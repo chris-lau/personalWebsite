@@ -32,8 +32,43 @@ export const BlogDetailPage: React.FC = () => {
     let inCodeBlock = false;
     let codeBuffer: string[] = [];
 
+    let inTable = false;
+    let tableHeader: string[] = [];
+    let tableRows: string[][] = [];
+
+    const flushTable = (keyIndex: number) => {
+      if (tableHeader.length > 0) {
+        elements.push(
+          <div key={`table-wrapper-${keyIndex}`} className="blog-table-container">
+            <table className="blog-table">
+              <thead>
+                <tr>
+                  {tableHeader.map((cell, i) => (
+                    <th key={i}>{cell}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {tableRows.map((row, rIndex) => (
+                  <tr key={rIndex}>
+                    {row.map((cell, cIndex) => (
+                      <td key={cIndex}>{cell}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      }
+      inTable = false;
+      tableHeader = [];
+      tableRows = [];
+    };
+
     lines.forEach((line, index) => {
       if (line.startsWith('```')) {
+        if (inTable) flushTable(index);
         if (inCodeBlock) {
           elements.push(
             <pre key={`code-${index}`} className="blog-code-block">
@@ -51,6 +86,29 @@ export const BlogDetailPage: React.FC = () => {
       if (inCodeBlock) {
         codeBuffer.push(line);
         return;
+      }
+
+      if (line.trim().startsWith('|')) {
+        // Table line
+        const cells = line
+          .split('|')
+          .slice(1, -1)
+          .map((c) => c.trim());
+
+        // Skip divider line (e.g., | :--- | :--- |)
+        if (cells.every((c) => /^[:-\s]+$/.test(c))) {
+          return;
+        }
+
+        if (!inTable) {
+          inTable = true;
+          tableHeader = cells;
+        } else {
+          tableRows.push(cells);
+        }
+        return;
+      } else if (inTable) {
+        flushTable(index);
       }
 
       if (line.startsWith('# ')) {
@@ -88,6 +146,11 @@ export const BlogDetailPage: React.FC = () => {
         );
       }
     });
+
+    if (inTable) {
+      flushTable(lines.length);
+    }
+
 
     return elements;
   };

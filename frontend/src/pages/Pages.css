@@ -462,6 +462,53 @@
   line-height: 1.5;
 }
 
+/* Markdown Table Layout */
+.blog-table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin: 1.25rem 0;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.blog-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.blog-table th,
+.blog-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-muted);
+  border-right: 1px solid var(--border-muted);
+  vertical-align: top;
+}
+
+.blog-table th:last-child,
+.blog-table td:last-child {
+  border-right: none;
+}
+
+.blog-table th {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  font-weight: 600;
+  font-family: var(--font-family);
+}
+
+.blog-table tr:last-child td {
+  border-bottom: none;
+}
+
+.blog-table tr:nth-child(even) td {
+  background-color: rgba(255, 255, 255, 0.015);
+}
+
+
 
 .blog-category-section {
   margin-bottom: 2rem;
