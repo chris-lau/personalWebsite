@@ -171,11 +171,13 @@ personalWebsite/
 - [x] Custom markdown table parser and responsive `.blog-table-container` CSS rendering column-aligned tables across all 3 themes.
 - [x] Universal zero-indent bullet list alignment (`list-style-position: inside`, `padding-left: 0`) ensuring bullets align flush left with paragraphs.
 
-### Step 8: Version Control & GitHub Publishing
+### Step 8: Version Control, Deployment & Cloudflare Setup
 - [x] Initialized Git repository on `main` branch.
 - [x] Configured `.gitignore` excluding generated assets (`node_modules`, `dist`, `.env`).
 - [x] Staged and committed initial portfolio codebase and blog articles.
 - [x] Created public GitHub repository and pushed code to `https://github.com/chris-lau/personalWebsite`.
+- [x] Configured Cloudflare Pages SPA redirection rule (`frontend/public/_redirects`: `/* /index.html 200`) to prevent 404 errors on direct sub-page refresh (`/blog`, `/projects`, `/about`).
+
 
 ---
 

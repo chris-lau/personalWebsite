@@ -143,8 +143,27 @@ npm run test:e2e
 
 ---
 
-## 🌐 Deployment
+## 🌐 Deployment & Cloudflare Pages
 
-The application is prepared for single-page app (SPA) hosting on platforms like **Cloudflare Pages**, **Vercel**, or **Netlify**.
+The application is prepared for single-page app (SPA) static deployment on **Cloudflare Pages**, **Vercel**, or **Netlify**.
 
-Build output directory: `frontend/dist/`
+### Cloudflare Pages Setup
+
+| Setting | Value | Explanation |
+| :--- | :--- | :--- |
+| **Root directory** | `frontend` | Root directory containing `package.json` |
+| **Build command** | `npm run build` | Compiles TypeScript & Vite assets into `dist/` |
+| **Build output directory** | `dist` | Production static build destination |
+
+> If your Cloudflare interface does not show a separate **Root directory** setting, use `cd frontend && npm install && npm run build` as the **Build command** and `frontend/dist` as the **Build output directory**.
+
+### SPA Routing & `_redirects` File
+
+This project includes `frontend/public/_redirects` with the following rule:
+```text
+/*  /index.html  200
+```
+
+**Why is this file needed?**
+In a React Single Page Application (SPA), routing (`/blog`, `/projects`, `/about`) is handled client-side in the browser. When a user directly visits or refreshes a sub-page, Cloudflare Pages will look for a physical file at that path and return a `404 Not Found` error if missing. The `_redirects` rule instructs Cloudflare to direct all requests (`/*`) back to `index.html` with a `200` status, enabling React Router to render the requested page correctly.
+
