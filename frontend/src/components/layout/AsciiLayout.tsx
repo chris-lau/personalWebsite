@@ -29,9 +29,9 @@ export const AsciiLayout: React.FC<AsciiLayoutProps> = ({ children }) => {
       {/* ASCII Top Header Banner */}
       <header className="ascii-header">
         <div className="ascii-banner" aria-hidden="true">
-          +-------------------------------------------------------+<br />
-          |        CHRIS LAU // STAFF PRODUCT MANAGER, AI         |<br />
-          +-------------------------------------------------------+
+          +-----------------------------------------------+<br />
+          |     CHRIS LAU // STAFF PRODUCT MANAGER, AI    |<br />
+          +-----------------------------------------------+
         </div>
         <div className="sr-only">
           <h1>Chris Lau - Staff Product Manager, AI</h1>
