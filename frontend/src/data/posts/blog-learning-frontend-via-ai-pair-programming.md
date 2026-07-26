@@ -91,20 +91,28 @@ Seeing this exact 4-line diff made it instantly clear how `list-style-position: 
 
 ## Phase 3: Deep-Diving "Why" & "What" Questions
 
-The real learning happened right after code diffs were applied. Whenever a new pattern appeared, I paused execution to ask the AI probing questions:
+The real learning happened right after code diffs were applied. Whenever a new tool or syntax pattern appeared, I paused execution to ask the AI probing questions about **what** was happening under the hood and **why** a specific implementation choice was made:
 
-### Question 1: *"Why do we need `list-style-position: inside` here?"*
-- **AI Explanation**: By default, browsers place list markers outside the content box (`list-style-position: outside`), which indents bullet points beyond standard paragraph borders. Setting `inside` draws bullet markers flush with paragraph text blocks.
+- *"What is `package.json` doing and what is `"private": true` for?"*
+- *"Why do we need a `src/` directory while configuration files sit outside?"*
+- *"What role does Vite play alongside TypeScript, and why is `vite build` required if we run `tsc`?"*
+- *"Does TypeScript compile code at build time or runtime?"*
+- *"What is the difference between Syntax Errors, Type Errors, and Linting?"*
 
-### Question 2: *"Why load Markdown files with `?raw` imports in Vite?"*
-- **AI Explanation**: In standard Node.js, reading files requires `fs.readFileSync`. In browser environments, `fs` doesn't exist. Vite's `?raw` import plugin instructs the build tool to inline the markdown file's plain text content directly into the compiled JavaScript bundle at build time.
+### Turning Questions Into a Dedicated Reference Post
 
-### Question 3: *"Why wrap the layout in a React Context instead of passing `theme` as a prop?"*
-- **AI Explanation**: Passing `theme` via props requires every single nested component (`Navbar`, `Footer`, `BlogCard`, `ProjectCard`) to accept and pass the prop down ("prop-drilling"). A `ThemeContext` acts like a global pub-sub provider, allowing any component to consume the active theme directly via `useTheme()`.
+As we went through these questions, I realized that these answers were invaluable—not just for my immediate comprehension, but also as a reference I could revisit whenever I needed a refresher in the future. 
+
+Instead of letting these insights get lost in chat transcripts, we compiled all of those exact questions and code-backed answers into a dedicated blog post: **[Teaching Code: Answers to Fundamental Frontend Development Questions](/blog/frontend-foundations-q-and-a)**.
+
+This created a double win:
+1. **Personal Reference**: A permanent, searchable reference guide in my own portfolio to refresh my memory whenever I start a new frontend feature.
+2. **Knowledge Sharing**: A beginner-friendly resource for other developers making the same transition to modern frontend development.
 
 ---
 
 ## Phase 4: Reading Code with Conceptual Mental Models
+
 
 By pairing these explanations with small code changes, I formed **mental models** grounded in backend engineering concepts:
 
