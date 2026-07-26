@@ -62,6 +62,32 @@
   font-size: 0.95rem;
 }
 
+/* Universal Skills Snapshot Layout & Spacing */
+.skills-snapshot {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.skill-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 1rem;
+  line-height: 1.6;
+}
+
+.skill-cat-label {
+  font-weight: 600;
+  color: var(--accent-primary);
+  min-width: 140px;
+}
+
+.skill-list {
+  color: var(--text-primary);
+  flex: 1;
+}
+
 .link-button {
   display: inline-flex;
   align-items: center;
@@ -848,7 +874,25 @@
 [data-theme="modern"] .skills-snapshot {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
+}
+
+[data-theme="modern"] .skill-group {
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-muted);
+}
+
+[data-theme="modern"] .skill-group:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+[data-theme="modern"] .skill-cat-label {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: var(--header-color);
+  min-width: 160px;
 }
 
 [data-theme="modern"] .filter-tag,

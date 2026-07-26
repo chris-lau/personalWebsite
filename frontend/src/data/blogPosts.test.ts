@@ -4,6 +4,8 @@ import {
   getBlogPostBySlug,
   getBlogPostsByTag,
   getAllBlogTags,
+  getGroupedBlogPostsByCategory,
+  getRelatedBlogPosts,
 } from './blogPosts';
 
 describe('Blog Posts Data Layer Unit Tests', () => {
@@ -41,5 +43,20 @@ describe('Blog Posts Data Layer Unit Tests', () => {
     expect(tags).toContain('React');
     expect(tags).toContain('TypeScript');
     expect(tags).toContain('Testing');
+  });
+
+  it('groups blog posts by category correctly', () => {
+    const categories = getGroupedBlogPostsByCategory();
+    expect(Object.keys(categories).length).toBeGreaterThan(0);
+    expect(categories['React Architecture & Design Systems']).toBeDefined();
+  });
+
+  it('retrieves related blog posts based on matching tags', () => {
+    const post = getBlogPostBySlug('demystifying-react-architecture-and-dev-tools');
+    if (post) {
+      const related = getRelatedBlogPosts(post, 3);
+      expect(related.length).toBeGreaterThan(0);
+      expect(related.find((p) => p.id === post.id)).toBeUndefined();
+    }
   });
 });

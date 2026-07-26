@@ -46,7 +46,7 @@ In our project, we define the exact data contract for a portfolio project before
 
 export interface Project {
   id: string;          // Must be a string (e.g., "personal-os")
-  title: string;       // Must be a string (e.g., "Personal OS Portfolio")
+  title: string;       // Must be a string (e.g., "AI & Systems Studio Website")
   description: string; // Detailed summary text
   techStack: string[]; // List of strings (e.g., ["React", "TypeScript", "Vite"])
   githubUrl?: string;  // Optional property (indicated by the '?')
@@ -94,7 +94,7 @@ A common beginner mistake is hardcoding copy and text directly inside JSX templa
 export function BadProjectCard() {
   return (
     <div>
-      <h3>Personal OS Portfolio</h3>
+      <h3>AI & Systems Studio Website</h3>
       <p>Dual-themed portfolio website...</p>
     </div>
   );
@@ -114,7 +114,7 @@ import { Project } from '../types/portfolio';
 export const projectsData: Project[] = [
   {
     id: 'personal-os',
-    title: 'Personal OS Portfolio',
+    title: 'AI & Systems Studio Website',
     description: 'Multi-themed (Modern Editorial, ASCII & CLI) portfolio website built with React, TypeScript, Vite, and CSS Tokens.',
     techStack: ['React', 'TypeScript', 'Vite', 'CSS Custom Properties'],
     githubUrl: 'https://github.com/example/personal-os',

@@ -142,7 +142,7 @@ Unlike legacy setups, Vite treats `index.html` as a primary source file sitting 
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Personal OS Portfolio</title>
+    <title>Chris Lau — AI &amp; Systems Studio</title>
     <!-- Google Fonts for UI Aesthetics -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Inter&display=swap" rel="stylesheet">

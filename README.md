@@ -1,4 +1,4 @@
-# Personal OS Portfolio (Triple-Theme ASCII, CLI & Modern Editorial)
+# Chris Lau — AI & Systems Studio Website (Triple-Theme ASCII, CLI & Modern Editorial)
 
 A modern, responsive, accessible, frontend-only personal portfolio website and blog engine supporting three distinct visual themes: **Warm Earthy ASCII Art Design**, **Retro Terminal CLI Design**, and **Modern Editorial Design** (inspired by Anthropic and OpenAI web aesthetics) with real-time theme toggling.
 
@@ -43,7 +43,7 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
 
 - **Testing & Quality Assurance**:
   - Storybook 8 component catalog & accessibility auditing (`@storybook/addon-a11y`).
-  - Vitest + `@testing-library/react` unit & component integration tests (33 passing tests).
+  - Vitest + `@testing-library/react` unit & component integration tests (35 passing tests).
   - Playwright real-browser end-to-end (E2E) testing across all 3 themes.
 
 ---

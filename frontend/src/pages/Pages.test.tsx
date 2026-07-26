@@ -14,7 +14,7 @@ import { BlogDetailPage } from './BlogDetailPage';
 
 describe('Page Components Unit Tests', () => {
 
-  it('renders BlogListPage and filters by search input', () => {
+  it('renders BlogListPage and filters by search input and tag buttons', () => {
     render(
       <MemoryRouter>
         <BlogListPage />
@@ -27,9 +27,17 @@ describe('Page Components Unit Tests', () => {
     fireEvent.change(searchInput, { target: { value: 'Scaffolding' } });
 
     expect(screen.getByText(/Demystifying Modern React Scaffolding/i)).toBeDefined();
+
+    // Reset search and test tag click
+    fireEvent.change(searchInput, { target: { value: '' } });
+    const reactTag = screen.queryByRole('button', { name: '#React' });
+    if (reactTag) {
+      fireEvent.click(reactTag);
+      expect(reactTag.className).toContain('active');
+    }
   });
 
-  it('renders BlogDetailPage with content when valid slug provided', () => {
+  it('renders BlogDetailPage with content and related articles when valid slug provided', () => {
     render(
       <MemoryRouter initialEntries={['/blog/demystifying-react-architecture-and-dev-tools']}>
         <Routes>
@@ -40,6 +48,7 @@ describe('Page Components Unit Tests', () => {
 
     expect(screen.getByText('Demystifying Modern React Architecture: Data Contracts, Dev Servers, and Type-Safe State')).toBeDefined();
     expect(screen.getByText('By Chris Lau')).toBeDefined();
+    expect(screen.getByText('RELATED ARTICLES')).toBeDefined();
   });
 
   it('renders BlogDetailPage error state when invalid slug provided', () => {

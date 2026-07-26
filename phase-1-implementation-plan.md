@@ -166,9 +166,10 @@ personalWebsite/
 - [x] Added active tactile click feedback (`transform: translateY(1px)`) to all buttons and tag filters.
 - [x] Redesigned `ModernLayout` footer to use a floating glassmorphic card container with rounded corners (`16px`), matching `.box-container` cards.
 - [x] Universal Contact page label alignment (`min-width: 95px`) across ASCII, CLI, and Modern themes.
+- [x] Universal Skills Snapshot layout alignment (`min-width: 140px`) preventing squished skill list text blocks.
+- [x] Paragraph typography measure optimization (`max-width: 70ch`, `line-height: 1.65-1.7`) for comfortable reading without eye strain.
 - [x] Custom markdown table parser and responsive `.blog-table-container` CSS rendering column-aligned tables across all 3 themes.
 - [x] Universal zero-indent bullet list alignment (`list-style-position: inside`, `padding-left: 0`) ensuring bullets align flush left with paragraphs.
-
 
 ### Step 8: Version Control & GitHub Publishing
 - [x] Initialized Git repository on `main` branch.
@@ -182,7 +183,7 @@ personalWebsite/
 
 ### Automated Verification
 - Run TypeScript compiler (`npx tsc --noEmit`) to verify strict typing.
-- Run `npm test` (`vitest --run`) to execute automated component rendering, data layer, & routing unit tests (33/33 tests passed).
+- Run `npm test` (`vitest --run`) to execute automated component rendering, data layer, & routing unit tests (35/35 tests passed).
 - Run `npm run test:e2e` (`playwright test`) to execute end-to-end browser tests in Chromium across ASCII, CLI, and Modern Editorial modes (5/5 tests passed).
 - Run `npm run build` (`tsc && vite build`) to verify clean production build output.
 

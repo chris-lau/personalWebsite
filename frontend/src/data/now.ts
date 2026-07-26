@@ -7,7 +7,7 @@ export const nowData: NowState = {
     'AI-enabled Surveillance & Compliance production services at Global Relay',
     'AI Governance program roadmap and cross-pod alignment',
     'Agentic Automation & GraphDB emerging tech prototyping',
-    'Triple-themed (Modern Editorial, ASCII & CLI) Personal OS portfolio website',
+    'Triple-themed (Modern Editorial, ASCII & CLI) AI & Systems Studio website',
   ],
   reading: [
     'Designing Data-Intensive Applications by Martin Kleppmann',
