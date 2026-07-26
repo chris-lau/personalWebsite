@@ -9,10 +9,7 @@ export const nowData: NowState = {
     'Agentic Automation & GraphDB emerging tech prototyping',
     'Triple-themed (Modern Editorial, ASCII & CLI) AI & Systems Studio website',
   ],
-  reading: [
-    'Designing Data-Intensive Applications by Martin Kleppmann',
-    'Co-Intelligence: Living and Working with AI by Ethan Mollick',
-  ],
+  reading: [],
   learning: [
     'Multi-agent LLM systems and task orchestration frameworks',
     'Graph database architectures for enterprise relationship mapping',

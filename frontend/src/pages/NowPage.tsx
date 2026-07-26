@@ -24,14 +24,16 @@ export const NowPage: React.FC = () => {
             </ul>
           </div>
 
-          <div className="now-block">
-            <h3>&gt; CURRENTLY READING</h3>
-            <ul>
-              {nowData.reading.map((book, i) => (
-                <li key={i}>📖 {book}</li>
-              ))}
-            </ul>
-          </div>
+          {nowData.reading.length > 0 && (
+            <div className="now-block">
+              <h3>&gt; CURRENTLY READING</h3>
+              <ul>
+                {nowData.reading.map((book, i) => (
+                  <li key={i}>📖 {book}</li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           <div className="now-block">
             <h3>&gt; LEARNING</h3>
