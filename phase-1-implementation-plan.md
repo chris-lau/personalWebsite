@@ -2,6 +2,8 @@
 
 Build and publish a polished, accessible, responsive, frontend-only portfolio supporting three distinct visual themes: **Warm Earthy ASCII Art Design**, **Retro Terminal CLI Design**, and **Modern Editorial Design** (inspired by Anthropic and OpenAI web aesthetics), with real-time theme toggling built using React, TypeScript, Vite, and Cloudflare Pages.
 
+GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github.com/chris-lau/personalWebsite)
+
 ## Goals & Scope
 
 - **Frontend-only**: React + TypeScript application built with Vite.
@@ -11,7 +13,7 @@ Build and publish a polished, accessible, responsive, frontend-only portfolio su
   - **Theme 3 (`modern`)**: Modern Editorial layout inspired by Anthropic & OpenAI websites (dark charcoal surface, warm ambient card glows, `Instrument Serif` headings, and `Inter` sans-serif typography).
   - **Real-Time Toggle**: Smooth 3-way theme switching using React Context (`ThemeContext.tsx`) and CSS custom property tokens (`[data-theme]`).
 - **Static Data Layer**: Complete static local data layer in `frontend/src/data/` independent of UI formatting.
-- **Navigation & Routing**: Client-side routed with `react-router-dom` across 7 core page areas:
+- **Navigation & Routing**: Client-side routed with `react-router-dom` across 8 core page areas:
   - `/` (Home)
   - `/about` (About / Résumé & Skill Matrix)
   - `/projects` (Projects Showcase)
@@ -27,8 +29,9 @@ Build and publish a polished, accessible, responsive, frontend-only portfolio su
 
 ```text
 personalWebsite/
-├── personal-os-project-plan.md
-├── phase-1-implementation-plan.md
+├── README.md                          # Project documentation
+├── personal-os-project-plan.md        # Master architectural project plan
+├── phase-1-implementation-plan.md     # Phase 1 execution plan & checklist
 └── frontend/
     ├── public/
     │   └── favicon.ico
@@ -52,7 +55,7 @@ personalWebsite/
     │   │       ├── ProjectCard.tsx   (Project display card)
     │   │       └── TimelineItem.tsx  (Experience timeline item)
     │   ├── data/
-    │   │   ├── posts/                (Markdown blog post storage)
+    │   │   ├── posts/                (Markdown blog post storage - 9 articles)
     │   │   ├── profile.ts
     │   │   ├── projects.ts
     │   │   ├── experience.ts
@@ -135,7 +138,9 @@ personalWebsite/
 - [x] `frontend/src/types/portfolio.ts`: Added `BlogPost` interface definition.
 - [x] `frontend/src/data/posts/`: Created dedicated modular markdown posts directory housing technical articles (`blog-*.md`).
 - [x] `frontend/src/data/blogPosts.ts`: Refactored static data module to use Vite raw imports (`?raw`), housing query helpers (`getAllBlogPosts`, `getBlogPostBySlug`, `getBlogPostsByTag`, `getAllBlogTags`).
-- [x] Published 8 technical blog posts, including:
+- [x] Published 9 technical blog posts:
+  - `blog-how-to-push-project-to-github.md` (Beginner guide on git init, .gitignore, commits, and pushing via GitHub CLI/Web)
+  - `blog-how-to-add-a-new-theme.md` (Step-by-step guide to adding design tokens, layouts, context, and tests for new themes)
   - `blog-building-a-full-featured-react-blog-engine.md`
   - `blog-demystifying-react-architecture-and-dev-tools.md`
   - `blog-modular-react-architecture-and-design-tokens.md`
@@ -143,10 +148,15 @@ personalWebsite/
   - `blog-testing-strategy-vitest-happy-dom-and-playwright.md`
   - `blog-frontend-foundations-q-and-a.md`
   - `blog-demystifying-react-scaffolding.md`
-  - `blog-how-to-add-a-new-theme.md` (Step-by-step guide to adding design tokens, layouts, context, and tests for new themes).
 - [x] `frontend/src/components/blog/BlogCard.tsx`: Reusable blog card component with CSS design token support.
 - [x] `frontend/src/pages/BlogListPage.tsx`: Interactive blog list page with keyword search bar, tag filtering pills, and post grid.
 - [x] `frontend/src/pages/BlogDetailPage.tsx`: Article detail view page with breadcrumbs, headers, tags, and structured markdown section rendering.
+
+### Step 7: Version Control & GitHub Publishing
+- [x] Initialized Git repository on `main` branch.
+- [x] Configured `.gitignore` excluding generated assets (`node_modules`, `dist`, `.env`).
+- [x] Staged and committed initial portfolio codebase and blog articles.
+- [x] Created public GitHub repository and pushed code to `https://github.com/chris-lau/personalWebsite`.
 
 ---
 
@@ -159,7 +169,7 @@ personalWebsite/
 - Run `npm run build` (`tsc && vite build`) to verify clean production build output.
 
 ### Manual Verification
-- Test all page routes (`/`, `/about`, `/projects`, `/blog`, `/blog/:slug`, `/experience`, `/now`, `/contact`, and unknown 404 paths).
+- Test all page routes (`/`, `/about`, `/projects`, `/blog`, `/blog/:slug`, `/experience`, `/now`, `/contact`, `/how-this-site-works`, and unknown 404 paths).
 - Test switching between **ASCII**, **CLI**, and **Modern Editorial** themes using the header toggle button and verify selection persists across page refreshes.
 - Verify universal zero-indent bullet list alignment across all sections (Career & Experience, Skill Matrix, Now Page, Blog Detail View).
 - Verify responsive mobile and desktop layout rendering.

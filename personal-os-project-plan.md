@@ -166,20 +166,25 @@ These services do not solve a Phase 1 problem.
 
 ---
 
-# Phase 1 — Static Portfolio
+# Phase 1 — Static Portfolio & Technical Blog Engine (COMPLETED)
 
 ## Goal
 
-Create and publish a professional frontend-only portfolio.
+Create and publish a professional frontend-only portfolio supporting triple-theme design (Warm Earthy ASCII, Retro Terminal CLI, and Modern Editorial) and a full technical blog engine.
+
+GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github.com/chris-lau/personalWebsite)
 
 ## Technologies
 
-- React
+- React 18
 - TypeScript
 - Vite
-- React Router, if multiple routes are needed
-- CSS Modules, Tailwind CSS, or structured standard CSS
-- Git and GitHub
+- React Router 6
+- CSS Custom Properties (Design Tokens)
+- Storybook 8 & `@storybook/addon-a11y`
+- Vitest & React Testing Library (Unit & Integration tests)
+- Playwright (Real browser E2E tests)
+- Git and GitHub (`gh` CLI)
 - Cloudflare Pages
 
 ## Pages
@@ -189,9 +194,11 @@ Create and publish a professional frontend-only portfolio.
 ├── Home
 ├── About
 ├── Projects
+├── Blog (List & Detail views for 9 technical articles)
 ├── Experience
 ├── Now
-└── Contact
+├── Contact
+└── How This Site Works (/how-this-site-works)
 ```
 
 ## Local Content Structure
@@ -202,55 +209,36 @@ frontend/src/data/
 ├── projects.ts
 ├── experience.ts
 ├── skills.ts
+├── blogPosts.ts
+├── posts/ (9 Markdown technical articles)
 └── now.ts
 ```
 
 ## Features
 
-- Responsive desktop and mobile layouts
-- Accessible navigation
-- Light and dark themes
-- Project cards
-- Technology filters
-- Experience timeline
-- Downloadable résumé
-- “Now” section
-- Social and contact links
-- Custom loading and 404 pages
-- SEO metadata
-- Open Graph metadata
-- Keyboard navigation
-- Basic component tests
+- Responsive desktop and mobile layouts across 3 themes (`ascii`, `cli`, `modern`)
+- Real-time global theme switcher with `localStorage` persistence
+- Accessible navigation & screen reader fallback attributes (`.sr-only`, `aria-hidden`)
+- Interactive project cards and technology filters
+- Modular technical blog engine with search bar, tag filtering, and markdown rendering
+- Experience and education timeline
+- Downloadable résumé & Sivers-style “Now” section
+- Technical architecture page (`/how-this-site-works`)
+- Basic component unit tests (33 tests) & E2E browser tests (5 tests)
 
-## Accounts Required
+## Repository Status
 
-- GitHub
-- Cloudflare only when deployment begins
-
-## Accounts Not Required
-
-- Domain registrar
-- Backend host
-- Database provider
-- Authentication provider
-
-## Deployment Address
-
-Use the free Cloudflare address initially:
-
-```text
-project-name.pages.dev
-```
+- GitHub Repository created and pushed: [https://github.com/chris-lau/personalWebsite](https://github.com/chris-lau/personalWebsite)
 
 ## Completion Criteria
 
-- The public website is deployed
-- It works on mobile and desktop
-- Visitors can understand who I am
-- Projects and experience are clearly presented
-- No backend is required for normal use
-- Accessibility and performance issues have been reviewed
-- The repository contains setup instructions
+- [x] The public website application is structured and buildable
+- [x] It works on mobile and desktop across ASCII, CLI, and Modern Editorial themes
+- [x] Visitors can understand who I am and read technical blog articles
+- [x] Projects and experience are clearly presented
+- [x] No backend is required for normal use
+- [x] Accessibility and performance issues have been reviewed
+- [x] The repository is published to GitHub with complete setup instructions
 
 ---
 

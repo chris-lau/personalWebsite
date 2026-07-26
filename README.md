@@ -1,33 +1,42 @@
-# Personal OS Portfolio (Dual-Theme ASCII & CLI)
+# Personal OS Portfolio (Triple-Theme ASCII, CLI & Modern Editorial)
 
-A modern, responsive, accessible, frontend-only personal portfolio website supporting both a **Warm Earthy ASCII Art Design** and a **Retro Terminal CLI Design** with real-time theme switching.
+A modern, responsive, accessible, frontend-only personal portfolio website and blog engine supporting three distinct visual themes: **Warm Earthy ASCII Art Design**, **Retro Terminal CLI Design**, and **Modern Editorial Design** (inspired by Anthropic and OpenAI web aesthetics) with real-time theme toggling.
 
 Built with **React 18**, **TypeScript**, **Vite**, **React Router 6**, **Storybook 8**, **Vitest**, and **Playwright**.
+
+GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github.com/chris-lau/personalWebsite)
 
 ---
 
 ## 🎨 Key Features
 
-- **Dual-Theme Support**:
+- **Triple-Theme Support**:
   - **`ascii` Mode**: Warm Earthy single-column layout (espresso background, parchment text, terracotta/sage accents, ASCII box frames).
-  - **`cli` Mode**: Retro terminal window layout with interactive command prompt ($), tab navigation, and terminal output aesthetic.
+  - **`cli` Mode**: Retro terminal window layout with interactive command prompt (`$`), tab navigation, and terminal output aesthetic.
+  - **`modern` Mode**: Modern Editorial layout inspired by Anthropic & OpenAI websites (dark charcoal surface, warm ambient glows, `Instrument Serif` headers, and `Inter` sans-serif typography).
   - **Real-Time Toggle**: Global state management via `ThemeContext` with `localStorage` persistence.
-- **Client-Side Navigation**:
+- **Client-Side Navigation & Routing**:
   - `/` — Home (Hero bio, featured projects, quick skill overview)
   - `/about` — About & Résumé (Detailed background, core values, technical stack)
   - `/projects` — Projects Showcase (Interactive filterable list by technology tag)
+  - `/blog` — Blog Engine (Keyword search, tag filtering, post detail markdown views)
   - `/experience` — Work & Education Timeline
   - `/now` — Current Activities & Reading List (Derek Sivers style `/now` page)
   - `/contact` — Contact details & Social links
-  - `/architecture` — Technical Architecture & Design System showcase
+  - `/how-this-site-works` — Technical Architecture & Design System showcase
+- **Full-Featured Technical Blog Engine**:
+  - Modular Markdown storage in `frontend/src/data/posts/`.
+  - Vite raw static imports (`?raw`) with query helpers (`getAllBlogPosts`, `getBlogPostBySlug`, `getBlogPostsByTag`).
+  - Includes 9 technical articles covering React architecture, scaffolding, testing strategies, design tokens, multi-theme context, and beginner GitHub workflows.
 - **Accessibility & UX**:
   - Screen reader fallback markup (`.sr-only`).
   - `aria-hidden` attributes on visual ASCII framing elements.
   - Full keyboard focus indicators and semantic HTML5 layout containers.
+  - Universal zero-indent bullet list alignment.
 - **Testing & Quality Assurance**:
   - Storybook 8 component catalog & accessibility auditing (`@storybook/addon-a11y`).
-  - Vitest + `@testing-library/react` unit & component integration tests.
-  - Playwright real-browser end-to-end (E2E) testing.
+  - Vitest + `@testing-library/react` unit & component integration tests (33 passing tests).
+  - Playwright real-browser end-to-end (E2E) testing across all 3 themes.
 
 ---
 
@@ -44,13 +53,21 @@ personalWebsite/
     │   └── portfolio.spec.ts
     ├── src/
     │   ├── components/
-    │   │   ├── layout/                # AsciiLayout, CliLayout, LayoutRenderer, ThemeToggle
-    │   │   └── ui/                    # AsciiBox, ProjectCard, TimelineItem
-    │   ├── context/                   # ThemeContext (Global theme provider)
-    │   ├── data/                      # Static data layer (profile, projects, experience, etc.)
-    │   ├── pages/                     # Page views (Home, About, Projects, Experience, etc.)
-    │   ├── styles/                    # Design tokens (variables.css) and reset (global.css)
-    │   ├── types/                     # TypeScript interfaces
+    │   │   ├── blog/                  # BlogCard & styling
+    │   │   ├── layout/                # AsciiLayout, CliLayout, ModernLayout, LayoutRenderer, ThemeToggle
+    │   │   └── ui/                    # BoxContainer, ProjectCard, TimelineItem
+    │   ├── context/                   # ThemeContext (Global 3-theme manager)
+    │   ├── data/                      # Static data layer & markdown blog posts
+    │   │   ├── posts/                 # Markdown blog post storage (9 articles)
+    │   │   ├── blogPosts.ts           # Blog engine static data layer & helpers
+    │   │   ├── profile.ts
+    │   │   ├── projects.ts
+    │   │   ├── experience.ts
+    │   │   ├── skills.ts
+    │   │   └── now.ts
+    │   ├── pages/                     # Page views (Home, About, Projects, Blog, Experience, Now, Contact, Architecture)
+    │   ├── styles/                    # Design tokens (variables.css for 3 themes) and reset (global.css)
+    │   ├── types/                     # TypeScript interfaces (theme.ts, portfolio.ts)
     │   ├── App.tsx                    # React Router configuration
     │   └── main.tsx                   # Entry point
     ├── package.json
@@ -72,7 +89,7 @@ personalWebsite/
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/personalWebsite.git
+   git clone https://github.com/chris-lau/personalWebsite.git
    cd personalWebsite/frontend
    ```
 
@@ -105,13 +122,13 @@ Navigate to the `frontend/` directory to run commands:
 ## 🧪 Testing
 
 ### Unit & Component Tests (Vitest)
-Executes component rendering, page behavior, and router integration tests:
+Executes component rendering, page behavior, blog engine filtering, and router integration tests:
 ```bash
 npm test
 ```
 
 ### End-to-End Tests (Playwright)
-Launches Chromium instances to test full user journeys, theme switching persistence, tag filtering, and 404 routing:
+Launches Chromium instances to test full user journeys, 3-theme switching persistence (`ascii`, `cli`, `modern`), tag filtering, and 404 routing:
 ```bash
 npm run test:e2e
 ```
