@@ -94,8 +94,8 @@ describe('App Router & Integration Tests', () => {
     expect(screen.getByText('WELCOME')).toBeDefined();
 
     // Click on projects link in navigation header
-    const projectsLink = screen.getByRole('link', { name: /^(Projects|\[PROJECTS\])$/i });
-    fireEvent.click(projectsLink);
+    const projectsLinks = screen.getAllByRole('link', { name: /^(Projects|\[PROJECTS\])$/i });
+    fireEvent.click(projectsLinks[0]);
 
     expect(screen.getByText('PROJECT ARCHIVE')).toBeDefined();
   });
@@ -107,10 +107,10 @@ describe('App Router & Integration Tests', () => {
       </MemoryRouter>
     );
 
-    const themeToggleBtn = screen.getByRole('button', { name: /switch to (cli|ascii|modern) theme/i });
+    const themeToggleBtn = screen.getByRole('button', { name: /switch theme/i });
     expect(themeToggleBtn).toBeDefined();
 
     fireEvent.click(themeToggleBtn);
-    expect(screen.getByRole('button', { name: /switch to (cli|ascii|modern) theme/i })).toBeDefined();
+    expect(screen.getByRole('button', { name: /switch theme/i })).toBeDefined();
   });
 });

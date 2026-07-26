@@ -2,8 +2,8 @@
   max-width: 960px;
   margin: 0 auto;
   padding: 2rem 1rem;
-  font-family: var(--font-family-mono);
-  color: var(--text-color);
+  font-family: var(--font-family);
+  color: var(--text-primary);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -12,7 +12,7 @@
 
 .cli-window {
   border: 1px solid var(--border-color);
-  background-color: var(--bg-surface);
+  background-color: var(--bg-secondary);
   border-radius: 6px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   overflow: hidden;
@@ -22,7 +22,7 @@
 }
 
 .cli-header-bar {
-  background-color: var(--bg-color);
+  background-color: var(--bg-primary);
   border-bottom: 1px solid var(--border-color);
   padding: 0.5rem 1rem;
   display: flex;
@@ -61,7 +61,7 @@
 }
 
 .cli-nav-bar {
-  background-color: var(--bg-color);
+  background-color: var(--bg-primary);
   border-bottom: 1px solid var(--border-color);
   padding: 0.5rem 1rem;
   display: flex;
@@ -71,7 +71,7 @@
 }
 
 .cli-prompt-symbol {
-  color: var(--accent-color);
+  color: var(--accent-secondary);
   font-weight: bold;
 }
 
@@ -93,13 +93,13 @@
 }
 
 .cli-tab:hover {
-  color: var(--text-color);
+  color: var(--text-primary);
   background-color: rgba(255, 255, 255, 0.05);
 }
 
 .cli-tab.active {
-  color: var(--accent-color);
-  background-color: var(--bg-surface);
+  color: var(--accent-secondary);
+  background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);
   font-weight: bold;
 }
@@ -111,13 +111,28 @@
 }
 
 .cli-footer {
-  background-color: var(--bg-color);
+  background-color: var(--bg-primary);
   border-top: 1px solid var(--border-color);
   padding: 0.4rem 1rem;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-size: 0.75rem;
   color: var(--text-muted);
+}
+
+.cli-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.cli-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #27c93f;
+  display: inline-block;
 }
 
 @media (max-width: 640px) {

@@ -116,15 +116,20 @@
 
 /* Footer */
 .modern-footer {
-  border-top: 1px solid var(--border-muted);
-  background-color: var(--bg-secondary);
-  padding: 2.5rem 1.5rem;
+  padding: 0 1.5rem 3rem;
   margin-top: auto;
 }
 
-.modern-footer-content {
+.modern-footer-card {
   max-width: var(--container-max-width);
   margin: 0 auto;
+  padding: 1.25rem 2rem;
+  border-radius: 16px;
+  border: 1px solid var(--border-muted);
+  background: var(--bg-card, rgba(28, 30, 36, 0.7));
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -133,13 +138,33 @@
 }
 
 .modern-footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   font-size: 0.9rem;
   color: var(--text-muted);
 }
 
-.modern-footer-brand span {
+.modern-footer-brand .brand-initials {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+}
+
+.modern-footer-brand .brand-divider {
+  color: var(--text-muted);
+  font-weight: 300;
+}
+
+.modern-footer-brand .brand-name {
   color: var(--text-primary);
-  font-weight: 500;
+  font-weight: 600;
+}
+
+.modern-footer-brand .brand-role {
+  color: var(--text-muted);
+  font-size: 0.85rem;
 }
 
 .modern-footer-copy {
@@ -163,5 +188,15 @@
 
   .modern-nav-link {
     white-space: nowrap;
+  }
+
+  .modern-footer-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .modern-footer-brand {
+    flex-wrap: wrap;
   }
 }

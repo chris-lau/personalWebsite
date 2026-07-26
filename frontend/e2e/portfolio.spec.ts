@@ -104,7 +104,7 @@ test.describe('Portfolio E2E Tests', () => {
     await expect(page.getByRole('heading', { name: 'ERROR 404' })).toBeVisible();
 
     // Click return home link
-    await page.click('text=[ Return Home ]');
+    await page.click('text=Return Home');
     await expect(page).toHaveURL('/');
     await expect(page.getByRole('heading', { name: 'WELCOME' })).toBeVisible();
   });

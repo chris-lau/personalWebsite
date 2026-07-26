@@ -21,20 +21,22 @@ export const ProjectsPage: React.FC = () => {
     <div className="page-container page-projects">
       <section>
         <BoxContainer title="PROJECT ARCHIVE">
-          <div className="filter-bar">
-            <span className="filter-label">Filter Tag: </span>
+          <div className="filter-bar" role="group" aria-label="Filter projects by technology">
+            <span className="filter-label" id="filter-by-label">Filter Tag: </span>
             <button
               type="button"
               className={`filter-tag ${selectedTag === null ? 'active' : ''}`}
+              aria-pressed={selectedTag === null}
               onClick={() => setSelectedTag(null)}
             >
-              [All]
+              All
             </button>
             {allTags.map((tag) => (
               <button
                 type="button"
                 key={tag}
                 className={`filter-tag ${selectedTag === tag ? 'active' : ''}`}
+                aria-pressed={selectedTag === tag}
                 onClick={() => setSelectedTag(tag)}
               >
                 #{tag}
@@ -55,12 +57,12 @@ export const ProjectsPage: React.FC = () => {
                 <div className="project-actions">
                   {project.githubUrl && (
                     <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="link-button">
-                      [GitHub]
+                      GitHub
                     </a>
                   )}
                   {project.liveUrl && (
                     <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="link-button">
-                      [Live Demo]
+                      Live Demo
                     </a>
                   )}
                 </div>

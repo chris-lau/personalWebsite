@@ -36,27 +36,65 @@
   margin-top: 0.5rem;
 }
 
-.link-button {
-  color: var(--color-accent);
-  text-decoration: none;
-  font-family: var(--font-mono);
+/* Universal Contact Page Layout & Column Alignment */
+.contact-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.contact-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.contact-row .platform-name {
+  min-width: 95px;
   font-weight: 600;
-  padding: 0.25rem 0.5rem;
-  border: 1px dashed var(--color-border-subtle);
-  border-radius: 2px;
-  transition: all 0.2s ease;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+}
+
+.link-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--accent-primary);
+  text-decoration: none;
+  font-family: var(--font-family);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--border-muted);
+  border-radius: 3px;
+  background-color: transparent;
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
 }
 
 .link-button:hover,
 .link-button:focus-visible {
-  color: var(--color-primary);
-  border-color: var(--color-primary);
-  background-color: var(--color-surface);
+  color: var(--header-color);
+  border-color: var(--accent-primary);
+  background-color: var(--bg-secondary);
+}
+
+.link-button:active,
+.filter-tag:active {
+  transform: translateY(1px);
 }
 
 .link-button.primary {
-  color: var(--color-primary);
-  border-style: solid;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  font-weight: 600;
 }
 
 /* Project grid */
@@ -416,26 +454,28 @@
   font-size: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1.15rem;
 }
 
 
 .blog-heading-2 {
   font-size: 1.4rem;
   color: var(--color-primary);
-  margin-top: 1.5rem;
+  margin-top: 1.75rem;
   margin-bottom: 0.5rem;
 }
 
 .blog-heading-3 {
   font-size: 1.15rem;
   color: var(--color-accent);
-  margin-top: 1.2rem;
+  margin-top: 1.35rem;
   margin-bottom: 0.4rem;
 }
 
 .blog-paragraph {
   margin: 0;
+  max-width: 72ch;
+  line-height: 1.65;
 }
 
 .blog-list-item {
@@ -572,6 +612,101 @@
 }
 
 /* ==========================================================================
+   CLI & ASCII Theme Component Overrides
+   ========================================================================== */
+
+/* CLI Theme Links (Matches Top Terminal Nav Bar) */
+[data-theme="cli"] .link-button {
+  font-family: var(--font-family);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.3rem 0.65rem;
+  border-radius: 3px;
+  border: 1px solid var(--border-muted);
+  color: var(--accent-secondary);
+  background-color: transparent;
+  transition: all 0.2s ease;
+}
+
+[data-theme="cli"] .link-button:hover,
+[data-theme="cli"] .link-button:focus-visible {
+  color: var(--bg-primary);
+  background-color: var(--accent-secondary);
+  border-color: var(--accent-secondary);
+}
+
+[data-theme="cli"] .link-button.primary {
+  border: 1px solid var(--border-color);
+  background-color: transparent;
+  color: var(--accent-primary);
+  font-weight: 600;
+}
+
+[data-theme="cli"] .link-button.primary:hover,
+[data-theme="cli"] .link-button.primary:focus-visible {
+  background-color: var(--accent-primary);
+  color: var(--bg-primary);
+  border-color: var(--accent-primary);
+}
+
+[data-theme="cli"] .filter-tag {
+  font-family: var(--font-family);
+  font-size: 0.825rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 3px;
+  border: 1px solid var(--border-muted);
+  color: var(--text-muted);
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+[data-theme="cli"] .filter-tag:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-secondary);
+  border-color: var(--accent-secondary);
+}
+
+[data-theme="cli"] .filter-tag.active {
+  color: var(--bg-primary);
+  background-color: var(--accent-secondary);
+  border-color: var(--accent-secondary);
+  font-weight: bold;
+}
+
+/* ASCII Theme Links */
+[data-theme="ascii"] .link-button {
+  font-family: var(--font-family);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.3rem 0.65rem;
+  border-radius: 2px;
+  border: 1px solid var(--border-muted);
+  color: var(--accent-primary);
+  background-color: transparent;
+  transition: all 0.2s ease;
+}
+
+[data-theme="ascii"] .link-button:hover,
+[data-theme="ascii"] .link-button:focus-visible {
+  color: var(--header-color);
+  background-color: var(--bg-secondary);
+  border-color: var(--accent-primary);
+}
+
+[data-theme="ascii"] .link-button.primary {
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+[data-theme="ascii"] .link-button.primary:hover {
+  background-color: var(--accent-primary);
+  color: var(--bg-primary);
+  border-color: var(--accent-primary);
+}
+
+/* ==========================================================================
    Modern Theme (Anthropic & OpenAI Inspired) CSS Component Overrides
    ========================================================================== */
 
@@ -669,17 +804,31 @@
   font-family: var(--font-family);
   font-size: 0.85rem;
   font-weight: 500;
-  padding: 0.4rem 0.95rem;
-  border-radius: 6px;
+  padding: 0.45rem 1rem;
+  border-radius: 8px;
   border: 1px solid var(--border-color);
   color: var(--text-primary);
   background-color: rgba(255, 255, 255, 0.04);
+  transition: all 0.2s ease;
 }
 
 [data-theme="modern"] .link-button:hover {
-  background-color: var(--accent-primary);
-  color: var(--text-inverse);
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--accent-primary);
   border-color: var(--accent-primary);
+}
+
+[data-theme="modern"] .link-button.primary {
+  background-color: var(--accent-primary);
+  color: #121316;
+  border: 1px solid var(--accent-primary);
+  font-weight: 600;
+}
+
+[data-theme="modern"] .link-button.primary:hover {
+  background-color: #f5b77f;
+  border-color: #f5b77f;
+  color: #121316;
 }
 
 [data-theme="modern"] .section-footer {
@@ -786,6 +935,16 @@
 [data-theme="modern"] .skill-tags {
   padding-left: 0;
   margin-left: 0;
+}
+
+[data-theme="modern"] p,
+[data-theme="modern"] .hero-bio,
+[data-theme="modern"] .blog-paragraph,
+[data-theme="modern"] .intro-text {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text-primary);
+  max-width: 70ch;
 }
 
 [data-theme="modern"] .skill-pill {

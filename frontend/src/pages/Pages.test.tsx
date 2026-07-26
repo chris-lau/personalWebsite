@@ -88,7 +88,7 @@ describe('Page Components Unit Tests', () => {
     expect(screen.getByText('PROJECT ARCHIVE')).toBeDefined();
     
     // Find all tags filter button
-    const allButton = screen.getByRole('button', { name: '[All]' });
+    const allButton = screen.getByRole('button', { name: 'All' });
     expect(allButton.className).toContain('active');
 
     // Click a tech tag button if present
@@ -147,6 +147,6 @@ describe('Page Components Unit Tests', () => {
     );
 
     expect(screen.getByText('ERROR 404')).toBeDefined();
-    expect(screen.getByText('[ Return Home ]')).toBeDefined();
+    expect(screen.getByText(/Return Home/i)).toBeDefined();
   });
 });

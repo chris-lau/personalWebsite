@@ -138,7 +138,7 @@ personalWebsite/
 - [x] `frontend/src/types/portfolio.ts`: Added `BlogPost` interface definition.
 - [x] `frontend/src/data/posts/`: Created dedicated modular markdown posts directory housing technical articles (`blog-*.md`).
 - [x] `frontend/src/data/blogPosts.ts`: Refactored static data module to use Vite raw imports (`?raw`), housing query helpers (`getAllBlogPosts`, `getBlogPostBySlug`, `getBlogPostsByTag`, `getAllBlogTags`).
-- [x] Published 9 technical blog posts:
+- [x] Published 10 technical blog posts:
   - `blog-how-to-push-project-to-github.md` (Beginner guide on git init, .gitignore, commits, and pushing via GitHub CLI/Web)
   - `blog-how-to-add-a-new-theme.md` (Step-by-step guide to adding design tokens, layouts, context, and tests for new themes)
   - `blog-building-a-full-featured-react-blog-engine.md`
@@ -148,11 +148,20 @@ personalWebsite/
   - `blog-testing-strategy-vitest-happy-dom-and-playwright.md`
   - `blog-frontend-foundations-q-and-a.md`
   - `blog-demystifying-react-scaffolding.md`
+  - `blog-master-frontend-testing-strategy.md`
 - [x] `frontend/src/components/blog/BlogCard.tsx`: Reusable blog card component with CSS design token support.
 - [x] `frontend/src/pages/BlogListPage.tsx`: Interactive blog list page with keyword search bar, tag filtering pills, and post grid.
 - [x] `frontend/src/pages/BlogDetailPage.tsx`: Article detail view page with breadcrumbs, headers, tags, and structured markdown section rendering.
 
-### Step 7: Version Control & GitHub Publishing
+### Step 7: UX/UI & Accessibility SME Design Polish
+- [x] Standardized design tokens across `a11y.css`, `Pages.css`, and `variables.css`.
+- [x] Fixed `#main-content` target across `AsciiLayout`, `CliLayout`, and `ModernLayout` for consistent skip navigation.
+- [x] Refactored `ThemeToggle` accessibility with explicit multi-state `aria-label` guidance.
+- [x] Added active tactile click feedback (`transform: translateY(1px)`) to all buttons and tag filters.
+- [x] Redesigned `ModernLayout` footer to use a floating glassmorphic card container with rounded corners (`16px`), matching `.box-container` cards.
+- [x] Universal Contact page label alignment (`min-width: 95px`) across ASCII, CLI, and Modern themes.
+
+### Step 8: Version Control & GitHub Publishing
 - [x] Initialized Git repository on `main` branch.
 - [x] Configured `.gitignore` excluding generated assets (`node_modules`, `dist`, `.env`).
 - [x] Staged and committed initial portfolio codebase and blog articles.

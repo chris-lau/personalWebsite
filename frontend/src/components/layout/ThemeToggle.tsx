@@ -10,8 +10,7 @@ export const ThemeToggle: React.FC = () => {
     <button
       onClick={toggleTheme}
       className="theme-toggle-btn"
-      aria-label={`Switch to ${nextTheme.toUpperCase()} theme`}
-      aria-pressed={theme !== 'ascii'}
+      aria-label={`Switch theme (current: ${theme.toUpperCase()}, next: ${nextTheme.toUpperCase()})`}
       type="button"
     >
       <span aria-hidden="true">[ MODE: {theme.toUpperCase()} ]</span>

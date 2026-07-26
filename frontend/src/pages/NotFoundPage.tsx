@@ -18,7 +18,7 @@ export const NotFoundPage: React.FC = () => {
 `}
             </pre>
             <p>Check the URL or navigate back to safety.</p>
-            <Link to="/" className="link-button primary">[ Return Home ]</Link>
+            <Link to="/" className="link-button primary">Return Home &rarr;</Link>
           </div>
         </BoxContainer>
       </section>

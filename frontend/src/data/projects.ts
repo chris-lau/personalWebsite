@@ -10,14 +10,6 @@ export const projectsData: Project[] = [
     featured: true,
   },
   {
-    id: 'critique-companion',
-    title: 'Critique Companion',
-    description: 'A developer & writer companion tool for structured feedback, analysis, and refinement workflows.',
-    techStack: ['TypeScript', 'React', 'Node.js'],
-    githubUrl: 'https://github.com/chris-lau/critique-companion',
-    featured: true,
-  },
-  {
     id: 'personal-os',
     title: 'Personal OS Portfolio',
     description: 'Triple-themed (Modern Editorial, ASCII Terminal & Retro CLI) personal website built with React 18, TypeScript, Vite, and CSS Design Tokens.',
@@ -25,13 +17,7 @@ export const projectsData: Project[] = [
     githubUrl: 'https://github.com/chris-lau/personalWebsite',
     featured: true,
   },
-  {
-    id: 'tokyo-2026',
-    title: 'Tokyo 2026 Planner',
-    description: 'Travel itinerary and interactive exploration application built with modern web technologies.',
-    techStack: ['JavaScript', 'HTML5', 'CSS3'],
-    githubUrl: 'https://github.com/chris-lau/Tokyo2026',
-    featured: false,
-  },
 ];
+
+
 

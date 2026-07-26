@@ -22,7 +22,7 @@ export const CliLayout: React.FC<CliLayoutProps> = ({ children }) => {
 
   return (
     <div className="cli-layout-container">
-      <a href="#cli-main-content" className="skip-to-content">
+      <a href="#main-content" className="skip-to-content">
         Skip to main content
       </a>
 
@@ -62,13 +62,16 @@ export const CliLayout: React.FC<CliLayoutProps> = ({ children }) => {
         </nav>
 
         {/* Main Terminal Output Content Area */}
-        <main id="cli-main-content" className="cli-body">
+        <main id="main-content" className="cli-body">
           {children}
         </main>
 
         {/* Terminal Footer */}
         <footer className="cli-footer">
-          <span className="cli-status">STATUS: OK</span>
+          <span className="cli-status-badge">
+            <span className="cli-status-dot" aria-hidden="true"></span>
+            <span>STATUS: OK</span>
+          </span>
           <span className="cli-timestamp">{new Date().toISOString().split('T')[0]}</span>
         </footer>
       </div>

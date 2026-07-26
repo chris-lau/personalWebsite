@@ -26,7 +26,7 @@ export const HomePage: React.FC = () => {
                   rel="noopener noreferrer"
                   className="link-button"
                 >
-                  [{s.platform}]
+                  {s.platform}
                 </a>
               ))}
             </div>
@@ -49,12 +49,12 @@ export const HomePage: React.FC = () => {
                 <div className="project-actions">
                   {project.githubUrl && (
                     <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="link-button">
-                      [GitHub]
+                      GitHub
                     </a>
                   )}
                   {project.liveUrl && (
                     <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="link-button">
-                      [Live Demo]
+                      Live Demo
                     </a>
                   )}
                 </div>
@@ -62,7 +62,7 @@ export const HomePage: React.FC = () => {
             ))}
           </div>
           <div className="section-footer">
-            <Link to="/projects" className="link-button primary">[ View All Projects &rarr; ]</Link>
+            <Link to="/projects" className="link-button primary">View All Projects &rarr;</Link>
           </div>
         </BoxContainer>
       </section>

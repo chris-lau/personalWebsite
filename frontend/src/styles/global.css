@@ -25,6 +25,16 @@ body {
   align-items: center;
 }
 
+/* Paragraph Typography & Optimal Reading Measure Baseline */
+p {
+  line-height: 1.65;
+  margin-bottom: 0.85rem;
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
 /* Universal Base List Reset & Bullet Alignment */
 ul, ol {
   padding-left: 0;

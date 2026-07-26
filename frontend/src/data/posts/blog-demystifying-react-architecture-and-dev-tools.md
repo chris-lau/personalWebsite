@@ -65,14 +65,16 @@ export interface BlogPost {
   slug: string;        // URL path slug (e.g., "building-a-full-featured-react-blog-engine")
   title: string;       // Article title
   description: string; // Article summary blurb
-  date: string;        // ISO publish date
+  updatedDate: string; // Last updated date
   readTime: string;    // Estimated read duration
   tags: string[];      // Topic tags for filtering
   author: string;      // Author name
   content: string;     // Full markdown body content
+  category?: string;   // Optional category grouping
   featured?: boolean;  // Optional flag for featured hero banners
 }
 ```
+
 
 ### Why Use Interfaces?
 

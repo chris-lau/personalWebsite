@@ -74,14 +74,16 @@ export interface BlogPost {
   slug: string;        // URL-friendly identifier (e.g. "demystifying-react-architecture")
   title: string;       // Full post headline
   description: string; // Summary blurb for post lists
-  date: string;        // ISO publication date (YYYY-MM-DD)
+  updatedDate: string; // ISO last updated date (YYYY-MM-DD)
   readTime: string;    // Estimated reading time (e.g. "6 min read")
   tags: string[];      // Topic tags (e.g. ["React", "TypeScript"])
   author: string;      // Author name
   content: string;     // Full markdown body text
+  category?: string;   // Optional category for grouping articles
   featured?: boolean;  // Optional flag for featured section highlights
 }
 ```
+
 
 ### Why Start with Interfaces?
 - **Type Safety**: Any component consuming a `BlogPost` gets full editor autocomplete and compile-time verification.
