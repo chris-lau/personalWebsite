@@ -1,6 +1,6 @@
 # A Backend TPM's Journey to Modern Frontend: Building a Multi-Theme React & TypeScript Portfolio
 
-> **TL;DR**: After years of leading backend technical programs, collaborating closely with frontend engineering teams inspired me to deepen my technical domain knowledge. By building a production-ready, multi-theme React portfolio from scratch, I mastered modern frontend paradigms—from component-driven architecture and semantic CSS design tokens to hot-module bundling (Vite) and 4-tier automated testing (Vitest, RTL, Storybook, Playwright). Here are the key takeaways from a Technical Program Manager's perspective.
+> **TL;DR**: After years of leading backend technical products, collaborating closely with frontend engineering teams inspired me to deepen my technical domain knowledge. By building a production-ready, multi-theme React portfolio from scratch, I mastered modern frontend paradigms—from component-driven architecture and semantic CSS design tokens to hot-module bundling (Vite) and 4-tier automated testing (Vitest, RTL, Storybook, Playwright). Here are the key takeaways from a Technical Product Manager's perspective.
 
 ---
 
@@ -18,11 +18,12 @@
 
 ## Introduction: Why a Backend TPM Built a Frontend App
 
-For many years, my primary role has been as a **Technical Program Manager (TPM)** specializing in **backend systems**—driving backend technical strategy, microservice architectures, database migrations, and infrastructure reliability. In that domain, program success centers around API SLAs, system dependencies, data contracts, and backend architectural alignment.
+For many years, my primary role has been as a **Technical Product Manager (TPM)** specializing in **backend systems**—driving backend technical product strategy, microservice architectures, database migrations, and infrastructure reliability. In that domain, product success centers around API SLAs, system dependencies, data contracts, and backend architectural alignment.
 
-Recently, while partnering closely with frontend engineering teams on major cross-functional initiatives, I recognized how useful deep technical familiarity with modern frontend development is for effective technical program management. Frontend engineering has evolved far beyond simple HTML/CSS styling into a sophisticated ecosystem of state management engines, component lifecycles, module bundling pipelines, accessibility compliance, and automated test pyramids.
+Recently, while partnering closely with frontend engineering teams on major cross-functional initiatives, I recognized how useful deep technical familiarity with modern frontend development is for effective technical product management. Frontend engineering has evolved far beyond simple HTML/CSS styling into a sophisticated ecosystem of state management engines, component lifecycles, module bundling pipelines, accessibility compliance, and automated test pyramids.
 
 To bridge technical domain boundaries and understand my frontend engineering partners' workflows, technical trade-offs, and velocity bottlenecks firsthand, I decided to build a real-world, production-ready application: a personal portfolio website and technical blog engine featuring **three distinct visual themes** (Warm Earthy ASCII, Retro Terminal CLI, and Modern Editorial).
+
 
 
 ---
@@ -163,12 +164,13 @@ npm run test:e2e   # 5/5 Playwright browser tests passed in 6.3s
 
 ## Conclusion: The Value of Technical Leadership & Domain Depth
 
-Building this portfolio website transformed my technical perspective as a Technical Program Manager. Modern frontend engineering is not just about making screens look pretty—it is an intricate discipline of data contract modeling, component state machines, performance optimizations, and multi-platform testing strategies.
+Building this portfolio website transformed my technical perspective as a Technical Product Manager. Modern frontend engineering is not just about making screens look pretty—it is an intricate discipline of data contract modeling, component state machines, performance optimizations, and multi-platform testing strategies.
 
 By stepping outside my backend TPM domain:
 - I can now partner more effectively with frontend engineering leads on architecture, scope boundaries, component design tokens, and technical trade-offs.
-- I bring a holistic full-stack perspective to technical program management, ensuring API DTO schemas align seamlessly with frontend presentation requirements.
+- I bring a holistic full-stack perspective to technical product management, ensuring API DTO schemas align seamlessly with frontend presentation requirements.
 - I evaluate technical dependencies and engineering velocity bottlenecks with hands-on domain depth.
 
-If you are a technical program manager or backend leader looking to elevate your cross-functional impact, I highly recommend building a modern React and TypeScript application hands-on!
+If you are a technical product manager or backend leader looking to elevate your cross-functional impact, I highly recommend building a modern React and TypeScript application hands-on!
+
 
