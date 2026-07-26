@@ -21,7 +21,7 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - `/projects` — Projects Showcase (Interactive filterable list by technology tag)
   - `/blog` — Blog Engine (Keyword search, tag filtering, post detail markdown views)
   - `/experience` — Work & Education Timeline
-  - `/now` — Current Activities & Reading List (Derek Sivers style `/now` page)
+  - `/now` — Current Activities & Learning Focus (Derek Sivers style `/now` page)
   - `/contact` — Contact details & Social links
   - `/how-this-site-works` — Technical Architecture & Design System showcase
 - **Full-Featured Technical Blog Engine**:
