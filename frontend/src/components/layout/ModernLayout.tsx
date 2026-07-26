@@ -69,7 +69,7 @@ export const ModernLayout: React.FC<ModernLayoutProps> = ({ children }) => {
       <footer className="modern-footer">
         <div className="modern-footer-content">
           <div className="modern-footer-brand">
-            <span>Chris Lau</span> &mdash; Software Engineer &amp; Systems Architect
+            <span>Chris Lau</span> &mdash; Staff Product Manager, AI
           </div>
           <p className="modern-footer-copy">
             &copy; {new Date().getFullYear()} Chris Lau. All rights reserved.

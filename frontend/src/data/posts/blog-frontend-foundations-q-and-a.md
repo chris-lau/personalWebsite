@@ -4,7 +4,10 @@ When learning or teaching frontend engineering, certain foundational concepts co
 
 This post compiles clear explanations and code-backed answers to essential developer questions, using real code snippets from our portfolio project codebase (`personalWebsite/frontend`).
 
+> **TL;DR**: Essential frontend reference guide covering 20 core developer questions on `package.json` manifest settings, TypeScript compiler targets vs Vite bundlers, static linting vs type checking, `index.html` entry points, and React DOM bootstrapping (`main.tsx` -> `App.tsx`).
+
 ---
+
 
 ## Table of Contents
 1. [What is `package.json` and what is `"private": true` for?](#1-what-is-packagejson-and-what-is-private-true-for)

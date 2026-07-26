@@ -438,9 +438,12 @@
 }
 
 .blog-list-item {
-  margin-left: 1.25rem;
+  padding-left: 0;
+  margin-left: 0;
+  list-style-position: inside;
   list-style-type: square;
 }
+
 
 .blog-blockquote {
   border-left: 3px solid var(--color-primary);

@@ -30,11 +30,11 @@ export const AsciiLayout: React.FC<AsciiLayoutProps> = ({ children }) => {
       <header className="ascii-header">
         <div className="ascii-banner" aria-hidden="true">
           +-------------------------------------------------------+<br />
-          |  CHRIS LAU // SOFTWARE ENGINEER & SYSTEMS ARCHITECT   |<br />
+          |        CHRIS LAU // STAFF PRODUCT MANAGER, AI         |<br />
           +-------------------------------------------------------+
         </div>
         <div className="sr-only">
-          <h1>Chris Lau - Software Engineer & Systems Architect</h1>
+          <h1>Chris Lau - Staff Product Manager, AI</h1>
         </div>
 
         {/* Navigation Bar */}

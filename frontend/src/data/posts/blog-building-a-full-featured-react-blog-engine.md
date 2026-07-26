@@ -2,7 +2,10 @@
 
 *A comprehensive, developer-friendly guide on how we designed, implemented, and tested a production-ready blog system in our React & TypeScript portfolio website.*
 
+> **TL;DR**: Build a modular 4-tier blog system by separating TypeScript data contracts (`BlogPost`), a pure data query layer (`blogPosts.ts` + Vite `?raw` markdown imports), presentational cards vs page views (`BlogCard`, `BlogListPage`, `BlogDetailPage`), and multi-theme layout routing (`LayoutRenderer` + `App.tsx`).
+
 ---
+
 
 ## Table of Contents
 1. [Introduction](#introduction)

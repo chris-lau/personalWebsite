@@ -6,7 +6,10 @@ When designed correctly, adding an entirely new visual theme should take **minut
 
 In this guide, we'll explore how our application's modular architecture makes theme expansion effortless, and walk through the exact steps to add a **Modern Editorial** theme alongside existing **ASCII Retro** and **CLI Terminal** themes.
 
+> **TL;DR**: Expand multi-theme React apps in 4 steps: (1) Add a new type union (`'ascii' | 'cli' | 'modern'`), (2) Define scoped CSS design tokens in `variables.css` under `[data-theme="modern"]`, (3) Create a layout component (`ModernLayout.tsx`) registered in `LayoutRenderer.tsx`, and (4) Add cycle options to `ThemeToggle.tsx` and Playwright E2E tests.
+
 ---
+
 
 ## Why Our Architecture Makes Adding Themes Effortless
 

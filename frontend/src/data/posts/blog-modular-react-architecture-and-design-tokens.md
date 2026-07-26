@@ -2,7 +2,10 @@
 
 *A step-by-step developer's guide to building modular, multi-theme web applications with React, TypeScript, and CSS Custom Properties.*
 
+> **TL;DR**: Build scalable multi-theme React apps by decoupling design tokens into CSS variables (`[data-theme]`), managing theme persistence in React `ThemeContext`, enforcing TypeScript data contracts for data layers, and wrapping pages in layout components (`AsciiLayout`, `CliLayout`, `ModernLayout`).
+
 ---
+
 
 ## Table of Contents
 1. [Introduction](#introduction)

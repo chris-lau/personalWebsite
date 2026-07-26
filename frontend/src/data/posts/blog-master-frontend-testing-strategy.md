@@ -8,7 +8,10 @@ When building modern React and TypeScript applications, testing is often present
 
 In this comprehensive guide, we unpack the **complete testing strategy** implemented in our portfolio project (`personalWebsite/frontend`). We will explain the rationale behind every decision, analyze the Testing Pyramid, and walk step-by-step through real code examples from our codebase.
 
+> **TL;DR**: Implement a 4-tier testing pyramid: Use Vitest (`happy-dom`) for sub-second pure logic unit tests, React Testing Library + `MemoryRouter` for user-centric component integration tests, Storybook 8 for isolated visual UI & WCAG accessibility audits, and Playwright for real Chromium browser E2E route navigation and multi-theme persistence checks.
+
 ---
+
 
 ## Table of Contents
 1. [The Philosophy: Confidence vs. Execution Speed](#the-philosophy-confidence-vs-execution-speed)

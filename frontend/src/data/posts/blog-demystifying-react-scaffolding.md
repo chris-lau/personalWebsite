@@ -4,7 +4,10 @@ When starting a modern web development journey with React and TypeScript, it is 
 
 In this post, we will demystify modern React scaffolding by walking through a real-world, production-ready portfolio project built with **React 18, TypeScript, Vite, and React Router**. We will dissect every core file, answer common beginner questions, and understand how all the pieces connect together.
 
+> **TL;DR**: Understand modern React scaffolding by separating config files outside `src/` (`package.json`, `tsconfig.json`, `vite.config.ts`, `index.html`) from application code inside `src/`. Vite serves native ES modules in development and bundles optimized assets for production, while `main.tsx` mounts React's Concurrent Virtual DOM root to `<div id="root">`.
+
 ---
+
 
 ## Table of Contents
 1. [The Big Picture: Project Anatomy](#the-big-picture-project-anatomy)

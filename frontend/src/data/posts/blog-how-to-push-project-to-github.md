@@ -4,7 +4,10 @@ Publishing your local web app or project to **GitHub** is one of the most essent
 
 In this beginner-friendly guide, we will break down what Git and GitHub actually do under the hood, how to configure your project, and how to push your local repository to GitHub in just a few simple commands.
 
+> **TL;DR**: Push a project to GitHub in 5 commands: Initialize local repo (`git init -b main`), configure `.gitignore` to exclude `node_modules`, stage and save changes (`git add . && git commit -m "initial commit"`), create a remote repo via GitHub CLI or web (`gh repo create`), and push (`git push -u origin main`).
+
 ---
+
 
 ## 1. Understanding Git vs. GitHub
 

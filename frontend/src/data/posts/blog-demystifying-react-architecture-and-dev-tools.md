@@ -2,7 +2,10 @@
 
 *A beginner-friendly deep dive into TypeScript interfaces, static data layers, and how modern dev tools like Vite actually work under the hood.*
 
+> **TL;DR**: Decouple your application into strong data contracts (TypeScript `interface`), an isolated data layer (`src/data/`), and presentation components. Use static data objects for portfolios before adding databases, and leverage Vite's in-memory `esbuild` server for instant hot-module reloading (`npm run dev`).
+
 ---
+
 
 ## Table of Contents
 1. [Introduction](#introduction)
