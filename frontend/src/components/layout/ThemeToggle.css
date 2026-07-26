@@ -1,0 +1,18 @@
+.theme-toggle-btn {
+  background: transparent;
+  color: var(--accent-primary, var(--accent-color, #d97457));
+  border: 1px dashed var(--border-color);
+  border-radius: 4px;
+  padding: 0.35rem 0.75rem;
+  font-family: var(--font-family);
+  font-size: 0.85rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.theme-toggle-btn:hover {
+  background-color: var(--accent-primary, var(--accent-color, #d97457));
+  color: var(--bg-primary, var(--bg-color, #181616));
+  border-style: solid;
+}
