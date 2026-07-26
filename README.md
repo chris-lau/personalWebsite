@@ -29,7 +29,8 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - Vite raw static imports (`?raw`) with query helpers (`getAllBlogPosts`, `getBlogPostBySlug`, `getBlogPostsByTag`, `getGroupedBlogPostsByCategory`, `getRelatedBlogPosts`).
   - **Executive Summaries**: Every article features a prominent **TL;DR** callout box for instant comprehension.
   - **Category Grouping & Discovery**: Articles organized under clear technical categories (`React Architecture & Design Systems`, `Developer Workflows & Tooling`, `Testing & Quality Assurance`) with automated **Related Articles** suggestions.
-  - Includes 12 technical articles covering React architecture, scaffolding, 4-tier testing strategies, design tokens, multi-theme context, beginner GitHub workflows, backend engineer frontend learning reflections, and interactive AI pair programming workflows.
+  - Includes 12 technical articles covering React architecture, scaffolding, 4-tier testing strategies, design tokens, multi-theme context, beginner GitHub workflows, Technical Product Manager (TPM) frontend learning reflections, and interactive AI pair programming workflows.
+
 
 
 - **Accessibility & UX**:
