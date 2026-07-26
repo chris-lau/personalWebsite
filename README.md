@@ -26,14 +26,18 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - `/how-this-site-works` — Technical Architecture & Design System showcase
 - **Full-Featured Technical Blog Engine**:
   - Modular Markdown storage in `frontend/src/data/posts/`.
-  - Vite raw static imports (`?raw`) with query helpers (`getAllBlogPosts`, `getBlogPostBySlug`, `getBlogPostsByTag`).
-  - Includes 10 technical articles covering React architecture, scaffolding, testing strategies, design tokens, multi-theme context, and beginner GitHub workflows.
+  - Vite raw static imports (`?raw`) with query helpers (`getAllBlogPosts`, `getBlogPostBySlug`, `getBlogPostsByTag`, `getGroupedBlogPostsByCategory`, `getRelatedBlogPosts`).
+  - **Executive Summaries**: Every article features a prominent **TL;DR** callout box for instant comprehension.
+  - **Category Grouping & Discovery**: Articles organized under clear technical categories (`React Architecture & Design Systems`, `Developer Workflows & Tooling`, `Testing & Quality Assurance`) with automated **Related Articles** suggestions.
+  - Includes 10 technical articles covering React architecture, scaffolding, 4-tier testing strategies, design tokens, multi-theme context, and beginner GitHub workflows.
 - **Accessibility & UX**:
   - Screen reader fallback markup (`.sr-only`).
   - `aria-hidden` attributes on visual ASCII framing elements.
-  - Full keyboard focus indicators and semantic HTML5 layout containers.
-  - Universal zero-indent bullet list alignment and Contact page label alignment (`min-width: 95px`).
+  - Full keyboard focus indicators and semantic HTML5 layout containers (`#main-content` skip navigation).
+  - Universal zero-indent bullet list alignment (`list-style-position: inside`) and Contact page label alignment (`min-width: 95px`).
   - Floating rounded glassmorphic footer card matching content container curvature (`16px`).
+  - Responsive markdown table parser rendering aligned data tables across all visual themes.
+
 - **Testing & Quality Assurance**:
   - Storybook 8 component catalog & accessibility auditing (`@storybook/addon-a11y`).
   - Vitest + `@testing-library/react` unit & component integration tests (33 passing tests).

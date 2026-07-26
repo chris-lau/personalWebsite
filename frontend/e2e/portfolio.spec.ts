@@ -73,19 +73,20 @@ test.describe('Portfolio E2E Tests', () => {
     await expect(page.locator('.modern-layout-container')).toBeVisible();
 
     // Click theme toggle to switch to ASCII
-    await page.click('button[aria-label*="Switch to ASCII theme"]');
+    await page.click('button.theme-toggle-btn');
     await expect(htmlElement).toHaveAttribute('data-theme', 'ascii');
     await expect(page.locator('.ascii-layout-container')).toBeVisible();
 
     // Click theme toggle to switch to CLI
-    await page.click('button[aria-label*="Switch to CLI theme"]');
+    await page.click('button.theme-toggle-btn');
     await expect(htmlElement).toHaveAttribute('data-theme', 'cli');
     await expect(page.locator('.cli-layout-container')).toBeVisible();
 
     // Toggle back to MODERN
-    await page.click('button[aria-label*="Switch to MODERN theme"]');
+    await page.click('button.theme-toggle-btn');
     await expect(htmlElement).toHaveAttribute('data-theme', 'modern');
   });
+
 
   test('filters projects by technology tag', async ({ page }) => {
     await page.goto('/projects');

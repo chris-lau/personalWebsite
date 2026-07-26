@@ -135,9 +135,10 @@ personalWebsite/
 - [x] `frontend/e2e/portfolio.spec.ts`: Playwright real browser E2E tests for routing, 3-theme switching, and tag filters.
 
 ### Step 6: Blog Engine & Technical Articles
-- [x] `frontend/src/types/portfolio.ts`: Added `BlogPost` interface definition.
+- [x] `frontend/src/types/portfolio.ts`: Added `BlogPost` interface definition (`id`, `slug`, `title`, `description`, `updatedDate`, `readTime`, `tags`, `author`, `content`, `category`, `featured`).
 - [x] `frontend/src/data/posts/`: Created dedicated modular markdown posts directory housing technical articles (`blog-*.md`).
-- [x] `frontend/src/data/blogPosts.ts`: Refactored static data module to use Vite raw imports (`?raw`), housing query helpers (`getAllBlogPosts`, `getBlogPostBySlug`, `getBlogPostsByTag`, `getAllBlogTags`).
+- [x] `frontend/src/data/blogPosts.ts`: Refactored static data module to use Vite raw imports (`?raw`), housing query helpers (`getAllBlogPosts`, `getBlogPostBySlug`, `getBlogPostsByTag`, `getGroupedBlogPostsByCategory`, `getRelatedBlogPosts`).
+- [x] Prominent **TL;DR** callout blocks added to the top of all 10 technical articles.
 - [x] Published 10 technical blog posts:
   - `blog-how-to-push-project-to-github.md` (Beginner guide on git init, .gitignore, commits, and pushing via GitHub CLI/Web)
   - `blog-how-to-add-a-new-theme.md` (Step-by-step guide to adding design tokens, layouts, context, and tests for new themes)
@@ -148,10 +149,10 @@ personalWebsite/
   - `blog-testing-strategy-vitest-happy-dom-and-playwright.md`
   - `blog-frontend-foundations-q-and-a.md`
   - `blog-demystifying-react-scaffolding.md`
-  - `blog-master-frontend-testing-strategy.md`
-- [x] `frontend/src/components/blog/BlogCard.tsx`: Reusable blog card component with CSS design token support.
-- [x] `frontend/src/pages/BlogListPage.tsx`: Interactive blog list page with keyword search bar, tag filtering pills, and post grid.
-- [x] `frontend/src/pages/BlogDetailPage.tsx`: Article detail view page with breadcrumbs, headers, tags, and structured markdown section rendering.
+  - `blog-master-frontend-testing-strategy.md` (Deep dive into 4-tier testing pyramid: Vitest, RTL, Storybook, Playwright)
+- [x] `frontend/src/components/blog/BlogCard.tsx`: Reusable blog card component with CSS design token support and `Updated: YYYY-MM-DD` timestamp.
+- [x] `frontend/src/pages/BlogListPage.tsx`: Interactive blog list page with keyword search bar, tag filtering pills, category section grouping, and post grid.
+- [x] `frontend/src/pages/BlogDetailPage.tsx`: Article detail view page with breadcrumbs, headers, tags, structured markdown rendering, custom markdown table parser, prominent TL;DR callout styling, and automated Related Articles section.
 
 ### Step 7: UX/UI & Accessibility SME Design Polish
 - [x] Standardized design tokens across `a11y.css`, `Pages.css`, and `variables.css`.
@@ -160,6 +161,9 @@ personalWebsite/
 - [x] Added active tactile click feedback (`transform: translateY(1px)`) to all buttons and tag filters.
 - [x] Redesigned `ModernLayout` footer to use a floating glassmorphic card container with rounded corners (`16px`), matching `.box-container` cards.
 - [x] Universal Contact page label alignment (`min-width: 95px`) across ASCII, CLI, and Modern themes.
+- [x] Custom markdown table parser and responsive `.blog-table-container` CSS rendering column-aligned tables across all 3 themes.
+- [x] Universal zero-indent bullet list alignment (`list-style-position: inside`, `padding-left: 0`) ensuring bullets align flush left with paragraphs.
+
 
 ### Step 8: Version Control & GitHub Publishing
 - [x] Initialized Git repository on `main` branch.
