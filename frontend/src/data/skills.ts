@@ -17,11 +17,9 @@ export const skillsData: SkillCategory[] = [
     category: 'Technical & Engineering',
     skills: [
       'SaaS & Cloud Platforms',
-      'Computer Engineering (B.A.Sc.)',
       'REST APIs & Architecture',
       'GraphDB & Database Modeling',
       'Industrial Automation & PLCs',
-      'PHP, MySQL, .NET Framework',
     ],
   },
   {
@@ -36,7 +34,9 @@ export const skillsData: SkillCategory[] = [
   },
   {
     category: 'Languages',
-    skills: ['English (Native/Bilingual)', 'Chinese (Native/Bilingual)'],
+    skills: ['English (Native/Bilingual)',
+      'Chinese (Native/Bilingual)'
+    ],
   },
 ];
 
