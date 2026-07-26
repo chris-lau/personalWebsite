@@ -12,8 +12,22 @@ import howToPushProjectToGithubContent from './posts/blog-how-to-push-project-to
 import masterTestingStrategyContent from './posts/blog-master-frontend-testing-strategy.md?raw';
 import backendEngineerFrontendJourneyContent from './posts/blog-backend-engineer-learning-frontend-journey.md?raw';
 import learningFrontendViaAiPairProgrammingContent from './posts/blog-learning-frontend-via-ai-pair-programming.md?raw';
+import understandingSpaRoutingContent from './posts/blog-understanding-spa-routing-and-cloud-hosting.md?raw';
 
 export const blogPostsData: BlogPost[] = [
+  {
+    id: 'understanding-spa-routing-and-cloud-hosting',
+    slug: 'understanding-spa-routing-and-cloud-hosting',
+    title: 'Demystifying SPA Routing: Why Client-Side Apps Break on Refresh and How to Fix It',
+    description: 'A deep dive into Single Page Application routing mechanics, the HTML5 History API, server catch-all rules, and deploying React apps seamlessly to Cloudflare Pages.',
+    updatedDate: '2026-07-26',
+    readTime: '6 min read',
+    tags: ['React', 'Routing', 'Cloudflare', 'Vite', 'DevOps', 'Architecture'],
+    author: 'Chris Lau',
+    category: 'React Architecture & Design Systems',
+    featured: true,
+    content: understandingSpaRoutingContent,
+  },
   {
     id: 'learning-frontend-via-ai-pair-programming',
     slug: 'learning-frontend-via-ai-pair-programming',
