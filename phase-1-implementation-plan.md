@@ -176,7 +176,9 @@ personalWebsite/
 - [x] Configured `.gitignore` excluding generated assets (`node_modules`, `dist`, `.env`).
 - [x] Staged and committed initial portfolio codebase and blog articles.
 - [x] Created public GitHub repository and pushed code to `https://github.com/chris-lau/personalWebsite`.
+- [x] Synchronized `frontend/package-lock.json` dependencies cleanly for `npm clean-install` (`npm ci`) compatibility on Cloudflare build containers.
 - [x] Configured Cloudflare Pages SPA redirection rule (`frontend/public/_redirects`: `/* /index.html 200`) to prevent 404 errors on direct sub-page refresh (`/blog`, `/projects`, `/about`).
+- [x] Configured Cloudflare Pages with Build System **v3** for zero-config Node.js runtime support (no `.nvmrc` or `NODE_VERSION` environment variables required).
 
 
 ---
