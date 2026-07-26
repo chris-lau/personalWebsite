@@ -11,8 +11,22 @@ import howToAddANewThemeContent from './posts/blog-how-to-add-a-new-theme.md?raw
 import howToPushProjectToGithubContent from './posts/blog-how-to-push-project-to-github.md?raw';
 import masterTestingStrategyContent from './posts/blog-master-frontend-testing-strategy.md?raw';
 import backendEngineerFrontendJourneyContent from './posts/blog-backend-engineer-learning-frontend-journey.md?raw';
+import learningFrontendViaAiPairProgrammingContent from './posts/blog-learning-frontend-via-ai-pair-programming.md?raw';
 
 export const blogPostsData: BlogPost[] = [
+  {
+    id: 'learning-frontend-via-ai-pair-programming',
+    slug: 'learning-frontend-via-ai-pair-programming',
+    title: 'Pair Programming with AI: How Small Iteration Loops Taught Me Modern Frontend Development',
+    description: 'How to rapidly master modern React, TypeScript, and CSS by pairing with AI in micro-steps, inspecting code diffs line-by-line, and asking deep architectural questions.',
+    updatedDate: '2026-07-26',
+    readTime: '7 min read',
+    tags: ['AI', 'Pair Programming', 'React', 'TypeScript', 'Learning', 'Workflows'],
+    author: 'Chris Lau',
+    category: 'Developer Workflows & Tooling',
+    featured: true,
+    content: learningFrontendViaAiPairProgrammingContent,
+  },
   {
     id: 'backend-engineer-learning-frontend-journey',
     slug: 'backend-engineer-learning-frontend-journey',
@@ -26,6 +40,7 @@ export const blogPostsData: BlogPost[] = [
     featured: true,
     content: backendEngineerFrontendJourneyContent,
   },
+
   {
     id: 'master-frontend-testing-strategy',
     slug: 'master-frontend-testing-strategy',

@@ -139,7 +139,8 @@ personalWebsite/
 - [x] `frontend/src/data/posts/`: Created dedicated modular markdown posts directory housing technical articles (`blog-*.md`).
 - [x] `frontend/src/data/blogPosts.ts`: Refactored static data module to use Vite raw imports (`?raw`), housing query helpers (`getAllBlogPosts`, `getBlogPostBySlug`, `getBlogPostsByTag`, `getGroupedBlogPostsByCategory`, `getRelatedBlogPosts`).
 - [x] Prominent **TL;DR** callout blocks added to the top of all 10 technical articles.
-- [x] Published 11 technical blog posts:
+- [x] Published 12 technical blog posts:
+  - `blog-learning-frontend-via-ai-pair-programming.md` (How to rapidly master modern React, TypeScript, and CSS by pairing with AI in micro-steps, inspecting code diffs, and asking deep architectural questions)
   - `blog-backend-engineer-learning-frontend-journey.md` (Reflections and core architectural lessons learned by a backend engineer building a multi-theme React & TypeScript portfolio)
   - `blog-how-to-push-project-to-github.md` (Beginner guide on git init, .gitignore, commits, and pushing via GitHub CLI/Web)
   - `blog-how-to-add-a-new-theme.md` (Step-by-step guide to adding design tokens, layouts, context, and tests for new themes)
@@ -151,6 +152,7 @@ personalWebsite/
   - `blog-frontend-foundations-q-and-a.md`
   - `blog-demystifying-react-scaffolding.md`
   - `blog-master-frontend-testing-strategy.md` (Deep dive into 4-tier testing pyramid: Vitest, RTL, Storybook, Playwright)
+
 
 - [x] `frontend/src/components/blog/BlogCard.tsx`: Reusable blog card component with CSS design token support and `Updated: YYYY-MM-DD` timestamp.
 - [x] `frontend/src/pages/BlogListPage.tsx`: Interactive blog list page with keyword search bar, tag filtering pills, category section grouping, and post grid.
