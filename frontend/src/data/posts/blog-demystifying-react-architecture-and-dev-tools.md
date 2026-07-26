@@ -24,7 +24,7 @@ When learning modern web development with React and TypeScript, it's easy to get
 - *"When I run `npm run dev`, where are the compiled `.js` files stored?"*
 - *"Do I need Markdown files or a database right away?"*
 
-In this article, we’ll answer these exact questions using real code from our open-source portfolio project—a dual-theme website featuring a **Warm Earthy ASCII Art Design** and a **Retro Terminal CLI Design**.
+In this article, we’ll answer these exact questions using real code from our open-source portfolio project—a multi-theme website featuring **Modern Editorial Design**, **Warm Earthy ASCII Art Design**, and **Retro Terminal CLI Design**.
 
 ---
 
@@ -110,7 +110,7 @@ export const projectsData: Project[] = [
   {
     id: 'personal-os',
     title: 'Personal OS Portfolio',
-    description: 'Dual-themed (ASCII & CLI) portfolio website built with React, TypeScript, Vite, and CSS Tokens.',
+    description: 'Multi-themed (Modern Editorial, ASCII & CLI) portfolio website built with React, TypeScript, Vite, and CSS Tokens.',
     techStack: ['React', 'TypeScript', 'Vite', 'CSS Custom Properties'],
     githubUrl: 'https://github.com/example/personal-os',
     liveUrl: 'https://example.com',

@@ -2,17 +2,21 @@ import { NowState } from '../types/portfolio';
 
 export const nowData: NowState = {
   lastUpdated: 'July 2026',
-  currentFocus: 'Building out the personal OS web app and experimenting with agentic AI tooling.',
+  currentFocus: 'Leading AI Surveillance initiatives, AI Governance frameworks, and prototyping Agentic Automation solutions.',
   workingOn: [
-    'Dual-theme ASCII/CLI React portfolio site',
-    'Custom agentic coding assistant workflow automation',
+    'AI-enabled Surveillance & Compliance production services at Global Relay',
+    'AI Governance program roadmap and cross-pod alignment',
+    'Agentic Automation & GraphDB emerging tech prototyping',
+    'Triple-themed (Modern Editorial, ASCII & CLI) Personal OS portfolio website',
   ],
   reading: [
     'Designing Data-Intensive Applications by Martin Kleppmann',
-    'Crafting Interpreters by Robert Nystrom',
+    'Co-Intelligence: Living and Working with AI by Ethan Mollick',
   ],
   learning: [
-    'Advanced WebAssembly (Wasm) runtimes',
-    'Custom CSS container queries and modern view transitions',
+    'Multi-agent LLM systems and task orchestration frameworks',
+    'Graph database architectures for enterprise relationship mapping',
+    'Modern React & TypeScript design systems',
   ],
 };
+

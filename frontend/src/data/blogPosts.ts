@@ -16,10 +16,11 @@ export const blogPostsData: BlogPost[] = [
     slug: 'how-to-push-project-to-github',
     title: 'How to Push Your Project to GitHub: A Beginner\'s Complete Step-by-Step Guide',
     description: 'A beginner-friendly guide covering Git vs GitHub fundamentals, git init, .gitignore, staging, committing, and pushing using GitHub CLI or Web interface.',
-    date: '2026-07-26',
+    updatedDate: '2026-07-26',
     readTime: '5 min read',
     tags: ['Git', 'GitHub', 'Tooling', 'Beginner', 'CLI'],
     author: 'Chris Lau',
+    category: 'Developer Workflows & Tooling',
     featured: true,
     content: howToPushProjectToGithubContent,
   },
@@ -28,10 +29,11 @@ export const blogPostsData: BlogPost[] = [
     slug: 'how-to-add-a-new-theme',
     title: 'How to Add a New Theme to a Modern React & TypeScript App: Design Tokens, Layouts, and Context',
     description: 'A developer-friendly step-by-step guide on expanding a multi-theme React application with CSS custom properties, type-safe Context, and E2E testing.',
-    date: '2026-07-26',
+    updatedDate: '2026-07-26',
     readTime: '6 min read',
     tags: ['React', 'TypeScript', 'CSS', 'Design System', 'Architecture'],
     author: 'Chris Lau',
+    category: 'React Architecture & Design Systems',
     featured: true,
     content: howToAddANewThemeContent,
   },
@@ -40,10 +42,11 @@ export const blogPostsData: BlogPost[] = [
     slug: 'building-a-full-featured-react-blog-engine',
     title: 'Building a Full-Featured Blog Engine in React & TypeScript: Architecture, Search, and Multi-Tier Testing',
     description: 'A comprehensive, developer-friendly guide on how we designed, implemented, and tested a production-ready blog system in our React & TypeScript portfolio website.',
-    date: '2026-07-26',
+    updatedDate: '2026-07-26',
     readTime: '8 min read',
     tags: ['React', 'TypeScript', 'Architecture', 'Testing'],
     author: 'Chris Lau',
+    category: 'React Architecture & Design Systems',
     featured: true,
     content: buildingBlogEngineContent,
   },
@@ -52,10 +55,11 @@ export const blogPostsData: BlogPost[] = [
     slug: 'demystifying-react-architecture-and-dev-tools',
     title: 'Demystifying Modern React Architecture: Data Contracts, Dev Servers, and Type-Safe State',
     description: 'A beginner-friendly deep dive into TypeScript interfaces, static data layers, and how modern dev tools like Vite actually work under the hood.',
-    date: '2026-07-20',
+    updatedDate: '2026-07-26',
     readTime: '6 min read',
     tags: ['React', 'TypeScript', 'Vite', 'Architecture'],
     author: 'Chris Lau',
+    category: 'React Architecture & Design Systems',
     featured: true,
     content: demystifyingArchitectureContent,
   },
@@ -64,10 +68,11 @@ export const blogPostsData: BlogPost[] = [
     slug: 'modular-react-architecture-and-design-tokens',
     title: 'Building a Scalable React Architecture: Design Tokens, Global State, and Type Contracts',
     description: 'A step-by-step developer\'s guide to building modular, multi-theme web applications with React, TypeScript, and CSS Custom Properties.',
-    date: '2026-07-21',
+    updatedDate: '2026-07-26',
     readTime: '7 min read',
     tags: ['React', 'CSS', 'Design System', 'Architecture'],
     author: 'Chris Lau',
+    category: 'React Architecture & Design Systems',
     featured: true,
     content: modularArchitectureContent,
   },
@@ -76,10 +81,11 @@ export const blogPostsData: BlogPost[] = [
     slug: 'testing-storybook-and-a11y-react-architecture',
     title: 'Modern Frontend Development: Component Architecture, Storybook, Accessibility, and Testing',
     description: 'A beginner-to-intermediate guide to building a modular, multi-theme React application with TypeScript, Storybook, Vitest, Playwright, and WCAG accessibility standards.',
-    date: '2026-07-22',
+    updatedDate: '2026-07-26',
     readTime: '8 min read',
     tags: ['Testing', 'Storybook', 'a11y', 'React'],
     author: 'Chris Lau',
+    category: 'Testing & Quality Assurance',
     featured: true,
     content: testingStorybookA11yContent,
   },
@@ -88,10 +94,11 @@ export const blogPostsData: BlogPost[] = [
     slug: 'testing-strategy-vitest-happy-dom-and-playwright',
     title: 'Testing Modern React Applications: From In-Memory Unit Tests to Real Browser Playwright E2E',
     description: 'A practical guide to building a comprehensive, multi-tier testing strategy using Vitest, React Testing Library, and Playwright E2E.',
-    date: '2026-07-23',
+    updatedDate: '2026-07-26',
     readTime: '7 min read',
     tags: ['Vitest', 'Playwright', 'Testing', 'React'],
     author: 'Chris Lau',
+    category: 'Testing & Quality Assurance',
     featured: false,
     content: testingStrategyContent,
   },
@@ -100,10 +107,11 @@ export const blogPostsData: BlogPost[] = [
     slug: 'frontend-foundations-q-and-a',
     title: 'Teaching Code: Answers to Fundamental Frontend Development Questions',
     description: 'A comprehensive compilation of explanations and code-backed answers to essential developer questions on build tools, compilers, package.json, and the DOM.',
-    date: '2026-07-24',
+    updatedDate: '2026-07-26',
     readTime: '6 min read',
     tags: ['Tooling', 'TypeScript', 'Vite', 'Frontend'],
     author: 'Chris Lau',
+    category: 'Developer Workflows & Tooling',
     featured: false,
     content: frontendFoundationsQAContent,
   },
@@ -112,10 +120,11 @@ export const blogPostsData: BlogPost[] = [
     slug: 'demystifying-react-scaffolding',
     title: 'Demystifying Modern React Scaffolding: From package.json to the Virtual DOM',
     description: 'A complete step-by-step walkthrough of modern React scaffolding, exploring how config files, Vite entry points, and virtual DOM nodes come together.',
-    date: '2026-07-25',
+    updatedDate: '2026-07-26',
     readTime: '7 min read',
     tags: ['React', 'Scaffolding', 'Vite', 'DOM'],
     author: 'Chris Lau',
+    category: 'Developer Workflows & Tooling',
     featured: false,
     content: demystifyingScaffoldingContent,
   },
@@ -141,3 +150,34 @@ export function getAllBlogTags(): string[] {
   });
   return Array.from(tagsSet);
 }
+
+export function getGroupedBlogPostsByCategory(): Record<string, BlogPost[]> {
+  const grouped: Record<string, BlogPost[]> = {};
+  blogPostsData.forEach((post) => {
+    const category = post.category || 'General';
+    if (!grouped[category]) {
+      grouped[category] = [];
+    }
+    grouped[category].push(post);
+  });
+  return grouped;
+}
+
+export function getRelatedBlogPosts(currentPost: BlogPost, limit = 3): BlogPost[] {
+  return blogPostsData
+    .filter((post) => post.id !== currentPost.id)
+    .map((post) => {
+      let score = 0;
+      if (post.category && post.category === currentPost.category) {
+        score += 3;
+      }
+      const sharedTags = post.tags.filter((tag) => currentPost.tags.includes(tag));
+      score += sharedTags.length;
+      return { post, score };
+    })
+    .filter((item) => item.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
+    .map((item) => item.post);
+}
+

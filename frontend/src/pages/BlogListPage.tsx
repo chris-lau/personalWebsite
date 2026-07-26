@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { getAllBlogPosts, getAllBlogTags } from '../data/blogPosts';
+import { getAllBlogPosts, getAllBlogTags, getGroupedBlogPostsByCategory } from '../data/blogPosts';
 import { BlogCard } from '../components/blog/BlogCard';
 
 export const BlogListPage: React.FC = () => {
@@ -8,6 +8,9 @@ export const BlogListPage: React.FC = () => {
 
   const allPosts = useMemo(() => getAllBlogPosts(), []);
   const allTags = useMemo(() => ['All', ...getAllBlogTags()], []);
+  const groupedByCategory = useMemo(() => getGroupedBlogPostsByCategory(), []);
+
+  const isFiltering = searchQuery.trim() !== '' || selectedTag !== 'All';
 
   const filteredPosts = useMemo(() => {
     return allPosts.filter((post) => {
@@ -60,24 +63,40 @@ export const BlogListPage: React.FC = () => {
         Showing {filteredPosts.length} of {allPosts.length} post{allPosts.length === 1 ? '' : 's'}
       </div>
 
-      <div className="blog-posts-grid">
-        {filteredPosts.length > 0 ? (
-          filteredPosts.map((post) => <BlogCard key={post.id} post={post} />)
-        ) : (
-          <div className="no-posts-found">
-            <p>No blog posts found matching your criteria.</p>
-            <button
-              className="tag-btn"
-              onClick={() => {
-                setSearchQuery('');
-                setSelectedTag('All');
-              }}
-            >
-              Clear Filters
-            </button>
-          </div>
-        )}
-      </div>
+      {isFiltering ? (
+        <div className="blog-posts-grid">
+          {filteredPosts.length > 0 ? (
+            filteredPosts.map((post) => <BlogCard key={post.id} post={post} />)
+          ) : (
+            <div className="no-posts-found">
+              <p>No blog posts found matching your criteria.</p>
+              <button
+                className="tag-btn"
+                onClick={() => {
+                  setSearchQuery('');
+                  setSelectedTag('All');
+                }}
+              >
+                Clear Filters
+              </button>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="blog-category-groups">
+          {Object.entries(groupedByCategory).map(([category, posts]) => (
+            <section key={category} className="blog-category-section">
+              <h2 className="blog-category-title">{category}</h2>
+              <div className="blog-posts-grid">
+                {posts.map((post) => (
+                  <BlogCard key={post.id} post={post} />
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
+

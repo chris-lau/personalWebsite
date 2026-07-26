@@ -26,7 +26,7 @@ export const Default: Story = {
       slug: 'demo-post-slug',
       title: 'Demystifying Modern React Architecture',
       description: 'A beginner-friendly deep dive into TypeScript interfaces, static data layers, and dev servers.',
-      date: '2026-07-25',
+      updatedDate: '2026-07-26',
       readTime: '6 min read',
       tags: ['React', 'TypeScript', 'Vite'],
       author: 'Chris Lau',

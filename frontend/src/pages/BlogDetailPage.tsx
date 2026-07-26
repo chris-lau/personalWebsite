@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getBlogPostBySlug } from '../data/blogPosts';
+import { getBlogPostBySlug, getRelatedBlogPosts } from '../data/blogPosts';
+import { BlogCard } from '../components/blog/BlogCard';
 
 export const BlogDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const post = slug ? getBlogPostBySlug(slug) : undefined;
+
+  const relatedPosts = useMemo(() => {
+    return post ? getRelatedBlogPosts(post, 3) : [];
+  }, [post]);
 
   if (!post) {
     return (
@@ -97,7 +102,7 @@ export const BlogDetailPage: React.FC = () => {
 
       <header className="blog-detail-header">
         <div className="blog-detail-meta">
-          <span className="blog-detail-date">{post.date}</span>
+          <span className="blog-detail-date">Updated: {post.updatedDate}</span>
           <span className="blog-card-dot">•</span>
           <span className="blog-detail-readtime">{post.readTime}</span>
           <span className="blog-card-dot">•</span>
@@ -117,6 +122,18 @@ export const BlogDetailPage: React.FC = () => {
 
       <div className="blog-detail-content">{renderMarkdownLines(post.content)}</div>
 
+      {relatedPosts.length > 0 && (
+        <section className="related-posts-section">
+          <hr className="blog-divider" />
+          <h2 className="related-posts-title">RELATED ARTICLES</h2>
+          <div className="blog-posts-grid">
+            {relatedPosts.map((relatedPost) => (
+              <BlogCard key={relatedPost.id} post={relatedPost} />
+            ))}
+          </div>
+        </section>
+      )}
+
       <footer className="blog-detail-footer">
         <Link to="/blog" className="back-link">
           &larr; Back to all blog posts
@@ -125,3 +142,4 @@ export const BlogDetailPage: React.FC = () => {
     </article>
   );
 };
+

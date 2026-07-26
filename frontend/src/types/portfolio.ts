@@ -63,12 +63,14 @@ export interface BlogPost {
   slug: string;
   title: string;
   description: string;
-  date: string;
+  updatedDate: string;
   readTime: string;
   tags: string[];
   author: string;
   content: string;
+  category?: string;
   featured?: boolean;
 }
+
 
 

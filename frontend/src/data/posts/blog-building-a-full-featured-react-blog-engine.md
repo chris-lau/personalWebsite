@@ -23,7 +23,7 @@
 
 When expanding a modern web application, adding a new domain feature like a **Blog Engine** can quickly become messy if code is not cleanly structured. A common anti-pattern is jamming API calls, state management, search logic, markdown formatting, and styling all inside a single page component.
 
-In this guide, we break down how we built the blog feature for our open-source dual-theme portfolio site. We will walk step-by-step through our clean architecture pattern, using real code snippets from the codebase (`personalWebsite/frontend`).
+In this guide, we break down how we built the blog feature for our open-source multi-theme portfolio site. We will walk step-by-step through our clean architecture pattern, using real code snippets from the codebase (`personalWebsite/frontend`).
 
 ---
 

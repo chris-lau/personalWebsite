@@ -463,12 +463,37 @@
 }
 
 
+.blog-category-section {
+  margin-bottom: 2rem;
+}
+
+.blog-category-title {
+  font-family: var(--font-family);
+  font-size: 1.25rem;
+  margin: 0 0 1rem 0;
+  color: var(--color-primary);
+  border-bottom: 1px solid var(--border-muted);
+  padding-bottom: 0.4rem;
+}
+
+.related-posts-section {
+  margin-top: 2.5rem;
+}
+
+.related-posts-title {
+  font-family: var(--font-family);
+  font-size: 1.2rem;
+  color: var(--color-primary);
+  margin-bottom: 1rem;
+}
+
 .back-link {
   color: var(--color-accent);
   text-decoration: none;
   font-family: var(--font-mono);
   font-size: 0.9rem;
 }
+
 
 .back-link:hover {
   text-decoration: underline;

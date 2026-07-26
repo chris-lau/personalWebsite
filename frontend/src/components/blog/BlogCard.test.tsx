@@ -9,8 +9,9 @@ const mockPost: BlogPost = {
   slug: 'test-post-slug',
   title: 'Test Blog Post Title',
   description: 'Test post description for unit testing.',
-  date: '2026-07-25',
+  updatedDate: '2026-07-26',
   readTime: '5 min read',
+
   tags: ['Testing', 'React'],
   author: 'Chris Lau',
   content: '# Test Content',
@@ -26,7 +27,7 @@ describe('BlogCard Component Unit Tests', () => {
 
     expect(screen.getByText('Test Blog Post Title')).toBeDefined();
     expect(screen.getByText('Test post description for unit testing.')).toBeDefined();
-    expect(screen.getByText('2026-07-25')).toBeDefined();
+    expect(screen.getByText('Updated: 2026-07-26')).toBeDefined();
     expect(screen.getByText('5 min read')).toBeDefined();
     expect(screen.getByText('#Testing')).toBeDefined();
     expect(screen.getByText('#React')).toBeDefined();

@@ -11,10 +11,11 @@ export const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
   return (
     <article className="blog-card" data-testid={`blog-card-${post.id}`}>
       <div className="blog-card-meta">
-        <span className="blog-card-date">{post.date}</span>
+        <span className="blog-card-date">Updated: {post.updatedDate}</span>
         <span className="blog-card-dot">•</span>
         <span className="blog-card-readtime">{post.readTime}</span>
       </div>
+
       <h3 className="blog-card-title">
         <Link to={`/blog/${post.slug}`}>{post.title}</Link>
       </h3>

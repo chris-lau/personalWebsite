@@ -20,7 +20,7 @@
 
 When building a modern web application, one of the biggest challenges for developers is structuring code so it remains clean, testable, and maintainable. 
 
-In this article, we’ll explore how we built a dual-theme website supporting both a **Warm Earthy ASCII Art Design** and a **Retro Terminal CLI Design**. We'll cover fundamental React concepts, how to isolate component previews with **Storybook**, how to write fast unit tests with **Vitest**, how to perform end-to-end browser testing with **Playwright**, and how to ensure retro ASCII interfaces remain **100% accessible (a11y)** to screen reader users.
+In this article, we’ll explore how we built a multi-theme website supporting **Modern Editorial Design**, **Warm Earthy ASCII Art Design**, and **Retro Terminal CLI Design**. We'll cover fundamental React concepts, how to isolate component previews with **Storybook**, how to write fast unit tests with **Vitest**, how to perform end-to-end browser testing with **Playwright**, and how to ensure custom interfaces remain **100% accessible (a11y)** to screen reader users.
 
 ---
 

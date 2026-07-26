@@ -22,8 +22,8 @@ export const siteArchitectureData: SiteArchitectureCategory[] = [
     category: 'DESIGN SYSTEM & DYNAMIC THEMING',
     items: [
       {
-        name: 'Dual Theme Architecture (ASCII Box vs CLI Terminal)',
-        desc: 'Stateful theme switching using React Context (ThemeContext) with localStorage persistence and CSS variable theme tokens (data-theme="ascii" & data-theme="cli").'
+        name: 'Multi-Theme Architecture (Modern Editorial, ASCII Box & CLI Terminal)',
+        desc: 'Stateful 3-way theme switching using React Context (ThemeContext) with localStorage persistence and CSS variable design tokens (data-theme="modern", "ascii", and "cli").'
       },
       {
         name: 'Pure Vanilla CSS & Monospace Typography',
