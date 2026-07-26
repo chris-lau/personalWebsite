@@ -10,8 +10,22 @@ import demystifyingScaffoldingContent from './posts/blog-demystifying-react-scaf
 import howToAddANewThemeContent from './posts/blog-how-to-add-a-new-theme.md?raw';
 import howToPushProjectToGithubContent from './posts/blog-how-to-push-project-to-github.md?raw';
 import masterTestingStrategyContent from './posts/blog-master-frontend-testing-strategy.md?raw';
+import backendEngineerFrontendJourneyContent from './posts/blog-backend-engineer-learning-frontend-journey.md?raw';
 
 export const blogPostsData: BlogPost[] = [
+  {
+    id: 'backend-engineer-learning-frontend-journey',
+    slug: 'backend-engineer-learning-frontend-journey',
+    title: 'A Backend Engineer\'s Journey to Modern Frontend: Building a Multi-Theme React & TypeScript Portfolio',
+    description: 'Reflections and core architectural lessons learned by a backend engineer building a production-ready, multi-theme React application to bridge the full-stack engineering gap.',
+    updatedDate: '2026-07-26',
+    readTime: '8 min read',
+    tags: ['Career', 'React', 'TypeScript', 'Architecture', 'Full-Stack'],
+    author: 'Chris Lau',
+    category: 'Developer Workflows & Tooling',
+    featured: true,
+    content: backendEngineerFrontendJourneyContent,
+  },
   {
     id: 'master-frontend-testing-strategy',
     slug: 'master-frontend-testing-strategy',
@@ -25,6 +39,7 @@ export const blogPostsData: BlogPost[] = [
     featured: true,
     content: masterTestingStrategyContent,
   },
+
   {
     id: 'how-to-push-project-to-github',
     slug: 'how-to-push-project-to-github',
