@@ -17,11 +17,11 @@ export const blogPostsData: BlogPost[] = [
   {
     id: 'learning-frontend-via-ai-pair-programming',
     slug: 'learning-frontend-via-ai-pair-programming',
-    title: 'Pair Programming with AI: How Small Iteration Loops Taught Me Modern Frontend Development',
-    description: 'How to rapidly master modern React, TypeScript, and CSS by pairing with AI in micro-steps, inspecting code diffs line-by-line, and asking deep architectural questions.',
+    title: 'Pair Programming with AI: How a Backend TPM Mastered Modern Frontend Development',
+    description: 'How to rapidly develop technical domain depth in React, TypeScript, and CSS as a TPM by pairing with AI in micro-steps, inspecting code diffs line-by-line, and asking deep architectural questions.',
     updatedDate: '2026-07-26',
     readTime: '7 min read',
-    tags: ['AI', 'Pair Programming', 'React', 'TypeScript', 'Learning', 'Workflows'],
+    tags: ['AI', 'Pair Programming', 'React', 'TypeScript', 'TPM', 'Workflows'],
     author: 'Chris Lau',
     category: 'Developer Workflows & Tooling',
     featured: true,
@@ -30,16 +30,17 @@ export const blogPostsData: BlogPost[] = [
   {
     id: 'backend-engineer-learning-frontend-journey',
     slug: 'backend-engineer-learning-frontend-journey',
-    title: 'A Backend Engineer\'s Journey to Modern Frontend: Building a Multi-Theme React & TypeScript Portfolio',
-    description: 'Reflections and core architectural lessons learned by a backend engineer building a production-ready, multi-theme React application to bridge the full-stack engineering gap.',
+    title: 'A Backend TPM\'s Journey to Modern Frontend: Building a Multi-Theme React & TypeScript Portfolio',
+    description: 'Reflections and core architectural lessons learned by a backend TPM building a production-ready, multi-theme React application to gain hands-on technical domain depth.',
     updatedDate: '2026-07-26',
     readTime: '8 min read',
-    tags: ['Career', 'React', 'TypeScript', 'Architecture', 'Full-Stack'],
+    tags: ['Career', 'TPM', 'React', 'TypeScript', 'Architecture', 'Leadership'],
     author: 'Chris Lau',
     category: 'Developer Workflows & Tooling',
     featured: true,
     content: backendEngineerFrontendJourneyContent,
   },
+
 
   {
     id: 'master-frontend-testing-strategy',
