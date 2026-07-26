@@ -133,12 +133,15 @@ export const BlogDetailPage: React.FC = () => {
           </li>
         );
       } else if (line.startsWith('> ')) {
+        const text = line.replace('> ', '');
+        const isTldr = text.includes('TL;DR');
         elements.push(
-          <blockquote key={index} className="blog-blockquote">
-            {line.replace('> ', '')}
+          <blockquote key={index} className={isTldr ? 'blog-tldr-callout' : 'blog-blockquote'}>
+            {text}
           </blockquote>
         );
       } else if (line.trim() !== '' && line.trim() !== '---') {
+
         elements.push(
           <p key={index} className="blog-paragraph">
             {line}

@@ -453,6 +453,27 @@
   opacity: 0.9;
 }
 
+/* Prominent TL;DR Callout Box */
+.blog-tldr-callout {
+  background: linear-gradient(135deg, rgba(244, 171, 106, 0.12) 0%, rgba(244, 171, 106, 0.03) 100%);
+  border: 1px solid var(--accent-primary);
+  border-left: 4px solid var(--accent-primary);
+  border-radius: 8px;
+  padding: 1.1rem 1.3rem;
+  margin: 1.5rem 0;
+  font-size: 0.98rem;
+  line-height: 1.6;
+  color: var(--text-primary);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.blog-tldr-callout strong {
+  color: var(--accent-primary);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+
 .blog-code-block {
   background-color: var(--bg-secondary);
   color: var(--text-primary);
