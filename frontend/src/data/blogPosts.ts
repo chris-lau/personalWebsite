@@ -8,8 +8,21 @@ import testingStrategyContent from './posts/blog-testing-strategy-vitest-happy-d
 import frontendFoundationsQAContent from './posts/blog-frontend-foundations-q-and-a.md?raw';
 import demystifyingScaffoldingContent from './posts/blog-demystifying-react-scaffolding.md?raw';
 import howToAddANewThemeContent from './posts/blog-how-to-add-a-new-theme.md?raw';
+import howToPushProjectToGithubContent from './posts/blog-how-to-push-project-to-github.md?raw';
 
 export const blogPostsData: BlogPost[] = [
+  {
+    id: 'how-to-push-project-to-github',
+    slug: 'how-to-push-project-to-github',
+    title: 'How to Push Your Project to GitHub: A Beginner\'s Complete Step-by-Step Guide',
+    description: 'A beginner-friendly guide covering Git vs GitHub fundamentals, git init, .gitignore, staging, committing, and pushing using GitHub CLI or Web interface.',
+    date: '2026-07-26',
+    readTime: '5 min read',
+    tags: ['Git', 'GitHub', 'Tooling', 'Beginner', 'CLI'],
+    author: 'Chris Lau',
+    featured: true,
+    content: howToPushProjectToGithubContent,
+  },
   {
     id: 'how-to-add-a-new-theme',
     slug: 'how-to-add-a-new-theme',
