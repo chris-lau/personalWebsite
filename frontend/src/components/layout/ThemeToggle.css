@@ -38,4 +38,11 @@
   transform: translateY(1px);
 }
 
+@media (max-width: 640px) {
+  .theme-segment-btn {
+    padding: 0.25rem 0.45rem;
+    font-size: 0.7rem;
+  }
+}
+
 

@@ -136,8 +136,26 @@
 }
 
 @media (max-width: 640px) {
+  .cli-layout-container {
+    padding: 0.5rem;
+  }
+
   .cli-header-bar {
     flex-wrap: wrap;
     gap: 0.5rem;
+    padding: 0.4rem 0.65rem;
+  }
+
+  .cli-title {
+    font-size: 0.75rem;
+  }
+
+  .cli-nav-bar {
+    padding: 0.4rem 0.65rem;
+  }
+
+  .cli-tab {
+    font-size: 0.78rem;
+    padding: 0.2rem 0.45rem;
   }
 }
