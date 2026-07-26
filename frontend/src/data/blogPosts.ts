@@ -9,8 +9,22 @@ import frontendFoundationsQAContent from './posts/blog-frontend-foundations-q-an
 import demystifyingScaffoldingContent from './posts/blog-demystifying-react-scaffolding.md?raw';
 import howToAddANewThemeContent from './posts/blog-how-to-add-a-new-theme.md?raw';
 import howToPushProjectToGithubContent from './posts/blog-how-to-push-project-to-github.md?raw';
+import masterTestingStrategyContent from './posts/blog-master-frontend-testing-strategy.md?raw';
 
 export const blogPostsData: BlogPost[] = [
+  {
+    id: 'master-frontend-testing-strategy',
+    slug: 'master-frontend-testing-strategy',
+    title: 'Master Frontend Testing Strategy: Vitest, React Testing Library, Storybook, and Playwright',
+    description: 'A comprehensive, beginner-friendly deep dive into our 4-tier testing architecture, explaining why and how we combine Vitest, RTL, Storybook, and Playwright.',
+    updatedDate: '2026-07-26',
+    readTime: '9 min read',
+    tags: ['Vitest', 'Playwright', 'Testing', 'React', 'Storybook', 'a11y'],
+    author: 'Chris Lau',
+    category: 'Testing & Quality Assurance',
+    featured: true,
+    content: masterTestingStrategyContent,
+  },
   {
     id: 'how-to-push-project-to-github',
     slug: 'how-to-push-project-to-github',
@@ -24,6 +38,7 @@ export const blogPostsData: BlogPost[] = [
     featured: true,
     content: howToPushProjectToGithubContent,
   },
+
   {
     id: 'how-to-add-a-new-theme',
     slug: 'how-to-add-a-new-theme',
