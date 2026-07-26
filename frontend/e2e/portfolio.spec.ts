@@ -72,18 +72,18 @@ test.describe('Portfolio E2E Tests', () => {
     await expect(htmlElement).toHaveAttribute('data-theme', 'modern');
     await expect(page.locator('.modern-layout-container')).toBeVisible();
 
-    // Click theme toggle to switch to ASCII
-    await page.click('button.theme-toggle-btn');
+    // Click theme segment button to switch to ASCII
+    await page.click('button[aria-label="Set theme to ASCII"]');
     await expect(htmlElement).toHaveAttribute('data-theme', 'ascii');
     await expect(page.locator('.ascii-layout-container')).toBeVisible();
 
-    // Click theme toggle to switch to CLI
-    await page.click('button.theme-toggle-btn');
+    // Click theme segment button to switch to CLI
+    await page.click('button[aria-label="Set theme to CLI"]');
     await expect(htmlElement).toHaveAttribute('data-theme', 'cli');
     await expect(page.locator('.cli-layout-container')).toBeVisible();
 
-    // Toggle back to MODERN
-    await page.click('button.theme-toggle-btn');
+    // Switch back to MODERN
+    await page.click('button[aria-label="Set theme to MODERN"]');
     await expect(htmlElement).toHaveAttribute('data-theme', 'modern');
   });
 

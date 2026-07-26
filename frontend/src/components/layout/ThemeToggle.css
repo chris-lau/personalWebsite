@@ -1,23 +1,41 @@
-.theme-toggle-btn {
+.theme-segmented-toggle {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 2px;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.theme-segment-btn {
   background: transparent;
-  color: var(--accent-primary);
-  border: 1px dashed var(--border-color);
+  color: var(--text-muted);
+  border: none;
   border-radius: 4px;
-  padding: 0.35rem 0.75rem;
+  padding: 0.3rem 0.65rem;
   font-family: var(--font-family);
-  font-size: 0.85rem;
-  font-weight: bold;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.15s ease-in-out;
 }
 
-.theme-toggle-btn:hover {
-  background-color: var(--accent-primary);
+.theme-segment-btn:hover {
+  color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.theme-segment-btn.active {
   color: var(--bg-primary);
-  border-style: solid;
+  background-color: var(--accent-primary);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
-.theme-toggle-btn:active {
+.theme-segment-btn:active {
   transform: translateY(1px);
 }
+
 

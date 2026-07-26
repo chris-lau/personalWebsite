@@ -162,8 +162,8 @@ personalWebsite/
 ### Step 7: UX/UI & Accessibility SME Design Polish
 - [x] Standardized design tokens across `a11y.css`, `Pages.css`, and `variables.css`.
 - [x] Fixed `#main-content` target across `AsciiLayout`, `CliLayout`, and `ModernLayout` for consistent skip navigation.
-- [x] Refactored `ThemeToggle` accessibility with explicit multi-state `aria-label` guidance.
-- [x] Added active tactile click feedback (`transform: translateY(1px)`) to all buttons and tag filters.
+- [x] Refactored `ThemeToggle` into an intuitive 3-option Segmented Control pill (`[ MODERN | ASCII | CLI ]`) featuring 1-click direct theme selection and accessibility attributes (`role="radiogroup"` / `role="radio"`).
+- [x] Fixed header whitespace wrapping (`white-space: nowrap`, `flex-shrink: 0`) in `ModernLayout` and `AsciiLayout` preventing title or theme controls from wrapping onto secondary lines.
 - [x] Redesigned `ModernLayout` footer to use a floating glassmorphic card container with rounded corners (`16px`), matching `.box-container` cards.
 - [x] Universal Contact page label alignment (`min-width: 95px`) across ASCII, CLI, and Modern themes.
 - [x] Universal Skills Snapshot layout alignment (`min-width: 140px`) preventing squished skill list text blocks.

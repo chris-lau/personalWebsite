@@ -14,7 +14,7 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - **`ascii` Mode**: Warm Earthy single-column layout (espresso background, parchment text, terracotta/sage accents, ASCII box frames).
   - **`cli` Mode**: Retro terminal window layout with interactive command prompt (`$`), tab navigation, and terminal output aesthetic.
   - **`modern` Mode**: Modern Editorial layout inspired by Anthropic & OpenAI websites (dark charcoal surface, warm ambient glows, `Instrument Serif` headers, and `Inter` sans-serif typography).
-  - **Real-Time Toggle**: Global state management via `ThemeContext` with `localStorage` persistence.
+  - **Real-Time Segmented Control**: 3-option pill selector (`[ MODERN | ASCII | CLI ]`) providing instant 1-click theme switching, full keyboard accessibility (`role="radiogroup"`), and `localStorage` state persistence.
 - **Client-Side Navigation & Routing**:
   - `/` — Home (Hero bio, featured projects, quick skill overview)
   - `/about` — About & Résumé (Detailed background, core values, technical stack)

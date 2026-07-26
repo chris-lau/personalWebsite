@@ -107,10 +107,12 @@ describe('App Router & Integration Tests', () => {
       </MemoryRouter>
     );
 
-    const themeToggleBtn = screen.getByRole('button', { name: /switch theme/i });
-    expect(themeToggleBtn).toBeDefined();
+    const asciiSegmentBtn = screen.getByRole('radio', { name: /Set theme to ASCII/i });
+    expect(asciiSegmentBtn).toBeDefined();
 
-    fireEvent.click(themeToggleBtn);
-    expect(screen.getByRole('button', { name: /switch theme/i })).toBeDefined();
+    fireEvent.click(asciiSegmentBtn);
+    
+    const updatedAsciiBtn = screen.getByRole('radio', { name: /Set theme to ASCII/i });
+    expect(updatedAsciiBtn.getAttribute('aria-checked')).toEqual('true');
   });
 });

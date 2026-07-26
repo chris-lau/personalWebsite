@@ -1,20 +1,37 @@
 import React from 'react';
 import { useTheme } from '../../context/ThemeContext';
+import { ThemeMode } from '../../types/theme';
 import './ThemeToggle.css';
 
 export const ThemeToggle: React.FC = () => {
-  const { theme, toggleTheme } = useTheme();
-  const nextTheme = theme === 'modern' ? 'ascii' : theme === 'ascii' ? 'cli' : 'modern';
+  const { theme, setTheme } = useTheme();
+
+  const options: { id: ThemeMode; label: string }[] = [
+    { id: 'modern', label: 'MODERN' },
+    { id: 'ascii', label: 'ASCII' },
+    { id: 'cli', label: 'CLI' },
+  ];
 
   return (
-    <button
-      onClick={toggleTheme}
-      className="theme-toggle-btn"
-      aria-label={`Switch theme (current: ${theme.toUpperCase()}, next: ${nextTheme.toUpperCase()})`}
-      type="button"
+    <div
+      className="theme-segmented-toggle"
+      role="radiogroup"
+      aria-label="Theme Mode Selection"
     >
-      <span aria-hidden="true">[ MODE: {theme.toUpperCase()} ]</span>
-      <span className="sr-only">Current theme is {theme}. Click to switch to {nextTheme}.</span>
-    </button>
+      {options.map((option) => (
+        <button
+          key={option.id}
+          type="button"
+          onClick={() => setTheme(option.id)}
+          className={`theme-segment-btn ${theme === option.id ? 'active' : ''}`}
+          role="radio"
+          aria-checked={theme === option.id ? 'true' : 'false'}
+          aria-label={`Set theme to ${option.label}`}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
   );
 };
+
