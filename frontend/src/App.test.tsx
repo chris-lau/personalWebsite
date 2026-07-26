@@ -94,7 +94,7 @@ describe('App Router & Integration Tests', () => {
     expect(screen.getByText('WELCOME')).toBeDefined();
 
     // Click on projects link in navigation header
-    const projectsLink = screen.getByRole('link', { name: '[PROJECTS]' });
+    const projectsLink = screen.getByRole('link', { name: /^(Projects|\[PROJECTS\])$/i });
     fireEvent.click(projectsLink);
 
     expect(screen.getByText('PROJECT ARCHIVE')).toBeDefined();
