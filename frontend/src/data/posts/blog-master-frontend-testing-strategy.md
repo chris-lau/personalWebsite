@@ -1,6 +1,9 @@
 # Master Frontend Testing Strategy: Vitest, React Testing Library, Storybook, and Playwright
 
+> **TL;DR**: Implement a 4-tier testing pyramid: Use Vitest (`happy-dom`) for sub-second pure logic unit tests, React Testing Library + `MemoryRouter` for user-centric component integration tests, Storybook 8 for isolated visual UI & WCAG accessibility audits, and Playwright for real Chromium browser E2E route navigation and multi-theme persistence checks.
+
 When building modern React and TypeScript applications, testing is often presented as an afterthought or a complex chore. Beginners frequently ask:
+
 
 - *"Why do we need multiple testing tools like Vitest, React Testing Library, Storybook, and Playwright?"*
 - *"Should I test every single line of CSS or internal component state?"*
@@ -8,9 +11,8 @@ When building modern React and TypeScript applications, testing is often present
 
 In this comprehensive guide, we unpack the **complete testing strategy** implemented in our portfolio project (`personalWebsite/frontend`). We will explain the rationale behind every decision, analyze the Testing Pyramid, and walk step-by-step through real code examples from our codebase.
 
-> **TL;DR**: Implement a 4-tier testing pyramid: Use Vitest (`happy-dom`) for sub-second pure logic unit tests, React Testing Library + `MemoryRouter` for user-centric component integration tests, Storybook 8 for isolated visual UI & WCAG accessibility audits, and Playwright for real Chromium browser E2E route navigation and multi-theme persistence checks.
-
 ---
+
 
 
 ## Table of Contents

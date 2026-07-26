@@ -141,13 +141,13 @@ export const BlogDetailPage: React.FC = () => {
           </blockquote>
         );
       } else if (line.trim() !== '' && line.trim() !== '---') {
-
         elements.push(
           <p key={index} className="blog-paragraph">
             {line}
           </p>
         );
       }
+
     });
 
     if (inTable) {
