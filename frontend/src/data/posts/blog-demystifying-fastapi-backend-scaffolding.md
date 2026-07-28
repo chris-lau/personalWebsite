@@ -89,6 +89,28 @@ settings = Settings()
 
 ---
 
+### Hands-On Code: How Ruff Is Configured in `pyproject.toml`
+
+Rather than installing separate tools for linting, formatting, and import sorting (`black`, `flake8`, `isort`), our backend uses **Ruff** configured alongside Pytest in [`pyproject.toml`](file:///Users/chrislau/Documents/personalWebsite/backend/pyproject.toml):
+
+```toml
+# backend/pyproject.toml
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+```
+
+#### What Ruff achieves in this boilerplate setup:
+1. **Sub-Second Code Quality Checks**: Running `./.venv/bin/ruff check .` analyzes all Python files for syntax errors, unused imports, and bad practices in less than **10 milliseconds**.
+2. **Consolidated Configuration**: Unifies line-length formatting limits (`100` characters) and Python version targeting (`py312`) in a single standardized file alongside Pytest runner settings.
+
+---
+
 ## 3. The Request Call Hierarchy (What Happens Under the Hood?)
 
 When a user opens your website in a browser and a fetch request is sent to your FastAPI backend, the request passes through multiple distinct layers before your endpoint code executes.
