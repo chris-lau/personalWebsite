@@ -31,88 +31,172 @@ export const GuidebookPage: React.FC = () => {
 
   // Pre-parse active chapter markdown content into React nodes using useMemo
   const renderedContent = useMemo(() => {
-    return activeChapter.content.split('\n\n').map((paragraph, index) => {
-      if (paragraph.startsWith('## ')) {
-        return (
-          <h2 key={index} className="reader-heading-2 serif-heading">
-            {paragraph.replace('## ', '')}
-          </h2>
-        );
+    const lines = activeChapter.content.split('\n');
+    const elements: React.ReactNode[] = [];
+    let keyIdx = 0;
+
+    let inCodeBlock = false;
+    let codeBuffer: string[] = [];
+
+    let inTable = false;
+    let tableHeader: string[] = [];
+    let tableRows: string[][] = [];
+
+    let paragraphBuffer: string[] = [];
+
+    const flushParagraph = () => {
+      if (paragraphBuffer.length > 0) {
+        const text = paragraphBuffer.join('\n').trim();
+        if (text) {
+          if (text === '---') {
+            elements.push(<hr key={`hr-${keyIdx++}`} className="reader-divider" />);
+          } else {
+            elements.push(
+              <p key={`p-${keyIdx++}`} className="reader-paragraph">
+                {text}
+              </p>
+            );
+          }
+        }
+        paragraphBuffer = [];
       }
-      if (paragraph.startsWith('### ')) {
-        return (
-          <h3 key={index} className="reader-heading-3 serif-heading">
-            {paragraph.replace('### ', '')}
-          </h3>
-        );
-      }
-      if (paragraph.startsWith('```')) {
-        const lines = paragraph.split('\n');
-        const code = lines.slice(1, -1).join('\n');
-        return (
-          <div key={index} className="reader-code-wrapper">
-            <pre className="reader-code-block">
-              <code>{code}</code>
-            </pre>
-          </div>
-        );
-      }
-      if (paragraph.startsWith('|')) {
-        const rows = paragraph.split('\n');
-        return (
-          <div key={index} className="table-responsive-container">
+    };
+
+    const flushTable = () => {
+      if (tableHeader.length > 0) {
+        elements.push(
+          <div key={`table-${keyIdx++}`} className="table-responsive-container">
             <table className="reader-table">
+              <thead>
+                <tr>
+                  {tableHeader.map((cell, i) => (
+                    <th key={i}>{cell.replace(/\*\*/g, '')}</th>
+                  ))}
+                </tr>
+              </thead>
               <tbody>
-                {rows.map((row, rIdx) => {
-                  const cells = row
-                    .split('|')
-                    .filter((c) => c.trim() !== '')
-                    .map((c) => c.trim());
-                  if (row.includes(':---') || row.includes('---')) return null;
-                  const isHeader = rIdx === 0;
-                  return (
-                    <tr key={rIdx}>
-                      {cells.map((cell, cIdx) =>
-                        isHeader ? (
-                          <th key={cIdx}>{cell.replace(/\*\*/g, '')}</th>
-                        ) : (
-                          <td key={cIdx}>{cell.replace(/\*\*/g, '')}</td>
-                        )
-                      )}
-                    </tr>
-                  );
-                })}
+                {tableRows.map((row, rIndex) => (
+                  <tr key={rIndex}>
+                    {row.map((cell, cIndex) => (
+                      <td key={cIndex}>{cell.replace(/\*\*/g, '')}</td>
+                    ))}
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
         );
       }
-      if (paragraph.startsWith('- ') || paragraph.startsWith('* ')) {
-        const items = paragraph.split('\n');
-        return (
-          <ul key={index} className="reader-list">
-            {items.map((item, iIdx) => (
-              <li key={iIdx}>{item.replace(/^[-*]\s+/, '')}</li>
-            ))}
+      inTable = false;
+      tableHeader = [];
+      tableRows = [];
+    };
+
+    lines.forEach((line) => {
+      if (line.trim().startsWith('```')) {
+        flushParagraph();
+        if (inTable) flushTable();
+        if (inCodeBlock) {
+          elements.push(
+            <div key={`code-wrapper-${keyIdx++}`} className="reader-code-wrapper">
+              <pre className="reader-code-block">
+                <code>{codeBuffer.join('\n')}</code>
+              </pre>
+            </div>
+          );
+          codeBuffer = [];
+          inCodeBlock = false;
+        } else {
+          inCodeBlock = true;
+        }
+        return;
+      }
+
+      if (inCodeBlock) {
+        codeBuffer.push(line);
+        return;
+      }
+
+      if (line.trim().startsWith('|')) {
+        flushParagraph();
+        const cells = line
+          .split('|')
+          .slice(1, -1)
+          .map((c) => c.trim());
+
+        if (cells.every((c) => /^[:-\s]+$/.test(c))) {
+          return;
+        }
+
+        if (!inTable) {
+          inTable = true;
+          tableHeader = cells;
+        } else {
+          tableRows.push(cells);
+        }
+        return;
+      } else if (inTable) {
+        flushTable();
+      }
+
+      if (line.startsWith('## ')) {
+        flushParagraph();
+        elements.push(
+          <h2 key={`h2-${keyIdx++}`} className="reader-heading-2 serif-heading">
+            {line.replace('## ', '')}
+          </h2>
+        );
+        return;
+      }
+
+      if (line.startsWith('### ')) {
+        flushParagraph();
+        elements.push(
+          <h3 key={`h3-${keyIdx++}`} className="reader-heading-3 serif-heading">
+            {line.replace('### ', '')}
+          </h3>
+        );
+        return;
+      }
+
+      if (line.trim() === '---') {
+        flushParagraph();
+        elements.push(<hr key={`hr-${keyIdx++}`} className="reader-divider" />);
+        return;
+      }
+
+      if (/^[-*]\s+/.test(line.trim())) {
+        flushParagraph();
+        elements.push(
+          <ul key={`ul-${keyIdx++}`} className="reader-list">
+            <li>{line.trim().replace(/^[-*]\s+/, '')}</li>
           </ul>
         );
+        return;
       }
-      if (paragraph.startsWith('1. ') || paragraph.startsWith('2. ')) {
-        const items = paragraph.split('\n');
-        return (
-          <ol key={index} className="reader-ordered-list">
-            {items.map((item, iIdx) => (
-              <li key={iIdx}>{item.replace(/^\d+\.\s+/, '')}</li>
-            ))}
+
+      if (/^\d+\.\s+/.test(line.trim())) {
+        flushParagraph();
+        elements.push(
+          <ol key={`ol-${keyIdx++}`} className="reader-ordered-list">
+            <li>{line.trim().replace(/^\d+\.\s+/, '')}</li>
           </ol>
         );
+        return;
       }
-      return (
-        <p key={index} className="reader-paragraph">
-          {paragraph}
-        </p>
-      );
+
+      if (line.trim() === '') {
+        flushParagraph();
+        return;
+      }
+
+      paragraphBuffer.push(line);
     });
+
+    flushParagraph();
+    if (inTable) flushTable();
+
+    return elements;
   }, [activeChapter.id, activeChapter.content]);
 
   return (
