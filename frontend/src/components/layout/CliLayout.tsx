@@ -1,24 +1,33 @@
-import React from 'react';
+import { useState, ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
 import { ThemeToggle } from './ThemeToggle';
 import './CliLayout.css';
 
 interface CliLayoutProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
-export const CliLayout: React.FC<CliLayoutProps> = ({ children }) => {
-  const navItems = [
-    { path: '/', label: 'home.sh' },
-    { path: '/about', label: 'about.txt' },
-    { path: '/projects', label: 'projects/' },
-    { path: '/blog', label: 'blog/' },
-    { path: '/experience', label: 'history.log' },
-    { path: '/now', label: 'now.md' },
-    { path: '/how-this-site-works', label: 'stack.md' },
-    { path: '/contact', label: 'contact.sh' },
-  ];
+const NAV_ITEMS = [
+  { path: '/', label: 'home.sh' },
+  { path: '/about', label: 'about.txt' },
+  { path: '/projects', label: 'projects/' },
+  { path: '/blog', label: 'blog/' },
+  { path: '/experience', label: 'history.log' },
+  { path: '/now', label: 'now.md' },
+  { path: '/how-this-site-works', label: 'stack.md' },
+  { path: '/contact', label: 'contact.sh' },
+];
 
+export const CliLayout = ({ children }: CliLayoutProps) => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen((prev) => !prev);
+  };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+  };
 
   return (
     <div className="cli-layout-container">
@@ -43,9 +52,19 @@ export const CliLayout: React.FC<CliLayoutProps> = ({ children }) => {
 
         {/* Terminal Navigation Bar */}
         <nav className="cli-nav-bar" aria-label="Terminal Navigation">
-          <span className="cli-prompt-symbol" aria-hidden="true">$</span>
-          <ul className="cli-nav-tabs">
-            {navItems.map((item) => (
+          <div className="cli-nav-header">
+            <span className="cli-prompt-symbol" aria-hidden="true">$</span>
+            <button
+              className="cli-mobile-menu-toggle"
+              onClick={toggleMobileMenu}
+              aria-expanded={mobileMenuOpen}
+              aria-label="Toggle terminal navigation menu"
+            >
+              [{mobileMenuOpen ? 'exit' : 'menu'}]
+            </button>
+          </div>
+          <ul className={`cli-nav-tabs ${mobileMenuOpen ? 'open' : ''}`}>
+            {NAV_ITEMS.map((item) => (
               <li key={item.path}>
                 <NavLink
                   to={item.path}
@@ -53,6 +72,7 @@ export const CliLayout: React.FC<CliLayoutProps> = ({ children }) => {
                     `cli-tab ${isActive ? 'active' : ''}`
                   }
                   end={item.path === '/'}
+                  onClick={closeMobileMenu}
                 >
                   {item.label}
                 </NavLink>

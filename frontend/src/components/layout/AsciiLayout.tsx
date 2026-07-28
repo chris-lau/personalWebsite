@@ -1,24 +1,33 @@
-import React from 'react';
+import { useState, ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
 import { ThemeToggle } from './ThemeToggle';
 import './AsciiLayout.css';
 
 interface AsciiLayoutProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
-export const AsciiLayout: React.FC<AsciiLayoutProps> = ({ children }) => {
-  const navItems = [
-    { path: '/', label: 'HOME' },
-    { path: '/about', label: 'ABOUT' },
-    { path: '/projects', label: 'PROJECTS' },
-    { path: '/blog', label: 'BLOG' },
-    { path: '/experience', label: 'EXP' },
-    { path: '/now', label: 'NOW' },
-    { path: '/how-this-site-works', label: 'STACK' },
-    { path: '/contact', label: 'CONTACT' },
-  ];
+const NAV_ITEMS = [
+  { path: '/', label: 'HOME' },
+  { path: '/about', label: 'ABOUT' },
+  { path: '/projects', label: 'PROJECTS' },
+  { path: '/blog', label: 'BLOG' },
+  { path: '/experience', label: 'EXP' },
+  { path: '/now', label: 'NOW' },
+  { path: '/how-this-site-works', label: 'STACK' },
+  { path: '/contact', label: 'CONTACT' },
+];
 
+export const AsciiLayout = ({ children }: AsciiLayoutProps) => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen((prev) => !prev);
+  };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+  };
 
   return (
     <div className="ascii-layout-container">
@@ -39,8 +48,22 @@ export const AsciiLayout: React.FC<AsciiLayoutProps> = ({ children }) => {
 
         {/* Navigation Bar */}
         <nav className="ascii-nav" aria-label="Main Navigation">
-          <ul className="ascii-nav-list">
-            {navItems.map((item) => (
+          <div className="ascii-nav-controls">
+            <button
+              className="ascii-mobile-menu-toggle"
+              onClick={toggleMobileMenu}
+              aria-expanded={mobileMenuOpen}
+              aria-label="Toggle navigation menu"
+            >
+              [{mobileMenuOpen ? 'X' : 'MENU'}]
+            </button>
+            <div className="ascii-nav-toggle">
+              <ThemeToggle />
+            </div>
+          </div>
+
+          <ul className={`ascii-nav-list ${mobileMenuOpen ? 'open' : ''}`}>
+            {NAV_ITEMS.map((item) => (
               <li key={item.path}>
                 <NavLink
                   to={item.path}
@@ -48,15 +71,13 @@ export const AsciiLayout: React.FC<AsciiLayoutProps> = ({ children }) => {
                     `ascii-nav-link ${isActive ? 'active' : ''}`
                   }
                   end={item.path === '/'}
+                  onClick={closeMobileMenu}
                 >
                   [{item.label}]
                 </NavLink>
               </li>
             ))}
           </ul>
-          <div className="ascii-nav-toggle">
-            <ThemeToggle />
-          </div>
         </nav>
       </header>
 
