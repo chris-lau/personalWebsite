@@ -123,7 +123,7 @@ We implement [`ThemeContext.tsx`](file:///Users/chrislau/Documents/personalWebsi
 
 ```tsx
 // src/context/ThemeContext.tsx
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { ThemeMode } from '../types/theme';
 
 interface ThemeContextType {
@@ -133,13 +133,14 @@ interface ThemeContextType {
 }
 
 const STORAGE_KEY = 'portfolio_theme';
+const VALID_THEMES: ThemeMode[] = ['modern', 'ascii', 'cli'];
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  // Read saved theme preference from localStorage on startup
+export function ThemeProvider({ children }: { children: ReactNode }) {
+  // Read saved theme preference from localStorage on startup with validation
   const [theme, setThemeState] = useState<ThemeMode>(() => {
-    const saved = localStorage.getItem(STORAGE_KEY) as ThemeMode;
-    return saved === 'cli' ? 'cli' : 'ascii';
+    const savedTheme = localStorage.getItem(STORAGE_KEY) as ThemeMode;
+    return VALID_THEMES.includes(savedTheme) ? savedTheme : 'modern';
   });
 
   const setTheme = (newTheme: ThemeMode) => {

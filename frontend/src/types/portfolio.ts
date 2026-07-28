@@ -8,9 +8,10 @@ export interface Profile {
   name: string;
   handle: string;
   title: string;
+  credentials?: string;
   location: string;
   bio: string;
-  avatarUrl?: string;
+  avatarUrl?: string | null;
   socials: SocialLink[];
 }
 

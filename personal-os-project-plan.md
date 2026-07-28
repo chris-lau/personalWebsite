@@ -216,15 +216,15 @@ frontend/src/data/
 
 ## Features
 
-- Responsive desktop and mobile layouts across 3 themes (`ascii`, `cli`, `modern`)
-- Real-time global theme switcher with `localStorage` persistence
+- Responsive desktop and mobile layouts across 3 themes (`ascii`, `cli`, `modern`) with mobile navigation drawer
+- Real-time global theme switcher with `localStorage` persistence and single-source theme validation
 - Accessible navigation & screen reader fallback attributes (`.sr-only`, `aria-hidden`)
 - Interactive project cards and technology filters
 - Modular technical blog engine with search bar, tag filtering, and markdown rendering
 - Experience and education timeline
-- Downloadable résumé & Sivers-style “Now” section
+- Downloadable résumé, Sivers-style “Now” section, and actionable `/contact` page
 - Technical architecture page (`/how-this-site-works`)
-- Basic component unit tests (33 tests) & E2E browser tests (5 tests)
+- Component unit tests (35 tests) & E2E browser tests (5 tests)
 
 ## Repository Status
 

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { ThemeMode } from '../types/theme';
 
 interface ThemeContextType {
@@ -8,16 +8,14 @@ interface ThemeContextType {
 }
 
 const STORAGE_KEY = 'portfolio_theme';
+const VALID_THEMES: ThemeMode[] = ['modern', 'ascii', 'cli'];
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
+export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemeMode>(() => {
     const savedTheme = localStorage.getItem(STORAGE_KEY) as ThemeMode;
-    if (savedTheme === 'cli' || savedTheme === 'modern' || savedTheme === 'ascii') {
-      return savedTheme;
-    }
-    return 'modern';
+    return VALID_THEMES.includes(savedTheme) ? savedTheme : 'modern';
   });
 
   const setTheme = (newTheme: ThemeMode) => {

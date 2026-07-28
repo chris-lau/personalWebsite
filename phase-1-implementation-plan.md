@@ -160,9 +160,13 @@ personalWebsite/
 - [x] `frontend/src/pages/BlogDetailPage.tsx`: Article detail view page with breadcrumbs, headers, tags, structured markdown rendering, custom markdown table parser, prominent TL;DR callout styling, and automated Related Articles section.
 
 ### Step 7: UX/UI & Accessibility SME Design Polish
-- [x] Standardized design tokens across `a11y.css`, `Pages.css`, and `variables.css`.
+- [x] Standardized design tokens across `a11y.css`, `Pages.css`, and `variables.css` (including WCAG AA 5.2+:1 contrast enhancement for ASCII `#cbbfa8` and CLI `#9db0e8` muted text).
 - [x] Fixed `#main-content` target across `AsciiLayout`, `CliLayout`, and `ModernLayout` for consistent skip navigation.
 - [x] Refactored `ThemeToggle` into an intuitive 3-option Segmented Control pill (`[ MODERN | ASCII | CLI ]`) featuring 1-click direct theme selection and accessibility attributes (`role="radiogroup"` / `role="radio"`).
+- [x] Refactored `ThemeContext` validation with a unified `VALID_THEMES` array and `LayoutRenderer` with a `LAYOUT_MAP` component lookup map.
+- [x] Implemented responsive mobile navigation menu drawer (`☰`/`✕`) in `ModernLayout`.
+- [x] Enhanced `/contact` page with direct email action box (`mailto:contact@chrislau.dev`).
+- [x] Transformed comma-separated skills snapshot into scannable tag chips/pills.
 - [x] Fixed header whitespace wrapping (`white-space: nowrap`, `flex-shrink: 0`) in `ModernLayout` and `AsciiLayout` preventing title or theme controls from wrapping onto secondary lines.
 - [x] Redesigned `ModernLayout` footer to use a floating glassmorphic card container with rounded corners (`16px`), matching `.box-container` cards.
 - [x] Universal Contact page label alignment (`min-width: 95px`) across ASCII, CLI, and Modern themes.

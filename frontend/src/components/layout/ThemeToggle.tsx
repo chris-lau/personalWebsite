@@ -1,9 +1,8 @@
-import React from 'react';
 import { useTheme } from '../../context/ThemeContext';
 import { ThemeMode } from '../../types/theme';
 import './ThemeToggle.css';
 
-export const ThemeToggle: React.FC = () => {
+export const ThemeToggle = () => {
   const { theme, setTheme } = useTheme();
 
   const options: { id: ThemeMode; label: string }[] = [

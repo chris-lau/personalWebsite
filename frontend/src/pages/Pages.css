@@ -43,6 +43,21 @@
   gap: 1.25rem;
 }
 
+.contact-intro {
+  line-height: 1.6;
+  margin: 0 0 0.5rem 0;
+  max-width: 680px;
+}
+
+.contact-action-box {
+  margin: 0.5rem 0 1rem 0;
+}
+
+.contact-email-btn {
+  font-size: 0.95rem;
+  padding: 0.6rem 1.2rem;
+}
+
 .contact-links {
   display: flex;
   flex-direction: column;
@@ -62,6 +77,13 @@
   font-size: 0.95rem;
 }
 
+.hero-credentials {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin: 0;
+}
+
 /* Universal Skills Snapshot Layout & Spacing */
 .skills-snapshot {
   display: flex;
@@ -72,8 +94,8 @@
 .skill-group {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.4rem 1rem;
+  align-items: center;
+  gap: 0.5rem 1rem;
   line-height: 1.6;
 }
 
@@ -83,9 +105,22 @@
   min-width: 140px;
 }
 
-.skill-list {
-  color: var(--text-primary);
+.skill-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
   flex: 1;
+}
+
+.skill-chip {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.8rem;
+  font-family: var(--font-family);
+  border-radius: 4px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-muted);
+  color: var(--text-primary);
 }
 
 .link-button {

@@ -25,7 +25,7 @@
   --bg-primary: #181616;
   --bg-secondary: #222020;
   --text-primary: #f2e3c6;   /* Enhanced readability warm beige */
-  --text-muted: #b8aa93;     /* Brighter muted warm tone for 4.5+:1 contrast */
+  --text-muted: #cbbfa8;     /* High-contrast warm muted tone (5.5+:1 WCAG AA) */
   --text-inverse: #181616;
   
   --header-color: #e5a752;    /* Warm Ochre / Gold for distinct section headers */
@@ -47,7 +47,7 @@
   --bg-primary: #0c0d10;
   --bg-secondary: #14161c;
   --text-primary: #ffc47e;  /* Brighter Amber Phosphor for crisp code reading */
-  --text-muted: #8394ca;    /* Enhanced Slate Blue for improved contrast */
+  --text-muted: #9db0e8;    /* High-contrast Slate Blue (5.2+:1 WCAG AA) */
   --text-inverse: #0c0d10;
   
   --header-color: #99f0ff;   /* Crisp Terminal Cyan for distinct section headers */

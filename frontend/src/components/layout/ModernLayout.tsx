@@ -1,4 +1,4 @@
-import React from 'react';
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { ThemeToggle } from './ThemeToggle';
 import './ModernLayout.css';
@@ -7,17 +7,27 @@ interface ModernLayoutProps {
   children: React.ReactNode;
 }
 
-export const ModernLayout: React.FC<ModernLayoutProps> = ({ children }) => {
-  const navItems = [
-    { path: '/', label: 'Home' },
-    { path: '/about', label: 'About' },
-    { path: '/projects', label: 'Projects' },
-    { path: '/blog', label: 'Blog' },
-    { path: '/experience', label: 'Experience' },
-    { path: '/now', label: 'Now' },
-    { path: '/how-this-site-works', label: 'Stack' },
-    { path: '/contact', label: 'Contact' },
-  ];
+const NAV_ITEMS = [
+  { path: '/', label: 'Home' },
+  { path: '/about', label: 'About' },
+  { path: '/projects', label: 'Projects' },
+  { path: '/blog', label: 'Blog' },
+  { path: '/experience', label: 'Experience' },
+  { path: '/now', label: 'Now' },
+  { path: '/how-this-site-works', label: 'Stack' },
+  { path: '/contact', label: 'Contact' },
+];
+
+export const ModernLayout = ({ children }: ModernLayoutProps) => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen((prev) => !prev);
+  };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+  };
 
   return (
     <div className="modern-layout-container">
@@ -28,15 +38,27 @@ export const ModernLayout: React.FC<ModernLayoutProps> = ({ children }) => {
       {/* Top Navigation Bar */}
       <header className="modern-header">
         <div className="modern-nav-wrapper">
-          <NavLink to="/" className="modern-brand-logo">
+          <NavLink to="/" className="modern-brand-logo" onClick={closeMobileMenu}>
             <span className="brand-initials">CL</span>
             <span className="brand-divider">/</span>
             <span className="brand-title">Chris Lau</span>
           </NavLink>
 
-          <nav className="modern-nav" aria-label="Main Navigation">
+          <div className="modern-nav-controls">
+            <ThemeToggle />
+            <button
+              className="modern-mobile-menu-toggle"
+              onClick={toggleMobileMenu}
+              aria-expanded={mobileMenuOpen}
+              aria-label="Toggle navigation menu"
+            >
+              {mobileMenuOpen ? '✕' : '☰'}
+            </button>
+          </div>
+
+          <nav className={`modern-nav ${mobileMenuOpen ? 'open' : ''}`} aria-label="Main Navigation">
             <ul className="modern-nav-list">
-              {navItems.map((item) => (
+              {NAV_ITEMS.map((item) => (
                 <li key={item.path}>
                   <NavLink
                     to={item.path}
@@ -44,6 +66,7 @@ export const ModernLayout: React.FC<ModernLayoutProps> = ({ children }) => {
                       `modern-nav-link ${isActive ? 'active' : ''}`
                     }
                     end={item.path === '/'}
+                    onClick={closeMobileMenu}
                   >
                     {item.label}
                   </NavLink>
@@ -51,10 +74,6 @@ export const ModernLayout: React.FC<ModernLayoutProps> = ({ children }) => {
               ))}
             </ul>
           </nav>
-
-          <div className="modern-nav-actions">
-            <ThemeToggle />
-          </div>
         </div>
       </header>
 

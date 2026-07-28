@@ -36,6 +36,9 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
 - **Accessibility & UX**:
   - Screen reader fallback markup (`.sr-only`).
   - `aria-hidden` attributes on visual ASCII framing elements.
+  - Responsive mobile navigation drawer toggle (`☰`/`✕`) in `ModernLayout`.
+  - Direct `mailto:contact@chrislau.dev` contact link on `/contact`.
+  - Scannable skill pill/chip tags across skills snapshots.
   - Full keyboard focus indicators and semantic HTML5 layout containers (`#main-content` skip navigation).
   - Universal zero-indent bullet list alignment (`list-style-position: inside`) and Contact page label alignment (`min-width: 95px`).
   - Floating rounded glassmorphic footer card matching content container curvature (`16px`).

@@ -91,9 +91,27 @@
   font-weight: 600;
 }
 
-.modern-nav-actions {
+.modern-nav-actions,
+.modern-nav-controls {
   display: flex;
   align-items: center;
+  gap: 0.5rem;
+}
+
+.modern-mobile-menu-toggle {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--border-muted);
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.modern-mobile-menu-toggle:hover {
+  background-color: var(--border-muted);
 }
 
 /* Main Content Area */
@@ -183,22 +201,32 @@
     gap: 0.75rem;
   }
 
+  .modern-mobile-menu-toggle {
+    display: block;
+  }
+
   .modern-nav {
     order: 3;
     width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 0.25rem;
+    display: none;
+    padding: 0.5rem 0;
+  }
+
+  .modern-nav.open {
+    display: block;
   }
 
   .modern-nav-list {
+    flex-direction: column;
+    align-items: stretch;
     gap: 0.35rem;
   }
 
   .modern-nav-link {
     white-space: nowrap;
-    font-size: 0.82rem;
-    padding: 0.35rem 0.6rem;
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+    display: block;
   }
 
   .modern-content-wrapper {

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { profileData } from '../data/profile';
 import { projectsData } from '../data/projects';
@@ -6,7 +5,7 @@ import { skillsData } from '../data/skills';
 import { BoxContainer } from '../components/ui/BoxContainer';
 import './Pages.css';
 
-export const HomePage: React.FC = () => {
+export const HomePage = () => {
   const featuredProjects = projectsData.filter((p) => p.featured);
 
   return (
@@ -15,7 +14,10 @@ export const HomePage: React.FC = () => {
         <BoxContainer title="WELCOME">
           <div className="hero-content">
             <h1 className="hero-title">{profileData.name}</h1>
-            <p className="hero-subtitle">{profileData.title} &bull; {profileData.location}</p>
+            <p className="hero-subtitle">{profileData.title}</p>
+            {profileData.credentials && (
+              <p className="hero-credentials">{profileData.credentials} &bull; {profileData.location}</p>
+            )}
             <p className="hero-bio">{profileData.bio}</p>
             <div className="hero-links">
               {profileData.socials.map((s) => (
@@ -73,7 +75,13 @@ export const HomePage: React.FC = () => {
             {skillsData.map((cat) => (
               <div key={cat.category} className="skill-group">
                 <span className="skill-cat-label">{cat.category}:</span>
-                <span className="skill-list">{cat.skills.join(', ')}</span>
+                <div className="skill-chips">
+                  {cat.skills.map((skill) => (
+                    <span key={skill} className="skill-chip">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
               </div>
             ))}
           </div>

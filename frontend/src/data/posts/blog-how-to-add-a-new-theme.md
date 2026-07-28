@@ -80,28 +80,13 @@ Update your `ThemeContext` provider to handle saved theme validation and n-way t
 
 ```typescript
 // src/context/ThemeContext.tsx
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
+const VALID_THEMES: ThemeMode[] = ['modern', 'ascii', 'cli'];
+
+export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemeMode>(() => {
     const saved = localStorage.getItem('portfolio_theme') as ThemeMode;
-    return saved === 'cli' || saved === 'modern' ? saved : 'ascii';
+    return VALID_THEMES.includes(saved) ? saved : 'modern';
   });
-
-  const toggleTheme = () => {
-    if (theme === 'ascii') setThemeState('cli');
-    else if (theme === 'cli') setThemeState('modern');
-    else setThemeState('ascii');
-  };
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-  }, [theme]);
-
-  return (
-    <ThemeContext.Provider value={{ theme, setTheme: setThemeState, toggleTheme }}>
-      {children}
-    </ThemeContext.Provider>
-  );
-}
 ```
 
 ---

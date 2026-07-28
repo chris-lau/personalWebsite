@@ -1,20 +1,22 @@
-import React from 'react';
+import { ComponentType, ReactNode } from 'react';
 import { useTheme } from '../../context/ThemeContext';
+import { ThemeMode } from '../../types/theme';
 import { AsciiLayout } from './AsciiLayout';
 import { CliLayout } from './CliLayout';
 import { ModernLayout } from './ModernLayout';
 
 interface LayoutRendererProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
-export const LayoutRenderer: React.FC<LayoutRendererProps> = ({ children }) => {
-  const { theme } = useTheme();
+const LAYOUT_MAP: Record<ThemeMode, ComponentType<{ children: ReactNode }>> = {
+  ascii: AsciiLayout,
+  cli: CliLayout,
+  modern: ModernLayout,
+};
 
-  if (theme === 'ascii') {
-    return <AsciiLayout>{children}</AsciiLayout>;
-  } else if (theme === 'cli') {
-    return <CliLayout>{children}</CliLayout>;
-  }
-  return <ModernLayout>{children}</ModernLayout>;
+export const LayoutRenderer = ({ children }: LayoutRendererProps) => {
+  const { theme } = useTheme();
+  const Layout = LAYOUT_MAP[theme] ?? ModernLayout;
+  return <Layout>{children}</Layout>;
 };
