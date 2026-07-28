@@ -10,7 +10,12 @@ export const AboutPage: React.FC = () => {
       <section className="about-bio-section">
         <BoxContainer title="ABOUT ME">
           <div className="about-bio">
-            <p>{profileData.bio}</p>
+            <p>
+              I am a Technical Product Leader specializing in AI Surveillance, Agentic Automation, Enterprise Data Acquisition, and SaaS platforms. My approach bridges deep technical engineering (UBC Computer Engineering B.A.Sc.) with strategic business execution (USC Marshall MBA).
+            </p>
+            <p>
+              Outside of product management, I focus on system design, building scalable frontend/backend architectures, and mentoring teams on modern development practices and AI workflow integration.
+            </p>
             <p className="location-info">Location: {profileData.location}</p>
           </div>
         </BoxContainer>

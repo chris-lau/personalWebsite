@@ -16,6 +16,7 @@ export const ThemeToggle = () => {
       className="theme-segmented-toggle"
       role="radiogroup"
       aria-label="Theme Mode Selection"
+      title="Switch Visual Theme Mode (Modern, ASCII, CLI)"
     >
       {options.map((option) => (
         <button
