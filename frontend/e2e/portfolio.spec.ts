@@ -13,7 +13,7 @@ test.describe('Portfolio E2E Tests', () => {
 
     // 3. Projects page
     await page.click('nav.modern-nav >> text="Projects"');
-    await expect(page.getByRole('heading', { name: 'PROJECT ARCHIVE' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'FEATURED PORTFOLIO PROJECTS' })).toBeVisible();
     await expect(page).toHaveURL('/projects');
 
     // 4. Blog page
@@ -93,9 +93,9 @@ test.describe('Portfolio E2E Tests', () => {
   });
 
 
-  test('filters projects by technology tag', async ({ page }) => {
+  test('filters projects by technology tag and switches to Live GitHub Activity tab', async ({ page }) => {
     await page.goto('/projects');
-    await expect(page.getByRole('heading', { name: 'PROJECT ARCHIVE' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'FEATURED PORTFOLIO PROJECTS' })).toBeVisible();
 
     // Click React tag filter button
     const reactBtn = page.getByRole('button', { name: '#React' });
@@ -103,6 +103,11 @@ test.describe('Portfolio E2E Tests', () => {
       await reactBtn.click();
       await expect(reactBtn).toHaveClass(/active/);
     }
+
+    // Switch to Live GitHub Activity tab
+    await page.click('role=tab[name="🐙 Live GitHub Activity"]');
+    await expect(page.getByRole('heading', { name: 'LIVE GITHUB ACTIVITY & REPOSITORIES' })).toBeVisible();
+    await expect(page.getByPlaceholder('Lookup any GitHub user / org...')).toBeVisible();
   });
 
   test('handles 404 routes correctly', async ({ page }) => {

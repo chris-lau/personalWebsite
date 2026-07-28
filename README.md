@@ -38,6 +38,14 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
 
 
 
+- **Live GitHub Activity & Repository Dashboard (`/projects`)**:
+  - Unauthenticated public requests to GitHub REST API (`api.github.com/users/{username}`).
+  - **Interactive Username Switcher**: Allows visitors to lookup any GitHub user/organization (default: `@chris-lau`, presets: `@facebook`, `@vercel`).
+  - **30-Day Activity Filter & Highlights**: `⚡ Active (Past 30 Days)` pill filter and glowing `🔥 Active` badges on recently updated repos.
+  - **Client-Side Caching**: 15-minute `sessionStorage` TTL cache prevents hitting GitHub's 60 req/hr rate limit.
+  - **Tabbed Navigation**: Accessible tab control on Projects page (`📁 Featured Projects` vs `🐙 Live GitHub Activity`).
+  - **Storybook Stories**: Isolated visual component workshops for `<GitHubSummary />`, `<GitHubRepoCard />`, and `<GitHubUsernameSelector />`.
+
 - **Accessibility & UX**:
   - Screen reader fallback markup (`.sr-only`).
   - `aria-hidden` attributes on visual ASCII framing elements.
@@ -51,7 +59,7 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
 
 - **Testing & Quality Assurance**:
   - Storybook 8 component catalog & accessibility auditing (`@storybook/addon-a11y`).
-  - Vitest + `@testing-library/react` unit & component integration tests (35 passing tests).
+  - Vitest + `@testing-library/react` unit & component integration tests (49 passing tests).
   - Playwright real-browser end-to-end (E2E) testing across all 3 themes.
 
 ---
@@ -68,22 +76,25 @@ personalWebsite/
     ├── e2e/                           # Playwright end-to-end tests
     │   └── portfolio.spec.ts
     ├── src/
+    │   ├── api/                       # GitHub REST API client & sessionStorage caching
     │   ├── components/
     │   │   ├── blog/                  # BlogCard & styling
+    │   │   ├── github/                # GitHubDashboard, GitHubSummary, GitHubRepoCard, GitHubFilters, GitHubUsernameSelector
     │   │   ├── layout/                # AsciiLayout, CliLayout, ModernLayout, LayoutRenderer, ThemeToggle
     │   │   └── ui/                    # BoxContainer, ProjectCard, TimelineItem
     │   ├── context/                   # ThemeContext (Global 3-theme manager)
     │   ├── data/                      # Static data layer & markdown blog posts
-    │   │   ├── posts/                 # Markdown blog post storage (10 articles)
+    │   │   ├── posts/                 # Markdown blog post storage (14 articles)
     │   │   ├── blogPosts.ts           # Blog engine static data layer & helpers
     │   │   ├── profile.ts
     │   │   ├── projects.ts
     │   │   ├── experience.ts
     │   │   ├── skills.ts
     │   │   └── now.ts
+    │   ├── hooks/                     # Custom React hooks (useGitHubData)
     │   ├── pages/                     # Page views (Home, About, Projects, Blog, Experience, Now, Contact, Architecture)
     │   ├── styles/                    # Design tokens (variables.css for 3 themes) and reset (global.css)
-    │   ├── types/                     # TypeScript interfaces (theme.ts, portfolio.ts)
+    │   ├── types/                     # TypeScript interfaces (theme.ts, portfolio.ts, github.ts)
     │   ├── App.tsx                    # React Router configuration
     │   └── main.tsx                   # Entry point
     ├── package.json

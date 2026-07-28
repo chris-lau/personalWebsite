@@ -13,8 +13,36 @@ import masterTestingStrategyContent from './posts/blog-master-frontend-testing-s
 import backendEngineerFrontendJourneyContent from './posts/blog-backend-engineer-learning-frontend-journey.md?raw';
 import learningFrontendViaAiPairProgrammingContent from './posts/blog-learning-frontend-via-ai-pair-programming.md?raw';
 import understandingSpaRoutingContent from './posts/blog-understanding-spa-routing-and-cloud-hosting.md?raw';
+import whyIsItCalledReactContent from './posts/blog-why-is-it-called-react.md?raw';
+import buildingLiveGithubDashboardContent from './posts/blog-building-live-github-dashboard-integration.md?raw';
 
 export const blogPostsData: BlogPost[] = [
+  {
+    id: 'building-live-github-dashboard-integration',
+    slug: 'building-live-github-dashboard-integration',
+    title: 'Building a Live GitHub Activity Dashboard: A Step-by-Step Architectural Deep Dive',
+    description: 'A comprehensive step-by-step engineering breakdown of integrating a real-time GitHub activity feed into a React portfolio—covering schema transformation, 15-min sessionStorage caching, custom hooks, Storybook stories, and multi-tier testing.',
+    updatedDate: 'July 2026',
+    readTime: '8 min read',
+    tags: ['React', 'API Integration', 'Architecture', 'Caching', 'Testing', 'TypeScript'],
+    author: 'Chris Lau',
+    category: 'React Architecture & Design Systems',
+    featured: true,
+    content: buildingLiveGithubDashboardContent,
+  },
+  {
+    id: 'why-is-it-called-react',
+    slug: 'why-is-it-called-react',
+    title: 'Why Is It Called React? Demystifying Reactive UI, State Synchronization, and Custom Hooks',
+    description: 'An architectural exploration of why Jordan Walke named React, how declarative reactive state replaces manual DOM mutations, and how custom hooks bridge raw API clients with reactive UI.',
+    updatedDate: 'July 2026',
+    readTime: '5 min read',
+    tags: ['React', 'Hooks', 'Architecture', 'UI', 'Frontend', 'JavaScript'],
+    author: 'Chris Lau',
+    category: 'React Architecture & Design Systems',
+    featured: true,
+    content: whyIsItCalledReactContent,
+  },
   {
     id: 'understanding-spa-routing-and-cloud-hosting',
     slug: 'understanding-spa-routing-and-cloud-hosting',

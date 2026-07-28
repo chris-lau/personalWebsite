@@ -234,6 +234,7 @@ frontend/src/data/
 
 - [x] The public website application is structured and buildable
 - [x] It works on mobile and desktop across ASCII, CLI, and Modern Editorial themes
+- [x] Local browser state (`localStorage`) preserves theme preferences across reloads
 - [x] Visitors can understand who I am and read technical blog articles
 - [x] Projects and experience are clearly presented
 - [x] No backend is required for normal use
@@ -242,86 +243,7 @@ frontend/src/data/
 
 ---
 
-# Phase 2 — Interactive Frontend
-
-## Goal
-
-Make the portfolio behave like an application while remaining frontend-only.
-
-## Features
-
-### Global Search
-
-Search across:
-
-- Project names
-- Descriptions
-- Technologies
-- Experience
-- Skills
-
-### Project Filtering and Sorting
-
-Visitors can filter projects by:
-
-- Technology
-- Project type
-- Status
-- Year
-
-### Personal OS Dashboard
-
-The dashboard can include:
-
-- Current projects
-- Current learning
-- Reading list
-- Recent updates
-- Development goals
-
-### Local Browser State
-
-Use `localStorage` for:
-
-- Theme preference
-- Layout preference
-- Selected filters
-- Demo task-board state
-
-### Demo Task Board
-
-```text
-To Do → In Progress → Complete
-```
-
-The task data belongs to each visitor and remains only in their browser.
-
-## Skills Demonstrated
-
-- React state management
-- Custom hooks
-- Forms
-- Validation
-- Browser storage
-- Search and filtering
-- Component composition
-- Loading and empty states
-
-## New Accounts Required
-
-None.
-
-## Completion Criteria
-
-- Interactive features work without a backend
-- Refreshing the page preserves appropriate preferences
-- Local state is clearly separated from permanent application data
-- Components have useful empty and error states
-- Important interactions have tests
-
----
-
-# Phase 3 — Existing Public API Integration
+# Phase 2 — Existing Public API Integration (COMPLETED)
 
 ## Goal
 
@@ -342,72 +264,84 @@ GitHub Dashboard
 ├── Repository search
 ├── Language filters
 ├── Sorting
-└── Recently updated projects
+└── Recently updated projects (Past 30 Days filter & 🔥 Active badges)
 ```
 
 ## Data Flow
 
 ```text
-React
+React Component (<GitHubDashboard />)
    │
    ▼
-GitHub REST API
+Custom Hook (useGitHubData.ts)
    │
    ▼
-Response validation and transformation
+sessionStorage Cache (15-min TTL)
    │
    ▼
-Portfolio components
+GitHub REST API (api.github.com)
+   │
+   ▼
+Response validation & transformation (github.ts)
+   │
+   ▼
+Portfolio components (<GitHubSummary />, <GitHubRepoCard />, <GitHubFilters />, <GitHubUsernameSelector />)
 ```
 
 ## Engineering Requirements
 
-- Keep API functions outside React page components
-- Define TypeScript types for API responses
-- Transform external data into internal view models
-- Display loading skeletons
-- Display useful error messages
-- Handle empty responses
-- Cache successful responses
-- Avoid unnecessary API calls
-- Handle rate-limit errors
-- Test API-dependent components using mocked responses
-- Never expose a private access token in frontend code
+- [x] Keep API functions outside React page components
+- [x] Define TypeScript types for API responses
+- [x] Transform external data into internal view models
+- [x] Display loading spinners
+- [x] Display useful error messages
+- [x] Handle empty responses
+- [x] Cache successful responses with `sessionStorage` (15-min TTL)
+- [x] Avoid unnecessary API calls
+- [x] Handle rate-limit errors gracefully
+- [x] Test API-dependent components using mocked responses (`vi.spyOn(globalThis, 'fetch')`)
+- [x] Never expose a private access token in frontend code
 
 ## Suggested Structure
 
 ```text
 frontend/src/
 ├── api/
-│   └── github.ts
+│   ├── github.ts
+│   └── github.test.ts
 ├── hooks/
-│   └── useGitHubRepositories.ts
+│   ├── useGitHubData.ts
+│   └── useGitHubData.test.ts
 ├── types/
 │   └── github.ts
 └── components/github/
-    ├── GitHubSummary.tsx
-    ├── RepositoryCard.tsx
-    └── RepositoryFilters.tsx
+    ├── GitHubDashboard.tsx
+    ├── GitHubDashboard.test.tsx
+    ├── GitHubSummary.tsx & GitHubSummary.stories.tsx
+    ├── GitHubRepoCard.tsx & GitHubRepoCard.stories.tsx
+    ├── GitHubFilters.tsx
+    ├── GitHubUsernameSelector.tsx & GitHubUsernameSelector.stories.tsx
+    └── GitHubComponents.css
 ```
 
 ## New Accounts Required
 
 None.
 
-Use the existing GitHub account and begin with public, unauthenticated GitHub API requests.
+Used public, unauthenticated GitHub API requests.
 
 ## Completion Criteria
 
-- The frontend calls a real public API
-- External data is typed and transformed
-- Loading, error, success, and empty states work
-- Results are cached
-- Rate-limit failures are handled gracefully
-- Tests do not rely on the live GitHub service
+- [x] The frontend calls a real public API
+- [x] External data is typed and transformed
+- [x] Loading, error, success, and empty states work
+- [x] Results are cached in `sessionStorage`
+- [x] Rate-limit failures are handled gracefully
+- [x] Tests do not rely on the live GitHub service (49/49 unit tests & 5/5 Playwright E2E passing)
 
 ---
 
-# Phase 4 — FastAPI Backend
+# Phase 3 — FastAPI Backend
 
 ## Goal
 
@@ -504,7 +438,7 @@ Benefits include:
 
 ---
 
-# Phase 5 — PostgreSQL and CRUD
+# Phase 4 — PostgreSQL and CRUD
 
 ## Goal
 
@@ -612,7 +546,7 @@ Write operations should not be publicly available before authentication is added
 
 ---
 
-# Phase 6 — Authentication and Admin Dashboard
+# Phase 5 — Authentication and Admin Dashboard
 
 ## Goal
 
@@ -677,7 +611,7 @@ Possibly none.
 
 ---
 
-# Phase 7 — Markdown Publishing
+# Phase 6 — Markdown Publishing
 
 ## Goal
 
@@ -724,7 +658,7 @@ None.
 
 ---
 
-# Phase 8 — Images and Optional Travel Journal
+# Phase 7 — Images and Optional Travel Journal
 
 ## Goal
 
@@ -766,7 +700,7 @@ Do not store large image files directly in PostgreSQL.
 
 ---
 
-# Phase 9 — Contact Inbox
+# Phase 8 — Contact Inbox
 
 ## Goal
 
@@ -825,7 +759,7 @@ None initially.
 
 ---
 
-# Phase 10 — Production Engineering
+# Phase 9 — Production Engineering
 
 ## Goal
 
@@ -883,7 +817,7 @@ Do not sign up for a monitoring provider until built-in logs and health checks a
 
 ---
 
-# Phase 11 — Optional MCP Server
+# Phase 10 — Optional MCP Server
 
 ## Goal
 
@@ -957,7 +891,7 @@ Create a separate public deployment only when remote MCP access is needed.
 
 ---
 
-# Phase 12 — Custom Domain
+# Phase 11 — Custom Domain
 
 ## Goal
 
@@ -1005,13 +939,13 @@ api.example.com  → Render
 |---|---|
 | Cloudflare | Host the React frontend |
 
-## Create When Phase 4 Is Ready to Deploy
+## Create When Phase 3 Is Ready to Deploy
 
 | Service | Reason |
 |---|---|
 | Render | Host the FastAPI backend |
 
-## Create When Phase 5 Begins
+## Create When Phase 4 Begins
 
 | Service | Reason |
 |---|---|
@@ -1113,7 +1047,7 @@ personal-os/
 └── LICENSE
 ```
 
-The backend directory does not need to exist during Phase 1. It can be added when Phase 4 begins.
+The backend directory does not need to exist during Phase 1. It can be added when Phase 3 begins.
 
 ---
 
@@ -1121,16 +1055,15 @@ The backend directory does not need to exist during Phase 1. It can be added whe
 
 ## Strong Frontend Version
 
-Complete Phases 1–3:
+Complete Phases 1–2:
 
 - React portfolio
-- Interactive frontend
 - Public API integration
 - Deployed on Cloudflare Pages
 
 ## Strong Full-Stack Version
 
-Complete Phases 1–6:
+Complete Phases 1–5:
 
 - React and TypeScript
 - External API integration

@@ -94,7 +94,7 @@ describe('Page Components Unit Tests', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('PROJECT ARCHIVE')).toBeDefined();
+    expect(screen.getByText('FEATURED PORTFOLIO PROJECTS')).toBeDefined();
     
     // Find all tags filter button
     const allButton = screen.getByRole('button', { name: 'All' });
@@ -106,6 +106,11 @@ describe('Page Components Unit Tests', () => {
       fireEvent.click(reactTag);
       expect(reactTag.className).toContain('active');
     }
+
+    // Switch to GitHub activity tab
+    const githubTab = screen.getByRole('tab', { name: '🐙 Live GitHub Activity' });
+    fireEvent.click(githubTab);
+    expect(screen.getByText('LIVE GITHUB ACTIVITY & REPOSITORIES')).toBeDefined();
   });
 
   it('renders ExperiencePage timeline items', () => {

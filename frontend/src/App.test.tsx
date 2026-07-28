@@ -31,7 +31,7 @@ describe('App Router & Integration Tests', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('PROJECT ARCHIVE')).toBeDefined();
+    expect(screen.getByText('FEATURED PORTFOLIO PROJECTS')).toBeDefined();
   });
 
   it('renders experience page at route "/experience"', () => {
@@ -97,7 +97,7 @@ describe('App Router & Integration Tests', () => {
     const projectsLinks = screen.getAllByRole('link', { name: /^(Projects|\[PROJECTS\])$/i });
     fireEvent.click(projectsLinks[0]);
 
-    expect(screen.getByText('PROJECT ARCHIVE')).toBeDefined();
+    expect(screen.getByText('FEATURED PORTFOLIO PROJECTS')).toBeDefined();
   });
 
   it('allows toggling theme mode within app layout', () => {
