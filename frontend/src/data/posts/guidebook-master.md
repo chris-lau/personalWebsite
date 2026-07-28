@@ -455,7 +455,7 @@ Unauthenticated public API calls are often subject to strict IP rate limits (e.g
 const CACHE_TTL_MS = 15 * 60 * 1000;
 
 export async function fetchGitHubUser(username: string): Promise<GitHubUser> {
-  const cacheKey = `gh_user_${username.toLowerCase()}`;
+  const cacheKey = 'gh_user_' + username.toLowerCase();
   const cached = sessionStorage.getItem(cacheKey);
 
   if (cached) {
@@ -465,7 +465,7 @@ export async function fetchGitHubUser(username: string): Promise<GitHubUser> {
     }
   }
 
-  const response = await fetch(`https://api.github.com/users/${encodeURIComponent(username)}`);
+  const response = await fetch('https://api.github.com/users/' + encodeURIComponent(username));
   const rawData = await response.json();
   const transformed = transformUser(rawData);
 
