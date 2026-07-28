@@ -11,10 +11,10 @@ export const AboutPage: React.FC = () => {
         <BoxContainer title="ABOUT ME">
           <div className="about-bio">
             <p>
-              I am a Technical Product Leader specializing in AI Surveillance, Agentic Automation, Enterprise Data Acquisition, and SaaS platforms. My approach bridges deep technical engineering (UBC Computer Engineering B.A.Sc.) with strategic business execution (USC Marshall MBA).
+              I&apos;m a Technical Product Leader who moved from hands-on engineering into enterprise SaaS product management, and now lead AI Surveillance and Agentic Automation initiatives at Global Relay. That path — engineering (UBC B.A.Sc.), then business (USC Marshall MBA), then AI product leadership — shapes how I work: I want to understand a system deeply enough to build it before owning its roadmap. That&apos;s part of why I built this site&apos;s frontend myself (see /how-this-site-works) rather than delegating it.
             </p>
             <p>
-              Outside of product management, I focus on system design, building scalable frontend/backend architectures, and mentoring teams on modern development practices and AI workflow integration.
+              Certified Scrum Product Owner (CSPO) &amp; Professional Engineer (P.Eng., Non-Practising).
             </p>
             <p className="location-info">Location: {profileData.location}</p>
           </div>
