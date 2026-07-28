@@ -357,6 +357,7 @@ Build a personal backend after gaining experience as an API consumer.
 - Ruff
 - mypy or Pyright
 - Docker
+- slowapi (or basic rate limiting middleware)
 
 ## Initial Endpoints
 
@@ -430,6 +431,7 @@ Benefits include:
 - `/health` confirms the service is running
 - React successfully calls at least one backend endpoint
 - CORS allows only approved frontend origins
+- Basic IP rate limiting is configured on API endpoints
 - Input and output schemas are defined
 - API tests pass
 - Errors use consistent response formats
