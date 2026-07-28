@@ -14,13 +14,21 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemeMode>(() => {
-    const savedTheme = localStorage.getItem(STORAGE_KEY) as ThemeMode;
-    return VALID_THEMES.includes(savedTheme) ? savedTheme : 'modern';
+    try {
+      const savedTheme = localStorage.getItem(STORAGE_KEY) as ThemeMode;
+      return VALID_THEMES.includes(savedTheme) ? savedTheme : 'modern';
+    } catch {
+      return 'modern';
+    }
   });
 
   const setTheme = (newTheme: ThemeMode) => {
     setThemeState(newTheme);
-    localStorage.setItem(STORAGE_KEY, newTheme);
+    try {
+      localStorage.setItem(STORAGE_KEY, newTheme);
+    } catch {
+      // Ignore storage errors in restricted contexts (e.g. Chrome incognito/iframe)
+    }
   };
 
   const toggleTheme = () => {
