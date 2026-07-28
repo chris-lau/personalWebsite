@@ -12,6 +12,7 @@ A clean, production-ready FastAPI repository structure begins with these core fi
 
 ```text
 backend/
+├── .venv/                   # Isolated Python virtual environment (git-ignored)
 ├── requirements.txt         # Package dependencies & versions
 ├── .env.example             # Un-sensitive template for environment variables
 ├── .env                     # Secrets & environment settings (git-ignored)
@@ -33,6 +34,7 @@ backend/
 
 | Boilerplate File | Purpose & Architectural Responsibility |
 | :--- | :--- |
+| **[`.venv/`](file:///Users/chrislau/Documents/personalWebsite/backend/.gitignore)** | Python's equivalent of `node_modules/`. An isolated local virtual environment directory holding Python executables (`python`, `pip`) and installed packages (`site-packages/`), preventing version collisions and protecting system Python. |
 | **[`requirements.txt`](file:///Users/chrislau/Documents/personalWebsite/backend/requirements.txt)** | Lists Python package dependencies (`fastapi`, `uvicorn[standard]`, `pydantic-settings`, `slowapi`, `httpx`, `pytest`). Ensures consistent library versions across dev, test, and production servers. |
 | **[`.env.example`](file:///Users/chrislau/Documents/personalWebsite/backend/.env.example)** | A public template file committed to git showing required configuration keys (e.g. `ENVIRONMENT`, `PORT`, `ALLOWED_ORIGINS`, `GITHUB_TOKEN`) without exposing real API keys. |
 | **[`.env`](file:///Users/chrislau/Documents/personalWebsite/backend/.env)** | The local environment configuration file containing actual development keys and secrets. **Never committed to Git**. |
@@ -44,6 +46,27 @@ backend/
 | **[`pyproject.toml`](file:///Users/chrislau/Documents/personalWebsite/backend/pyproject.toml)** | Configures Python tools like Pytest (`pythonpath = ["."]`) and Ruff linter rules in a single standard configuration file. |
 | **[`tests/conftest.py`](file:///Users/chrislau/Documents/personalWebsite/backend/tests/conftest.py)** | Defines Pytest `@pytest.fixture` providing an in-memory `TestClient(app)` fixture for fast endpoint testing without starting live network servers. |
 | **[`tests/test_health.py`](file:///Users/chrislau/Documents/personalWebsite/backend/tests/test_health.py)** | Automated unit/integration tests verifying that `/health` returns `HTTP 200 OK`, CORS headers match approved origins, and security headers are present. |
+
+---
+
+### Hands-On: Why Every Python Backend Begins with `.venv`
+
+In Node.js/React development, every project gets a local `node_modules/` folder automatically when you run `npm install`. By default, Python installs third-party packages **globally** across your operating system.
+
+To prevent dependency collisions between projects and protect system Python, every backend starts by scaffolding an isolated virtual environment (`.venv`):
+
+```bash
+# 1. Create isolated environment
+python3 -m venv .venv
+
+# 2. Activate environment (points shell to local .venv/bin)
+source .venv/bin/activate
+
+# 3. Install project dependencies locally
+pip install -r requirements.txt
+```
+
+Adding `.venv/` to `.gitignore` ensures that local binary executables are never committed to Git, matching the same practice used for `node_modules/`.
 
 ---
 
