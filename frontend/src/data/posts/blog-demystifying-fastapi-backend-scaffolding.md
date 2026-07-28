@@ -135,14 +135,60 @@ Notice how the request passes **outside-in** (from Uvicorn $\rightarrow$ CORS $\
 
 ---
 
-## 5. Summary Checklist for Beginners
+## 5. Testing Framework Deep Dive: Pytest & FastAPI `TestClient`
 
-When initializing your next FastAPI backend, follow this 5-step checklist:
+A robust backend architecture is incomplete without an automated testing strategy. In Python backend development, **Pytest** combined with FastAPI's built-in **`TestClient`** provides an exceptionally fast, in-memory testing environment.
+
+### Key Components of FastAPI Testing:
+
+1. **Pytest Framework**: The standard test runner for Python. It discovers files named `test_*.py`, executes functions named `def test_*()`, and uses simple Python `assert` statements.
+2. **FastAPI `TestClient` (Powered by `httpx` & `Starlette`)**:
+   - Rather than spinning up a real Uvicorn network server on port 8000 and making network sockets, `TestClient` simulates HTTP requests directly in memory against your `FastAPI` app instance.
+   - Tests run in milliseconds (e.g., executing 3 full endpoint, CORS, and security header tests in just **0.06 seconds**!).
+3. **`conftest.py` & Reusable Fixtures**:
+   - `conftest.py` is Pytest's automatic fixture repository.
+   - By creating a `@pytest.fixture` named `client`, Pytest automatically injects the `TestClient` into any test function that declares `client` as a parameter.
+
+### Example Test Setup:
+
+```python
+# 1. tests/conftest.py — Central Test Fixture
+import pytest
+from fastapi.testclient import TestClient
+from main import app
+
+@pytest.fixture
+def client():
+    """Provides a clean TestClient instance to all test files."""
+    with TestClient(app) as test_client:
+        yield test_client
+
+
+# 2. tests/test_health.py — Endpoint & Security Compliance Test
+def test_health_check_endpoint(client):
+    """Verify GET /health returns HTTP 200 OK and expected status payload."""
+    response = client.get("/health")
+    assert response.status_code == 200
+    assert response.json()["status"] == "ok"
+
+def test_security_headers_present(client):
+    """Verify security headers are injected into response headers."""
+    response = client.get("/health")
+    assert response.headers["X-Content-Type-Options"] == "nosniff"
+    assert response.headers["X-Frame-Options"] == "DENY"
+```
+
+---
+
+## 6. Summary Checklist for Beginners
+
+When initializing your next FastAPI backend, follow this 6-step checklist:
 
 - [x] **Create directory & `.gitignore`**: Exclude `.venv`, `__pycache__`, and `.env`.
 - [x] **Define `requirements.txt`**: Pin `fastapi`, `uvicorn`, `pydantic-settings`, `slowapi`, `httpx`, and `pytest`.
 - [x] **Set up `config.py`**: Parse environment variables safely using `pydantic-settings`.
 - [x] **Configure Security & CORS in `main.py`**: Add `CORSMiddleware`, security headers, and rate limiting.
+- [x] **Set up `conftest.py` & Pytest**: Build in-memory `TestClient` fixtures for rapid unit testing.
 - [x] **Verify with `/health` and `/docs`**: Run `uvicorn main:app --reload`, check `http://localhost:8000/health`, and inspect Swagger UI at `http://localhost:8000/docs`.
 
 With this boilerplate foundation in place, adding new endpoints, JSON seed data, and external API proxies is clean, secure, and maintainable!
