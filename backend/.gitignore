@@ -1,0 +1,25 @@
+# Python virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment files containing credentials
+.env
+.env.local
+.env.*.local
+
+# Pytest / Cache
+.pytest_cache/
+.coverage
+htmlcov/
+.ruff_cache/
+
+# IDE files
+.vscode/
+.idea/
