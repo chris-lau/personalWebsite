@@ -24,7 +24,7 @@ export const experienceData: Experience[] = [
     company: 'Global Relay',
     location: 'Greater Vancouver Metropolitan Area',
     startDate: 'Jun 2019',
-    endDate: 'Feb 2025',
+    endDate: 'Feb 2025 (Concurrent with AI role from Apr 2024)',
     description: 'Owner of product roadmap and production issues for Connectors product suite.',
     highlights: [
       'Hired and directly managed 7 Technical Product Managers; actively participated in recruitment and training.',

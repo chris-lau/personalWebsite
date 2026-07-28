@@ -43,7 +43,7 @@ export const siteArchitectureData: SiteArchitectureCategory[] = [
         desc: 'Automated real Chrome browser tests verifying user navigation flows, theme toggle persistence, interactive filtering, and 404 page fallback.'
       },
       {
-        name: 'Storybook 8 & Accessibility (a11y) Audits',
+        name: 'Storybook 10 & Accessibility (a11y) Audits',
         desc: 'Isolated component visual development and @storybook/addon-a11y accessibility validation (.sr-only utility, ARIA landmark roles, and high contrast visible focus rings).'
       }
     ]

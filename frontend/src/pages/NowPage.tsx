@@ -39,7 +39,7 @@ export const NowPage: React.FC = () => {
             <h3>&gt; LEARNING</h3>
             <ul>
               {nowData.learning.map((topic, i) => (
-                <li key={i}>⚡ {topic}</li>
+                <li key={i}>* {topic}</li>
               ))}
             </ul>
           </div>

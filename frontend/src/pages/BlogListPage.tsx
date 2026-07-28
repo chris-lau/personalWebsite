@@ -30,7 +30,7 @@ export const BlogListPage: React.FC = () => {
       <header className="page-header">
         <h1 className="page-title">TECHNICAL BLOG</h1>
         <p className="page-subtitle">
-          Articles on React architecture, testing strategies, TypeScript, and modern web engineering.
+          Build logs from mastering modern frontend development — React architecture, testing strategy, and TypeScript — as a hands-on complement to my day job leading AI product and governance initiatives.
         </p>
       </header>
 
