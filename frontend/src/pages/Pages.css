@@ -66,8 +66,9 @@
 
 .contact-row {
   display: flex;
-  align-items: center;
-  gap: 1rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
 }
 
 .contact-row .platform-name {
@@ -75,6 +76,14 @@
   font-weight: 600;
   color: var(--text-primary);
   font-size: 0.95rem;
+  padding-top: 0.25rem;
+}
+
+.contact-row .link-button {
+  max-width: 100%;
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .hero-credentials {
