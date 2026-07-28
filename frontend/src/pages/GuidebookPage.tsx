@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { guidebookChapters } from '../data/guidebookData';
 import { BoxContainer } from '../components/ui/BoxContainer';
 import './Pages.css';
@@ -6,6 +6,7 @@ import './GuidebookPage.css';
 
 export const GuidebookPage: React.FC = () => {
   const [activeChapterId, setActiveChapterId] = useState<string>('chapter-1');
+  const readerRef = useRef<HTMLDivElement>(null);
 
   const activeChapter =
     guidebookChapters.find((ch) => ch.id === activeChapterId) || guidebookChapters[0];
@@ -14,6 +15,14 @@ export const GuidebookPage: React.FC = () => {
   const prevChapter = activeIndex > 0 ? guidebookChapters[activeIndex - 1] : null;
   const nextChapter =
     activeIndex < guidebookChapters.length - 1 ? guidebookChapters[activeIndex + 1] : null;
+
+  const scrollToReader = () => {
+    if (readerRef.current) {
+      const yOffset = -80; // Account for fixed header bar height
+      const y = readerRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  };
 
   return (
     <div className="page-container page-guidebook">
@@ -47,7 +56,7 @@ export const GuidebookPage: React.FC = () => {
                       type="button"
                       onClick={() => {
                         setActiveChapterId(ch.id);
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                        scrollToReader();
                       }}
                       className={`chapter-btn ${activeChapter.id === ch.id ? 'active' : ''}`}
                     >
@@ -73,7 +82,7 @@ export const GuidebookPage: React.FC = () => {
         </aside>
 
         {/* Chapter Reader Area */}
-        <main className="guidebook-reader">
+        <main ref={readerRef} className="guidebook-reader">
           <BoxContainer title={`CHAPTER ${activeChapter.number} of ${guidebookChapters.length}`}>
             <div className="reader-header">
               <div className="chapter-meta">
@@ -176,7 +185,7 @@ export const GuidebookPage: React.FC = () => {
                   type="button"
                   onClick={() => {
                     setActiveChapterId(prevChapter.id);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    scrollToReader();
                   }}
                   className="link-button pagination-btn prev"
                 >
@@ -191,7 +200,7 @@ export const GuidebookPage: React.FC = () => {
                   type="button"
                   onClick={() => {
                     setActiveChapterId(nextChapter.id);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    scrollToReader();
                   }}
                   className="link-button primary pagination-btn next"
                 >
