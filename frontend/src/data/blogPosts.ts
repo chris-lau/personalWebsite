@@ -85,7 +85,7 @@ export const blogPostsData: BlogPost[] = [
     slug: 'building-a-full-featured-react-blog-engine',
     title: 'Building a Full-Featured Blog Engine in React & TypeScript: Architecture, Search, and Multi-Tier Testing',
     description: 'A comprehensive, developer-friendly guide on how we designed, implemented, and tested a production-ready blog system in our React & TypeScript portfolio website.',
-    updatedDate: '2026-07-26',
+    updatedDate: 'July 2026',
     readTime: '8 min read',
     tags: ['React', 'TypeScript', 'Architecture', 'Testing'],
     author: 'Chris Lau',
