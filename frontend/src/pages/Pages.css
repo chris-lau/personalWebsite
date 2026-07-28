@@ -35,6 +35,20 @@
   border-color: var(--color-primary, #6366f1);
 }
 
+@media (max-width: 640px) {
+  .projects-tab-bar {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .projects-tab-btn {
+    width: 100%;
+    text-align: center;
+    padding: 0.75rem 1rem;
+  }
+}
+
+
 
 .hero-content {
   display: flex;
