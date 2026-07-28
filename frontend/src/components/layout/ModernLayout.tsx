@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { path: '/about', label: 'About' },
   { path: '/projects', label: 'Projects' },
   { path: '/blog', label: 'Blog' },
+  { path: '/guidebook', label: 'Book' },
   { path: '/experience', label: 'Experience' },
   { path: '/now', label: 'Now' },
   { path: '/how-this-site-works', label: 'Stack' },

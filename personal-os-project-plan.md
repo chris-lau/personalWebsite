@@ -1,8 +1,8 @@
-# Chris Lau — AI & Systems Studio Website — Project Plan
+# Chris Lau // AI & Product Leadership Website — Project Plan
 
 ## Project Description
 
-Chris Lau — AI & Systems Studio Website is a personal website combined with a progressively developed full-stack web application.
+Chris Lau // AI & Product Leadership Website is a personal website combined with a progressively developed full-stack web application.
 
 The project will begin as a polished, frontend-only portfolio built with React, TypeScript, and Vite. It will initially present my experience, projects, skills, current activities, and résumé using static local data.
 

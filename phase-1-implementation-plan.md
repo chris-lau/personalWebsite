@@ -55,12 +55,13 @@ personalWebsite/
     │   │       ├── ProjectCard.tsx   (Project display card)
     │   │       └── TimelineItem.tsx  (Experience timeline item)
     │   ├── data/
-    │   │   ├── posts/                (Markdown blog post storage - 9 articles)
+    │   │   ├── posts/                (Markdown blog post & guidebook storage)
     │   │   ├── profile.ts
     │   │   ├── projects.ts
     │   │   ├── experience.ts
     │   │   ├── skills.ts
     │   │   ├── blogPosts.ts
+    │   │   ├── guidebookData.ts      (Guidebook chapter repository & data queries)
     │   │   └── now.ts
     │   ├── pages/
     │   │   ├── HomePage.tsx
@@ -68,6 +69,7 @@ personalWebsite/
     │   │   ├── ProjectsPage.tsx
     │   │   ├── BlogListPage.tsx
     │   │   ├── BlogDetailPage.tsx
+    │   │   ├── GuidebookPage.tsx     (Interactive guidebook reader app)
     │   │   ├── ExperiencePage.tsx
     │   │   ├── NowPage.tsx
     │   │   ├── ContactPage.tsx
@@ -158,6 +160,12 @@ personalWebsite/
 - [x] `frontend/src/components/blog/BlogCard.tsx`: Reusable blog card component with CSS design token support and `Updated: YYYY-MM-DD` timestamp.
 - [x] `frontend/src/pages/BlogListPage.tsx`: Interactive blog list page with keyword search bar, tag filtering pills, category section grouping, and post grid.
 - [x] `frontend/src/pages/BlogDetailPage.tsx`: Article detail view page with breadcrumbs, headers, tags, structured markdown rendering, custom markdown table parser, prominent TL;DR callout styling, and automated Related Articles section.
+
+### Step 6.5: Interactive Frontend Development Guidebook Reader App (`/guidebook`)
+- [x] `frontend/src/data/posts/guidebook-master.md`: Ported full 8-chapter master guidebook (*Building Modern Web Applications: A Step-by-Step Guide for Frontend Beginners*).
+- [x] `frontend/src/data/guidebookData.ts`: Created typed guidebook data repository exporting `GuidebookChapter` interface and 8 structured chapter contents with sub-section navigation anchors.
+- [x] `frontend/src/pages/GuidebookPage.tsx` & `GuidebookPage.css`: Developed interactive reader web app featuring a sticky Table of Contents sidebar, formatted markdown reader canvas, code blocks, WCAG tables, and next/prev chapter pagination buttons.
+- [x] `frontend/src/App.tsx`: Registered route `/guidebook` and added navigation links (`Book` / `BOOK` / `book.md`) across all 3 visual layouts (`ModernLayout`, `AsciiLayout`, `CliLayout`).
 
 ### Step 7: UX/UI & Accessibility SME Design Polish
 - [x] Standardized design tokens across `a11y.css`, `Pages.css`, and `variables.css` (including WCAG AA 5.2+:1 contrast enhancement for ASCII `#cbbfa8` and CLI `#9db0e8` muted text).

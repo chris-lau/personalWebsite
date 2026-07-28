@@ -11,6 +11,7 @@ import { ExperiencePage } from './pages/ExperiencePage';
 import { NowPage } from './pages/NowPage';
 import { ContactPage } from './pages/ContactPage';
 import { HowThisSiteWorksPage } from './pages/HowThisSiteWorksPage';
+import { GuidebookPage } from './pages/GuidebookPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 
 export const App: React.FC = () => {
@@ -23,6 +24,7 @@ export const App: React.FC = () => {
           <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/blog" element={<BlogListPage />} />
           <Route path="/blog/:slug" element={<BlogDetailPage />} />
+          <Route path="/guidebook" element={<GuidebookPage />} />
           <Route path="/experience" element={<ExperiencePage />} />
           <Route path="/now" element={<NowPage />} />
           <Route path="/how-this-site-works" element={<HowThisSiteWorksPage />} />

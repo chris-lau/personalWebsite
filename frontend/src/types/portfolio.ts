@@ -73,5 +73,14 @@ export interface BlogPost {
   featured?: boolean;
 }
 
+export interface GuidebookChapter {
+  id: string;
+  number: number;
+  title: string;
+  subsections: string[];
+  content: string;
+}
+
+
 
 

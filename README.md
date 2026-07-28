@@ -20,10 +20,14 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - `/about` — About & Résumé (Detailed background, core values, technical stack)
   - `/projects` — Projects Showcase (Interactive filterable list by technology tag)
   - `/blog` — Blog Engine (Keyword search, tag filtering, post detail markdown views)
+  - `/guidebook` — Frontend Development Guidebook (Interactive 8-chapter reader app)
   - `/experience` — Work & Education Timeline
   - `/now` — Current Activities & Learning Focus (Derek Sivers style `/now` page)
   - `/contact` — Contact details & Social links
   - `/how-this-site-works` — Technical Architecture & Design System showcase
+- **Interactive Frontend Development Guidebook App (`/guidebook`)**:
+  - Full 8-chapter interactive guidebook: *Building Modern Web Applications: A Step-by-Step Guide for Frontend Beginners*.
+  - Features sticky Table of Contents sidebar, markdown canvas rendering, syntax-highlighted code blocks, WCAG tables, and next/prev chapter pagination buttons.
 - **Full-Featured Technical Blog Engine**:
   - Modular Markdown storage in `frontend/src/data/posts/`.
   - Vite raw static imports (`?raw`) with query helpers (`getAllBlogPosts`, `getBlogPostBySlug`, `getBlogPostsByTag`, `getGroupedBlogPostsByCategory`, `getRelatedBlogPosts`).

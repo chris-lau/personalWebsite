@@ -21,6 +21,11 @@ test.describe('Portfolio E2E Tests', () => {
     await expect(page.getByRole('heading', { name: 'TECHNICAL BLOG' })).toBeVisible();
     await expect(page).toHaveURL('/blog');
 
+    // 4b. Book / Guidebook page
+    await page.click('nav.modern-nav >> text="Book"');
+    await expect(page.getByRole('heading', { name: 'FRONTEND DEVELOPMENT GUIDEBOOK' })).toBeVisible();
+    await expect(page).toHaveURL('/guidebook');
+
     // 5. Experience page
     await page.click('nav.modern-nav >> text="Experience"');
     await expect(page.getByRole('heading', { name: 'CAREER & EXPERIENCE' })).toBeVisible();
