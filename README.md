@@ -20,14 +20,15 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - `/about` — About & Résumé (Detailed background, core values, technical stack)
   - `/projects` — Projects Showcase (Interactive filterable list by technology tag)
   - `/blog` — Blog Engine (Keyword search, tag filtering, post detail markdown views)
-  - `/guidebook` — Frontend Development Guidebook (Interactive 8-chapter reader app)
+  - `/guidebook` — Frontend Development Guidebook (Interactive 9-chapter reader app)
   - `/experience` — Work & Education Timeline
   - `/now` — Current Activities & Learning Focus (Derek Sivers style `/now` page)
   - `/contact` — Contact details & Social links
   - `/how-this-site-works` — Technical Architecture & Design System showcase
 - **Interactive Frontend Development Guidebook App (`/guidebook`)**:
-  - Full 8-chapter interactive guidebook: *Building Modern Web Applications: A Step-by-Step Guide for Frontend Beginners*.
-  - Features sticky Table of Contents sidebar, markdown canvas rendering, syntax-highlighted code blocks, WCAG tables, and next/prev chapter pagination buttons.
+  - Full 9-chapter interactive guidebook: *Building Modern Web Applications: A Step-by-Step Guide for Frontend Beginners*.
+  - Features sticky Table of Contents sidebar, markdown canvas rendering, syntax-highlighted line-by-line code blocks, WCAG tables, and next/prev chapter pagination buttons.
+  - Includes **Chapter 9: Consuming External REST APIs & Client-Side Caching** (decoupling API view models, 15-minute `sessionStorage` TTL caching, custom hooks, and Storybook stories).
   - **Performance & Mobile Optimization**: `useMemo` pre-parsed markdown node caching, container-relative instant scrolling (`scrollToReader()`), and CSS Grid `minmax(0, 1fr)` track sizing for responsive mobile reading without horizontal viewport overflow.
 - **Full-Featured Technical Blog Engine**:
   - Modular Markdown storage in `frontend/src/data/posts/`.
@@ -47,6 +48,8 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - **Storybook Stories**: Isolated visual component workshops for `<GitHubSummary />`, `<GitHubRepoCard />`, and `<GitHubUsernameSelector />`.
 
 - **Accessibility & UX**:
+  - Top-level React **`ErrorBoundary`** component catching runtime errors and displaying graceful recovery UI.
+  - Defensive `try/catch` wrappers around `localStorage` and `sessionStorage` for strict browser privacy modes (Chrome/Safari incognito).
   - Screen reader fallback markup (`.sr-only`).
   - `aria-hidden` attributes on visual ASCII framing elements.
   - Responsive mobile navigation drawer toggle (`☰`/`✕`) in `ModernLayout`.
