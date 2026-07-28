@@ -1,4 +1,4 @@
-# Chris Lau — AI & Systems Studio Website (Triple-Theme ASCII, CLI & Modern Editorial)
+# Chris Lau // AI & Product Leadership Website (Triple-Theme ASCII, CLI & Modern Editorial)
 
 A modern, responsive, accessible, frontend-only personal portfolio website and blog engine supporting three distinct visual themes: **Warm Earthy ASCII Art Design**, **Retro Terminal CLI Design**, and **Modern Editorial Design** (inspired by Anthropic and OpenAI web aesthetics) with real-time theme toggling.
 

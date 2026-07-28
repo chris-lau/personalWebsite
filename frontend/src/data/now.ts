@@ -7,7 +7,7 @@ export const nowData: NowState = {
     'AI-enabled Surveillance & Compliance production services at Global Relay',
     'AI Governance program roadmap and cross-pod alignment',
     'Agentic Automation & GraphDB emerging tech prototyping',
-    'Triple-themed (Modern Editorial, ASCII & CLI) AI & Systems Studio website',
+    'Triple-themed (Modern Editorial, ASCII & CLI) AI & Product Leadership personal website',
   ],
   reading: [],
   learning: [
