@@ -18,8 +18,22 @@ import buildingLiveGithubDashboardContent from './posts/blog-building-live-githu
 import demystifyingFastapiScaffoldingContent from './posts/blog-demystifying-fastapi-backend-scaffolding.md?raw';
 import whyEslintContent from './posts/blog-why-eslint-by-default-instead-of-biome.md?raw';
 import whatRuffDoesContent from './posts/blog-what-ruff-does-python-linter.md?raw';
+import demystifyingVenvContent from './posts/blog-demystifying-python-virtual-environments-venv.md?raw';
 
 export const blogPostsData: BlogPost[] = [
+  {
+    id: 'demystifying-python-virtual-environments-venv',
+    slug: 'demystifying-python-virtual-environments-venv',
+    title: 'Demystifying Python Virtual Environments (.venv): Why Node.js Developers Need Them & How They Work',
+    description: 'A beginner-friendly breakdown of Python virtual environments (.venv), comparing them to Node.js node_modules, system Python isolation, and production deployment parity.',
+    updatedDate: 'July 2026',
+    readTime: '6 min read',
+    tags: ['Python', '.venv', 'Node.js', 'FastAPI', 'Architecture', 'DevOps'],
+    author: 'Chris Lau',
+    category: 'Backend Architecture & Security',
+    featured: true,
+    content: demystifyingVenvContent,
+  },
   {
     id: 'why-eslint-by-default-instead-of-biome',
     slug: 'why-eslint-by-default-instead-of-biome',
