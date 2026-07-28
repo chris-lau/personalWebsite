@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { guidebookChapters } from '../data/guidebookData';
 import { BoxContainer } from '../components/ui/BoxContainer';
 import './Pages.css';
@@ -18,11 +18,104 @@ export const GuidebookPage: React.FC = () => {
 
   const scrollToReader = () => {
     if (readerRef.current) {
-      const yOffset = -80; // Account for fixed header bar height
+      const yOffset = -80;
       const y = readerRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      window.scrollTo({ top: y, behavior: 'smooth' });
+      window.scrollTo({ top: y, behavior: 'instant' });
     }
   };
+
+  const handleSelectChapter = (chapterId: string) => {
+    setActiveChapterId(chapterId);
+    scrollToReader();
+  };
+
+  // Pre-parse active chapter markdown content into React nodes using useMemo
+  const renderedContent = useMemo(() => {
+    return activeChapter.content.split('\n\n').map((paragraph, index) => {
+      if (paragraph.startsWith('## ')) {
+        return (
+          <h2 key={index} className="reader-heading-2 serif-heading">
+            {paragraph.replace('## ', '')}
+          </h2>
+        );
+      }
+      if (paragraph.startsWith('### ')) {
+        return (
+          <h3 key={index} className="reader-heading-3 serif-heading">
+            {paragraph.replace('### ', '')}
+          </h3>
+        );
+      }
+      if (paragraph.startsWith('```')) {
+        const lines = paragraph.split('\n');
+        const lang = lines[0].replace('```', '');
+        const code = lines.slice(1, -1).join('\n');
+        return (
+          <div key={index} className="reader-code-wrapper">
+            {lang && <div className="code-lang-tag">{lang}</div>}
+            <pre className="reader-code-block">
+              <code>{code}</code>
+            </pre>
+          </div>
+        );
+      }
+      if (paragraph.startsWith('|')) {
+        const rows = paragraph.split('\n');
+        return (
+          <div key={index} className="table-responsive-container">
+            <table className="reader-table">
+              <tbody>
+                {rows.map((row, rIdx) => {
+                  const cells = row
+                    .split('|')
+                    .filter((c) => c.trim() !== '')
+                    .map((c) => c.trim());
+                  if (row.includes(':---') || row.includes('---')) return null;
+                  const isHeader = rIdx === 0;
+                  return (
+                    <tr key={rIdx}>
+                      {cells.map((cell, cIdx) =>
+                        isHeader ? (
+                          <th key={cIdx}>{cell.replace(/\*\*/g, '')}</th>
+                        ) : (
+                          <td key={cIdx}>{cell.replace(/\*\*/g, '')}</td>
+                        )
+                      )}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        );
+      }
+      if (paragraph.startsWith('- ') || paragraph.startsWith('* ')) {
+        const items = paragraph.split('\n');
+        return (
+          <ul key={index} className="reader-list">
+            {items.map((item, iIdx) => (
+              <li key={iIdx}>{item.replace(/^[-*]\s+/, '')}</li>
+            ))}
+          </ul>
+        );
+      }
+      if (paragraph.startsWith('1. ') || paragraph.startsWith('2. ')) {
+        const items = paragraph.split('\n');
+        return (
+          <ol key={index} className="reader-ordered-list">
+            {items.map((item, iIdx) => (
+              <li key={iIdx}>{item.replace(/^\d+\.\s+/, '')}</li>
+            ))}
+          </ol>
+        );
+      }
+      return (
+        <p key={index} className="reader-paragraph">
+          {paragraph}
+        </p>
+      );
+    });
+  }, [activeChapter.id, activeChapter.content]);
 
   return (
     <div className="page-container page-guidebook">
@@ -54,10 +147,7 @@ export const GuidebookPage: React.FC = () => {
                   <li key={ch.id} className="chapter-item">
                     <button
                       type="button"
-                      onClick={() => {
-                        setActiveChapterId(ch.id);
-                        scrollToReader();
-                      }}
+                      onClick={() => handleSelectChapter(ch.id)}
                       className={`chapter-btn ${activeChapter.id === ch.id ? 'active' : ''}`}
                     >
                       <span className="chapter-num">Ch {ch.number}.</span>
@@ -91,102 +181,14 @@ export const GuidebookPage: React.FC = () => {
               <h2 className="reader-chapter-title serif-heading">{activeChapter.title}</h2>
             </div>
 
-            <div className="reader-content">
-              {activeChapter.content.split('\n\n').map((paragraph, index) => {
-                if (paragraph.startsWith('## ')) {
-                  return (
-                    <h2 key={index} className="reader-heading-2 serif-heading">
-                      {paragraph.replace('## ', '')}
-                    </h2>
-                  );
-                }
-                if (paragraph.startsWith('### ')) {
-                  return (
-                    <h3 key={index} className="reader-heading-3 serif-heading">
-                      {paragraph.replace('### ', '')}
-                    </h3>
-                  );
-                }
-                if (paragraph.startsWith('```')) {
-                  const lines = paragraph.split('\n');
-                  const lang = lines[0].replace('```', '');
-                  const code = lines.slice(1, -1).join('\n');
-                  return (
-                    <div key={index} className="reader-code-wrapper">
-                      {lang && <div className="code-lang-tag">{lang}</div>}
-                      <pre className="reader-code-block">
-                        <code>{code}</code>
-                      </pre>
-                    </div>
-                  );
-                }
-                if (paragraph.startsWith('|')) {
-                  const rows = paragraph.split('\n');
-                  return (
-                    <div key={index} className="table-responsive-container">
-                      <table className="reader-table">
-                        <tbody>
-                          {rows.map((row, rIdx) => {
-                            const cells = row
-                              .split('|')
-                              .filter((c) => c.trim() !== '')
-                              .map((c) => c.trim());
-                            if (row.includes(':---') || row.includes('---')) return null;
-                            const isHeader = rIdx === 0;
-                            return (
-                              <tr key={rIdx}>
-                                {cells.map((cell, cIdx) =>
-                                  isHeader ? (
-                                    <th key={cIdx}>{cell.replace(/\*\*/g, '')}</th>
-                                  ) : (
-                                    <td key={cIdx}>{cell.replace(/\*\*/g, '')}</td>
-                                  )
-                                )}
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
-                  );
-                }
-                if (paragraph.startsWith('- ') || paragraph.startsWith('* ')) {
-                  const items = paragraph.split('\n');
-                  return (
-                    <ul key={index} className="reader-list">
-                      {items.map((item, iIdx) => (
-                        <li key={iIdx}>{item.replace(/^[-*]\s+/, '')}</li>
-                      ))}
-                    </ul>
-                  );
-                }
-                if (paragraph.startsWith('1. ') || paragraph.startsWith('2. ')) {
-                  const items = paragraph.split('\n');
-                  return (
-                    <ol key={index} className="reader-ordered-list">
-                      {items.map((item, iIdx) => (
-                        <li key={iIdx}>{item.replace(/^\d+\.\s+/, '')}</li>
-                      ))}
-                    </ol>
-                  );
-                }
-                return (
-                  <p key={index} className="reader-paragraph">
-                    {paragraph}
-                  </p>
-                );
-              })}
-            </div>
+            <div className="reader-content">{renderedContent}</div>
 
             {/* Chapter Pagination Navigation */}
             <nav className="chapter-pagination" aria-label="Chapter Pagination">
               {prevChapter ? (
                 <button
                   type="button"
-                  onClick={() => {
-                    setActiveChapterId(prevChapter.id);
-                    scrollToReader();
-                  }}
+                  onClick={() => handleSelectChapter(prevChapter.id)}
                   className="link-button pagination-btn prev"
                 >
                   ← Ch {prevChapter.number}: {prevChapter.title}
@@ -198,10 +200,7 @@ export const GuidebookPage: React.FC = () => {
               {nextChapter && (
                 <button
                   type="button"
-                  onClick={() => {
-                    setActiveChapterId(nextChapter.id);
-                    scrollToReader();
-                  }}
+                  onClick={() => handleSelectChapter(nextChapter.id)}
                   className="link-button primary pagination-btn next"
                 >
                   Ch {nextChapter.number}: {nextChapter.title} →

@@ -165,6 +165,8 @@ personalWebsite/
 - [x] `frontend/src/data/posts/guidebook-master.md`: Ported full 8-chapter master guidebook (*Building Modern Web Applications: A Step-by-Step Guide for Frontend Beginners*).
 - [x] `frontend/src/data/guidebookData.ts`: Created typed guidebook data repository exporting `GuidebookChapter` interface and 8 structured chapter contents with sub-section navigation anchors.
 - [x] `frontend/src/pages/GuidebookPage.tsx` & `GuidebookPage.css`: Developed interactive reader web app featuring a sticky Table of Contents sidebar, formatted markdown reader canvas, code blocks, WCAG tables, and next/prev chapter pagination buttons.
+- [x] **Performance Optimization**: Implemented `useMemo` pre-parsed markdown node caching and `instant` container scrolling (`scrollToReader()`) eliminating DOM re-computation and smooth scroll delays during chapter navigation.
+- [x] **Mobile Responsiveness & Grid Isolation**: Applied `grid-template-columns: 300px minmax(0, 1fr)`, `min-width: 0` on reader canvas, and `white-space: pre-wrap` code wrappers eliminating horizontal page overflow on small viewports.
 - [x] `frontend/src/App.tsx`: Registered route `/guidebook` and added navigation links (`Book` / `BOOK` / `book.md`) across all 3 visual layouts (`ModernLayout`, `AsciiLayout`, `CliLayout`).
 
 ### Step 7: UX/UI & Accessibility SME Design Polish

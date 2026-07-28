@@ -201,12 +201,13 @@ Decoupled content data from UI components by creating typed static data modules:
 ## Step 5: Page Components & React Router Integration
 
 ### 1. Core Page Views (`src/pages/`)
-Built 9 client-side routed page views:
+Built 10 client-side routed page views:
 - **`HomePage.tsx`**: Hero section, quick bio summary, featured projects, and skill chips.
 - **`AboutPage.tsx`**: Full professional bio, values, and categorized skill matrix.
 - **`ProjectsPage.tsx`**: Project archive with interactive technology tag filter buttons.
 - **`ExperiencePage.tsx`**: Career & education timeline with left-aligned bullet highlights.
 - **`BlogListPage.tsx` & `BlogDetailPage.tsx`**: Blog article search, category grouping, tag filtering, and full article view.
+- **`GuidebookPage.tsx`**: Interactive 8-chapter reader app (*Building Modern Web Applications*) with sticky Table of Contents sidebar, pre-parsed `useMemo` rendering, WCAG AA mobile responsive layout, and container-relative instant scrolling.
 - **`NowPage.tsx`**: Derek Sivers style `/now` page (current projects, reading list, focus areas).
 - **`ContactPage.tsx`**: Contact information and interactive `mailto:` action button.
 - **`HowThisSiteWorksPage.tsx`**: Comprehensive technical architecture breakdown.
@@ -228,6 +229,7 @@ Built 9 client-side routed page views:
            <Route path="/projects" element={<ProjectsPage />} />
            <Route path="/blog" element={<BlogListPage />} />
            <Route path="/blog/:slug" element={<BlogDetailPage />} /> {/* Dynamic URL parameter */}
+           <Route path="/guidebook" element={<GuidebookPage />} />   {/* Interactive Guidebook Reader */}
            <Route path="/experience" element={<ExperiencePage />} />
            <Route path="/now" element={<NowPage />} />
            <Route path="/how-this-site-works" element={<HowThisSiteWorksPage />} />

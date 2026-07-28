@@ -28,6 +28,7 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
 - **Interactive Frontend Development Guidebook App (`/guidebook`)**:
   - Full 8-chapter interactive guidebook: *Building Modern Web Applications: A Step-by-Step Guide for Frontend Beginners*.
   - Features sticky Table of Contents sidebar, markdown canvas rendering, syntax-highlighted code blocks, WCAG tables, and next/prev chapter pagination buttons.
+  - **Performance & Mobile Optimization**: `useMemo` pre-parsed markdown node caching, container-relative instant scrolling (`scrollToReader()`), and CSS Grid `minmax(0, 1fr)` track sizing for responsive mobile reading without horizontal viewport overflow.
 - **Full-Featured Technical Blog Engine**:
   - Modular Markdown storage in `frontend/src/data/posts/`.
   - Vite raw static imports (`?raw`) with query helpers (`getAllBlogPosts`, `getBlogPostBySlug`, `getBlogPostsByTag`, `getGroupedBlogPostsByCategory`, `getRelatedBlogPosts`).
