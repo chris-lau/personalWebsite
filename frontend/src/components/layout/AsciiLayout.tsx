@@ -37,11 +37,11 @@ export const AsciiLayout = ({ children }: AsciiLayoutProps) => {
 
       {/* ASCII Top Header Banner */}
       <header className="ascii-header">
-        <div className="ascii-banner" aria-hidden="true">
+        <pre className="ascii-banner" aria-hidden="true">
 +-----------------------------------------------+
 |     CHRIS LAU // STAFF PRODUCT MANAGER, AI    |
 +-----------------------------------------------+
-        </div>
+        </pre>
         <div className="sr-only">
           <h1>Chris Lau - Staff Product Manager, AI</h1>
         </div>
