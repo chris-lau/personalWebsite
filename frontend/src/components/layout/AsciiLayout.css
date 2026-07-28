@@ -14,21 +14,38 @@
 }
 
 .ascii-banner {
-  white-space: pre;
   color: var(--header-color);
   font-weight: bold;
   text-align: center;
   margin-bottom: 1.5rem;
-  overflow-x: auto;
-  overflow-y: hidden;
-  line-height: 1.25;
-  font-size: clamp(0.42rem, 2.25vw, 0.95rem);
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
 }
 
-.ascii-banner::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
+.ascii-banner-desktop,
+.ascii-banner-mobile {
+  white-space: pre;
+  font-family: var(--font-family);
+  line-height: 1.25;
+  font-size: clamp(0.55rem, 2.2vw, 0.95rem);
+  overflow: hidden;
+}
+
+.ascii-banner-desktop {
+  display: block;
+}
+
+.ascii-banner-mobile {
+  display: none;
+}
+
+@media (max-width: 520px) {
+  .ascii-banner-desktop {
+    display: none;
+  }
+
+  .ascii-banner-mobile {
+    display: block;
+    font-size: clamp(0.6rem, 3.2vw, 0.85rem);
+  }
 }
 
 .ascii-nav {
