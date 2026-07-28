@@ -14,37 +14,48 @@
 }
 
 .ascii-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem 0.6rem;
   color: var(--header-color);
+  font-family: var(--font-family);
   font-weight: bold;
+  font-size: clamp(0.9rem, 2.5vw, 1.15rem);
   text-align: center;
   margin-bottom: 1.5rem;
+  padding: 0.5rem 0;
+  line-height: 1.4;
 }
 
-.ascii-banner-desktop,
-.ascii-banner-mobile {
-  white-space: pre;
-  font-family: var(--font-family);
-  line-height: 1.25;
-  font-size: clamp(0.55rem, 2.2vw, 0.95rem);
-  overflow: hidden;
+.ascii-prompt {
+  color: var(--accent-primary);
+  font-weight: bold;
 }
 
-.ascii-banner-desktop {
-  display: block;
+.ascii-name {
+  color: var(--text-primary);
+  letter-spacing: 0.04em;
 }
 
-.ascii-banner-mobile {
-  display: none;
+.ascii-separator {
+  color: var(--accent-secondary);
+}
+
+.ascii-title {
+  color: var(--header-color);
 }
 
 @media (max-width: 520px) {
-  .ascii-banner-desktop {
-    display: none;
+  .ascii-banner-text {
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.4rem;
   }
 
-  .ascii-banner-mobile {
-    display: block;
-    font-size: clamp(0.6rem, 3.2vw, 0.85rem);
+  .ascii-divider {
+    display: none;
   }
 }
 
