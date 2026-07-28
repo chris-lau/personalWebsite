@@ -15,8 +15,22 @@ import learningFrontendViaAiPairProgrammingContent from './posts/blog-learning-f
 import understandingSpaRoutingContent from './posts/blog-understanding-spa-routing-and-cloud-hosting.md?raw';
 import whyIsItCalledReactContent from './posts/blog-why-is-it-called-react.md?raw';
 import buildingLiveGithubDashboardContent from './posts/blog-building-live-github-dashboard-integration.md?raw';
+import demystifyingFastapiScaffoldingContent from './posts/blog-demystifying-fastapi-backend-scaffolding.md?raw';
 
 export const blogPostsData: BlogPost[] = [
+  {
+    id: 'demystifying-fastapi-backend-scaffolding',
+    slug: 'demystifying-fastapi-backend-scaffolding',
+    title: 'Demystifying FastAPI Scaffolding: A Beginner\'s Guide to Backend Boilerplate & Call Hierarchy',
+    description: 'A beginner-friendly architectural guide explaining core FastAPI backend boilerplate files (main.py, config.py, security.py, rate_limit.py) and a complete step-by-step Request Call Hierarchy diagram.',
+    updatedDate: 'July 2026',
+    readTime: '7 min read',
+    tags: ['FastAPI', 'Backend', 'Python', 'Architecture', 'Security', 'Uvicorn'],
+    author: 'Chris Lau',
+    category: 'Backend Architecture & Security',
+    featured: true,
+    content: demystifyingFastapiScaffoldingContent,
+  },
   {
     id: 'building-live-github-dashboard-integration',
     slug: 'building-live-github-dashboard-integration',
