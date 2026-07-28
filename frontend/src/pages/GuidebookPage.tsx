@@ -48,11 +48,9 @@ export const GuidebookPage: React.FC = () => {
       }
       if (paragraph.startsWith('```')) {
         const lines = paragraph.split('\n');
-        const lang = lines[0].replace('```', '');
         const code = lines.slice(1, -1).join('\n');
         return (
           <div key={index} className="reader-code-wrapper">
-            {lang && <div className="code-lang-tag">{lang}</div>}
             <pre className="reader-code-block">
               <code>{code}</code>
             </pre>
