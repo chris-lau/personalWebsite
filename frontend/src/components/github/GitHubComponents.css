@@ -15,8 +15,8 @@
   justify-content: space-between;
   gap: 0.75rem;
   padding: 0.75rem 1rem;
-  background-color: var(--surface-card, rgba(255, 255, 255, 0.03));
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  background-color: var(--bg-secondary, rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15));
   border-radius: var(--border-radius-md, 8px);
 }
 
@@ -29,56 +29,72 @@
 
 .gh-username-input {
   flex: 1;
-  padding: 0.5rem 0.75rem;
-  background: var(--surface-input, rgba(0, 0, 0, 0.2));
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15));
+  padding: 0.55rem 0.85rem;
+  background: var(--bg-primary, #0c0d10);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2));
   border-radius: var(--border-radius-sm, 4px);
   color: var(--text-primary, #ffffff);
   font-size: 0.9rem;
-  font-family: inherit;
+  font-family: var(--font-family, inherit);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.gh-username-input::placeholder {
+  color: var(--text-muted, #8b949e);
+  opacity: 0.8;
 }
 
 .gh-username-input:focus {
-  outline: 2px solid var(--accent-primary, #6366f1);
-  border-color: transparent;
+  outline: none;
+  border-color: var(--accent-primary, #6366f1);
+  box-shadow: 0 0 0 2px var(--border-muted, rgba(99, 102, 241, 0.3));
 }
 
 .gh-selector-button {
-  padding: 0.5rem 1rem;
+  padding: 0.55rem 1.15rem;
   background-color: var(--accent-primary, #6366f1);
-  color: #ffffff;
+  color: var(--text-inverse, #121316);
   border: none;
   border-radius: var(--border-radius-sm, 4px);
-  font-weight: 600;
-  font-size: 0.85rem;
+  font-weight: 700;
+  font-size: 0.88rem;
+  font-family: var(--font-family, inherit);
   cursor: pointer;
-  transition: opacity 0.2s ease;
+  white-space: nowrap;
+  transition: opacity 0.2s ease, transform 0.1s ease;
 }
 
 .gh-selector-button:hover {
-  opacity: 0.9;
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.gh-selector-button:active {
+  transform: translateY(0);
 }
 
 .gh-presets {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
 }
 
 .gh-presets-label {
   font-size: 0.8rem;
   color: var(--text-muted, #8b949e);
   margin-right: 0.2rem;
+  font-family: var(--font-family, inherit);
 }
 
 .gh-preset-chip {
-  padding: 0.25rem 0.6rem;
-  font-size: 0.75rem;
-  background: var(--surface-button, rgba(255, 255, 255, 0.06));
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  padding: 0.3rem 0.7rem;
+  font-size: 0.78rem;
+  font-family: var(--font-family, inherit);
+  background: var(--bg-primary, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2));
   border-radius: 999px;
-  color: var(--text-secondary, #cccccc);
+  color: var(--text-primary, #cccccc);
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -86,18 +102,21 @@
 .gh-preset-chip:hover,
 .gh-preset-chip.active {
   background: var(--accent-primary, #6366f1);
-  color: #ffffff;
+  color: var(--text-inverse, #121316);
+  font-weight: 700;
   border-color: var(--accent-primary, #6366f1);
 }
 
 .gh-reset-button {
-  padding: 0.25rem 0.6rem;
-  font-size: 0.75rem;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.78rem;
+  font-family: var(--font-family, inherit);
   background: rgba(239, 68, 68, 0.15);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  border: 1px solid rgba(239, 68, 68, 0.4);
   border-radius: 999px;
   color: #f87171;
   cursor: pointer;
+  font-weight: 600;
 }
 
 .gh-reset-button:hover {
@@ -165,8 +184,8 @@
 /* Summary Card */
 .gh-summary-card {
   padding: 1.25rem;
-  background-color: var(--surface-card, rgba(255, 255, 255, 0.03));
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  background-color: var(--bg-secondary, rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15));
   border-radius: var(--border-radius-md, 8px);
   display: flex;
   flex-direction: column;
@@ -316,13 +335,24 @@
 
 .gh-search-input {
   width: 100%;
-  padding: 0.5rem 0.75rem;
-  background: var(--surface-input, rgba(0, 0, 0, 0.2));
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15));
+  padding: 0.55rem 0.85rem;
+  background: var(--bg-primary, rgba(0, 0, 0, 0.2));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2));
   border-radius: var(--border-radius-sm, 4px);
   color: var(--text-primary, #ffffff);
   font-size: 0.88rem;
-  font-family: inherit;
+  font-family: var(--font-family, inherit);
+}
+
+.gh-search-input::placeholder {
+  color: var(--text-muted, #8b949e);
+  opacity: 0.8;
+}
+
+.gh-search-input:focus {
+  outline: none;
+  border-color: var(--accent-primary, #6366f1);
+  box-shadow: 0 0 0 2px var(--border-muted, rgba(99, 102, 241, 0.3));
 }
 
 .gh-filter-controls {
@@ -333,10 +363,11 @@
 }
 
 .gh-filter-pill {
-  padding: 0.4rem 0.75rem;
-  font-size: 0.8rem;
-  background: var(--surface-button, rgba(255, 255, 255, 0.05));
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+  padding: 0.45rem 0.85rem;
+  font-size: 0.82rem;
+  font-family: var(--font-family, inherit);
+  background: var(--bg-secondary, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2));
   border-radius: var(--border-radius-sm, 4px);
   color: var(--text-primary, #ffffff);
   cursor: pointer;
@@ -345,21 +376,26 @@
 
 .gh-filter-pill:hover,
 .gh-filter-pill.active {
-  background: #f59e0b;
-  color: #000000;
-  font-weight: 600;
-  border-color: #f59e0b;
+  background: var(--accent-primary, #f59e0b);
+  color: var(--text-inverse, #000000);
+  font-weight: 700;
+  border-color: var(--accent-primary, #f59e0b);
 }
 
 .gh-select-input {
-  padding: 0.4rem 0.75rem;
-  background: var(--surface-input, rgba(0, 0, 0, 0.2));
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15));
+  padding: 0.45rem 0.85rem;
+  background: var(--bg-primary, rgba(0, 0, 0, 0.2));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2));
   border-radius: var(--border-radius-sm, 4px);
   color: var(--text-primary, #ffffff);
   font-size: 0.82rem;
-  font-family: inherit;
+  font-family: var(--font-family, inherit);
   cursor: pointer;
+}
+
+.gh-select-input option {
+  background-color: var(--bg-secondary, #1a1b20);
+  color: var(--text-primary, #ffffff);
 }
 
 /* Repo Count Bar */
@@ -381,8 +417,8 @@
   flex-direction: column;
   justify-content: space-between;
   padding: 1.1rem;
-  background-color: var(--surface-card, rgba(255, 255, 255, 0.03));
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  background-color: var(--bg-secondary, rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15));
   border-radius: var(--border-radius-md, 8px);
   transition: transform 0.2s ease, border-color 0.2s ease;
   min-height: 180px;
@@ -408,6 +444,7 @@
 .gh-repo-name {
   font-size: 1rem;
   font-weight: 600;
+  font-family: var(--font-family, inherit);
   margin: 0;
 }
 
@@ -453,9 +490,11 @@
 .gh-topic-tag {
   font-size: 0.7rem;
   padding: 0.1rem 0.4rem;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-primary, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
   border-radius: 4px;
   color: var(--text-muted, #8b949e);
+  font-family: var(--font-family, inherit);
 }
 
 .gh-repo-meta {
@@ -490,23 +529,26 @@
   display: flex;
   gap: 0.5rem;
   padding-top: 0.5rem;
-  border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.06));
+  border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
 }
 
 .gh-link-button {
-  padding: 0.3rem 0.65rem;
+  padding: 0.35rem 0.75rem;
   font-size: 0.78rem;
-  background: var(--surface-button, rgba(255, 255, 255, 0.05));
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
+  font-family: var(--font-family, inherit);
+  background: var(--bg-primary, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2));
   border-radius: 4px;
   color: var(--text-primary, #ffffff);
   text-decoration: none;
-  transition: background 0.2s ease;
+  font-weight: 600;
+  transition: all 0.2s ease;
 }
 
 .gh-link-button:hover {
   background: var(--accent-primary, #6366f1);
-  color: #ffffff;
+  color: var(--text-inverse, #000000);
+  border-color: var(--accent-primary, #6366f1);
 }
 
 .gh-link-button.live-demo {
@@ -516,7 +558,7 @@
 
 .gh-link-button.live-demo:hover {
   background: #22c55e;
-  color: #ffffff;
+  color: #000000;
 }
 
 /* Empty State */
@@ -524,16 +566,18 @@
   text-align: center;
   padding: 3rem 1rem;
   color: var(--text-muted, #8b949e);
-  background: var(--surface-card, rgba(255, 255, 255, 0.02));
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+  background: var(--bg-secondary, rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15));
   border-radius: 8px;
 }
 
 .gh-reset-filters-btn {
   margin-top: 1rem;
-  padding: 0.4rem 1rem;
+  padding: 0.45rem 1.15rem;
   background: var(--accent-primary, #6366f1);
-  color: #ffffff;
+  color: var(--text-inverse, #121316);
+  font-weight: 700;
+  font-family: var(--font-family, inherit);
   border: none;
   border-radius: 4px;
   cursor: pointer;

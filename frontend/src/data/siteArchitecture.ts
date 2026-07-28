@@ -15,6 +15,10 @@ export const siteArchitectureData: SiteArchitectureCategory[] = [
       {
         name: 'React Router 6 (Client-Side SPA Routing)',
         desc: 'Declarative routing with <Routes> and <Route> wrapped in a global LayoutRenderer context.'
+      },
+      {
+        name: 'GitHub REST API Integration & sessionStorage Caching Layer',
+        desc: 'Real-time GitHub activity integration fetching user profile & repository metrics (api.github.com), 15-minute per-username sessionStorage TTL caching, custom React hook (useGitHubData), and 30-day activity highlight filters.'
       }
     ]
   },

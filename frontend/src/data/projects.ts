@@ -12,8 +12,8 @@ export const projectsData: Project[] = [
   {
     id: 'personal-os',
     title: 'Personal Portfolio Website',
-    description: 'Triple-themed (Modern Editorial, ASCII Terminal & Retro CLI) personal website built with React 18, TypeScript, Vite, and CSS Design Tokens.',
-    techStack: ['React', 'TypeScript', 'Vite', 'CSS Tokens'],
+    description: 'Triple-themed (Modern Editorial, ASCII Terminal & Retro CLI) personal website featuring a live GitHub Activity Dashboard, REST API integration, sessionStorage caching, and CSS Design Tokens.',
+    techStack: ['React', 'TypeScript', 'GitHub API', 'Vite', 'CSS Tokens'],
     githubUrl: 'https://github.com/chris-lau/personalWebsite',
     featured: true,
   },
