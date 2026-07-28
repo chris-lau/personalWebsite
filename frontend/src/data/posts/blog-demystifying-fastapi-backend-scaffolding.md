@@ -37,12 +37,55 @@ backend/
 | **[`.env.example`](file:///Users/chrislau/Documents/personalWebsite/backend/.env.example)** | A public template file committed to git showing required configuration keys (e.g. `ENVIRONMENT`, `PORT`, `ALLOWED_ORIGINS`, `GITHUB_TOKEN`) without exposing real API keys. |
 | **[`.env`](file:///Users/chrislau/Documents/personalWebsite/backend/.env)** | The local environment configuration file containing actual development keys and secrets. **Never committed to Git**. |
 | **[`.gitignore`](file:///Users/chrislau/Documents/personalWebsite/backend/.gitignore)** | Instructs Git to ignore sensitive `.env` files, virtual environments (`.venv/`), compiled Python bytecode (`__pycache__/`), and test caches (`.pytest_cache/`). |
-| **[`config.py`](file:///Users/chrislau/Documents/personalWebsite/backend/config.py)** | Uses `Pydantic-Settings` to read environment variables into Python memory with strict type validation (converting text port `"8000"` to integer `8000` and splitting `ALLOWED_ORIGINS` into a list of strings). |
+| **[`config.py`](file:///Users/chrislau/Documents/personalWebsite/backend/config.py)** | Uses **`Pydantic-Settings`** (`BaseSettings`) to read environment variables into Python memory with strict type validation (converting text port `"8000"` to integer `8000` and splitting `ALLOWED_ORIGINS` into a list of strings). |
 | **[`core/security.py`](file:///Users/chrislau/Documents/personalWebsite/backend/core/security.py)** | Custom middleware that injects security headers into every outgoing HTTP response (`X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy`). |
 | **[`core/rate_limit.py`](file:///Users/chrislau/Documents/personalWebsite/backend/core/rate_limit.py)** | Configures `slowapi` to track client IP addresses and limit incoming requests (e.g. max 60 req/min per IP) to prevent spam and DDoS attacks. |
-| **[`main.py`](file:///Users/chrislau/Documents/personalWebsite/backend/main.py)** | The main application entrypoint. Initializes FastAPI, attaches `CORSMiddleware`, registers security headers, sets up `slowapi` rate limit exception handlers, defines global 500 error sanitizers, and mounts routes like `/health`. |
+| **[`main.py`](file:///Users/chrislau/Documents/personalWebsite/backend/main.py)** | The main application entrypoint. Initializes FastAPI, attaches `CORSMiddleware`, registers security headers, sets up `slowapi` rate limit exception handlers, defines global 500 error sanitizers, and mounts routes like `/health`. Uses Pydantic under the hood to generate Swagger UI OpenAPI specs (`/docs`). |
 | **[`pyproject.toml`](file:///Users/chrislau/Documents/personalWebsite/backend/pyproject.toml)** | Configures Python tools like Pytest (`pythonpath = ["."]`) and Ruff linter rules in a single standard configuration file. |
+| **[`tests/conftest.py`](file:///Users/chrislau/Documents/personalWebsite/backend/tests/conftest.py)** | Defines Pytest `@pytest.fixture` providing an in-memory `TestClient(app)` fixture for fast endpoint testing without starting live network servers. |
 | **[`tests/test_health.py`](file:///Users/chrislau/Documents/personalWebsite/backend/tests/test_health.py)** | Automated unit/integration tests verifying that `/health` returns `HTTP 200 OK`, CORS headers match approved origins, and security headers are present. |
+
+---
+
+### Hands-On Code: How Pydantic Is Used in `config.py`
+
+Pydantic's `BaseSettings` eliminates manual parsing of environment variables. Here is the exact implementation used in our boilerplate:
+
+```python
+# backend/config.py
+from typing import List
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore"
+    )
+
+    ENVIRONMENT: str = Field(default="development")
+    PORT: int = Field(default=8000)
+    ALLOWED_ORIGINS: str = Field(
+        default="http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173"
+    )
+    RATE_LIMIT_PER_MINUTE: int = Field(default=60)
+    GITHUB_TOKEN: str = Field(default="")
+
+    @property
+    def cors_origins_list(self) -> List[str]:
+        """Parse comma-separated ALLOWED_ORIGINS string into a list for CORSMiddleware."""
+        if not self.ALLOWED_ORIGINS:
+            return ["http://localhost:5173"]
+        return [origin.strip() for origin in self.ALLOWED_ORIGINS.split(",") if origin.strip()]
+
+settings = Settings()
+```
+
+#### What Pydantic achieves in this boilerplate file:
+1. **Automatic Type Coercion**: Converts string `PORT="8000"` from `.env` into integer `8000` at runtime.
+2. **Default Fallbacks**: If `.env` is absent (e.g. initial dev setup), safe default fields are supplied.
+3. **Environment Variable Overrides**: On production hosts like Render, Pydantic automatically overrides `.env` with system environment variables seamlessly.
 
 ---
 
