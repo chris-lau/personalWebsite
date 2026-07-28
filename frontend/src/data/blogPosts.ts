@@ -19,8 +19,22 @@ import demystifyingFastapiScaffoldingContent from './posts/blog-demystifying-fas
 import whyEslintContent from './posts/blog-why-eslint-by-default-instead-of-biome.md?raw';
 import whatRuffDoesContent from './posts/blog-what-ruff-does-python-linter.md?raw';
 import demystifyingVenvContent from './posts/blog-demystifying-python-virtual-environments-venv.md?raw';
+import demystifyingSecurityHeadersContent from './posts/blog-demystifying-http-security-headers-fastapi.md?raw';
 
 export const blogPostsData: BlogPost[] = [
+  {
+    id: 'demystifying-http-security-headers-fastapi',
+    slug: 'demystifying-http-security-headers-fastapi',
+    title: 'Demystifying HTTP Security Headers: How Backend Middleware Protects Browsers from Web Attacks',
+    description: 'A deep architectural dive into HTTP security headers (nosniff, DENY frame options, XSS, Referrer-Policy), why attackers cannot spoof them, and implementing middleware in FastAPI.',
+    updatedDate: 'July 2026',
+    readTime: '7 min read',
+    tags: ['Security', 'FastAPI', 'Middleware', 'HTTP', 'Backend', 'Python'],
+    author: 'Chris Lau',
+    category: 'Backend Architecture & Security',
+    featured: true,
+    content: demystifyingSecurityHeadersContent,
+  },
   {
     id: 'demystifying-python-virtual-environments-venv',
     slug: 'demystifying-python-virtual-environments-venv',
