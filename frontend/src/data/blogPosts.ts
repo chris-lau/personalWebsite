@@ -16,8 +16,36 @@ import understandingSpaRoutingContent from './posts/blog-understanding-spa-routi
 import whyIsItCalledReactContent from './posts/blog-why-is-it-called-react.md?raw';
 import buildingLiveGithubDashboardContent from './posts/blog-building-live-github-dashboard-integration.md?raw';
 import demystifyingFastapiScaffoldingContent from './posts/blog-demystifying-fastapi-backend-scaffolding.md?raw';
+import whyEslintContent from './posts/blog-why-eslint-by-default-instead-of-biome.md?raw';
+import whatRuffDoesContent from './posts/blog-what-ruff-does-python-linter.md?raw';
 
 export const blogPostsData: BlogPost[] = [
+  {
+    id: 'why-eslint-by-default-instead-of-biome',
+    slug: 'why-eslint-by-default-instead-of-biome',
+    title: 'Why ESLint Remains React\'s Default Linter Over Biome (And When to Switch)',
+    description: 'An architectural exploration of why React & Vite projects default to ESLint over Rust-based Biome, covering Meta\'s React Hooks rules, plugin ecosystems, and performance tradeoffs.',
+    updatedDate: 'July 2026',
+    readTime: '6 min read',
+    tags: ['React', 'ESLint', 'Biome', 'Tooling', 'TypeScript', 'Architecture'],
+    author: 'Chris Lau',
+    category: 'React Architecture & Design Systems',
+    featured: true,
+    content: whyEslintContent,
+  },
+  {
+    id: 'what-ruff-does-python-linter',
+    slug: 'what-ruff-does-python-linter',
+    title: 'Demystifying Ruff: The Rust-Powered Supercharger for Python Linting & Formatting',
+    description: 'A deep dive into Ruff—the blazing fast Rust-written Python linter and formatter that replaces Black, Flake8, and isort in a single binary.',
+    updatedDate: 'July 2026',
+    readTime: '6 min read',
+    tags: ['Python', 'Ruff', 'FastAPI', 'Rust', 'Tooling', 'Backend'],
+    author: 'Chris Lau',
+    category: 'Backend Architecture & Security',
+    featured: true,
+    content: whatRuffDoesContent,
+  },
   {
     id: 'demystifying-fastapi-backend-scaffolding',
     slug: 'demystifying-fastapi-backend-scaffolding',
