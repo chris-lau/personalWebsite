@@ -74,37 +74,54 @@ personalWebsite/
 ├── README.md                          # Project documentation
 ├── personal-os-project-plan.md        # Master architectural project plan
 ├── phase-1-implementation-plan.md     # Phase 1 execution plan & checklist
+├── phase-2-implementation-plan.md     # Phase 2 execution plan & checklist
+├── phase-3-implementation-plan.md     # Phase 3 execution plan & checklist
+├── phase-3-summary.md                 # Phase 3 summary & architecture guide
+├── backend/                           # 🚧 FastAPI Backend Service (Work in Progress — Phase 3)
+│   ├── main.py                        # FastAPI entrypoint, CORS, rate limiting, security headers, /health
+│   ├── config.py                      # Pydantic BaseSettings environment variable loader
+│   ├── requirements.txt               # Dependencies (fastapi, uvicorn, pydantic, slowapi, httpx, pytest)
+│   ├── core/                          # Security headers & slowapi rate limiter middleware
+│   └── tests/                         # Pytest TestClient suite (conftest.py, test_health.py)
 └── frontend/                          # React + TypeScript SPA app
     ├── .storybook/                    # Storybook 8 configuration
     ├── e2e/                           # Playwright end-to-end tests
     │   └── portfolio.spec.ts
     ├── src/
     │   ├── api/                       # GitHub REST API client & sessionStorage caching
-    │   ├── components/
-    │   │   ├── blog/                  # BlogCard & styling
-    │   │   ├── github/                # GitHubDashboard, GitHubSummary, GitHubRepoCard, GitHubFilters, GitHubUsernameSelector
-    │   │   ├── layout/                # AsciiLayout, CliLayout, ModernLayout, LayoutRenderer, ThemeToggle
-    │   │   └── ui/                    # BoxContainer, ProjectCard, TimelineItem
+    │   ├── components/                # React UI & Dashboard components
     │   ├── context/                   # ThemeContext (Global 3-theme manager)
     │   ├── data/                      # Static data layer & markdown blog posts
-    │   │   ├── posts/                 # Markdown blog post storage (14 articles)
-    │   │   ├── blogPosts.ts           # Blog engine static data layer & helpers
-    │   │   ├── profile.ts
-    │   │   ├── projects.ts
-    │   │   ├── experience.ts
-    │   │   ├── skills.ts
-    │   │   └── now.ts
     │   ├── hooks/                     # Custom React hooks (useGitHubData)
-    │   ├── pages/                     # Page views (Home, About, Projects, Blog, Experience, Now, Contact, Architecture)
-    │   ├── styles/                    # Design tokens (variables.css for 3 themes) and reset (global.css)
-    │   ├── types/                     # TypeScript interfaces (theme.ts, portfolio.ts, github.ts)
-    │   ├── App.tsx                    # React Router configuration
-    │   └── main.tsx                   # Entry point
+    │   ├── pages/                     # Page views
+    │   ├── styles/                    # Design tokens & CSS reset
+    │   └── types/                     # TypeScript interfaces
     ├── package.json
-    ├── playwright.config.ts
     ├── vite.config.ts
     └── tsconfig.json
 ```
+
+---
+
+## 🚧 Backend Service (FastAPI — Work in Progress)
+
+The project is currently introducing **Phase 3: FastAPI Backend & GitHub API Proxy** (`/backend`).
+
+### Stack & Security
+* **Framework**: Python 3.12+ / FastAPI / Uvicorn
+* **Security Controls**: CORS origin protection (`CORSMiddleware`), IP rate limiting (`slowapi`), HTTP security headers (`nosniff`, `DENY`), sanitized error handling.
+* **Testing**: Pytest + FastAPI `TestClient` in-memory test runner.
+* **Interactive API Playground**: Automatic Swagger UI available at `/docs`.
+
+### Running Backend Locally
+```bash
+cd backend
+source .venv/bin/activate
+uvicorn main:app --reload
+```
+* **Health Check**: `http://localhost:8000/health`
+* **Swagger UI Docs**: `http://localhost:8000/docs`
+* **Run Tests**: `pytest -v`
 
 ---
 
