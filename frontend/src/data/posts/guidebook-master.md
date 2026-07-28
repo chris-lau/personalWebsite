@@ -42,6 +42,11 @@ Welcome to **Building Modern Web Applications**! This book is written specifical
    - 8.2 Accessible Segmented Controls (`role="radiogroup"` & `role="radio"`)
    - 8.3 Mobile Responsive Drawers & Touch Targets
    - 8.4 Deploying SPAs to Cloudflare Pages (`_redirects` SPA Fallbacks)
+9. [Chapter 9: Consuming External REST APIs & Client-Side Caching](#chapter-9-consuming-external-rest-apis--client-side-caching)
+   - 9.1 Decoupling Raw API Payloads from View Models
+   - 9.2 Handling Rate Limits with `sessionStorage` Caching
+   - 9.3 Encapsulating Async Lifecycles in Custom React Hooks
+   - 9.4 Tabbed UI Integration & Storybook Visual Workshops
 
 ---
 
@@ -406,3 +411,113 @@ test('navigates through core page routes', async ({ page }) => {
 - [x] React Context global state management for theme persistence.
 - [x] 3-layer SPA client-side routing with `react-router-dom`.
 - [x] 3-tier testing suite (Vitest Unit/Integration + Storybook a11y + Playwright E2E).
+- [x] External REST API integration with 15-minute `sessionStorage` caching & custom hook state management.
+
+---
+
+## Chapter 9: Consuming External REST APIs & Client-Side Caching
+
+### 9.1 Decoupling Raw API Payloads from View Models
+
+When integrating third-party APIs (such as GitHub's REST API `api.github.com/users/{username}`), raw JSON responses contain dozens of unused or unstable fields.
+
+To protect UI components from API contract breakage, decouple raw API schemas from clean View Models:
+
+```typescript
+// Raw API contract matching external service schema
+export interface GitHubRepoResponse {
+  id: number;
+  name: string;
+  stargazers_count: number;
+  pushed_at: string;
+}
+
+// Clean View Model consumed by React UI components
+export interface GitHubRepo {
+  id: number;
+  name: string;
+  stars: number;
+  formattedLastUpdated: string;
+  isRecentlyUpdated: boolean; // Precomputed: updated within last 30 days
+}
+```
+
+---
+
+### 9.2 Handling Rate Limits with `sessionStorage` Caching
+
+Unauthenticated public API calls are often subject to strict IP rate limits (e.g. 60 req/hr on GitHub). To prevent quota exhaustion:
+
+1. Check `sessionStorage` before firing `fetch()`.
+2. Save successful JSON payloads with a timestamp and a 15-minute TTL (Time-To-Live).
+
+```typescript
+const CACHE_TTL_MS = 15 * 60 * 1000;
+
+export async function fetchGitHubUser(username: string): Promise<GitHubUser> {
+  const cacheKey = `gh_user_${username.toLowerCase()}`;
+  const cached = sessionStorage.getItem(cacheKey);
+
+  if (cached) {
+    const { timestamp, data } = JSON.parse(cached);
+    if (Date.now() - timestamp < CACHE_TTL_MS) {
+      return data; // Return cached payload instantly!
+    }
+  }
+
+  const response = await fetch(`https://api.github.com/users/${encodeURIComponent(username)}`);
+  const rawData = await response.json();
+  const transformed = transformUser(rawData);
+
+  sessionStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), data: transformed }));
+  return transformed;
+}
+```
+
+---
+
+### 9.3 Encapsulating Async Lifecycles in Custom React Hooks
+
+Move asynchronous state management (`loading`, `error`, `data`, `refetch`) out of UI components and into reusable custom hooks:
+
+```typescript
+export function useGitHubData(initialUsername = 'chris-lau') {
+  const [username, setUsername] = useState(initialUsername);
+  const [user, setUser] = useState<GitHubUser | null>(null);
+  const [repos, setRepos] = useState<GitHubRepo[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    setLoading(true);
+
+    Promise.all([fetchGitHubUser(username), fetchGitHubRepos(username)])
+      .then(([userData, reposData]) => {
+        if (isMounted) {
+          setUser(userData);
+          setRepos(reposData);
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
+        if (isMounted) {
+          setError(err.message);
+          setLoading(false);
+        }
+      });
+
+    return () => { isMounted = false; };
+  }, [username]);
+
+  return { username, setUsername, user, repos, loading, error };
+}
+```
+
+---
+
+### 9.4 Tabbed UI Integration & Storybook Visual Workshops
+
+1. **Accessible Tab Control**: Use `role="tablist"` and `role="tab"` buttons to switch between static curated portfolio projects and dynamic live API feeds (`<GitHubDashboard />`).
+2. **Storybook Stories**: Write `.stories.tsx` files to visual-test API UI components with mock payload states across all visual themes (`Modern Editorial`, `Warm ASCII`, and `Retro CLI`).
+
