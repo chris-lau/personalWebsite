@@ -112,18 +112,18 @@ personalWebsite/
 ## Detailed Task Breakdown
 
 ### Phase 3.1: Backend Core Setup & Security Foundation
-- [ ] Initialize `/backend` directory structure with Python 3.12 virtual environment.
-- [ ] Create `requirements.txt` with `fastapi`, `uvicorn`, `pydantic`, `pydantic-settings`, `slowapi`, `httpx`, `pytest`, `ruff`.
-- [ ] Create `config.py` using `Pydantic-Settings` to parse `ENVIRONMENT`, `ALLOWED_ORIGINS`, `GITHUB_TOKEN`, and `RATE_LIMIT_PER_MINUTE`.
-- [ ] Implement `core/security.py` middleware for security headers.
-- [ ] Implement `core/rate_limit.py` using `slowapi` with IP remote address detection.
-- [ ] Implement `main.py` with FastAPI app, CORS middleware, rate limit exception handler, security headers, and Swagger UI metadata.
+- [x] Initialize `/backend` directory structure with Python 3.12 virtual environment (`.venv`).
+- [x] Create `requirements.txt` with `fastapi`, `uvicorn`, `pydantic`, `pydantic-settings`, `slowapi`, `httpx`, `pytest`, `ruff`.
+- [x] Create `config.py` using `Pydantic-Settings` to parse `ENVIRONMENT`, `ALLOWED_ORIGINS`, `GITHUB_TOKEN`, and `RATE_LIMIT_PER_MINUTE`.
+- [x] Implement `core/security.py` middleware for security headers (`nosniff`, `DENY` frame options).
+- [x] Implement `core/rate_limit.py` using `slowapi` with IP remote address detection.
+- [x] Implement `main.py` with FastAPI app, CORS middleware, rate limit exception handler, security headers, and Swagger UI metadata.
 
 ### Phase 3.2: Seed Data, Schemas, & Static Endpoints
+- [x] Create endpoint: `GET /health` -> `{"status": "ok", "environment": "...", "service": "..."}`
 - [ ] Create Pydantic response schemas in `schemas/` (`ProfileResponse`, `ProjectResponse`, `NowResponse`, `ReadingResponse`).
 - [ ] Create JSON seed data in `data/` (`profile.json`, `projects.json`, `now.json`, `reading.json`).
 - [ ] Create endpoints:
-  - `GET /health` -> `{"status": "ok", "environment": "..."}`
   - `GET /api/profile`
   - `GET /api/projects` & `GET /api/projects/{slug}`
   - `GET /api/now`
@@ -138,10 +138,9 @@ personalWebsite/
   - Handle rate limit errors / network failures from upstream GitHub gracefully.
 
 ### Phase 3.4: Backend Automated Testing Suite
-- [ ] `tests/test_health.py`: Verify `/health` returns 200.
-- [ ] `tests/test_cors.py`: Verify approved origin gets CORS headers, disallowed origin gets blocked.
+- [x] Create `pyproject.toml` and `conftest.py` with Pytest `TestClient` fixture setup.
+- [x] `tests/test_health.py`: Verify `/health` returns 200, CORS origin headers match, and security headers (`nosniff`, `DENY`) are present.
 - [ ] `tests/test_rate_limit.py`: Verify spammed requests return `429 Too Many Requests`.
-- [ ] `tests/test_security_headers.py`: Verify `nosniff`, `DENY`, and security headers are present.
 - [ ] `tests/test_endpoints.py`: Verify `/api/projects`, `/api/profile`, `/api/now`, `/api/reading` return valid schemas.
 - [ ] `tests/test_github_proxy.py`: Mock upstream GitHub API calls, verify response transformation and caching behavior.
 
