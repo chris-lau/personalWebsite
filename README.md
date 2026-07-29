@@ -116,20 +116,33 @@ personalWebsite/
 
 Phase 3 introduces a dedicated, production-ready **Python FastAPI Backend** (`/backend`) providing a centralized REST API service, server-side caching, and client fallback handling.
 
-### Architectural Highlights
-* **Framework & Server**: Python 3.11 / FastAPI / Uvicorn.
-* **Schema Validation**: **Pydantic v2** models (`ProfileResponse`, `ProjectResponse`, `NowResponse`, `BookResponse`, `GitHubSummaryResponse`).
-* **Security & Rate Limiting**: CORS origin middleware protection, IP rate limiting (`slowapi`), and sanitized error handlers.
-* **Server-Side GitHub Proxy**: 15-minute in-memory TTL caching protecting clients from GitHub rate limits.
-* **Frontend Offline Fallback**: React API client (`frontend/src/api/backend.ts`) automatically falls back to local datasets if the FastAPI server is offline.
-* **Containerization**: Multi-stage `Dockerfile` and `.dockerignore` for Render deployment readiness.
-* **Interactive API Documentation**: Auto-generated OpenAPI Swagger UI at `/docs` and ReDoc at `/redoc`.
-* **Complete Test Coverage**:
-  - **Backend**: 16 / 16 Pytest tests passing (`./.venv/bin/pytest` in `backend/`).
-  - **Frontend**: 59 / 59 Vitest unit tests passing (`npm test` in `frontend/`).
-  - **E2E**: 6 / 6 Playwright E2E tests passing (`npx playwright test`).
-
 Detailed summary: [phase-3-summary.md](file:///Users/chrislau/Documents/personalWebsite/phase-3-summary.md) | Implementation plan: [phase-3-implementation-plan.md](file:///Users/chrislau/Documents/personalWebsite/phase-3-implementation-plan.md)
+
+---
+
+## 📊 Phase 3.5 — Full-Stack Operational Monitoring & Telemetry (IN-PROGRESS)
+
+Phase 3.5 introduces an integrated, zero-cost, zero-cookie **Full-Stack Operational Monitoring & Telemetry System** across the Python FastAPI backend, React 18 frontend, and End-to-End application topology.
+
+### Architectural Highlights
+* **Request Correlation (`X-Request-ID`)**: Middleware generating and propagating unique UUIDv4 headers for end-to-end request tracing (`CorrelationIDMiddleware`).
+* **Structured JSON Logging**: Machine-readable JSON logs output to `stdout` containing `timestamp`, `request_id`, `method`, `path`, `status_code`, `latency_ms`, `client_ip`, and `user_agent` (`RequestLoggingMiddleware`).
+* **Stack Trace Error Logging**: Global 500 exception handler outputting unhandled exception stack traces to `stderr` with request correlation IDs.
+* **Sub-System Health & Telemetry Endpoints**:
+  - `GET /health/live` — Fast process liveness probe.
+  - `GET /health/ready` — Deep sub-system readiness probe checking RAM RSS memory (MB), uptime, environment, and CORS origins.
+  - `GET /api/telemetry` & `GET /api/v1/telemetry` — Live process uptime, RSS memory, cache hit/miss status, and `slowapi` rate-limit budget telemetry.
+* **Frontend Real User Monitoring (RUM) & Audit Utilities**:
+  - Navigation timing, TTFB, DOM node count, and JS heap memory (`getBrowserPerformanceMetrics`).
+  - Storage byte size, active key count, and GitHub proxy cache age (`auditSessionStorage`).
+  - Diagnostic JSON report exporter (`exportDiagnosticReport`).
+* **Full-Stack Test Metrics**:
+  - **Backend**: **21 / 21 Pytest tests passing** (`./.venv/bin/pytest` in `backend/`).
+  - **Frontend**: **61 / 61 Vitest unit tests passing** across **12 test files** (`npm test` in `frontend/`).
+  - **E2E**: **6 / 6 Playwright E2E tests passing** (`npx playwright test`).
+
+Detailed summary: [phase-3.5-summary.md](file:///Users/chrislau/Documents/personalWebsite/phase-3.5-summary.md) | Implementation plan: [phase-3.5-implementation-plan.md](file:///Users/chrislau/Documents/personalWebsite/phase-3.5-implementation-plan.md)
+
 
 ---
 
