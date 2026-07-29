@@ -15,44 +15,41 @@ export const HowThisSiteWorksPage: React.FC = () => {
             This portfolio is built as a lightweight, stateful, full-stack application showcasing modern frontend architectural principles, strict typing, dynamic theming, multi-tier testing strategies, and a Python FastAPI backend.
           </p>
 
-          {/* Interactive Swagger UI & OpenAPI Explorer Box */}
-          <div className="api-explorer-card">
-            <h3 className="api-explorer-title">⚡ FASTAPI INTERACTIVE SWAGGER UI</h3>
-            <p className="api-explorer-desc">
-              Explore and test backend REST API endpoints (`/api/profile`, `/api/projects`, `/api/now`, `/api/github-summary`) interactively using the auto-generated Swagger UI and ReDoc specifications.
-            </p>
-            <div className="api-explorer-actions">
+          {/* Top Quick Explorer Bar */}
+          <div className="quick-explorer-bar">
+            <h3 className="quick-explorer-title">&gt; LIVE EXPLORERS & API INTERFACES</h3>
+            <div className="quick-explorer-buttons">
+              <a
+                href="https://chris-lau-storybook.pages.dev"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="explorer-badge-btn storybook"
+              >
+                🎨 Live Storybook UI
+              </a>
               <a
                 href={`${BACKEND_BASE_URL}/docs`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="api-explorer-btn primary"
+                className="explorer-badge-btn swagger"
               >
-                🚀 Open Swagger UI (/docs)
+                ⚡ FastAPI Swagger UI (/docs)
               </a>
               <a
                 href={`${BACKEND_BASE_URL}/redoc`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="api-explorer-btn secondary"
+                className="explorer-badge-btn redoc"
               >
-                📖 Open ReDoc (/redoc)
+                📖 ReDoc Specs (/redoc)
               </a>
               <a
                 href={`${BACKEND_BASE_URL}/openapi.json`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="api-explorer-btn secondary"
+                className="explorer-badge-btn openapi"
               >
-                📋 OpenAPI JSON Schema
-              </a>
-              <a
-                href="https://chris-lau-storybook.pages.dev"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="api-explorer-btn secondary"
-              >
-                🎨 Live Storybook UI
+                📋 OpenAPI Schema
               </a>
             </div>
           </div>

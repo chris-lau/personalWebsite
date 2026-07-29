@@ -1091,36 +1091,30 @@
   border: 1px solid var(--border-muted);
 }
 
-/* Interactive API Explorer Card on How This Site Works page */
-.api-explorer-card {
-  margin: 1.5rem 0 2rem 0;
+/* Quick Explorer Bar at the top of How This Site Works page */
+.quick-explorer-bar {
+  margin: 1.25rem 0 2rem 0;
   padding: 1.25rem 1.5rem;
   background: var(--surface-card, rgba(255, 255, 255, 0.03));
   border: 1px dashed var(--border-color, rgba(255, 255, 255, 0.2));
   border-radius: var(--border-radius-md, 8px);
 }
 
-.api-explorer-title {
-  margin: 0 0 0.5rem 0;
-  font-size: 1.1rem;
+.quick-explorer-title {
+  margin: 0 0 0.85rem 0;
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--color-primary, #6366f1);
+  letter-spacing: 0.02em;
 }
 
-.api-explorer-desc {
-  margin: 0 0 1rem 0;
-  font-size: 0.92rem;
-  line-height: 1.5;
-  color: var(--color-text-muted, #8b949e);
-}
-
-.api-explorer-actions {
+.quick-explorer-buttons {
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem;
 }
 
-.api-explorer-btn {
+.explorer-badge-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -1130,26 +1124,33 @@
   border-radius: var(--border-radius-sm, 6px);
   text-decoration: none;
   transition: all 0.2s ease;
-}
-
-.api-explorer-btn.primary {
-  background: var(--color-primary, #6366f1);
-  color: #ffffff;
-  border: 1px solid var(--color-primary, #6366f1);
-}
-
-.api-explorer-btn.primary:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
-
-.api-explorer-btn.secondary {
   background: var(--surface-button, rgba(255, 255, 255, 0.05));
   color: var(--color-text, #e6edf3);
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2));
 }
 
-.api-explorer-btn.secondary:hover {
+.explorer-badge-btn:hover {
+  transform: translateY(-1px);
   border-color: var(--color-primary, #6366f1);
   color: var(--color-primary, #6366f1);
+}
+
+.explorer-badge-btn.storybook {
+  border-color: rgba(255, 71, 133, 0.4);
+  color: #ff4785;
+}
+
+.explorer-badge-btn.storybook:hover {
+  background: rgba(255, 71, 133, 0.12);
+  border-color: #ff4785;
+}
+
+.explorer-badge-btn.swagger {
+  border-color: rgba(73, 204, 144, 0.4);
+  color: #49cc90;
+}
+
+.explorer-badge-btn.swagger:hover {
+  background: rgba(73, 204, 144, 0.12);
+  border-color: #49cc90;
 }
