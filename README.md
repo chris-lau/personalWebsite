@@ -77,11 +77,15 @@ personalWebsite/
 ├── phase-2-implementation-plan.md     # Phase 2 execution plan & checklist
 ├── phase-3-implementation-plan.md     # Phase 3 execution plan & checklist
 ├── phase-3-summary.md                 # Phase 3 summary & architecture guide
-├── backend/                           # 🚧 FastAPI Backend Service (Work in Progress — Phase 3)
+├── backend/                           # 🐍 FastAPI Backend & Single Source of Truth Service
+│   ├── .venv/                         # Isolated Python virtual environment (git-ignored)
 │   ├── main.py                        # FastAPI entrypoint, CORS, rate limiting, security headers, /health
 │   ├── config.py                      # Pydantic BaseSettings environment variable loader
+│   ├── pyproject.toml                 # Pytest & Ruff linter configuration
 │   ├── requirements.txt               # Dependencies (fastapi, uvicorn, pydantic, slowapi, httpx, pytest)
 │   ├── core/                          # Security headers & slowapi rate limiter middleware
+│   ├── data/                          # 📁 Canonical JSON Data Layer (projects, profile, skills, experience, now, site_architecture, blog_posts)
+│   ├── posts/                         # 📝 Canonical Markdown Blog Posts (.md)
 │   └── tests/                         # Pytest TestClient suite (conftest.py, test_health.py)
 └── frontend/                          # React + TypeScript SPA app
     ├── .storybook/                    # Storybook 8 configuration
@@ -91,7 +95,7 @@ personalWebsite/
     │   ├── api/                       # GitHub REST API client & sessionStorage caching
     │   ├── components/                # React UI & Dashboard components
     │   ├── context/                   # ThemeContext (Global 3-theme manager)
-    │   ├── data/                      # Static data layer & markdown blog posts
+    │   ├── data/                      # Frontend data importers (imports from ../../../backend/data & ../../../backend/posts)
     │   ├── hooks/                     # Custom React hooks (useGitHubData)
     │   ├── pages/                     # Page views
     │   ├── styles/                    # Design tokens & CSS reset
@@ -103,25 +107,30 @@ personalWebsite/
 
 ---
 
-## 🚧 Backend Service (FastAPI — Work in Progress)
+## 🐍 Backend Service (FastAPI & Single Source of Truth Data Layer)
 
-The project is currently introducing **Phase 3: FastAPI Backend & GitHub API Proxy** (`/backend`).
+The project includes a production-ready **FastAPI Backend & Data Layer** (`/backend`).
 
-### Stack & Security
-* **Framework**: Python 3.12+ / FastAPI / Uvicorn
-* **Security Controls**: CORS origin protection (`CORSMiddleware`), IP rate limiting (`slowapi`), HTTP security headers (`nosniff`, `DENY`), sanitized error handling.
+### Architectural Highlights
+* **Single Source of Truth**: All portfolio JSON data files (`projects.json`, `profile.json`, `skills.json`, `experience.json`, `now.json`, `site_architecture.json`, `blog_posts.json`) and Markdown blog articles live in `backend/data/` and `backend/posts/`, serving both the FastAPI REST API and React Vite imports.
+* **Framework**: Python 3.12+ / FastAPI / Uvicorn.
+* **Tooling**: **Ruff** (blazing fast Rust-written linter and code formatter replacing Black, Flake8, and isort).
+* **Security Controls**: CORS origin protection (`CORSMiddleware`), IP rate limiting (`slowapi`), HTTP security headers (`nosniff`, `DENY`, `strict-origin-when-cross-origin`), sanitized error handling.
 * **Testing**: Pytest + FastAPI `TestClient` in-memory test runner.
 * **Interactive API Playground**: Automatic Swagger UI available at `/docs`.
 
 ### Running Backend Locally
 ```bash
 cd backend
+python3 -m venv .venv
 source .venv/bin/activate
+pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 * **Health Check**: `http://localhost:8000/health`
 * **Swagger UI Docs**: `http://localhost:8000/docs`
 * **Run Tests**: `pytest -v`
+* **Run Ruff Linter & Formatter**: `ruff check .` and `ruff format .`
 
 ---
 

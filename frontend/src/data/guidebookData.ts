@@ -1,5 +1,5 @@
 import { GuidebookChapter } from '../types/portfolio';
-import guidebookMasterContent from './posts/guidebook-master.md?raw';
+import guidebookMasterContent from '../../../backend/posts/guidebook-master.md?raw';
 
 export const getGuidebookMasterContent = (): string => {
   return guidebookMasterContent;
