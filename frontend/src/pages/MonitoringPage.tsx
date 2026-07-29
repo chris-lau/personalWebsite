@@ -12,31 +12,20 @@ export const MonitoringPage: React.FC = () => {
             Welcome to the live operational telemetry and health monitoring console. This system provides zero-cost, zero-cookie observability across the entire personal OS application stack — connecting browser Real User Monitoring (RUM), FastAPI process metrics, and synthetic E2E diagnostics.
           </p>
 
-          {/* Render Cold Start Notice Banner */}
-          <div
-            className="cold-start-notice-banner"
+          <p
+            className="cold-start-note"
             style={{
-              margin: '1rem 0',
-              padding: '0.85rem 1.1rem',
-              border: '1px solid var(--accent-color, #e74c3c)',
-              borderRadius: '4px',
-              backgroundColor: 'var(--card-bg, rgba(231, 76, 60, 0.08))',
-              display: 'flex',
-              alignItems: 'flex-start',
-              gap: '0.85rem',
+              fontSize: '0.8rem',
+              opacity: 0.85,
+              margin: '0.75rem 0',
+              padding: '0.4rem 0.75rem',
+              borderLeft: '3px solid var(--accent-color, #3498db)',
+              backgroundColor: 'var(--card-bg, rgba(0, 0, 0, 0.1))',
+              borderRadius: '0 4px 4px 0',
             }}
           >
-            <span style={{ fontSize: '1.3rem', lineHeight: 1 }}>⚠️</span>
-            <div style={{ fontSize: '0.85rem', lineHeight: '1.45' }}>
-              <strong>Understanding Backend Inactivity Cold Starts & Delays:</strong>
-              <p style={{ margin: '0.35rem 0 0 0', opacity: 0.9 }}>
-                The Python FastAPI backend is hosted on a free-tier container instance (Render). After 15 minutes of inactivity, the container automatically spins down to 0 instances to conserve cloud resources.
-              </p>
-              <p style={{ margin: '0.35rem 0 0 0', opacity: 0.9 }}>
-                <strong>Does this affect Swagger UI (/docs) and live endpoints? YES.</strong> The <strong>very first request</strong> sent to ANY endpoint — whether clicking <em>[ Try it out ]</em> on Swagger UI (/docs), triggering dashboard ping buttons, or fetching data — will experience a <strong>50+ second wake-up delay</strong> while Render provisions and boots the Docker container. Once awake, all subsequent requests execute in sub-50ms.
-              </p>
-            </div>
-          </div>
+            ℹ️ <strong>Backend Cold Start Note:</strong> Free-tier cloud instances (Render) spin down after 15 mins of inactivity. Initial requests (including Swagger UI <code>/docs</code> & diagnostic probes) may take ~50s to wake up the backend container. Subsequent requests respond in &lt;50ms.
+          </p>
 
           <div
             className="monitoring-page-highlights"

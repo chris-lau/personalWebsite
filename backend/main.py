@@ -16,9 +16,7 @@ app = FastAPI(
     title="Personal OS API",
     description=(
         "Backend API service for personal portfolio website, featuring profile data, project showcases, telemetry, and GitHub stats proxy.\n\n"
-        "⚠️ **Container Inactivity Cold Start Notice:** This API is hosted on Render's free-tier container infrastructure, which automatically spins down after 15 minutes of inactivity.\n\n"
-        "The **very first request** sent to ANY endpoint — including testing endpoints via this Swagger UI (/docs), triggering health probes, or frontend fetches — "
-        "will experience a **50+ second wake-up delay** while Render provisions and boots the Docker container. Once awake, all subsequent requests execute in sub-50ms."
+        "ℹ️ **Inactivity Cold Start Note:** Render free instances spin down after 15 mins of inactivity. Initial requests (including testing via Swagger UI `/docs`) may take ~50s to wake up the server container."
     ),
     version="1.0.0",
     docs_url="/docs",
