@@ -17,19 +17,25 @@ export const MonitoringPage: React.FC = () => {
             className="cold-start-notice-banner"
             style={{
               margin: '1rem 0',
-              padding: '0.75rem 1rem',
+              padding: '0.85rem 1.1rem',
               border: '1px solid var(--accent-color, #e74c3c)',
               borderRadius: '4px',
               backgroundColor: 'var(--card-bg, rgba(231, 76, 60, 0.08))',
               display: 'flex',
-              alignItems: 'center',
-              gap: '0.75rem',
+              alignItems: 'flex-start',
+              gap: '0.85rem',
             }}
           >
-            <span style={{ fontSize: '1.25rem' }}>⚠️</span>
-            <p style={{ margin: 0, fontSize: '0.85rem', lineHeight: '1.4' }}>
-              <strong>Backend Inactivity Cold Start Notice:</strong> The Python FastAPI backend runs on a free-tier container instance (Render). Due to inactivity, the server spins down automatically. Initial requests or health probes after periods of inactivity may experience a delay of <strong>50 seconds or more</strong> while the container wakes up. Subsequent requests execute in sub-50ms.
-            </p>
+            <span style={{ fontSize: '1.3rem', lineHeight: 1 }}>⚠️</span>
+            <div style={{ fontSize: '0.85rem', lineHeight: '1.45' }}>
+              <strong>Understanding Backend Inactivity Cold Starts & Delays:</strong>
+              <p style={{ margin: '0.35rem 0 0 0', opacity: 0.9 }}>
+                The Python FastAPI backend is hosted on a free-tier container instance (Render). After 15 minutes of inactivity, the container automatically spins down to 0 instances to conserve cloud resources.
+              </p>
+              <p style={{ margin: '0.35rem 0 0 0', opacity: 0.9 }}>
+                <strong>Does this affect Swagger UI (/docs) and live endpoints? YES.</strong> The <strong>very first request</strong> sent to ANY endpoint — whether clicking <em>[ Try it out ]</em> on Swagger UI (/docs), triggering dashboard ping buttons, or fetching data — will experience a <strong>50+ second wake-up delay</strong> while Render provisions and boots the Docker container. Once awake, all subsequent requests execute in sub-50ms.
+              </p>
+            </div>
           </div>
 
           <div

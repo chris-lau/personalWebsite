@@ -139,16 +139,16 @@ export const FullStackMonitoringDashboard: React.FC = () => {
             className="inactivity-notice-banner"
             style={{
               marginTop: '0.75rem',
-              padding: '0.6rem 0.85rem',
+              padding: '0.65rem 0.85rem',
               border: '1px solid var(--border-color, #444)',
               borderRadius: '4px',
               backgroundColor: 'var(--card-bg, rgba(0, 0, 0, 0.2))',
               fontSize: '0.8rem',
-              lineHeight: '1.4',
-              opacity: 0.9,
+              lineHeight: '1.45',
+              opacity: 0.95,
             }}
           >
-            ℹ️ <strong>Note:</strong> Free-tier cloud instances (Render) spin down after periods of inactivity. Initial requests or health probes after inactivity may take <strong>50 seconds or longer</strong> while the backend container wakes up.
+            ℹ️ <strong>Backend Inactivity Cold Start Delay:</strong> Free-tier cloud instances (Render) spin down after 15 mins of inactivity. The <strong>very first request</strong> to ANY endpoint (including testing via <strong>Swagger UI /docs</strong>, triggering health pings, or diagnostic tests) will wait <strong>50+ seconds</strong> while the backend Docker container boots up. Subsequent requests respond in sub-50ms.
           </div>
 
           <div className="monitoring-actions">
