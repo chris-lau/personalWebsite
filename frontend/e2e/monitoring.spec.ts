@@ -8,13 +8,13 @@ test.describe('Operational Monitoring Dashboard E2E Tests', () => {
 
     // 2. Verify Monitoring Dashboard Container
     await expect(
-      page.getByText('FULL-STACK OPERATIONAL MONITORING & TELEMETRY DASHBOARD')
+      page.getByRole('heading', { name: /FULL-STACK OPERATIONAL MONITORING & TELEMETRY DASHBOARD/ })
     ).toBeVisible();
 
     // 3. Verify Topology Nodes
-    await expect(page.getByText('React 18 SPA')).toBeVisible();
-    await expect(page.getByText('FastAPI Backend')).toBeVisible();
-    await expect(page.getByText('GitHub REST API')).toBeVisible();
+    await expect(page.getByText('React 18 SPA', { exact: true })).toBeVisible();
+    await expect(page.getByText('FastAPI Backend', { exact: true })).toBeVisible();
+    await expect(page.getByText('GitHub REST API', { exact: true })).toBeVisible();
 
     // 4. Verify Interactive Action Buttons
     await expect(page.getByRole('button', { name: '🔄 Ping Health' })).toBeVisible();
@@ -40,12 +40,13 @@ test.describe('Operational Monitoring Dashboard E2E Tests', () => {
   test('toggles simulated offline mode toggle button', async ({ page }) => {
     await page.goto('/how-this-site-works');
 
-    const toggleBtn = page.getByRole('button', { name: /Simulate Offline Mode/i });
-    await toggleBtn.click();
+    const offlineToggleBtn = page.getByRole('button', { name: /Simulate Offline Mode/i });
+    await offlineToggleBtn.click();
 
-    await expect(page.getByRole('button', { name: '⚙️ Simulated Offline: ON' })).toBeVisible();
+    const activeToggleBtn = page.getByRole('button', { name: '⚙️ Simulated Offline: ON' });
+    await expect(activeToggleBtn).toBeVisible();
 
-    await toggleBtn.click();
+    await activeToggleBtn.click();
     await expect(page.getByRole('button', { name: '🔌 Simulate Offline Mode' })).toBeVisible();
   });
 });
