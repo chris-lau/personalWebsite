@@ -36,6 +36,11 @@ test.describe('Portfolio E2E Tests', () => {
     await expect(page.getByRole('heading', { name: "WHAT I'M DOING NOW" })).toBeVisible();
     await expect(page).toHaveURL('/now');
 
+    // 6b. Ops / Monitoring page
+    await page.click('nav.modern-nav >> text="Ops"');
+    await expect(page.getByRole('heading', { name: 'FULL-STACK OPERATIONAL MONITORING & TELEMETRY', exact: true })).toBeVisible();
+    await expect(page).toHaveURL('/monitoring');
+
     // 7. Stack / How this site works page
     await page.click('nav.modern-nav >> text="Stack"');
     await expect(page.getByRole('heading', { name: 'HOW THIS SITE WORKS' })).toBeVisible();

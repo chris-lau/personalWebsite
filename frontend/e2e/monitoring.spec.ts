@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Operational Monitoring Dashboard E2E Tests', () => {
-  test('navigates to /how-this-site-works and renders Full-Stack Monitoring Dashboard', async ({ page }) => {
-    // 1. Navigate to /how-this-site-works
-    await page.goto('/how-this-site-works');
-    await expect(page.getByRole('heading', { name: 'HOW THIS SITE WORKS' })).toBeVisible();
+  test('navigates to /monitoring and renders Full-Stack Monitoring Dashboard', async ({ page }) => {
+    // 1. Navigate to /monitoring
+    await page.goto('/monitoring');
+    await expect(page.getByRole('heading', { name: 'FULL-STACK OPERATIONAL MONITORING & TELEMETRY', exact: true })).toBeVisible();
 
     // 2. Verify Monitoring Dashboard Container
     await expect(
@@ -25,7 +25,7 @@ test.describe('Operational Monitoring Dashboard E2E Tests', () => {
   });
 
   test('runs automated synthetic diagnostic suite on user interaction', async ({ page }) => {
-    await page.goto('/how-this-site-works');
+    await page.goto('/monitoring');
     
     // Click diagnostic test button
     const diagBtn = page.getByRole('button', { name: /Run Full E2E Diagnostic Test/i });
@@ -38,7 +38,7 @@ test.describe('Operational Monitoring Dashboard E2E Tests', () => {
   });
 
   test('toggles simulated offline mode toggle button', async ({ page }) => {
-    await page.goto('/how-this-site-works');
+    await page.goto('/monitoring');
 
     const offlineToggleBtn = page.getByRole('button', { name: /Simulate Offline Mode/i });
     await offlineToggleBtn.click();

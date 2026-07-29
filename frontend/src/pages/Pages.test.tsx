@@ -8,11 +8,21 @@ import { ExperiencePage } from './ExperiencePage';
 import { NowPage } from './NowPage';
 import { ContactPage } from './ContactPage';
 import { HowThisSiteWorksPage } from './HowThisSiteWorksPage';
+import { MonitoringPage } from './MonitoringPage';
 import { NotFoundPage } from './NotFoundPage';
 import { BlogListPage } from './BlogListPage';
 import { BlogDetailPage } from './BlogDetailPage';
 
 describe('Page Components Unit Tests', () => {
+  it('renders MonitoringPage telemetry console', () => {
+    render(
+      <MemoryRouter>
+        <MonitoringPage />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('FULL-STACK OPERATIONAL MONITORING & TELEMETRY')).toBeDefined();
+  });
 
   it('renders BlogListPage and filters by search input and tag buttons', () => {
     render(

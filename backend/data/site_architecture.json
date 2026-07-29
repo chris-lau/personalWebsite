@@ -87,5 +87,30 @@
         "desc": "Containerized multi-stage Docker deployment on Render (Root: backend, python:3.11-slim) serving REST endpoints and live Swagger UI at /docs."
       }
     ]
+  },
+  {
+    "category": "OPERATIONAL MONITORING, TELEMETRY & SYNTHETIC DIAGNOSTICS",
+    "items": [
+      {
+        "name": "Request Correlation & UUIDv4 Tracing (X-Request-ID)",
+        "desc": "CorrelationIDMiddleware generating and propagating unique UUIDv4 headers for end-to-end request tracing across all API calls."
+      },
+      {
+        "name": "Structured JSON Access Logging to stdout",
+        "desc": "RequestLoggingMiddleware emitting machine-readable JSON logs containing timestamp, request_id, method, path, status_code, latency_ms, client_ip, and user_agent."
+      },
+      {
+        "name": "Sub-System Health & Readiness Probes (/health/live, /health/ready, /api/v1/telemetry)",
+        "desc": "Differentiated process liveness, deep sub-system readiness inspecting RAM RSS memory (MB) and uptime, and slowapi rate-limiter budget telemetry."
+      },
+      {
+        "name": "Browser Real User Monitoring (RUM) & Storage Audits",
+        "desc": "Client utilities auditing TTFB ms, DOM node count, JS heap memory usage, sessionStorage byte size, and GitHub proxy cache age."
+      },
+      {
+        "name": "Live Full-Stack Monitoring Console & Automated 5-Step Synthetic Diagnostic Runner",
+        "desc": "Dedicated /monitoring page featuring live system topology map (React SPA ➔ FastAPI Backend ➔ GitHub API) and an automated 5-step synthetic E2E diagnostic test runner."
+      }
+    ]
   }
 ]
