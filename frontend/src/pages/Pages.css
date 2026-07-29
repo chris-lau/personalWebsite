@@ -1090,3 +1090,66 @@
   color: var(--accent-secondary);
   border: 1px solid var(--border-muted);
 }
+
+/* Interactive API Explorer Card on How This Site Works page */
+.api-explorer-card {
+  margin: 1.5rem 0 2rem 0;
+  padding: 1.25rem 1.5rem;
+  background: var(--surface-card, rgba(255, 255, 255, 0.03));
+  border: 1px dashed var(--border-color, rgba(255, 255, 255, 0.2));
+  border-radius: var(--border-radius-md, 8px);
+}
+
+.api-explorer-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-primary, #6366f1);
+}
+
+.api-explorer-desc {
+  margin: 0 0 1rem 0;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--color-text-muted, #8b949e);
+}
+
+.api-explorer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.api-explorer-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.1rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: var(--border-radius-sm, 6px);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.api-explorer-btn.primary {
+  background: var(--color-primary, #6366f1);
+  color: #ffffff;
+  border: 1px solid var(--color-primary, #6366f1);
+}
+
+.api-explorer-btn.primary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.api-explorer-btn.secondary {
+  background: var(--surface-button, rgba(255, 255, 255, 0.05));
+  color: var(--color-text, #e6edf3);
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2));
+}
+
+.api-explorer-btn.secondary:hover {
+  border-color: var(--color-primary, #6366f1);
+  color: var(--color-primary, #6366f1);
+}

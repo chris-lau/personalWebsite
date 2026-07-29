@@ -49,5 +49,26 @@
         "desc": "Isolated component visual development and @storybook/addon-a11y accessibility validation (.sr-only utility, ARIA landmark roles, and high contrast visible focus rings)."
       }
     ]
+  },
+  {
+    "category": "FASTAPI BACKEND & SWAGGER API EXPLORER",
+    "items": [
+      {
+        "name": "Python 3.11 & FastAPI REST Microservice",
+        "desc": "Decoupled backend API service serving profile details, curated projects, reading entries, and server-side GitHub stats proxy."
+      },
+      {
+        "name": "Pydantic v2 Schemas & Data Contracts",
+        "desc": "Strict input and output validation models ensuring type-safe JSON API contracts across all endpoints."
+      },
+      {
+        "name": "Server-Side GitHub Proxy & 15-Minute Cache",
+        "desc": "Async HTTPX service fetching GitHub stats server-side with a 15-minute in-memory TTL cache to eliminate client-side rate limits."
+      },
+      {
+        "name": "Interactive Swagger UI & ReDoc Documentation",
+        "desc": "Auto-generated OpenAPI 3.0 documentation available at /docs and /redoc for testing and API discovery."
+      }
+    ]
   }
 ]
