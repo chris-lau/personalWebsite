@@ -46,6 +46,14 @@ export const HowThisSiteWorksPage: React.FC = () => {
               >
                 📋 OpenAPI JSON Schema
               </a>
+              <a
+                href="https://chris-lau-storybook.pages.dev"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="api-explorer-btn secondary"
+              >
+                🎨 Live Storybook UI
+              </a>
             </div>
           </div>
 
