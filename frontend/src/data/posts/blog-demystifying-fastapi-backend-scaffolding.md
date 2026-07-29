@@ -138,77 +138,117 @@ target-version = "py312"
 
 When a user opens your website in a browser and a fetch request is sent to your FastAPI backend, the request passes through multiple distinct layers before your endpoint code executes.
 
-Here is the complete **Request Call Hierarchy**:
+Here is the complete **Request Call Hierarchy**, annotated with the exact **File** and **Library/Package** handling each step:
 
 ```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ 1. Client Browser / Frontend App                                           │
-│    Executes: fetch('http://localhost:8000/health', { headers: { Origin } }) │
+│ STEP 1. Client Browser / Frontend App                                       │
+│ 📁 File: frontend/src/api/github.ts                                         │
+│ 📦 Library: Standard Web Fetch API                                          │
+│ ⚡ Executes: fetch('http://localhost:8000/health', { headers: { Origin } }) │
 └──────────────────────────────────────┬──────────────────────────────────────┘
-                                       │ (HTTP TCP Packet)
+                                       │ (HTTP TCP Packet over Port 8000)
                                        ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ 2. Uvicorn (ASGI Web Server)                                                │
-│    Listens on Port 8000, receives HTTP TCP stream, parses HTTP protocol,    │
-│    and forwards ASGI scope & receive callable to FastAPI application.       │
+│ STEP 2. Uvicorn (ASGI Web Server Engine)                                    │
+│ 📁 Executable: backend/.venv/bin/uvicorn                                    │
+│ 📦 Library: uvicorn (ASGI Server)                                           │
+│ ⚡ Action: Listens on Port 8000, parses HTTP protocol stream, and invokes   │
+│            FastAPI ASGI application callable (`uvicorn main:app`).          │
 └──────────────────────────────────────┬──────────────────────────────────────┘
-                                       │ (ASGI Event)
+                                       │ (ASGI Event Scope)
                                        ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ 3. CORSMiddleware (First Outer Layer)                                       │
-│    Inspects 'Origin' header against ALLOWED_ORIGINS list.                   │
-│    - Disallowed Origin ──► Returns 403 Forbidden / Blocks Preflight         │
-│    - Allowed Origin    ──► Passes request to inner middleware stack          │
-└──────────────────────────────────────┬──────────────────────────────────────┘
-                                       │
-                                       ▼
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ 4. SecurityHeadersMiddleware (Custom Middleware)                            │
-│    Passes request downstream, then attaches security headers to response:   │
-│    - X-Content-Type-Options: nosniff                                        │
-│    - X-Frame-Options: DENY                                                  │
+│ STEP 3. CORSMiddleware (Outer Security Boundary)                            │
+│ 📁 File: backend/main.py (L32-L38)                                          │
+│ 📦 Library: fastapi.middleware.cors.CORSMiddleware                          │
+│ ⚡ Action: Checks incoming 'Origin' against `settings.allowed_origins_list`.│
+│            - Disallowed ──► Returns 403 Forbidden / Blocks preflight OPTIONS │
+│            - Allowed    ──► Passes request to inner middleware stack        │
 └──────────────────────────────────────┬──────────────────────────────────────┘
                                        │
                                        ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ 5. Slowapi Rate Limiter Middleware                                          │
-│    Extracts client IP address. Checks request counter in memory.            │
-│    - Requests > 60/min ──► Raises RateLimitExceeded ──► Returns 429 Too Many │
-│    - Requests ≤ 60/min ──► Allowed to proceed                               │
+│ STEP 4. SecurityHeadersMiddleware (Browser Shield Middleware)               │
+│ 📁 File: backend/core/security.py (SecurityHeadersMiddleware)               │
+│ 📦 Library: starlette.middleware.base.BaseHTTPMiddleware                    │
+│ ⚡ Action: Passes request downstream, then injects security headers:        │
+│            - X-Content-Type-Options: nosniff                                │
+│            - X-Frame-Options: DENY                                          │
+│            - Referrer-Policy: strict-origin-when-cross-origin               │
 └──────────────────────────────────────┬──────────────────────────────────────┘
                                        │
                                        ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ 6. FastAPI URL Router & Path Matcher                                        │
-│    Matches URL path ('/health') and HTTP method ('GET') to decorated function│
+│ STEP 5. Slowapi IP Rate Limiter                                             │
+│ 📁 File: backend/core/rate_limit.py & backend/main.py (L26-L27)             │
+│ 📦 Library: slowapi (Limiter & get_remote_address)                          │
+│ ⚡ Action: Tracks client IP in memory counter.                              │
+│            - Exceeds 60 req/min ──► Raises RateLimitExceeded ──► 429 Too Many│
+│            - Within 60 req/min  ──► Forwards to router                      │
 └──────────────────────────────────────┬──────────────────────────────────────┘
                                        │
                                        ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ 7. Pydantic Schema Validation & Dependency Injection                        │
-│    Validates path params, query string params, and JSON body payload.       │
-│    - Invalid Data ──► Returns 422 Unprocessable Entity                      │
-│    - Valid Data   ──► Calls endpoint function                               │
+│ STEP 6. FastAPI URL Router & Path Matcher                                   │
+│ 📁 File: backend/main.py (L51)                                              │
+│ 📦 Library: fastapi.FastAPI (APIRouter)                                     │
+│ ⚡ Action: Matches HTTP method ('GET') & path ('/health') to handler function│
 └──────────────────────────────────────┬──────────────────────────────────────┘
                                        │
                                        ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ 8. Endpoint Handler Function (e.g. async def health_check())               │
-│    Executes business logic, reads seed JSON / database, and returns dict.   │
+│ STEP 7. Pydantic Schema Validation & Dependency Injection                   │
+│ 📁 File: backend/config.py & Pydantic Core                                  │
+│ 📦 Library: pydantic & pydantic-settings                                    │
+│ ⚡ Action: Validates query parameters, headers, and JSON body payload.       │
+│            - Invalid Payload ──► Returns 422 Unprocessable Entity           │
+│            - Valid Payload   ──► Invokes endpoint function                  │
+└──────────────────────────────────────┬──────────────────────────────────────┘
+                                       │
+                                       ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ STEP 8. Endpoint Handler Function                                           │
+│ 📁 File: backend/main.py (health_check())                                   │
+│ 📦 Library: Python Standard Library / FastAPI                               │
+│ ⚡ Action: Executes business logic and returns Python dict `{"status": "ok"}`│
 └──────────────────────────────────────┬──────────────────────────────────────┘
                                        │ (Python Dict)
                                        ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ 9. Response Serialization & Middleware Unwinding                            │
-│    FastAPI converts Python dict to JSON payload (`{"status": "ok"}`).       │
-│    Response unwinds back through SecurityHeaders Middleware & CORS.         │
+│ STEP 9. Response Serialization & Middleware Unwinding                       │
+│ 📁 File: backend/main.py & backend/core/security.py                         │
+│ 📦 Library: fastapi.responses.JSONResponse & Starlette Stack                │
+│ ⚡ Action: Converts Python dict to JSON payload (`{"status": "ok"}`).       │
+│            Response unwinds back through SecurityHeaders & CORS middleware. │
 └──────────────────────────────────────┬──────────────────────────────────────┘
-                                       │ (HTTP 200 OK + JSON)
+                                       │ (HTTP 200 OK + JSON Packet)
                                        ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ 10. Client Browser receives response & renders UI                           │
+│ STEP 10. Client Browser receives response & updates UI                       │
+│ 📁 File: frontend/src/hooks/useGitHubData.ts                                │
+│ 📦 Library: React (useState / useEffect)                                    │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+### Step-by-Step File & Library Mapping Reference Table
+
+To make responsibility ownership 100% clear, here is the exact mapping of every call hierarchy step to its handling file, package library, and code symbol:
+
+| Step # | Request Lifecycle Layer | Handling File | Library / Package | Code Symbol / Class |
+| :---: | :--- | :--- | :--- | :--- |
+| **1** | **Frontend Request** | [`frontend/src/api/github.ts`](file:///Users/chrislau/Documents/personalWebsite/frontend/src/api/github.ts) | Browser Web API | `fetch('http://localhost:8000/health')` |
+| **2** | **ASGI Web Server** | [`backend/.venv/bin/uvicorn`](file:///Users/chrislau/Documents/personalWebsite/backend/pyproject.toml) | `uvicorn` | `uvicorn.run()` / `uvicorn main:app` |
+| **3** | **CORS Header Validation** | [`backend/main.py`](file:///Users/chrislau/Documents/personalWebsite/backend/main.py#L32-L38) | `fastapi.middleware.cors` | `CORSMiddleware` |
+| **4** | **Security Headers Injection** | [`backend/core/security.py`](file:///Users/chrislau/Documents/personalWebsite/backend/core/security.py) | `starlette.middleware.base` | `SecurityHeadersMiddleware` |
+| **5** | **IP Rate Limiting** | [`backend/core/rate_limit.py`](file:///Users/chrislau/Documents/personalWebsite/backend/core/rate_limit.py) | `slowapi` | `Limiter(key_func=get_remote_address)` |
+| **6** | **URL Route Matching** | [`backend/main.py`](file:///Users/chrislau/Documents/personalWebsite/backend/main.py#L51) | `fastapi` | `@app.get("/health")` |
+| **7** | **Schema & Type Validation** | [`backend/config.py`](file:///Users/chrislau/Documents/personalWebsite/backend/config.py) | `pydantic-settings` | `BaseSettings` / `Settings` |
+| **8** | **Endpoint Function** | [`backend/main.py`](file:///Users/chrislau/Documents/personalWebsite/backend/main.py#L51-L55) | FastAPI / Python Stdlib | `async def health_check()` |
+| **9** | **Response Unwinding** | [`backend/core/security.py`](file:///Users/chrislau/Documents/personalWebsite/backend/core/security.py) | `fastapi.responses` | `JSONResponse` |
+| **10** | **UI Render** | [`frontend/src/hooks/useGitHubData.ts`](file:///Users/chrislau/Documents/personalWebsite/frontend/src/hooks/useGitHubData.ts) | React | `setHealthStatus(data)` |
 
 ---
 
