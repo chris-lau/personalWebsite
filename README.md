@@ -137,9 +137,9 @@ Phase 3.5 introduces an integrated, zero-cost, zero-cookie **Full-Stack Operatio
   - Storage byte size, active key count, and GitHub proxy cache age (`auditSessionStorage`).
   - Diagnostic JSON report exporter (`exportDiagnosticReport`).
 * **Full-Stack Test Metrics**:
-  - **Backend**: **21 / 21 Pytest tests passing** (`./.venv/bin/pytest` in `backend/`).
-  - **Frontend**: **61 / 61 Vitest unit tests passing** across **12 test files** (`npm test` in `frontend/`).
-  - **E2E**: **6 / 6 Playwright E2E tests passing** (`npx playwright test`).
+  - **Backend**: **22 / 22 Pytest tests passing** (`./.venv/bin/pytest` in `backend/`).
+  - **Frontend**: **71 / 71 Vitest unit tests passing** across **14 test files** (`npm test` in `frontend/`).
+  - **E2E**: **9 / 9 Playwright E2E tests passing** across **3 spec files** (`npx playwright test`).
 
 Detailed summary: [phase-3.5-summary.md](file:///Users/chrislau/Documents/personalWebsite/phase-3.5-summary.md) | Implementation plan: [phase-3.5-implementation-plan.md](file:///Users/chrislau/Documents/personalWebsite/phase-3.5-implementation-plan.md)
 

@@ -83,8 +83,8 @@ FastAPI Backend (Python 3.11 on Render Container)
 
 ## 🧪 Verification & Test Metrics
 
-- **Backend Pytest Suite**: **21 / 21 Pytest tests passing** (`./.venv/bin/pytest` in `backend/`).
-- **Frontend Vitest Suite**: **65 / 65 Vitest tests passing** (`13 / 13 test files`).
+- **Backend Pytest Suite**: **22 / 22 Pytest tests passing** (`./.venv/bin/pytest` in `backend/`).
+- **Frontend Vitest Suite**: **71 / 71 Vitest tests passing** (`14 / 14 test files`).
 - **E2E Playwright Suite**: **9 / 9 Playwright E2E tests passing** (`3 / 3 spec files`).
 - **Correlation ID Header**: Verified `X-Request-ID` present on all HTTP responses.
 - **Structured JSON Logging**: Verified valid JSON log entries on `stdout`.

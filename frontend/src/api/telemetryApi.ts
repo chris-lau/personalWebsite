@@ -133,7 +133,7 @@ export async function runE2EDiagnosticSuite(): Promise<DiagnosticCheckItem[]> {
     ...results[2],
     status: ready.data && ready.data.status === 'healthy' ? 'pass' : 'fail',
     details: ready.data
-      ? `Backend readiness healthy. RAM RSS: ${ready.data.checks.process_memory?.rss_mb || 'N/A'}MB.`
+      ? `Backend readiness healthy. RAM RSS: ${ready.data.checks?.process_memory?.rss_mb || 'N/A'}MB.`
       : 'Backend readiness probe unreachable.',
   };
 

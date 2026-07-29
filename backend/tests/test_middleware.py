@@ -12,3 +12,16 @@ def test_correlation_id_propagated(client):
     response = client.get("/health", headers={"X-Request-ID": custom_id})
     assert response.status_code == 200
     assert response.headers.get("X-Request-ID") == custom_id
+
+
+def test_cors_preflight_headers(client):
+    """Verify CORS preflight OPTIONS request returns allowed origins headers."""
+    response = client.options(
+        "/api/v1/projects",
+        headers={
+            "Origin": "http://localhost:5173",
+            "Access-Control-Request-Method": "GET",
+        },
+    )
+    assert response.status_code == 200
+    assert "access-control-allow-origin" in response.headers
