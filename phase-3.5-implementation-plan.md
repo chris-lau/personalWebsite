@@ -149,12 +149,13 @@ personalWebsite/
 - [x] Define TypeScript types in `frontend/src/types/monitoring.ts`.
 - [x] Implement `frontend/src/utils/telemetry.ts` performance and storage helpers.
 - [x] Implement `frontend/src/api/telemetryApi.ts` client.
-- [x] Add Vitest unit tests in `frontend/src/utils/telemetry.test.ts`.
+- [x] Add Vitest unit tests in `frontend/src/utils/telemetry.test.ts` and `frontend/src/api/telemetryApi.test.ts`.
 
 ### Step 4: Full-Stack Monitoring UI & Diagnostic Suite
 - [x] Build `<FullStackMonitoringDashboard />` and `FullStackMonitoringDashboard.css`.
 - [x] Implement 5-step synthetic diagnostic test runner (`[Run Full E2E Diagnostic Test]`).
 - [x] Add Vitest tests in `FullStackMonitoringDashboard.test.tsx`.
+- [x] Add Storybook stories in `FullStackMonitoringDashboard.stories.tsx`.
 
 ### Step 5: Integration & Guidebook Documentation
 - [x] Embed `<FullStackMonitoringDashboard />` into `frontend/src/pages/HowThisSiteWorksPage.tsx`.

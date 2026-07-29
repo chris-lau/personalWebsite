@@ -73,7 +73,7 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
 
 ```text
 personalWebsite/
-├── README.md                          # Project documentation
+├── README.md                          # Master project documentation
 ├── personal-os-project-plan.md        # Master architectural project plan
 ├── phase-1-implementation-plan.md     # Phase 1 execution plan & checklist
 ├── phase-1-summary.md                 # Phase 1 summary & completion log
@@ -84,27 +84,25 @@ personalWebsite/
 ├── phase-3.5-implementation-plan.md   # Phase 3.5 execution plan & checklist
 ├── phase-3.5-summary.md               # Phase 3.5 summary & completion log
 ├── backend/                           # Python FastAPI Backend Service
-│   ├── app/
-│   │   ├── main.py                    # FastAPI application entrypoint & CORS
-│   │   ├── core/                      # Rate limiting & config settings
-│   │   ├── services/                  # Content loader & GitHub proxy + cache
-│   │   ├── api/                       # API router & endpoints
-│   │   └── data/                      # Local static JSON repositories
-│   ├── tests/                         # Pytest test suite (16 tests)
-│   ├── pyproject.toml                 # Tool configuration & dependencies
+│   ├── main.py                        # FastAPI entrypoint, CORS & error handlers
+│   ├── core/                          # CorrelationID & RequestLogging Middleware
+│   ├── schemas/                       # Telemetry Pydantic v2 data models
+│   ├── api/endpoints/                 # REST endpoints & telemetry (/health/ready)
+│   ├── data/                          # Backend Guidebook JSON repositories
+│   ├── tests/                         # Pytest test suite (22 tests)
 │   └── Dockerfile                     # Multi-stage container build for Render
-└── frontend/                          # React + TypeScript SPA app
+└── frontend/                          # React 18 + TypeScript SPA app
     ├── .storybook/                    # Storybook 8 configuration
-    ├── e2e/                           # Playwright end-to-end tests
+    ├── e2e/                           # Playwright end-to-end tests (3 spec files)
     ├── src/
-    │   ├── api/                       # backend.ts client (with fallback) & github.ts
-    │   ├── components/                # React UI & Dashboard components
+    │   ├── api/                       # REST client & telemetryApi client
+    │   ├── components/                # React UI, Blog, GitHub & Monitoring Dashboard
     │   ├── context/                   # ThemeContext (Global 3-theme manager)
     │   ├── data/                      # Frontend data importers
     │   ├── hooks/                     # Custom React hooks (useGitHubData)
-    │   ├── pages/                     # Page views
-    │   ├── styles/                    # Design tokens & CSS reset
-    │   └── types/                     # TypeScript interfaces
+    │   ├── pages/                     # Page views (including HowThisSiteWorksPage)
+    │   ├── utils/                     # Telemetry utilities (RUM, audit & export)
+    │   └── types/                     # TypeScript interfaces (monitoring.ts)
     ├── package.json
     ├── vite.config.ts
     └── tsconfig.json
@@ -120,7 +118,7 @@ Detailed summary: [phase-3-summary.md](file:///Users/chrislau/Documents/personal
 
 ---
 
-## 📊 Phase 3.5 — Full-Stack Operational Monitoring & Telemetry (IN-PROGRESS)
+## 📊 Phase 3.5 — Full-Stack Operational Monitoring & Telemetry (COMPLETED)
 
 Phase 3.5 introduces an integrated, zero-cost, zero-cookie **Full-Stack Operational Monitoring & Telemetry System** across the Python FastAPI backend, React 18 frontend, and End-to-End application topology.
 
@@ -132,10 +130,12 @@ Phase 3.5 introduces an integrated, zero-cost, zero-cookie **Full-Stack Operatio
   - `GET /health/live` — Fast process liveness probe.
   - `GET /health/ready` — Deep sub-system readiness probe checking RAM RSS memory (MB), uptime, environment, and CORS origins.
   - `GET /api/telemetry` & `GET /api/v1/telemetry` — Live process uptime, RSS memory, cache hit/miss status, and `slowapi` rate-limit budget telemetry.
-* **Frontend Real User Monitoring (RUM) & Audit Utilities**:
+* **Frontend Real User Monitoring (RUM) & Interactive Dashboard**:
   - Navigation timing, TTFB, DOM node count, and JS heap memory (`getBrowserPerformanceMetrics`).
   - Storage byte size, active key count, and GitHub proxy cache age (`auditSessionStorage`).
   - Diagnostic JSON report exporter (`exportDiagnosticReport`).
+  - `<FullStackMonitoringDashboard />` React UI component embedded on `/how-this-site-works` featuring live system topology map and automated 5-step synthetic diagnostic test runner.
+  - Storybook component cataloging (`FullStackMonitoringDashboard.stories.tsx`).
 * **Full-Stack Test Metrics**:
   - **Backend**: **22 / 22 Pytest tests passing** (`./.venv/bin/pytest` in `backend/`).
   - **Frontend**: **71 / 71 Vitest unit tests passing** across **14 test files** (`npm test` in `frontend/`).

@@ -43,7 +43,7 @@ Phase 3.5 introduces:
 * Created TypeScript interface models in `frontend/src/types/monitoring.ts`.
 * Built measurement & storage audit utilities in `frontend/src/utils/telemetry.ts` (`getBrowserPerformanceMetrics()`, `auditSessionStorage()`, `exportDiagnosticReport()`).
 * Built telemetry API client `frontend/src/api/telemetryApi.ts` (`fetchBackendTelemetry()`, `fetchBackendReadiness()`, `benchmarkNetworkRTT()`, `runE2EDiagnosticSuite()`).
-* Added Vitest unit test suite `frontend/src/utils/telemetry.test.ts`.
+* Added Vitest unit test suite `frontend/src/utils/telemetry.test.ts` and API client test suite `frontend/src/api/telemetryApi.test.ts`.
 
 ### 6. Full-Stack Monitoring UI & Synthetic Diagnostic Suite (`frontend/src/components/monitoring/`)
 * Built interactive `<FullStackMonitoringDashboard />` React UI component and CSS (`FullStackMonitoringDashboard.css`) styled across ASCII, CLI, and Modern themes.
@@ -51,6 +51,7 @@ Phase 3.5 introduces:
 * Implemented automated 5-step synthetic diagnostic test runner executing storage integrity, RTT network benchmark, backend readiness, GitHub proxy cache status, and `slowapi` rate-limiter budget validation.
 * Added interactive maintainer action controls: `[Ping Health]`, `[Run Full E2E Diagnostic Test]`, `[Flush Cache]`, `[Simulate Offline Mode]`, and `[Export Diagnostic Log (.json)]`.
 * Added Vitest component unit test suite `FullStackMonitoringDashboard.test.tsx`.
+* Added Storybook component story catalog `FullStackMonitoringDashboard.stories.tsx`.
 
 ### 7. Page Integration, Educational Guidebook & E2E Testing
 * Embedded `<FullStackMonitoringDashboard />` inside `frontend/src/pages/HowThisSiteWorksPage.tsx`.
