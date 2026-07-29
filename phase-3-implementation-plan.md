@@ -121,13 +121,18 @@ personalWebsite/
 
 ### Phase 3.2: Seed Data, Schemas, & Static Endpoints
 - [x] Create endpoint: `GET /health` -> `{"status": "ok", "environment": "...", "service": "..."}`
-- [ ] Create Pydantic response schemas in `schemas/` (`ProfileResponse`, `ProjectResponse`, `NowResponse`, `ReadingResponse`).
-- [ ] Create JSON seed data in `data/` (`profile.json`, `projects.json`, `now.json`, `reading.json`).
+- [x] Create JSON seed data in `backend/data/` (`profile.json`, `projects.json`, `skills.json`, `experience.json`, `now.json`, `site_architecture.json`, `blog_posts.json`).
+- [x] Migrate all 20 Markdown blog articles and `guidebook-master.md` to `backend/posts/`.
+- [x] Establish `backend/data/` and `backend/posts/` as the **Single Source of Truth** for both React Vite imports and FastAPI REST API endpoints.
+- [x] Refactor all frontend data modules (`projects.ts`, `profile.ts`, `skills.ts`, `experience.ts`, `now.ts`, `siteArchitecture.ts`, `blogPosts.ts`, `guidebookData.ts`) to import directly from `backend/data/` and `backend/posts/`.
+- [ ] Create Pydantic response schemas in `backend/schemas/` (`ProfileResponse`, `ProjectResponse`, `NowResponse`, `ExperienceResponse`, `SkillResponse`).
 - [ ] Create endpoints:
   - `GET /api/profile`
   - `GET /api/projects` & `GET /api/projects/{slug}`
   - `GET /api/now`
-  - `GET /api/reading`
+  - `GET /api/experience`
+  - `GET /api/skills`
+  - `GET /api/posts` & `GET /api/posts/{slug}`
 
 ### Phase 3.3: GitHub Proxy & In-Memory Server Caching
 - [ ] Create `core/cache.py` with thread-safe in-memory cache utility (TTL = 15 minutes).
