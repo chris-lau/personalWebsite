@@ -81,6 +81,8 @@ personalWebsite/
 ├── phase-2-summary.md                 # Phase 2 summary & completion log
 ├── phase-3-implementation-plan.md     # Phase 3 execution plan & checklist
 ├── phase-3-summary.md                 # Phase 3 summary & completion log
+├── phase-3.5-implementation-plan.md   # Phase 3.5 execution plan & checklist
+├── phase-3.5-summary.md               # Phase 3.5 summary & completion log
 ├── backend/                           # Python FastAPI Backend Service
 │   ├── app/
 │   │   ├── main.py                    # FastAPI application entrypoint & CORS

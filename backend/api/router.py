@@ -8,6 +8,7 @@ from .endpoints import (
     profile,
     projects,
     skills,
+    telemetry,
 )
 
 api_router = APIRouter()
@@ -19,3 +20,5 @@ api_router.include_router(experience.router, tags=["Experience"])
 api_router.include_router(now.router, tags=["Now"])
 api_router.include_router(posts.router, tags=["Blog Posts"])
 api_router.include_router(guidebook.router, tags=["Guidebook"])
+api_router.include_router(telemetry.router, tags=["Telemetry & Health"])
+

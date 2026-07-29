@@ -443,6 +443,40 @@ Benefits include:
 
 ---
 
+# Phase 3.5 — Full-Stack Operational Monitoring & Telemetry (IN-PROGRESS)
+
+## Goal
+
+Build an integrated, zero-cost, zero-cookie operational monitoring and telemetry system across the React frontend, FastAPI backend, and End-to-End (E2E) architecture.
+
+Detailed Implementation Plan: [implementation_plan.md](file:///Users/chrislau/.gemini/antigravity-ide/brain/d224301b-3ee3-4247-98fb-a12ee16daf34/implementation_plan.md)
+
+## Technologies & Architecture
+
+- **Backend Telemetry & Structured Logging**: FastAPI middleware, `X-Request-ID` correlation tracer, structured JSON logging, `/health/live`, `/health/ready`, and `GET /api/v1/telemetry`.
+- **Frontend Real User Monitoring (RUM)**: Browser Performance API (TTFB, LCP, INP, CLS), JS Heap Memory inspection, `sessionStorage` cache auditing.
+- **End-to-End Synthetic Diagnostics**: Automated 5-step E2E health probe runner and full-stack topology map (`[Cloudflare Pages React SPA] ──► [FastAPI Render Backend] ──► [GitHub REST API]`).
+- **Guidebook Chapter 8**: Volume 2, Chapter 8 documenting full-stack telemetry and operational monitoring.
+
+## Features
+
+- Real-time full-stack system topology map with network round-trip latency (ms)
+- Backend process telemetry (uptime seconds, RAM RSS in MB, slowapi rate-limit status, GitHub cache hit/miss ratio)
+- Frontend browser telemetry (Core Web Vitals, DOM node count, theme interaction stats)
+- Automated synthetic diagnostic suite (`[Run Full E2E Diagnostic Test]`)
+- Interactive service controls (`[Ping Health]`, `[Flush Session Cache]`, `[Simulate Offline Mode]`, `[Export Diagnostic Log]`)
+
+## Completion Criteria
+
+- [ ] Structured JSON logging and `X-Request-ID` middleware active in FastAPI backend
+- [ ] `/health/live`, `/health/ready`, and `/api/v1/telemetry` endpoints returning valid system metrics
+- [ ] Frontend `<FullStackMonitoringDashboard />` component embedded on `/how-this-site-works`
+- [ ] 5-step E2E synthetic diagnostic runner passing all health probes
+- [ ] Unit & E2E tests added for backend and frontend telemetry components
+- [ ] Volume 2 Chapter 8 added to Software Engineering Guidebook
+
+---
+
 # Phase 4 — PostgreSQL and CRUD
 
 ## Goal
