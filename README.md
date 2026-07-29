@@ -131,6 +131,28 @@ Detailed summary: [phase-3-summary.md](file:///Users/chrislau/Documents/personal
 
 ---
 
+## 🔑 Environment Variables
+
+The project uses environment variables for configuring both frontend and backend environments:
+
+### Frontend Environment Variables (`frontend/.env` / Cloudflare Pages)
+
+| Variable | Required | Default / Example | Description |
+| :--- | :--- | :--- | :--- |
+| `VITE_API_URL` | Optional | `http://localhost:8000/api` | Base URL for FastAPI backend endpoints. If unset or backend is offline, frontend automatically falls back to local data. |
+
+### Backend Environment Variables (`backend/.env` / Render)
+
+| Variable | Required | Default / Example | Description |
+| :--- | :--- | :--- | :--- |
+| `ENVIRONMENT` | Yes | `development` / `production` | Environment runtime flag (`development`, `production`, `test`). |
+| `PORT` | Optional | `8000` (or `10000` on Render) | Port for Uvicorn web server to listen on. |
+| `ALLOWED_ORIGINS` | Optional | `http://localhost:5173,https://chrislau.dev` | Comma-separated list of allowed CORS origins. |
+| `RATE_LIMIT_PER_MINUTE` | Optional | `60` | Max requests per minute per IP address (`slowapi`). |
+| `GITHUB_TOKEN` | Optional | `""` | Optional personal access token for higher GitHub REST API rate limits server-side. |
+
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites
