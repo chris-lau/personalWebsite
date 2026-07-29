@@ -74,19 +74,10 @@ personalWebsite/
 ├── README.md                          # Project documentation
 ├── personal-os-project-plan.md        # Master architectural project plan
 ├── phase-1-implementation-plan.md     # Phase 1 execution plan & checklist
+├── phase-1-summary.md                 # Phase 1 summary & completion log
 ├── phase-2-implementation-plan.md     # Phase 2 execution plan & checklist
+├── phase-2-summary.md                 # Phase 2 summary & completion log
 ├── phase-3-implementation-plan.md     # Phase 3 execution plan & checklist
-├── phase-3-summary.md                 # Phase 3 summary & architecture guide
-├── backend/                           # 🐍 FastAPI Backend & Single Source of Truth Service
-│   ├── .venv/                         # Isolated Python virtual environment (git-ignored)
-│   ├── main.py                        # FastAPI entrypoint, CORS, rate limiting, security headers, /health
-│   ├── config.py                      # Pydantic BaseSettings environment variable loader
-│   ├── pyproject.toml                 # Pytest & Ruff linter configuration
-│   ├── requirements.txt               # Dependencies (fastapi, uvicorn, pydantic, slowapi, httpx, pytest)
-│   ├── core/                          # Security headers & slowapi rate limiter middleware
-│   ├── data/                          # 📁 Canonical JSON Data Layer (projects, profile, skills, experience, now, site_architecture, blog_posts, guidebook_chapters)
-│   ├── posts/                         # 📝 Canonical Markdown Articles & Guidebook Master (.md)
-│   └── tests/                         # Pytest TestClient suite (conftest.py, test_health.py)
 └── frontend/                          # React + TypeScript SPA app
     ├── .storybook/                    # Storybook 8 configuration
     ├── e2e/                           # Playwright end-to-end tests
@@ -107,30 +98,20 @@ personalWebsite/
 
 ---
 
-## 🐍 Backend Service (FastAPI & Single Source of Truth Data Layer)
+## 🐍 Phase 3 Roadmap — FastAPI Backend & Python API Service
 
-The project includes a production-ready **FastAPI Backend & Data Layer** (`/backend`).
+Phase 3 introduces a dedicated **Python FastAPI Backend** (`/backend`).
 
-### Architectural Highlights
-* **Single Source of Truth**: All portfolio JSON data files (`projects.json`, `profile.json`, `skills.json`, `experience.json`, `now.json`, `site_architecture.json`, `blog_posts.json`, `guidebook_chapters.json`) and Markdown articles (`guidebook-master.md`, 20 blog posts) live in `backend/data/` and `backend/posts/`, serving both the FastAPI REST API and React Vite imports.
+### Planned Architectural Highlights
 * **Framework**: Python 3.12+ / FastAPI / Uvicorn.
-* **Tooling**: **Ruff** (blazing fast Rust-written linter and code formatter replacing Black, Flake8, and isort).
-* **Security Controls**: CORS origin protection (`CORSMiddleware`), IP rate limiting (`slowapi`), HTTP security headers (`nosniff`, `DENY`, `strict-origin-when-cross-origin`), sanitized error handling.
-* **Testing**: Pytest + FastAPI `TestClient` in-memory test runner.
+* **Tooling**: **Ruff** (Rust-written linter & code formatter) & **Pydantic v2** schema validation.
+* **Security Controls**: CORS origin protection (`CORSMiddleware`), IP rate limiting (`slowapi`), sanitized error handling.
+* **Server-Side Caching**: 15-minute in-memory cache for GitHub API data.
+* **Testing**: Pytest + FastAPI `TestClient` test runner.
 * **Interactive API Playground**: Automatic Swagger UI available at `/docs`.
+* **Frontend Fallback**: React frontend (`frontend/src/api/backend.ts`) automatically falls back to local data if backend is offline.
 
-### Running Backend Locally
-```bash
-cd backend
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-uvicorn main:app --reload
-```
-* **Health Check**: `http://localhost:8000/health`
-* **Swagger UI Docs**: `http://localhost:8000/docs`
-* **Run Tests**: `pytest -v`
-* **Run Ruff Linter & Formatter**: `ruff check .` and `ruff format .`
+Detailed execution plan: [phase-3-implementation-plan.md](file:///Users/chrislau/Documents/personalWebsite/phase-3-implementation-plan.md)
 
 ---
 
