@@ -134,6 +134,23 @@ export const FullStackMonitoringDashboard: React.FC = () => {
             )}
           </div>
 
+          {/* Render Inactivity Cold Start Notice */}
+          <div
+            className="inactivity-notice-banner"
+            style={{
+              marginTop: '0.75rem',
+              padding: '0.6rem 0.85rem',
+              border: '1px solid var(--border-color, #444)',
+              borderRadius: '4px',
+              backgroundColor: 'var(--card-bg, rgba(0, 0, 0, 0.2))',
+              fontSize: '0.8rem',
+              lineHeight: '1.4',
+              opacity: 0.9,
+            }}
+          >
+            ℹ️ <strong>Note:</strong> Free-tier cloud instances (Render) spin down after periods of inactivity. Initial requests or health probes after inactivity may take <strong>50 seconds or longer</strong> while the backend container wakes up.
+          </div>
+
           <div className="monitoring-actions">
             <button
               type="button"

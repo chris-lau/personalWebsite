@@ -132,6 +132,7 @@ Phase 3.5 introduces an integrated, zero-cost, zero-cookie **Full-Stack Operatio
   - `GET /health/live` — Fast process liveness probe.
   - `GET /health/ready` — Deep sub-system readiness probe checking RAM RSS memory (MB), uptime, environment, and CORS origins.
   - `GET /api/telemetry` & `GET /api/v1/telemetry` — Live process uptime, RSS memory, cache hit/miss status, and `slowapi` rate-limit budget telemetry.
+  - > ⚠️ **Note on Container Cold Starts**: Free-tier backend hosting (Render) automatically spins down instances during inactivity. Initial health probes or API requests after periods of inactivity may experience a delay of **50 seconds or longer** while the container wakes up. Subsequent requests execute in sub-50ms.
 * **Frontend Real User Monitoring (RUM) & Interactive Dashboard**:
   - Navigation timing, TTFB, DOM node count, and JS heap memory (`getBrowserPerformanceMetrics`).
   - Storage byte size, active key count, and GitHub proxy cache age (`auditSessionStorage`).
