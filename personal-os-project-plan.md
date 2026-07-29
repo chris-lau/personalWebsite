@@ -347,6 +347,8 @@ Used public, unauthenticated GitHub API requests.
 
 Build a personal backend after gaining experience as an API consumer.
 
+Detailed Implementation Plan: [phase-3-implementation-plan.md](file:///Users/chrislau/Documents/personalWebsite/phase-3-implementation-plan.md)
+
 ## Technologies
 
 - Python
