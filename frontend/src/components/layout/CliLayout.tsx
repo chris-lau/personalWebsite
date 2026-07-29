@@ -76,7 +76,7 @@ export const CliLayout = ({ children }: CliLayoutProps) => {
             <span className="cli-btn minimize"></span>
             <span className="cli-btn maximize"></span>
           </div>
-          <div className="cli-title">chris@portfolio:~ (bash)</div>
+          <div className="cli-title">contact@chrislau.dev:~ (bash)</div>
           <div className="cli-toggle-container">
             <ThemeToggle />
           </div>
