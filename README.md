@@ -78,15 +78,25 @@ personalWebsite/
 ├── phase-2-implementation-plan.md     # Phase 2 execution plan & checklist
 ├── phase-2-summary.md                 # Phase 2 summary & completion log
 ├── phase-3-implementation-plan.md     # Phase 3 execution plan & checklist
+├── phase-3-summary.md                 # Phase 3 summary & completion log
+├── backend/                           # Python FastAPI Backend Service
+│   ├── app/
+│   │   ├── main.py                    # FastAPI application entrypoint & CORS
+│   │   ├── core/                      # Rate limiting & config settings
+│   │   ├── services/                  # Content loader & GitHub proxy + cache
+│   │   ├── api/                       # API router & endpoints
+│   │   └── data/                      # Local static JSON repositories
+│   ├── tests/                         # Pytest test suite (16 tests)
+│   ├── pyproject.toml                 # Tool configuration & dependencies
+│   └── Dockerfile                     # Multi-stage container build for Render
 └── frontend/                          # React + TypeScript SPA app
     ├── .storybook/                    # Storybook 8 configuration
     ├── e2e/                           # Playwright end-to-end tests
-    │   └── portfolio.spec.ts
     ├── src/
-    │   ├── api/                       # GitHub REST API client & sessionStorage caching
+    │   ├── api/                       # backend.ts client (with fallback) & github.ts
     │   ├── components/                # React UI & Dashboard components
     │   ├── context/                   # ThemeContext (Global 3-theme manager)
-    │   ├── data/                      # Frontend data importers (imports from ../../../backend/data & ../../../backend/posts)
+    │   ├── data/                      # Frontend data importers
     │   ├── hooks/                     # Custom React hooks (useGitHubData)
     │   ├── pages/                     # Page views
     │   ├── styles/                    # Design tokens & CSS reset
@@ -98,20 +108,24 @@ personalWebsite/
 
 ---
 
-## 🐍 Phase 3 Roadmap — FastAPI Backend & Python API Service
+## 🐍 Phase 3 — FastAPI Backend & Python API Service (COMPLETED)
 
-Phase 3 introduces a dedicated **Python FastAPI Backend** (`/backend`).
+Phase 3 introduces a dedicated, production-ready **Python FastAPI Backend** (`/backend`) providing a centralized REST API service, server-side caching, and client fallback handling.
 
-### Planned Architectural Highlights
-* **Framework**: Python 3.12+ / FastAPI / Uvicorn.
-* **Tooling**: **Ruff** (Rust-written linter & code formatter) & **Pydantic v2** schema validation.
-* **Security Controls**: CORS origin protection (`CORSMiddleware`), IP rate limiting (`slowapi`), sanitized error handling.
-* **Server-Side Caching**: 15-minute in-memory cache for GitHub API data.
-* **Testing**: Pytest + FastAPI `TestClient` test runner.
-* **Interactive API Playground**: Automatic Swagger UI available at `/docs`.
-* **Frontend Fallback**: React frontend (`frontend/src/api/backend.ts`) automatically falls back to local data if backend is offline.
+### Architectural Highlights
+* **Framework & Server**: Python 3.11 / FastAPI / Uvicorn.
+* **Schema Validation**: **Pydantic v2** models (`ProfileResponse`, `ProjectResponse`, `NowResponse`, `BookResponse`, `GitHubSummaryResponse`).
+* **Security & Rate Limiting**: CORS origin middleware protection, IP rate limiting (`slowapi`), and sanitized error handlers.
+* **Server-Side GitHub Proxy**: 15-minute in-memory TTL caching protecting clients from GitHub rate limits.
+* **Frontend Offline Fallback**: React API client (`frontend/src/api/backend.ts`) automatically falls back to local datasets if the FastAPI server is offline.
+* **Containerization**: Multi-stage `Dockerfile` and `.dockerignore` for Render deployment readiness.
+* **Interactive API Documentation**: Auto-generated OpenAPI Swagger UI at `/docs` and ReDoc at `/redoc`.
+* **Complete Test Coverage**:
+  - **Backend**: 16 / 16 Pytest tests passing (`./.venv/bin/pytest` in `backend/`).
+  - **Frontend**: 59 / 59 Vitest unit tests passing (`npm test` in `frontend/`).
+  - **E2E**: 6 / 6 Playwright E2E tests passing (`npx playwright test`).
 
-Detailed execution plan: [phase-3-implementation-plan.md](file:///Users/chrislau/Documents/personalWebsite/phase-3-implementation-plan.md)
+Detailed summary: [phase-3-summary.md](file:///Users/chrislau/Documents/personalWebsite/phase-3-summary.md) | Implementation plan: [phase-3-implementation-plan.md](file:///Users/chrislau/Documents/personalWebsite/phase-3-implementation-plan.md)
 
 ---
 
