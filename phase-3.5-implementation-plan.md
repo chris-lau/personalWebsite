@@ -137,18 +137,19 @@ personalWebsite/
 ## Detailed Task Checklist for Execution
 
 ### Step 1: Backend Structured Logging & Middleware
-- [ ] Create `backend/core/middleware.py` with `CorrelationIDMiddleware` and `RequestLoggingMiddleware`.
-- [ ] Connect middleware in `backend/main.py` and update 500 error handler to log stack traces to `stderr`.
+- [x] Create `backend/core/middleware.py` with `CorrelationIDMiddleware` and `RequestLoggingMiddleware`.
+- [x] Connect middleware in `backend/main.py` and update 500 error handler to log stack traces to `stderr`.
 
 ### Step 2: Backend Telemetry Endpoints
-- [ ] Update `backend/api/v1/endpoints/health.py` with `/health/live` and `/health/ready`.
-- [ ] Create `backend/api/v1/endpoints/telemetry.py` with `GET /api/v1/telemetry`.
-- [ ] Add Pytest tests in `backend/tests/test_telemetry.py`.
+- [x] Update `backend/api/endpoints/telemetry.py` with `/health/live` and `/health/ready`.
+- [x] Create `backend/api/endpoints/telemetry.py` with `GET /api/v1/telemetry`.
+- [x] Add Pytest tests in `backend/tests/test_middleware.py` and `backend/tests/test_telemetry.py`.
 
 ### Step 3: Frontend Telemetry Utilities & Client
-- [ ] Define TypeScript types in `frontend/src/types/monitoring.ts`.
-- [ ] Implement `frontend/src/utils/telemetry.ts` performance and storage helpers.
-- [ ] Implement `frontend/src/api/telemetryApi.ts` client.
+- [x] Define TypeScript types in `frontend/src/types/monitoring.ts`.
+- [x] Implement `frontend/src/utils/telemetry.ts` performance and storage helpers.
+- [x] Implement `frontend/src/api/telemetryApi.ts` client.
+- [x] Add Vitest unit tests in `frontend/src/utils/telemetry.test.ts`.
 
 ### Step 4: Full-Stack Monitoring UI & Diagnostic Suite
 - [ ] Build `<FullStackMonitoringDashboard />` and `FullStackMonitoringDashboard.css`.

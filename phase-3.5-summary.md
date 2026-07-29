@@ -39,11 +39,11 @@ Phase 3.5 introduces:
 * Implemented `GET /api/telemetry` & `GET /api/v1/telemetry`: Operational telemetry endpoint exposing real-time process uptime, RSS memory, cache hit/miss status, and `slowapi` rate-limit budgets.
 * Attached top-level `/health/live` and `/health/ready` routes in `backend/main.py` and included `telemetry.router` in `backend/api/router.py`.
 
-### 4. Telemetry & Middleware Pytest Suite (`backend/tests/`)
-* Created Pytest unit test suites `test_middleware.py` and `test_telemetry.py`.
-* Verified `X-Request-ID` UUID generation and request header propagation.
-* Verified `/health/live`, `/health/ready`, and `/api/telemetry` response structures.
-* Total Pytest count increased from 16 to **21 / 21 tests passing**.
+### 5. Frontend Telemetry Utilities & Client (`frontend/src/`)
+* Created TypeScript interface models in `frontend/src/types/monitoring.ts`.
+* Built measurement & storage audit utilities in `frontend/src/utils/telemetry.ts` (`getBrowserPerformanceMetrics()`, `auditSessionStorage()`, `exportDiagnosticReport()`).
+* Built telemetry API client `frontend/src/api/telemetryApi.ts` (`fetchBackendTelemetry()`, `fetchBackendReadiness()`, `benchmarkNetworkRTT()`, `runE2EDiagnosticSuite()`).
+* Added Vitest unit test suite `frontend/src/utils/telemetry.test.ts`. Total Vitest test count increased from 59 to **61 / 61 tests passing** across **12 test files**.
 
 ---
 
@@ -71,9 +71,11 @@ FastAPI Backend (Python 3.11 on Render Container)
 ## 🧪 Verification & Test Metrics
 
 - **Backend Pytest Suite**: **21 / 21 Pytest tests passing** (`./.venv/bin/pytest` in `backend/`).
-- **Frontend Vitest Suite**: **59 / 59 Vitest tests passing** (`11 / 11 test files`).
+- **Frontend Vitest Suite**: **61 / 61 Vitest tests passing** (`12 / 12 test files`).
 - **E2E Playwright Suite**: **6 / 6 Playwright E2E tests passing**.
 - **Correlation ID Header**: Verified `X-Request-ID` present on all HTTP responses.
 - **Structured JSON Logging**: Verified valid JSON log entries on `stdout`.
 - **Sub-System Readiness**: Verified `/health/ready` returns sub-system RAM RSS (MB) and uptime metrics.
+- **Browser RUM & Storage Audit**: Verified navigation timing, DOM nodes count, JS heap memory, and `sessionStorage` cache auditing.
+
 
