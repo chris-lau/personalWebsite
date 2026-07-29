@@ -84,8 +84,8 @@ personalWebsite/
 │   ├── pyproject.toml                 # Pytest & Ruff linter configuration
 │   ├── requirements.txt               # Dependencies (fastapi, uvicorn, pydantic, slowapi, httpx, pytest)
 │   ├── core/                          # Security headers & slowapi rate limiter middleware
-│   ├── data/                          # 📁 Canonical JSON Data Layer (projects, profile, skills, experience, now, site_architecture, blog_posts)
-│   ├── posts/                         # 📝 Canonical Markdown Blog Posts (.md)
+│   ├── data/                          # 📁 Canonical JSON Data Layer (projects, profile, skills, experience, now, site_architecture, blog_posts, guidebook_chapters)
+│   ├── posts/                         # 📝 Canonical Markdown Articles & Guidebook Master (.md)
 │   └── tests/                         # Pytest TestClient suite (conftest.py, test_health.py)
 └── frontend/                          # React + TypeScript SPA app
     ├── .storybook/                    # Storybook 8 configuration
@@ -112,7 +112,7 @@ personalWebsite/
 The project includes a production-ready **FastAPI Backend & Data Layer** (`/backend`).
 
 ### Architectural Highlights
-* **Single Source of Truth**: All portfolio JSON data files (`projects.json`, `profile.json`, `skills.json`, `experience.json`, `now.json`, `site_architecture.json`, `blog_posts.json`) and Markdown blog articles live in `backend/data/` and `backend/posts/`, serving both the FastAPI REST API and React Vite imports.
+* **Single Source of Truth**: All portfolio JSON data files (`projects.json`, `profile.json`, `skills.json`, `experience.json`, `now.json`, `site_architecture.json`, `blog_posts.json`, `guidebook_chapters.json`) and Markdown articles (`guidebook-master.md`, 20 blog posts) live in `backend/data/` and `backend/posts/`, serving both the FastAPI REST API and React Vite imports.
 * **Framework**: Python 3.12+ / FastAPI / Uvicorn.
 * **Tooling**: **Ruff** (blazing fast Rust-written linter and code formatter replacing Black, Flake8, and isort).
 * **Security Controls**: CORS origin protection (`CORSMiddleware`), IP rate limiting (`slowapi`), HTTP security headers (`nosniff`, `DENY`, `strict-origin-when-cross-origin`), sanitized error handling.
