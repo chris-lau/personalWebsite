@@ -1,6 +1,7 @@
 import React from 'react';
 import { siteArchitectureData } from '../data/siteArchitecture';
 import { BoxContainer } from '../components/ui/BoxContainer';
+import { FullStackMonitoringDashboard } from '../components/monitoring/FullStackMonitoringDashboard';
 import './Pages.css';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
@@ -12,7 +13,7 @@ export const HowThisSiteWorksPage: React.FC = () => {
       <section>
         <BoxContainer title="HOW THIS SITE WORKS">
           <p className="intro-text">
-            This portfolio is built as a lightweight, stateful, full-stack application showcasing modern frontend architectural principles, strict typing, dynamic theming, multi-tier testing strategies, and a Python FastAPI backend.
+            This portfolio is built as a lightweight, stateful, full-stack application showcasing modern frontend architectural principles, strict typing, dynamic theming, multi-tier testing strategies, operational telemetry, and a Python FastAPI backend.
           </p>
 
           {/* Top Quick Explorer Bar */}
@@ -70,7 +71,11 @@ export const HowThisSiteWorksPage: React.FC = () => {
             ))}
           </div>
         </BoxContainer>
+
+        {/* Full-Stack Operational Monitoring Dashboard */}
+        <FullStackMonitoringDashboard />
       </section>
     </div>
   );
 };
+

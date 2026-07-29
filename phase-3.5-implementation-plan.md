@@ -152,14 +152,14 @@ personalWebsite/
 - [x] Add Vitest unit tests in `frontend/src/utils/telemetry.test.ts`.
 
 ### Step 4: Full-Stack Monitoring UI & Diagnostic Suite
-- [ ] Build `<FullStackMonitoringDashboard />` and `FullStackMonitoringDashboard.css`.
-- [ ] Implement 5-step synthetic diagnostic test runner (`[Run Full E2E Diagnostic Test]`).
-- [ ] Add Vitest tests in `FullStackMonitoringDashboard.test.tsx`.
+- [x] Build `<FullStackMonitoringDashboard />` and `FullStackMonitoringDashboard.css`.
+- [x] Implement 5-step synthetic diagnostic test runner (`[Run Full E2E Diagnostic Test]`).
+- [x] Add Vitest tests in `FullStackMonitoringDashboard.test.tsx`.
 
 ### Step 5: Integration & Guidebook Documentation
-- [ ] Embed `<FullStackMonitoringDashboard />` into `frontend/src/pages/HowThisSiteWorksPage.tsx`.
-- [ ] Add Chapter 8 to `backend/data/backend_guidebook_chapters.json` and `backend/posts/backend-guidebook-master.md`.
-- [ ] Add Playwright E2E test in `frontend/e2e/monitoring.spec.ts`.
+- [x] Embed `<FullStackMonitoringDashboard />` into `frontend/src/pages/HowThisSiteWorksPage.tsx`.
+- [x] Add Chapter 8 to `backend/data/backend_guidebook_chapters.json` and `backend/posts/backend-guidebook-master.md`.
+- [x] Add Playwright E2E test in `frontend/e2e/monitoring.spec.ts`.
 
 ---
 

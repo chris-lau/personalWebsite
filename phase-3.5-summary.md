@@ -43,7 +43,19 @@ Phase 3.5 introduces:
 * Created TypeScript interface models in `frontend/src/types/monitoring.ts`.
 * Built measurement & storage audit utilities in `frontend/src/utils/telemetry.ts` (`getBrowserPerformanceMetrics()`, `auditSessionStorage()`, `exportDiagnosticReport()`).
 * Built telemetry API client `frontend/src/api/telemetryApi.ts` (`fetchBackendTelemetry()`, `fetchBackendReadiness()`, `benchmarkNetworkRTT()`, `runE2EDiagnosticSuite()`).
-* Added Vitest unit test suite `frontend/src/utils/telemetry.test.ts`. Total Vitest test count increased from 59 to **61 / 61 tests passing** across **12 test files**.
+* Added Vitest unit test suite `frontend/src/utils/telemetry.test.ts`.
+
+### 6. Full-Stack Monitoring UI & Synthetic Diagnostic Suite (`frontend/src/components/monitoring/`)
+* Built interactive `<FullStackMonitoringDashboard />` React UI component and CSS (`FullStackMonitoringDashboard.css`) styled across ASCII, CLI, and Modern themes.
+* Rendered live full-stack system topology map: `[Cloudflare Pages React SPA] ──(RTT ms)──► [FastAPI Render Backend] ──(Proxy Cache)──► [GitHub REST API]`.
+* Implemented automated 5-step synthetic diagnostic test runner executing storage integrity, RTT network benchmark, backend readiness, GitHub proxy cache status, and `slowapi` rate-limiter budget validation.
+* Added interactive maintainer action controls: `[Ping Health]`, `[Run Full E2E Diagnostic Test]`, `[Flush Cache]`, `[Simulate Offline Mode]`, and `[Export Diagnostic Log (.json)]`.
+* Added Vitest component unit test suite `FullStackMonitoringDashboard.test.tsx`.
+
+### 7. Page Integration, Educational Guidebook & E2E Testing
+* Embedded `<FullStackMonitoringDashboard />` inside `frontend/src/pages/HowThisSiteWorksPage.tsx`.
+* Added **Volume 2, Chapter 8** (*"Full-Stack Operational Monitoring, Structured JSON Logging, Telemetry Endpoints & E2E Synthetic Probes"*) to `backend/data/backend_guidebook_chapters.json` and `backend/posts/backend-guidebook-master.md`.
+* Added Playwright end-to-end test suite `frontend/e2e/monitoring.spec.ts`.
 
 ---
 
@@ -52,7 +64,8 @@ Phase 3.5 introduces:
 ```text
 Visitor Browser (React 18 SPA on Cloudflare Pages)
    │
-   ├──► Browser RUM Telemetry (TTFB, LCP, INP, CLS, JS Heap Memory)
+   ├──► FullStackMonitoringDashboard (Live topology, telemetry cards, 5-step synthetic runner)
+   ├──► Browser RUM Telemetry (TTFB, DOM nodes, JS Heap Memory)
    ├──► SessionStorage Cache Audit (GitHub 15-min TTL status)
    │
    ▼  [X-Request-ID Correlation Header]
@@ -71,11 +84,12 @@ FastAPI Backend (Python 3.11 on Render Container)
 ## 🧪 Verification & Test Metrics
 
 - **Backend Pytest Suite**: **21 / 21 Pytest tests passing** (`./.venv/bin/pytest` in `backend/`).
-- **Frontend Vitest Suite**: **61 / 61 Vitest tests passing** (`12 / 12 test files`).
-- **E2E Playwright Suite**: **6 / 6 Playwright E2E tests passing**.
+- **Frontend Vitest Suite**: **65 / 65 Vitest tests passing** (`13 / 13 test files`).
+- **E2E Playwright Suite**: **9 / 9 Playwright E2E tests passing** (`3 / 3 spec files`).
 - **Correlation ID Header**: Verified `X-Request-ID` present on all HTTP responses.
 - **Structured JSON Logging**: Verified valid JSON log entries on `stdout`.
 - **Sub-System Readiness**: Verified `/health/ready` returns sub-system RAM RSS (MB) and uptime metrics.
 - **Browser RUM & Storage Audit**: Verified navigation timing, DOM nodes count, JS heap memory, and `sessionStorage` cache auditing.
+- **Synthetic Diagnostic Runner**: Verified 5-step automated diagnostic suite execution and JSON log report downloading.
 
 
