@@ -39,3 +39,17 @@ def test_cors_preflight_production_origin(client):
     assert response.status_code == 200
     assert response.headers.get("access-control-allow-origin") == "https://chrislau.dev"
 
+
+def test_cors_preflight_cloudflare_pages_origin(client):
+    """Verify CORS preflight OPTIONS request for Cloudflare Pages domain https://personalwebsite-8i8.pages.dev."""
+    response = client.options(
+        "/api/v1/telemetry",
+        headers={
+            "Origin": "https://personalwebsite-8i8.pages.dev",
+            "Access-Control-Request-Method": "GET",
+        },
+    )
+    assert response.status_code == 200
+    assert response.headers.get("access-control-allow-origin") == "https://personalwebsite-8i8.pages.dev"
+
+

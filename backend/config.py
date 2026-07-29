@@ -10,7 +10,7 @@ class Settings(BaseSettings):
 
     # CORS Origins
     ALLOWED_ORIGINS: str = Field(
-        default="http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,https://chrislau.dev,https://www.chrislau.dev,https://chris-lau.pages.dev,https://chrislau.pages.dev,https://chris-lau-storybook.pages.dev"
+        default="http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,https://chrislau.dev,https://www.chrislau.dev,https://personalwebsite-8i8.pages.dev,https://chris-lau.pages.dev,https://chrislau.pages.dev,https://chris-lau-storybook.pages.dev"
     )
     CORS_ORIGINS: str = Field(default="")
 
