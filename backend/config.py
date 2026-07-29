@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     ALLOWED_ORIGINS: str = Field(
         default="http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,https://chrislau.dev,https://www.chrislau.dev,https://chris-lau.pages.dev,https://chrislau.pages.dev,https://chris-lau-storybook.pages.dev"
     )
+    CORS_ORIGINS: str = Field(default="")
 
     # Rate Limiting
     RATE_LIMIT_PER_MINUTE: int = Field(default=60)
@@ -21,10 +22,10 @@ class Settings(BaseSettings):
 
     @property
     def cors_origins_list(self) -> list[str]:
-        """Parse comma-separated ALLOWED_ORIGINS into a clean list of strings."""
-        if not self.ALLOWED_ORIGINS:
-            return ["http://localhost:5173", "https://chrislau.dev"]
-        return [origin.strip().rstrip("/") for origin in self.ALLOWED_ORIGINS.split(",") if origin.strip()]
+        """Parse comma-separated ALLOWED_ORIGINS and CORS_ORIGINS into a clean list of strings."""
+        combined = f"{self.ALLOWED_ORIGINS},{self.CORS_ORIGINS}"
+        origins = [origin.strip().rstrip("/") for origin in combined.split(",") if origin.strip()]
+        return origins if origins else ["http://localhost:5173", "https://chrislau.dev"]
 
 
 settings = Settings()
