@@ -62,7 +62,9 @@ Phase 3 introduces:
 
 ## 🧪 Verification & Test Metrics
 
+- **Live Website**: [https://chrislau.dev](https://chrislau.dev)
+- **Live Component Storybook**: [https://chris-lau-storybook.pages.dev](https://chris-lau-storybook.pages.dev)
 - **Backend Pytest Suite**: **16 / 16 Pytest tests passing** (`./.venv/bin/pytest` in `backend/`).
 - **Frontend Vitest Suite**: **59 / 59 Vitest tests passing** (`11 / 11 test files`), including `backend.test.ts`.
-- **E2E Playwright Tests**: **Playwright fallback E2E tests written** (`frontend/e2e/fallback.spec.ts`).
+- **E2E Playwright Suite**: **6 / 6 Playwright E2E tests passing** (`npx playwright test`).
 - **OpenAPI Schema Check**: Valid JSON schema served at `/openapi.json` and `/docs`.

@@ -341,13 +341,14 @@ Used public, unauthenticated GitHub API requests.
 
 ---
 
-# Phase 3 — FastAPI Backend
+# Phase 3 — FastAPI Backend (COMPLETED)
 
 ## Goal
 
 Build a personal backend after gaining experience as an API consumer.
 
 Detailed Implementation Plan: [phase-3-implementation-plan.md](file:///Users/chrislau/Documents/personalWebsite/phase-3-implementation-plan.md)
+Detailed Phase Summary: [phase-3-summary.md](file:///Users/chrislau/Documents/personalWebsite/phase-3-summary.md)
 
 ## Technologies
 
@@ -429,16 +430,16 @@ Benefits include:
 
 ## Completion Criteria
 
-- FastAPI is deployed
-- `/health` confirms the service is running
-- React successfully calls at least one backend endpoint
-- CORS allows only approved frontend origins
-- Basic IP rate limiting is configured on API endpoints
-- Input and output schemas are defined
-- API tests pass
-- Errors use consistent response formats
-- API documentation is available
-- The frontend remains usable when the backend is unavailable
+- [x] FastAPI backend scaffolding, Pydantic schemas, and Dockerfile ready for Render deployment
+- [x] `/health` endpoint confirms the service is running
+- [x] React successfully calls backend endpoints (`frontend/src/api/backend.ts`)
+- [x] CORS allows only approved frontend origins
+- [x] Basic IP rate limiting (`slowapi`) is configured on API endpoints
+- [x] Input and output Pydantic v2 schemas are defined
+- [x] API tests pass (16/16 Pytest passing, 59/59 Vitest passing, 6/6 Playwright E2E passing)
+- [x] Errors use consistent response formats
+- [x] API documentation (Swagger UI & ReDoc) is available
+- [x] The frontend remains 100% usable when the backend is unavailable (graceful fallback)
 
 ---
 
