@@ -109,6 +109,15 @@ personalWebsite/
 - [x] Write Pytest test cases covering `/health`, `/api/projects`, `/api/profile`, `/api/github-summary`, and error scenarios.
 - [x] Create multi-stage `Dockerfile` and `.dockerignore` for Render deployment readiness.
 
+### Step 8: Volume 2 Guidebook App & Educational Content (`frontend/src/pages/GuidebookPage.tsx`)
+- [x] Create Volume 2 guidebook dataset (`backend/data/backend_guidebook_chapters.json` & `backend/posts/backend-guidebook-master.md`) covering FastAPI, Pydantic v2, REST endpoints, GitHub proxy cache, `slowapi`, Pytest, and Docker.
+- [x] Add interactive Volume Selector Tab Bar on `/guidebook` to switch seamlessly between `[ 📘 Vol 1: Frontend ]` and `[ 🐍 Vol 2: FastAPI Backend ]`.
+
+### Step 9: Multi-Cloud Deployments & Custom Domain Setup
+- [x] Deploy React SPA frontend to Cloudflare Pages and attach custom domain `https://chrislau.dev`.
+- [x] Deploy isolated component library Storybook to Cloudflare Pages (`https://chris-lau-storybook.pages.dev`).
+- [x] Prepare FastAPI backend multi-stage Docker container for Render cloud deployment.
+
 ---
 
 ## Verification Plan
