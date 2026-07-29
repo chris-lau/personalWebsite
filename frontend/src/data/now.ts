@@ -1,19 +1,4 @@
 import { NowState } from '../types/portfolio';
+import rawNow from '../../../backend/data/now.json';
 
-export const nowData: NowState = {
-  lastUpdated: 'July 2026',
-  currentFocus: 'Leading AI Surveillance initiatives, AI Governance frameworks, and prototyping Agentic Automation solutions.',
-  workingOn: [
-    'AI-enabled Surveillance & Compliance production services at Global Relay',
-    'AI Governance program roadmap and cross-pod alignment',
-    'Agentic Automation & GraphDB emerging tech prototyping',
-    'Triple-themed (Modern Editorial, ASCII & CLI) AI & Product Leadership personal website',
-  ],
-  reading: [],
-  learning: [
-    'Multi-agent LLM systems and task orchestration frameworks',
-    'Graph database architectures for enterprise relationship mapping',
-    'Modern React & TypeScript design systems',
-  ],
-};
-
+export const nowData: NowState = rawNow as NowState;
