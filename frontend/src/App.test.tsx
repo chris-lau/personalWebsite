@@ -93,9 +93,12 @@ describe('App Router & Integration Tests', () => {
 
     expect(screen.getByText('WELCOME')).toBeDefined();
 
-    // Click on projects link in navigation header
-    const projectsLinks = screen.getAllByRole('link', { name: /^(Projects|\[PROJECTS\])$/i });
-    fireEvent.click(projectsLinks[0]);
+    // Open Work & Writing dropdown, then click Projects menu item in navigation header
+    const workTrigger = screen.getByRole('button', { name: /Work & Writing/i });
+    fireEvent.click(workTrigger);
+
+    const projectsItem = screen.getByRole('menuitem', { name: /Projects/i });
+    fireEvent.click(projectsItem);
 
     expect(screen.getByText('FEATURED PORTFOLIO PROJECTS')).toBeDefined();
   });

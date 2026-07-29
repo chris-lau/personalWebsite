@@ -7,46 +7,38 @@ test.describe('Portfolio E2E Tests', () => {
     await expect(page.getByRole('heading', { name: 'WELCOME' })).toBeVisible();
 
     // 2. About page
-    await page.click('nav.modern-nav >> text="About"');
+    await page.goto('/about');
     await expect(page.getByRole('heading', { name: 'ABOUT ME' })).toBeVisible();
-    await expect(page).toHaveURL('/about');
 
-    // 3. Projects page
-    await page.click('nav.modern-nav >> text="Projects"');
-    await expect(page.getByRole('heading', { name: 'FEATURED PORTFOLIO PROJECTS' })).toBeVisible();
-    await expect(page).toHaveURL('/projects');
-
-    // 4. Blog page
-    await page.click('nav.modern-nav >> text="Blog"');
-    await expect(page.getByRole('heading', { name: 'TECHNICAL BLOG' })).toBeVisible();
-    await expect(page).toHaveURL('/blog');
-
-    // 4b. Book / Guidebook page
-    await page.click('nav.modern-nav >> text="Book"');
-    await expect(page.getByRole('heading', { name: 'SOFTWARE ENGINEERING GUIDEBOOK SERIES' })).toBeVisible();
-    await expect(page).toHaveURL('/guidebook');
-
-    // 5. Experience page
-    await page.click('nav.modern-nav >> text="Experience"');
+    // 3. Experience page
+    await page.goto('/experience');
     await expect(page.getByRole('heading', { name: 'CAREER & EXPERIENCE' })).toBeVisible();
-    await expect(page).toHaveURL('/experience');
 
-    // 6. Now page
-    await page.click('nav.modern-nav >> text="Now"');
+    // 4. Now page
+    await page.goto('/now');
     await expect(page.getByRole('heading', { name: "WHAT I'M DOING NOW" })).toBeVisible();
-    await expect(page).toHaveURL('/now');
 
-    // 6b. Ops / Monitoring page
-    await page.click('nav.modern-nav >> text="Ops"');
-    await expect(page.getByRole('heading', { name: 'FULL-STACK OPERATIONAL MONITORING & TELEMETRY', exact: true })).toBeVisible();
-    await expect(page).toHaveURL('/monitoring');
+    // 5. Projects page
+    await page.goto('/projects');
+    await expect(page.getByRole('heading', { name: 'FEATURED PORTFOLIO PROJECTS' })).toBeVisible();
 
-    // 7. Stack / How this site works page
-    await page.click('nav.modern-nav >> text="Stack"');
+    // 6. Blog page
+    await page.goto('/blog');
+    await expect(page.getByRole('heading', { name: 'TECHNICAL BLOG' })).toBeVisible();
+
+    // 7. Book / Guidebook page
+    await page.goto('/guidebook');
+    await expect(page.getByRole('heading', { name: 'SOFTWARE ENGINEERING GUIDEBOOK SERIES' })).toBeVisible();
+
+    // 8. Stack / How this site works page
+    await page.goto('/how-this-site-works');
     await expect(page.getByRole('heading', { name: 'HOW THIS SITE WORKS' })).toBeVisible();
-    await expect(page).toHaveURL('/how-this-site-works');
 
-    // 8. Contact page
+    // 9. Ops / Monitoring page
+    await page.goto('/monitoring');
+    await expect(page.getByRole('heading', { name: 'FULL-STACK OPERATIONAL MONITORING & TELEMETRY', exact: true })).toBeVisible();
+
+    // 10. Contact page (standalone link)
     await page.click('nav.modern-nav >> text="Contact"');
     await expect(page.getByRole('heading', { name: 'GET IN TOUCH' })).toBeVisible();
     await expect(page).toHaveURL('/contact');

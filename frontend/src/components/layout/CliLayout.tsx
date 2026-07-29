@@ -1,27 +1,18 @@
-import { useState, ReactNode } from 'react';
-import { NavLink } from 'react-router-dom';
+import { useState, useRef, useEffect, ReactNode } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 import { ThemeToggle } from './ThemeToggle';
+import { NAV_GROUPS, NavGroupItem } from '../../config/navConfig';
 import './CliLayout.css';
 
 interface CliLayoutProps {
   children: ReactNode;
 }
 
-const NAV_ITEMS = [
-  { path: '/', label: 'home.sh' },
-  { path: '/about', label: 'about.txt' },
-  { path: '/projects', label: 'projects/' },
-  { path: '/blog', label: 'blog/' },
-  { path: '/guidebook', label: 'book.md' },
-  { path: '/experience', label: 'history.log' },
-  { path: '/now', label: 'now.md' },
-  { path: '/monitoring', label: 'top.sh' },
-  { path: '/how-this-site-works', label: 'stack.md' },
-  { path: '/contact', label: 'contact.sh' },
-];
-
 export const CliLayout = ({ children }: CliLayoutProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const location = useLocation();
+  const navRef = useRef<HTMLDivElement>(null);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen((prev) => !prev);
@@ -29,6 +20,45 @@ export const CliLayout = ({ children }: CliLayoutProps) => {
 
   const closeMobileMenu = () => {
     setMobileMenuOpen(false);
+    setActiveDropdown(null);
+  };
+
+  const toggleDropdown = (groupId: string) => {
+    setActiveDropdown((prev) => (prev === groupId ? null : groupId));
+  };
+
+  // Close dropdown on click outside or Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setActiveDropdown(null);
+      }
+    };
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setActiveDropdown(null);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Close dropdown on route change
+  useEffect(() => {
+    setActiveDropdown(null);
+  }, [location.pathname]);
+
+  const isGroupActive = (group: NavGroupItem) => {
+    if (group.path) {
+      return location.pathname === group.path;
+    }
+    return group.children?.some((child) => location.pathname === child.path);
   };
 
   return (
@@ -53,9 +83,11 @@ export const CliLayout = ({ children }: CliLayoutProps) => {
         </header>
 
         {/* Terminal Navigation Bar */}
-        <nav className="cli-nav-bar" aria-label="Terminal Navigation">
+        <nav className="cli-nav-bar" aria-label="Terminal Navigation" ref={navRef}>
           <div className="cli-nav-header">
-            <span className="cli-prompt-symbol" aria-hidden="true">$</span>
+            <NavLink to="/" className="cli-prompt-link" onClick={closeMobileMenu}>
+              <span className="cli-prompt-symbol" aria-hidden="true">$</span> home.sh
+            </NavLink>
             <button
               className="cli-mobile-menu-toggle"
               onClick={toggleMobileMenu}
@@ -66,20 +98,70 @@ export const CliLayout = ({ children }: CliLayoutProps) => {
             </button>
           </div>
           <ul className={`cli-nav-tabs ${mobileMenuOpen ? 'open' : ''}`}>
-            {NAV_ITEMS.map((item) => (
-              <li key={item.path}>
-                <NavLink
-                  to={item.path}
-                  className={({ isActive }) =>
-                    `cli-tab ${isActive ? 'active' : ''}`
-                  }
-                  end={item.path === '/'}
-                  onClick={closeMobileMenu}
+            {NAV_GROUPS.map((group) => {
+              const active = isGroupActive(group);
+
+              if (group.path) {
+                return (
+                  <li key={group.id} className="cli-tab-item">
+                    <NavLink
+                      to={group.path}
+                      className={({ isActive }) =>
+                        `cli-tab ${isActive ? 'active' : ''}`
+                      }
+                      onClick={closeMobileMenu}
+                    >
+                      {group.cliLabel}
+                    </NavLink>
+                  </li>
+                );
+              }
+
+              const isOpen = activeDropdown === group.id;
+
+              return (
+                <li
+                  key={group.id}
+                  className={`cli-tab-item has-dropdown ${isOpen ? 'dropdown-open' : ''}`}
+                  onMouseEnter={() => !mobileMenuOpen && setActiveDropdown(group.id)}
                 >
-                  {item.label}
-                </NavLink>
-              </li>
-            ))}
+                  <button
+                    type="button"
+                    className={`cli-tab cli-dropdown-toggle ${active ? 'active' : ''}`}
+                    onClick={() => toggleDropdown(group.id)}
+                    aria-expanded={isOpen}
+                    aria-haspopup="true"
+                    aria-controls={`cli-submenu-${group.id}`}
+                  >
+                    <span>{group.cliLabel}</span>
+                    <span className="cli-caret" aria-hidden="true">
+                      {isOpen ? '▲' : '▼'}
+                    </span>
+                  </button>
+
+                  <ul
+                    id={`cli-submenu-${group.id}`}
+                    className={`cli-dropdown-menu ${isOpen ? 'show' : ''}`}
+                    role="menu"
+                  >
+                    {group.children?.map((child) => (
+                      <li key={child.path} role="none">
+                        <NavLink
+                          to={child.path}
+                          className={({ isActive }) =>
+                            `cli-dropdown-item ${isActive ? 'active' : ''}`
+                          }
+                          role="menuitem"
+                          onClick={closeMobileMenu}
+                        >
+                          <span className="cli-sub-prefix">&gt;</span> {child.cliLabel}
+                        </NavLink>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              );
+            })}
           </ul>
         </nav>
 
@@ -100,3 +182,4 @@ export const CliLayout = ({ children }: CliLayoutProps) => {
     </div>
   );
 };
+

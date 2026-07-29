@@ -16,6 +16,22 @@ export const HowThisSiteWorksPage: React.FC = () => {
             This portfolio is built as a lightweight, stateful, full-stack application showcasing modern frontend architectural principles, strict typing, dynamic theming, multi-tier testing strategies, real-time telemetry, and a Python FastAPI backend.
           </p>
 
+          {/* Render Cold Start Note */}
+          <p
+            className="cold-start-note"
+            style={{
+              fontSize: '0.8rem',
+              opacity: 0.85,
+              margin: '0.75rem 0 1rem 0',
+              padding: '0.4rem 0.75rem',
+              borderLeft: '3px solid var(--accent-color, #3498db)',
+              backgroundColor: 'var(--card-bg, rgba(0, 0, 0, 0.1))',
+              borderRadius: '0 4px 4px 0',
+            }}
+          >
+            ℹ️ <strong>Backend Cold Start Note:</strong> Free-tier cloud instances (Render) spin down after 15 mins of inactivity. Initial requests (including Swagger UI <code>/docs</code> &amp; diagnostic probes) may take ~50s to wake up the backend container. Subsequent requests respond in &lt;50ms.
+          </p>
+
           {/* Top Quick Explorer Bar */}
           <div className="quick-explorer-bar">
             <h3 className="quick-explorer-title">&gt; LIVE EXPLORERS & OPERATIONAL CONSOLES</h3>

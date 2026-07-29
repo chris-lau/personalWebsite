@@ -1,27 +1,18 @@
-import { useState, ReactNode } from 'react';
-import { NavLink } from 'react-router-dom';
+import { useState, useRef, useEffect, ReactNode } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 import { ThemeToggle } from './ThemeToggle';
+import { NAV_GROUPS, NavGroupItem } from '../../config/navConfig';
 import './AsciiLayout.css';
 
 interface AsciiLayoutProps {
   children: ReactNode;
 }
 
-const NAV_ITEMS = [
-  { path: '/', label: 'HOME' },
-  { path: '/about', label: 'ABOUT' },
-  { path: '/projects', label: 'PROJECTS' },
-  { path: '/blog', label: 'BLOG' },
-  { path: '/guidebook', label: 'BOOK' },
-  { path: '/experience', label: 'EXP' },
-  { path: '/now', label: 'NOW' },
-  { path: '/monitoring', label: 'OPS' },
-  { path: '/how-this-site-works', label: 'STACK' },
-  { path: '/contact', label: 'CONTACT' },
-];
-
 export const AsciiLayout = ({ children }: AsciiLayoutProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const location = useLocation();
+  const navRef = useRef<HTMLElement>(null);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen((prev) => !prev);
@@ -29,6 +20,45 @@ export const AsciiLayout = ({ children }: AsciiLayoutProps) => {
 
   const closeMobileMenu = () => {
     setMobileMenuOpen(false);
+    setActiveDropdown(null);
+  };
+
+  const toggleDropdown = (groupId: string) => {
+    setActiveDropdown((prev) => (prev === groupId ? null : groupId));
+  };
+
+  // Close dropdown on click outside or Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setActiveDropdown(null);
+      }
+    };
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setActiveDropdown(null);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Close dropdown on route change
+  useEffect(() => {
+    setActiveDropdown(null);
+  }, [location.pathname]);
+
+  const isGroupActive = (group: NavGroupItem) => {
+    if (group.path) {
+      return location.pathname === group.path;
+    }
+    return group.children?.some((child) => location.pathname === child.path);
   };
 
   return (
@@ -39,9 +69,11 @@ export const AsciiLayout = ({ children }: AsciiLayoutProps) => {
 
       {/* ASCII Top Header Banner */}
       <header className="ascii-header">
-        <div className="ascii-banner" aria-hidden="true">
+        <div className="ascii-banner">
           <span className="ascii-prompt">&gt;</span>
-          <span className="ascii-name">CHRIS LAU</span>
+          <NavLink to="/" className="ascii-brand-link" onClick={closeMobileMenu}>
+            <span className="ascii-name">CHRIS LAU</span>
+          </NavLink>
           <span className="ascii-separator">//</span>
           <span className="ascii-title">STAFF PRODUCT MANAGER, AI</span>
         </div>
@@ -50,7 +82,7 @@ export const AsciiLayout = ({ children }: AsciiLayoutProps) => {
         </div>
 
         {/* Navigation Bar */}
-        <nav className="ascii-nav" aria-label="Main Navigation">
+        <nav className="ascii-nav" aria-label="Main Navigation" ref={navRef}>
           <div className="ascii-nav-controls">
             <button
               className="ascii-mobile-menu-toggle"
@@ -66,20 +98,80 @@ export const AsciiLayout = ({ children }: AsciiLayoutProps) => {
           </div>
 
           <ul className={`ascii-nav-list ${mobileMenuOpen ? 'open' : ''}`}>
-            {NAV_ITEMS.map((item) => (
-              <li key={item.path}>
-                <NavLink
-                  to={item.path}
-                  className={({ isActive }) =>
-                    `ascii-nav-link ${isActive ? 'active' : ''}`
-                  }
-                  end={item.path === '/'}
-                  onClick={closeMobileMenu}
+            {NAV_GROUPS.map((group) => {
+              const active = isGroupActive(group);
+
+              if (group.path) {
+                return (
+                  <li key={group.id} className="ascii-nav-item">
+                    <NavLink
+                      to={group.path}
+                      className={({ isActive }) =>
+                        `ascii-nav-link ${isActive ? 'active' : ''}`
+                      }
+                      onClick={closeMobileMenu}
+                    >
+                      [{group.asciiLabel}]
+                    </NavLink>
+                  </li>
+                );
+              }
+
+              const isOpen = activeDropdown === group.id;
+
+              return (
+                <li
+                  key={group.id}
+                  className={`ascii-nav-item has-dropdown ${isOpen ? 'dropdown-open' : ''}`}
+                  onMouseEnter={() => !mobileMenuOpen && setActiveDropdown(group.id)}
                 >
-                  [{item.label}]
-                </NavLink>
-              </li>
-            ))}
+                  <button
+                    type="button"
+                    className={`ascii-nav-link ascii-dropdown-toggle ${active ? 'active' : ''}`}
+                    onClick={() => toggleDropdown(group.id)}
+                    aria-expanded={isOpen}
+                    aria-haspopup="true"
+                    aria-controls={`ascii-submenu-${group.id}`}
+                  >
+                    <span>[{group.asciiLabel}]</span>
+                    <span className="ascii-caret" aria-hidden="true">
+                      {isOpen ? '▴' : '▾'}
+                    </span>
+                  </button>
+
+                  <div
+                    id={`ascii-submenu-${group.id}`}
+                    className={`ascii-dropdown-menu ${isOpen ? 'show' : ''}`}
+                    role="menu"
+                  >
+                    <div className="ascii-border-top" aria-hidden="true">
+                      +-- {group.asciiLabel} --+
+                    </div>
+                    <ul className="ascii-submenu-list">
+                      {group.children?.map((child) => (
+                        <li key={child.path} role="none">
+                          <NavLink
+                            to={child.path}
+                            className={({ isActive }) =>
+                              `ascii-dropdown-item ${isActive ? 'active' : ''}`
+                            }
+                            role="menuitem"
+                            onClick={closeMobileMenu}
+                          >
+                            <span className="ascii-item-bracket">[</span>
+                            {child.asciiLabel}
+                            <span className="ascii-item-bracket">]</span>
+                          </NavLink>
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="ascii-border-bottom" aria-hidden="true">
+                      +----------------+
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         </nav>
       </header>
@@ -101,3 +193,4 @@ export const AsciiLayout = ({ children }: AsciiLayoutProps) => {
     </div>
   );
 };
+
