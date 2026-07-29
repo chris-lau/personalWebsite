@@ -4,7 +4,8 @@ Create and align the detailed execution plan for **Phase 3.5** directly from the
 
 Phase 3.5 introduces an integrated, zero-cost, zero-cookie **Full-Stack Operational Monitoring & Telemetry System** across the Python FastAPI backend (`/backend`), React 18 frontend (`/frontend`), and End-to-End (E2E) application topology.
 
-GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github.com/chris-lau/personalWebsite)
+GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github.com/chris-lau/personalWebsite)  
+Summary Document: [phase-3.5-summary.md](file:///Users/chrislau/Documents/personalWebsite/phase-3.5-summary.md)
 
 ---
 
@@ -27,7 +28,7 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
    - Inspect `sessionStorage` cache items, cache size, and cache expiration timers.
 
 4. **Full-Stack E2E Diagnostic Suite & Topology Map**:
-   - Build `<FullStackMonitoringDashboard />` component embedded on `/how-this-site-works`.
+   - Build `<FullStackMonitoringDashboard />` component embedded on `/monitoring` and `/how-this-site-works`.
    - Render a live full-stack system topology diagram: `[Cloudflare Pages React SPA] ──(RTT ms)──► [FastAPI Render Backend] ──(Proxy Cache)──► [GitHub REST API]`.
    - Automated 5-step E2E synthetic diagnostic suite (`[Run Full E2E Diagnostic Test]`):
      - **Check 1**: Client Storage & Cache Integrity.
@@ -40,6 +41,11 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
 5. **Educational Guidebook Series Documentation**:
    - Add **Volume 2, Chapter 8**: *"Full-Stack Operational Monitoring, Structured JSON Logging, Telemetry Endpoints & E2E Synthetic Probes"* to `backend/data/backend_guidebook_chapters.json` and `backend/posts/backend-guidebook-master.md`.
 
+6. **Dedicated Monitoring Page & Visual Theme Navigation**:
+   - Add dedicated page `/monitoring` (`MonitoringPage.tsx`).
+   - Integrate navigation items across all visual layouts (`Ops` in Modern, `OPS` in ASCII, `top.sh` in CLI).
+   - Publish technical observability blog post: *"Demystifying Full-Stack Operational Monitoring & Telemetry: Zero-Cost Observability from Browser RUM to FastAPI Middleware"*.
+
 ---
 
 ## Workspace Directory Structure Updates
@@ -47,8 +53,9 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
 ```text
 personalWebsite/
 ├── README.md                          # Master project documentation
-├── personal-os-project-plan.md        # Architectural roadmap (Phase 3.5 added)
+├── personal-os-project-plan.md        # Architectural roadmap (Phase 3.5 completed)
 ├── phase-3.5-implementation-plan.md   # Phase 3.5 execution plan & checklist
+├── phase-3.5-summary.md               # Phase 3.5 summary & verification log
 ├── backend/
 │   ├── main.py                        # Updated with logging, health/live, health/ready
 │   ├── core/
@@ -75,7 +82,8 @@ personalWebsite/
     │   │       ├── FullStackMonitoringDashboard.css
     │   │       └── FullStackMonitoringDashboard.test.tsx
     │   └── pages/
-    │       └── HowThisSiteWorksPage.tsx # Embedded monitoring dashboard
+    │       ├── MonitoringPage.tsx     # Dedicated telemetry console page
+    │       └── HowThisSiteWorksPage.tsx # Embedded monitoring badge
     └── e2e/
         └── monitoring.spec.ts         # Playwright E2E test for synthetic diagnostic runner
 ```
@@ -166,19 +174,19 @@ personalWebsite/
 - [x] Create dedicated `frontend/src/pages/MonitoringPage.tsx` hosting `<FullStackMonitoringDashboard />` and `/monitoring` route.
 - [x] Add top header navigation link across all themes (`Ops` in Modern, `OPS` in ASCII, `top.sh` in CLI).
 - [x] Publish technical observability blog post: *"Demystifying Full-Stack Operational Monitoring & Telemetry: Zero-Cost Observability from Browser RUM to FastAPI Middleware"*.
-- [x] Update `README.md`, `phase-3.5-implementation-plan.md`, and `phase-3.5-summary.md`.
+- [x] Update `README.md`, `phase-3.5-implementation-plan.md`, `phase-3.5-summary.md`, and `personal-os-project-plan.md`.
 
 ---
 
 ## Verification Plan
 
 ### Automated Verification
-1. **Backend Pytest Suite**: `./.venv/bin/pytest` in `backend/` verifying `/health/live`, `/health/ready`, `/api/v1/telemetry`, and structured logging headers.
-2. **Frontend Vitest Suite**: `npm test` in `frontend/` verifying telemetry client utilities and component rendering.
-3. **Playwright E2E Suite**: `npx playwright test` verifying the 5-step synthetic diagnostic test runner.
+1. **Backend Pytest Suite**: `./.venv/bin/pytest` in `backend/` verifying `/health/live`, `/health/ready`, `/api/v1/telemetry`, and structured logging headers (22 / 22 passed).
+2. **Frontend Vitest Suite**: `npm test` in `frontend/` verifying telemetry client utilities and component rendering (75 / 75 passed).
+3. **Playwright E2E Suite**: `npx playwright test` verifying the 5-step synthetic diagnostic test runner (9 / 9 passed).
 
 ### Manual Verification
 1. Launch local backend (`uvicorn main:app --port 8000`) and frontend (`npm run dev`).
-2. Navigate to `http://localhost:5173/how-this-site-works`.
+2. Navigate to `http://localhost:5173/monitoring` and `http://localhost:5173/how-this-site-works`.
 3. Run the E2E synthetic diagnostic suite and confirm all 5 checks pass.
 4. Export the diagnostic `.json` report and verify output schema.

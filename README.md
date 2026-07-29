@@ -17,29 +17,28 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - **`cli` Mode**: Retro terminal window layout with interactive command prompt (`$`), tab navigation, and terminal output aesthetic.
   - **`modern` Mode**: Modern Editorial layout inspired by Anthropic & OpenAI websites (dark charcoal surface, warm ambient glows, `Instrument Serif` headers, and `Inter` sans-serif typography).
   - **Real-Time Segmented Control**: 3-option pill selector (`[ MODERN | ASCII | CLI ]`) providing instant 1-click theme switching, full keyboard accessibility (`role="radiogroup"`), and `localStorage` state persistence.
-- **Client-Side Navigation & Routing**:
-  - `/` — Home (Hero bio, featured projects, quick skill overview)
-  - `/about` — About & Résumé (Detailed background, core values, technical stack)
-  - `/projects` — Projects Showcase (Interactive filterable list by technology tag)
-  - `/blog` — Blog Engine (Keyword search, tag filtering, post detail markdown views)
-  - `/guidebook` — Frontend Development Guidebook (Interactive 9-chapter reader app)
-  - `/experience` — Work & Education Timeline
-  - `/now` — Current Activities & Learning Focus (Derek Sivers style `/now` page)
-  - `/contact` — Contact details & Social links
-  - `/how-this-site-works` — Technical Architecture & Design System showcase
+- **Consolidated Navigation & Submenus**:
+  - Consolidated 10 flat navigation items down to 3 intuitive top-level categories (**About** ▾, **Work & Writing** ▾, **System & Ops** ▾) + standalone **Contact** link.
+  - **Logo / Brand (`CL / Chris Lau`)**: Direct link to Home (`/`).
+  - **`About` ▾**: Bio & Profile (`/about`), Experience & Career (`/experience`), What I'm Doing Now (`/now`).
+  - **`Work & Writing` ▾**: Portfolio Projects (`/projects`), Technical Blog (`/blog`), Engineering Book (`/guidebook`).
+  - **`System & Ops` ▾**: Site Architecture & Stack (`/how-this-site-works`), Ops Dashboard (`/monitoring`).
+  - **`Contact`**: Standalone CTA link (`/contact`).
+  - **Theme-Specific Submenu Adaptations**: Glassmorphism floating cards in Modern theme, Unix folder structures (`about/`, `work/`, `sys/`) in CLI theme, and ASCII border popover boxes (`+--- ABOUT ---+`) in ASCII theme.
+  - **Accessibility & UX**: W3C ARIA disclosure semantics (`aria-expanded`, `aria-haspopup="true"`, `aria-controls`), keyboard `Escape` key close, auto-dismiss on outside click, and responsive mobile drawer accordion collapse.
+
 - **Interactive Frontend Development Guidebook App (`/guidebook`)**:
   - Full 9-chapter interactive guidebook: *Building Modern Web Applications: A Step-by-Step Guide for Frontend Beginners*.
   - Features sticky Table of Contents sidebar, markdown canvas rendering, syntax-highlighted line-by-line code blocks, WCAG tables, and next/prev chapter pagination buttons.
   - Includes **Chapter 9: Consuming External REST APIs & Client-Side Caching** (decoupling API view models, 15-minute `sessionStorage` TTL caching, custom hooks, and Storybook stories).
   - **Performance & Mobile Optimization**: `useMemo` pre-parsed markdown node caching, container-relative instant scrolling (`scrollToReader()`), and CSS Grid `minmax(0, 1fr)` track sizing for responsive mobile reading without horizontal viewport overflow.
+
 - **Full-Featured Technical Blog Engine**:
   - Modular Markdown storage in `frontend/src/data/posts/`.
   - Vite raw static imports (`?raw`) with query helpers (`getAllBlogPosts`, `getBlogPostBySlug`, `getBlogPostsByTag`, `getGroupedBlogPostsByCategory`, `getRelatedBlogPosts`).
   - **Executive Summaries**: Every article features a prominent **TL;DR** callout box for instant comprehension.
   - **Category Grouping & Discovery**: Articles organized under clear technical categories (`React Architecture & Design Systems`, `Developer Workflows & Tooling`, `Testing & Quality Assurance`) with automated **Related Articles** suggestions.
   - Includes 13 technical articles covering React architecture, SPA routing mechanics & Cloudflare hosting, scaffolding, 4-tier testing strategies, design tokens, multi-theme context, beginner GitHub workflows, Technical Product Manager (TPM) frontend learning reflections, and interactive AI pair programming workflows.
-
-
 
 - **Live GitHub Activity & Repository Dashboard (`/projects`)**:
   - Unauthenticated public requests to GitHub REST API (`api.github.com/users/{username}`).
@@ -54,7 +53,7 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - Defensive `try/catch` wrappers around `localStorage` and `sessionStorage` for strict browser privacy modes (Chrome/Safari incognito).
   - Screen reader fallback markup (`.sr-only`).
   - `aria-hidden` attributes on visual ASCII framing elements.
-  - Responsive mobile navigation drawer toggle (`☰`/`✕`) in `ModernLayout`.
+  - Responsive mobile navigation drawer toggle (`☰`/`✕`) in `ModernLayout` (hidden on desktop viewports).
   - Direct `mailto:contact@chrislau.dev` contact link on `/contact`.
   - Scannable skill pill/chip tags across skills snapshots.
   - Full keyboard focus indicators and semantic HTML5 layout containers (`#main-content` skip navigation).
@@ -64,8 +63,8 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
 
 - **Testing & Quality Assurance**:
   - Storybook 8 component catalog & accessibility auditing (`@storybook/addon-a11y`).
-  - Vitest + `@testing-library/react` unit & component integration tests (49 passing tests).
-  - Playwright real-browser end-to-end (E2E) testing across all 3 themes.
+  - Vitest + `@testing-library/react` unit & component integration tests (**75 / 75 passing tests** across 15 test files).
+  - Playwright real-browser end-to-end (E2E) testing across all 3 themes (**9 / 9 passing tests** across 3 spec files).
 
 ---
 

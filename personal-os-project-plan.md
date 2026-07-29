@@ -443,13 +443,13 @@ Benefits include:
 
 ---
 
-# Phase 3.5 — Full-Stack Operational Monitoring & Telemetry (IN-PROGRESS)
+# Phase 3.5 — Full-Stack Operational Monitoring & Telemetry (COMPLETED)
 
 ## Goal
 
 Build an integrated, zero-cost, zero-cookie operational monitoring and telemetry system across the React frontend, FastAPI backend, and End-to-End (E2E) architecture.
 
-Detailed Implementation Plan: [implementation_plan.md](file:///Users/chrislau/.gemini/antigravity-ide/brain/d224301b-3ee3-4247-98fb-a12ee16daf34/implementation_plan.md)
+Detailed Implementation Plan: [phase-3.5-implementation-plan.md](file:///Users/chrislau/Documents/personalWebsite/phase-3.5-implementation-plan.md) | Summary: [phase-3.5-summary.md](file:///Users/chrislau/Documents/personalWebsite/phase-3.5-summary.md)
 
 ## Technologies & Architecture
 
@@ -468,12 +468,12 @@ Detailed Implementation Plan: [implementation_plan.md](file:///Users/chrislau/.g
 
 ## Completion Criteria
 
-- [ ] Structured JSON logging and `X-Request-ID` middleware active in FastAPI backend
-- [ ] `/health/live`, `/health/ready`, and `/api/v1/telemetry` endpoints returning valid system metrics
-- [ ] Frontend `<FullStackMonitoringDashboard />` component embedded on `/how-this-site-works`
-- [ ] 5-step E2E synthetic diagnostic runner passing all health probes
-- [ ] Unit & E2E tests added for backend and frontend telemetry components
-- [ ] Volume 2 Chapter 8 added to Software Engineering Guidebook
+- [x] Structured JSON logging and `X-Request-ID` middleware active in FastAPI backend
+- [x] `/health/live`, `/health/ready`, and `/api/v1/telemetry` endpoints returning valid system metrics
+- [x] Frontend `<FullStackMonitoringDashboard />` component embedded on `/monitoring` and `/how-this-site-works`
+- [x] 5-step E2E synthetic diagnostic runner passing all health probes
+- [x] Unit & E2E tests added for backend and frontend telemetry components
+- [x] Volume 2 Chapter 8 added to Software Engineering Guidebook
 
 ---
 
