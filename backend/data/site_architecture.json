@@ -70,5 +70,22 @@
         "desc": "Auto-generated OpenAPI 3.0 documentation available at /docs and /redoc for testing and API discovery."
       }
     ]
+  },
+  {
+    "category": "PRODUCTION DEPLOYMENTS & CLOUD INFRASTRUCTURE",
+    "items": [
+      {
+        "name": "React Frontend SPA (https://chrislau.dev)",
+        "desc": "Deployed statically on Cloudflare Pages (Root: frontend, Build: npm run build, Output: dist) with global CDN distribution and SSL."
+      },
+      {
+        "name": "Live Component Storybook (https://chris-lau-storybook.pages.dev)",
+        "desc": "Deployed on Cloudflare Pages (Root: frontend, Build: npm run build-storybook, Output: storybook-static) providing a live isolated UI library."
+      },
+      {
+        "name": "FastAPI Backend & Interactive Swagger UI (/docs)",
+        "desc": "Containerized multi-stage Docker deployment on Render (Root: backend, python:3.11-slim) serving REST endpoints and live Swagger UI at /docs."
+      }
+    ]
   }
 ]
