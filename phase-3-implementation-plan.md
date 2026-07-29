@@ -121,18 +121,21 @@ personalWebsite/
 
 ### Phase 3.2: Seed Data, Schemas, & Static Endpoints
 - [x] Create endpoint: `GET /health` -> `{"status": "ok", "environment": "...", "service": "..."}`
-- [x] Create JSON seed data in `backend/data/` (`profile.json`, `projects.json`, `skills.json`, `experience.json`, `now.json`, `site_architecture.json`, `blog_posts.json`).
+- [x] Create JSON seed data in `backend/data/` (`profile.json`, `projects.json`, `skills.json`, `experience.json`, `now.json`, `site_architecture.json`, `blog_posts.json`, `guidebook_chapters.json`).
 - [x] Migrate all 20 Markdown blog articles and `guidebook-master.md` to `backend/posts/`.
 - [x] Establish `backend/data/` and `backend/posts/` as the **Single Source of Truth** for both React Vite imports and FastAPI REST API endpoints.
 - [x] Refactor all frontend data modules (`projects.ts`, `profile.ts`, `skills.ts`, `experience.ts`, `now.ts`, `siteArchitecture.ts`, `blogPosts.ts`, `guidebookData.ts`) to import directly from `backend/data/` and `backend/posts/`.
-- [ ] Create Pydantic response schemas in `backend/schemas/` (`ProfileResponse`, `ProjectResponse`, `NowResponse`, `ExperienceResponse`, `SkillResponse`).
-- [ ] Create endpoints:
+- [x] Create Pydantic response schemas in `backend/schemas/` (`ProfileResponse`, `ProjectResponse`, `NowResponse`, `ExperienceItemResponse`, `SkillCategoryResponse`, `BlogPostMetaResponse`, `BlogPostDetailResponse`, `GuidebookChapterResponse`).
+- [x] Create REST API endpoints:
   - `GET /api/profile`
   - `GET /api/projects` & `GET /api/projects/{slug}`
-  - `GET /api/now`
   - `GET /api/experience`
   - `GET /api/skills`
+  - `GET /api/now`
   - `GET /api/posts` & `GET /api/posts/{slug}`
+  - `GET /api/guidebook` & `GET /api/guidebook/{chapter_id}`
+- [x] Mount master API router in `backend/main.py`.
+- [x] Write Pytest integration test suite in `backend/tests/test_endpoints.py` (16 passing tests).
 
 ### Phase 3.3: GitHub Proxy & In-Memory Server Caching
 - [ ] Create `core/cache.py` with thread-safe in-memory cache utility (TTL = 15 minutes).

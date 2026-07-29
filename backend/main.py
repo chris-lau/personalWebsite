@@ -1,8 +1,8 @@
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from slowapi.errors import RateLimitExceeded
 from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 
 from config import settings
 from core.rate_limit import limiter
@@ -38,7 +38,7 @@ app.add_middleware(
 async def global_exception_handler(request: Request, exc: Exception):
     return JSONResponse(
         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        content={"detail": "An internal server error occurred."}
+        content={"detail": "An internal server error occurred."},
     )
 
 
@@ -49,10 +49,17 @@ async def health_check(request: Request):
     return {
         "status": "ok",
         "environment": settings.ENVIRONMENT,
-        "service": "Personal OS FastAPI Backend"
+        "service": "Personal OS FastAPI Backend",
     }
+
+
+# 6. Include Master API Router
+from api.router import api_router
+
+app.include_router(api_router, prefix="/api")
 
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run("main:app", host="0.0.0.0", port=settings.PORT, reload=True)
