@@ -21,8 +21,10 @@ import whyEslintContent from '../../../backend/posts/blog-why-eslint-by-default-
 import whatRuffDoesContent from '../../../backend/posts/blog-what-ruff-does-python-linter.md?raw';
 import demystifyingVenvContent from '../../../backend/posts/blog-demystifying-python-virtual-environments-venv.md?raw';
 import demystifyingSecurityHeadersContent from '../../../backend/posts/blog-demystifying-http-security-headers-fastapi.md?raw';
+import demystifyingMonitoringContent from '../../../backend/posts/blog-demystifying-full-stack-monitoring-and-telemetry.md?raw';
 
 const contentMap: Record<string, string> = {
+  'blog-demystifying-full-stack-monitoring-and-telemetry.md': demystifyingMonitoringContent,
   'blog-demystifying-http-security-headers-fastapi.md': demystifyingSecurityHeadersContent,
   'blog-demystifying-python-virtual-environments-venv.md': demystifyingVenvContent,
   'blog-why-eslint-by-default-instead-of-biome.md': whyEslintContent,

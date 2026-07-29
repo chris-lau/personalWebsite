@@ -28,11 +28,13 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(RequestLoggingMiddleware)
 app.add_middleware(CorrelationIDMiddleware)
 app.add_middleware(SecurityHeadersMiddleware)
+is_wildcard = "*" in settings.cors_origins_list
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins_list,
-    allow_credentials=True,
-    allow_methods=["GET", "OPTIONS"],
+    allow_credentials=not is_wildcard,
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 

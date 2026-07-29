@@ -17,8 +17,10 @@ Phase 3.5 introduces:
 3. **Backend Stack Trace Logging**: Global 500 exception handler capturing full unhandled exception stack traces to `stderr` with request correlation IDs.
 4. **Sub-System Health & Telemetry Endpoints**: Process liveness (`/health/live`), sub-system readiness (`/health/ready`), and live process metrics (`GET /api/v1/telemetry`).
 5. **Frontend Real User Monitoring (RUM)**: Browser Performance API metrics (TTFB, LCP, INP, CLS), JS Heap Memory, and `sessionStorage` cache auditing.
-6. **Live Full-Stack Topology Map & Synthetic Diagnostics**: Interactive UI dashboard on `/how-this-site-works` displaying full-stack topology (`React SPA` ➔ `FastAPI Backend` ➔ `GitHub API`) and an automated 5-step synthetic diagnostic suite.
-7. **Software Engineering Guidebook (Volume 2, Chapter 8)**: Chapter documentation covering full-stack telemetry and operational monitoring.
+6. **Live Full-Stack Topology Map & Synthetic Diagnostics**: Interactive UI dashboard hosted on dedicated `/monitoring` page displaying full-stack topology (`React SPA` ➔ `FastAPI Backend` ➔ `GitHub API`) and an automated 5-step synthetic diagnostic suite.
+7. **Standalone Monitoring Navigation Item**: Integrated top header nav link across all themes (**`Ops`** in Modern, **`OPS`** in ASCII, **`top.sh`** in CLI).
+8. **Technical Observability Blog Post**: *"Demystifying Full-Stack Operational Monitoring & Telemetry: Zero-Cost Observability from Browser RUM to FastAPI Middleware"*.
+9. **Software Engineering Guidebook (Volume 2, Chapter 8)**: Chapter documentation covering full-stack telemetry and operational monitoring.
 
 ---
 
@@ -39,6 +41,11 @@ Phase 3.5 introduces:
 * Implemented `GET /api/telemetry` & `GET /api/v1/telemetry`: Operational telemetry endpoint exposing real-time process uptime, RSS memory, cache hit/miss status, and `slowapi` rate-limit budgets.
 * Attached top-level `/health/live` and `/health/ready` routes in `backend/main.py` and included `telemetry.router` in `backend/api/router.py`.
 
+### 4. Dedicated Monitoring Page, Nav Link & Blog Post
+* Created dedicated page [`frontend/src/pages/MonitoringPage.tsx`](file:///Users/chrislau/Documents/personalWebsite/frontend/src/pages/MonitoringPage.tsx) hosting `<FullStackMonitoringDashboard />` under the `/monitoring` route.
+* Added top header navigation items across all 3 visual themes (**`Ops`** in Modern, **`OPS`** in ASCII, **`top.sh`** in CLI).
+* Published technical observability blog post: *"Demystifying Full-Stack Operational Monitoring & Telemetry: Zero-Cost Observability from Browser RUM to FastAPI Middleware"*.
+
 ### 5. Frontend Telemetry Utilities & Client (`frontend/src/`)
 * Created TypeScript interface models in `frontend/src/types/monitoring.ts`.
 * Built measurement & storage audit utilities in `frontend/src/utils/telemetry.ts` (`getBrowserPerformanceMetrics()`, `auditSessionStorage()`, `exportDiagnosticReport()`).
@@ -54,7 +61,7 @@ Phase 3.5 introduces:
 * Added Storybook component story catalog `FullStackMonitoringDashboard.stories.tsx`.
 
 ### 7. Page Integration, Educational Guidebook & E2E Testing
-* Embedded `<FullStackMonitoringDashboard />` inside `frontend/src/pages/HowThisSiteWorksPage.tsx`.
+* Updated `frontend/src/pages/HowThisSiteWorksPage.tsx` with a live monitoring badge button linking to `/monitoring`.
 * Added **Volume 2, Chapter 8** (*"Full-Stack Operational Monitoring, Structured JSON Logging, Telemetry Endpoints & E2E Synthetic Probes"*) to `backend/data/backend_guidebook_chapters.json` and `backend/posts/backend-guidebook-master.md`.
 * Added Playwright end-to-end test suite `frontend/e2e/monitoring.spec.ts`.
 
@@ -65,6 +72,7 @@ Phase 3.5 introduces:
 ```text
 Visitor Browser (React 18 SPA on Cloudflare Pages)
    │
+   ├──► /monitoring Page & Top Nav Link (Ops / OPS / top.sh across themes)
    ├──► FullStackMonitoringDashboard (Live topology, telemetry cards, 5-step synthetic runner)
    ├──► Browser RUM Telemetry (TTFB, DOM nodes, JS Heap Memory)
    ├──► SessionStorage Cache Audit (GitHub 15-min TTL status)
@@ -82,15 +90,16 @@ FastAPI Backend (Python 3.11 on Render Container)
 
 ---
 
-## 🧪 Verification & Test Metrics
+## 🧪 Verification & Test Metrics (103 / 103 Total Tests Passing)
 
 - **Backend Pytest Suite**: **22 / 22 Pytest tests passing** (`./.venv/bin/pytest` in `backend/`).
-- **Frontend Vitest Suite**: **71 / 71 Vitest tests passing** (`14 / 14 test files`).
+- **Frontend Vitest Suite**: **72 / 72 Vitest tests passing** (`14 / 14 test files`).
 - **E2E Playwright Suite**: **9 / 9 Playwright E2E tests passing** (`3 / 3 spec files`).
 - **Correlation ID Header**: Verified `X-Request-ID` present on all HTTP responses.
 - **Structured JSON Logging**: Verified valid JSON log entries on `stdout`.
 - **Sub-System Readiness**: Verified `/health/ready` returns sub-system RAM RSS (MB) and uptime metrics.
 - **Browser RUM & Storage Audit**: Verified navigation timing, DOM nodes count, JS heap memory, and `sessionStorage` cache auditing.
+- **Synthetic Diagnostic Runner**: Verified 5-step automated diagnostic suite execution and JSON log report downloading..
 - **Synthetic Diagnostic Runner**: Verified 5-step automated diagnostic suite execution and JSON log report downloading.
 
 

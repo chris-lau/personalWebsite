@@ -1,5 +1,18 @@
 [
   {
+    "id": "demystifying-full-stack-monitoring-and-telemetry",
+    "slug": "demystifying-full-stack-monitoring-and-telemetry",
+    "title": "Demystifying Full-Stack Operational Monitoring & Telemetry: Zero-Cost Observability from Browser RUM to FastAPI Middleware",
+    "description": "An architectural deep-dive into full-stack observability without expensive SaaS tools: UUID request correlation, structured JSON access logging, health readiness probes, browser RUM, and synthetic E2E diagnostics.",
+    "updatedDate": "July 2026",
+    "readTime": "7 min read",
+    "tags": ["Monitoring", "Telemetry", "FastAPI", "React", "Middleware", "DevOps", "Observability"],
+    "author": "Chris Lau",
+    "category": "Backend Architecture & Security",
+    "featured": true,
+    "markdownFile": "blog-demystifying-full-stack-monitoring-and-telemetry.md"
+  },
+  {
     "id": "demystifying-http-security-headers-fastapi",
     "slug": "demystifying-http-security-headers-fastapi",
     "title": "Demystifying HTTP Security Headers: How Backend Middleware Protects Browsers from Web Attacks",

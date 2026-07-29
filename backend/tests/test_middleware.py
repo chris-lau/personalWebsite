@@ -25,3 +25,17 @@ def test_cors_preflight_headers(client):
     )
     assert response.status_code == 200
     assert "access-control-allow-origin" in response.headers
+
+
+def test_cors_preflight_production_origin(client):
+    """Verify CORS preflight OPTIONS request for production domain https://chrislau.dev."""
+    response = client.options(
+        "/api/v1/telemetry",
+        headers={
+            "Origin": "https://chrislau.dev",
+            "Access-Control-Request-Method": "GET",
+        },
+    )
+    assert response.status_code == 200
+    assert response.headers.get("access-control-allow-origin") == "https://chrislau.dev"
+

@@ -162,6 +162,12 @@ personalWebsite/
 - [x] Add Chapter 8 to `backend/data/backend_guidebook_chapters.json` and `backend/posts/backend-guidebook-master.md`.
 - [x] Add Playwright E2E test in `frontend/e2e/monitoring.spec.ts`.
 
+### Step 6: Dedicated Monitoring Page, Navigation & Technical Blog
+- [x] Create dedicated `frontend/src/pages/MonitoringPage.tsx` hosting `<FullStackMonitoringDashboard />` and `/monitoring` route.
+- [x] Add top header navigation link across all themes (`Ops` in Modern, `OPS` in ASCII, `top.sh` in CLI).
+- [x] Publish technical observability blog post: *"Demystifying Full-Stack Operational Monitoring & Telemetry: Zero-Cost Observability from Browser RUM to FastAPI Middleware"*.
+- [x] Update `README.md`, `phase-3.5-implementation-plan.md`, and `phase-3.5-summary.md`.
+
 ---
 
 ## Verification Plan

@@ -100,7 +100,7 @@ personalWebsite/
     │   ├── context/                   # ThemeContext (Global 3-theme manager)
     │   ├── data/                      # Frontend data importers
     │   ├── hooks/                     # Custom React hooks (useGitHubData)
-    │   ├── pages/                     # Page views (including HowThisSiteWorksPage)
+    │   ├── pages/                     # Page views (MonitoringPage, HowThisSiteWorksPage)
     │   ├── utils/                     # Telemetry utilities (RUM, audit & export)
     │   └── types/                     # TypeScript interfaces (monitoring.ts)
     ├── package.json
@@ -123,6 +123,8 @@ Detailed summary: [phase-3-summary.md](file:///Users/chrislau/Documents/personal
 Phase 3.5 introduces an integrated, zero-cost, zero-cookie **Full-Stack Operational Monitoring & Telemetry System** across the Python FastAPI backend, React 18 frontend, and End-to-End application topology.
 
 ### Architectural Highlights
+* **Dedicated Navigation & Monitoring Page (`/monitoring`)**:
+  - Standalone operational console accessible via top header navigation across all themes (**`Ops`** in Modern, **`OPS`** in ASCII, **`top.sh`** in CLI).
 * **Request Correlation (`X-Request-ID`)**: Middleware generating and propagating unique UUIDv4 headers for end-to-end request tracing (`CorrelationIDMiddleware`).
 * **Structured JSON Logging**: Machine-readable JSON logs output to `stdout` containing `timestamp`, `request_id`, `method`, `path`, `status_code`, `latency_ms`, `client_ip`, and `user_agent` (`RequestLoggingMiddleware`).
 * **Stack Trace Error Logging**: Global 500 exception handler outputting unhandled exception stack traces to `stderr` with request correlation IDs.
@@ -134,11 +136,13 @@ Phase 3.5 introduces an integrated, zero-cost, zero-cookie **Full-Stack Operatio
   - Navigation timing, TTFB, DOM node count, and JS heap memory (`getBrowserPerformanceMetrics`).
   - Storage byte size, active key count, and GitHub proxy cache age (`auditSessionStorage`).
   - Diagnostic JSON report exporter (`exportDiagnosticReport`).
-  - `<FullStackMonitoringDashboard />` React UI component embedded on `/how-this-site-works` featuring live system topology map and automated 5-step synthetic diagnostic test runner.
+  - `<FullStackMonitoringDashboard />` React UI component featuring live system topology map and automated 5-step synthetic diagnostic test runner.
   - Storybook component cataloging (`FullStackMonitoringDashboard.stories.tsx`).
-* **Full-Stack Test Metrics**:
+* **Technical Observability Blog Post**:
+  - *"Demystifying Full-Stack Operational Monitoring & Telemetry: Zero-Cost Observability from Browser RUM to FastAPI Middleware"*.
+* **Full-Stack Test Metrics (103 / 103 Total Tests Passing)**:
   - **Backend**: **22 / 22 Pytest tests passing** (`./.venv/bin/pytest` in `backend/`).
-  - **Frontend**: **71 / 71 Vitest unit tests passing** across **14 test files** (`npm test` in `frontend/`).
+  - **Frontend**: **72 / 72 Vitest unit tests passing** across **14 test files** (`npm test` in `frontend/`).
   - **E2E**: **9 / 9 Playwright E2E tests passing** across **3 spec files** (`npx playwright test`).
 
 Detailed summary: [phase-3.5-summary.md](file:///Users/chrislau/Documents/personalWebsite/phase-3.5-summary.md) | Implementation plan: [phase-3.5-implementation-plan.md](file:///Users/chrislau/Documents/personalWebsite/phase-3.5-implementation-plan.md)
