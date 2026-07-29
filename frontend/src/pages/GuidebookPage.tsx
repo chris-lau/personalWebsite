@@ -1,20 +1,23 @@
 import React, { useState, useRef, useMemo } from 'react';
-import { guidebookChapters } from '../data/guidebookData';
+import { guidebookChapters, backendGuidebookChapters } from '../data/guidebookData';
 import { BoxContainer } from '../components/ui/BoxContainer';
 import './Pages.css';
 import './GuidebookPage.css';
 
 export const GuidebookPage: React.FC = () => {
+  const [activeVolume, setActiveVolume] = useState<'frontend' | 'backend'>('frontend');
   const [activeChapterId, setActiveChapterId] = useState<string>('chapter-1');
   const readerRef = useRef<HTMLDivElement>(null);
 
-  const activeChapter =
-    guidebookChapters.find((ch) => ch.id === activeChapterId) || guidebookChapters[0];
+  const currentChapters = activeVolume === 'frontend' ? guidebookChapters : backendGuidebookChapters;
 
-  const activeIndex = guidebookChapters.findIndex((ch) => ch.id === activeChapter.id);
-  const prevChapter = activeIndex > 0 ? guidebookChapters[activeIndex - 1] : null;
+  const activeChapter =
+    currentChapters.find((ch) => ch.id === activeChapterId) || currentChapters[0];
+
+  const activeIndex = currentChapters.findIndex((ch) => ch.id === activeChapter.id);
+  const prevChapter = activeIndex > 0 ? currentChapters[activeIndex - 1] : null;
   const nextChapter =
-    activeIndex < guidebookChapters.length - 1 ? guidebookChapters[activeIndex + 1] : null;
+    activeIndex < currentChapters.length - 1 ? currentChapters[activeIndex + 1] : null;
 
   const scrollToReader = () => {
     if (readerRef.current) {
@@ -22,6 +25,13 @@ export const GuidebookPage: React.FC = () => {
       const y = readerRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
       window.scrollTo({ top: y, behavior: 'instant' });
     }
+  };
+
+  const handleSelectVolume = (volume: 'frontend' | 'backend') => {
+    setActiveVolume(volume);
+    const firstChapterId = volume === 'frontend' ? 'chapter-1' : 'backend-chapter-1';
+    setActiveChapterId(firstChapterId);
+    scrollToReader();
   };
 
   const handleSelectChapter = (chapterId: string) => {
@@ -202,17 +212,45 @@ export const GuidebookPage: React.FC = () => {
   return (
     <div className="page-container page-guidebook">
       <section className="guidebook-hero">
-        <BoxContainer title="FRONTEND DEVELOPMENT GUIDEBOOK">
+        <BoxContainer title="SOFTWARE ENGINEERING GUIDEBOOK SERIES">
           <div className="hero-content">
-            <h1 className="hero-title serif-heading">Building Modern Web Applications</h1>
+            <h1 className="hero-title serif-heading">
+              {activeVolume === 'frontend'
+                ? 'Volume 1: Building Modern Web Applications'
+                : 'Volume 2: FastAPI & Python Backend Architecture'}
+            </h1>
             <p className="hero-subtitle">
-              A Step-by-Step Architecture Guide for Frontend Beginners, TPMs & Engineers
+              {activeVolume === 'frontend'
+                ? 'A Step-by-Step Architecture Guide for Frontend Beginners, TPMs & Engineers'
+                : 'A Step-by-Step Guide to FastAPI REST Microservices, Pydantic v2, Pytest & Docker'}
             </p>
             <p className="hero-bio">
               Written by <strong>Chris Lau</strong> — Staff Product Manager, AI & Enterprise Systems. 
-              This interactive guidebook breaks down the end-to-end architecture, technical decisions, 
-              design tokens, data contracts, testing strategy, and Cloudflare Pages deployment behind modern web apps.
+              This interactive guidebook series breaks down modern full-stack web architecture, TypeScript patterns, 
+              Python FastAPI REST design, Pydantic schemas, server-side caching, testing strategies, and containerized cloud deployments.
             </p>
+
+            {/* Volume Selector Tab Bar */}
+            <div className="projects-tab-bar" style={{ marginTop: '1rem' }} role="tablist" aria-label="Guidebook volume selection">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeVolume === 'frontend'}
+                className={`projects-tab-btn ${activeVolume === 'frontend' ? 'active' : ''}`}
+                onClick={() => handleSelectVolume('frontend')}
+              >
+                📘 Vol 1: Frontend Architecture (Ch 1–9)
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeVolume === 'backend'}
+                className={`projects-tab-btn ${activeVolume === 'backend' ? 'active' : ''}`}
+                onClick={() => handleSelectVolume('backend')}
+              >
+                🐍 Vol 2: FastAPI Backend Engine (Ch 1–7)
+              </button>
+            </div>
           </div>
         </BoxContainer>
       </section>
@@ -222,10 +260,12 @@ export const GuidebookPage: React.FC = () => {
         {/* Sidebar Table of Contents */}
         <aside className="guidebook-sidebar" aria-label="Table of Contents">
           <div className="sidebar-inner">
-            <h2 className="sidebar-heading">&gt; TABLE OF CONTENTS</h2>
+            <h2 className="sidebar-heading">
+              &gt; {activeVolume === 'frontend' ? 'VOL 1 TABLE OF CONTENTS' : 'VOL 2 TABLE OF CONTENTS'}
+            </h2>
             <nav className="chapter-nav">
               <ul className="chapter-list">
-                {guidebookChapters.map((ch) => (
+                {currentChapters.map((ch) => (
                   <li key={ch.id} className="chapter-item">
                     <button
                       type="button"
@@ -255,10 +295,12 @@ export const GuidebookPage: React.FC = () => {
 
         {/* Chapter Reader Area */}
         <main ref={readerRef} className="guidebook-reader">
-          <BoxContainer title={`CHAPTER ${activeChapter.number} of ${guidebookChapters.length}`}>
+          <BoxContainer title={`CHAPTER ${activeChapter.number} of ${currentChapters.length}`}>
             <div className="reader-header">
               <div className="chapter-meta">
-                <span className="chapter-badge">Chapter {activeChapter.number}</span>
+                <span className="chapter-badge">
+                  {activeVolume === 'frontend' ? 'Volume 1' : 'Volume 2'} — Chapter {activeChapter.number}
+                </span>
               </div>
               <h2 className="reader-chapter-title serif-heading">{activeChapter.title}</h2>
             </div>

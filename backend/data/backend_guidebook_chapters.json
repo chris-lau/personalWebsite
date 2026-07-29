@@ -1,0 +1,79 @@
+[
+  {
+    "id": "backend-chapter-1",
+    "number": 1,
+    "title": "Python FastAPI Ecosystem & Backend Architecture",
+    "subsections": [
+      "1.1 Why FastAPI? (ASGI, Pydantic v2, Async IO)",
+      "1.2 Monorepo Architecture: Decoupling /backend from /frontend",
+      "1.3 Core Dependencies: Uvicorn, Pydantic, HTTPX, Slowapi"
+    ],
+    "content": "## Chapter 1: Python FastAPI Ecosystem & Backend Architecture\n\n### 1.1 Why FastAPI?\n\nBefore building our personal backend service, let's understand why **FastAPI** is the modern standard for Python web APIs:\n\n- **High Performance (ASGI)**: Built on Starlette and Uvicorn, FastAPI runs as an Asynchronous Server Gateway Interface (ASGI) application capable of handling thousands of concurrent requests asynchronously.\n- **Pydantic v2 Type Validation**: Automatic parsing and type validation for JSON request payloads and response models.\n- **Auto-Generated OpenAPI Documentation**: Automatically generates interactive Swagger UI (`/docs`) and ReDoc (`/redoc`) specifications directly from Python type hints.\n- **Developer Productivity**: Built-in autocompletion in editors (VS Code, Antigravity) with minimal boilerplate.\n\n---\n\n### 1.2 Monorepo Architecture: Decoupling `/backend` from `/frontend`\n\nIn a professional web application, separate presentation from backend business logic:\n\n```text\npersonalWebsite/\n├── frontend/        # React 18 + TypeScript SPA (Cloudflare Pages)\n└── backend/         # FastAPI + Python 3.11 REST Service (Render)\n```\n\nBy keeping `/backend` completely decoupled from `/frontend`:\n- The frontend loads blazingly fast as a static SPA on Cloudflare Pages.\n- The Python backend can be deployed independently on Render using Docker.\n- The React app features automatic fallback to local datasets if the backend is offline.\n\n---\n\n### 1.3 Core Backend Dependencies\n\n| Package | Purpose & Responsibility |\n| :--- | :--- |\n| **`fastapi`** | Core web framework for routing, dependency injection, and middleware. |\n| **`uvicorn[standard]`** | High-performance ASGI web server worker. |\n| **`pydantic` & `pydantic-settings`** | Data validation, response schemas, and `.env` settings management. |\n| **`httpx`** | Asynchronous HTTP client for server-side API proxy calls (GitHub REST API). |\n| **`slowapi`** | IP rate-limiting middleware protecting API endpoints from abuse. |\n| **`pytest` & `pytest-asyncio`** | Async test runner for automated unit & integration testing. |"
+  },
+  {
+    "id": "backend-chapter-2",
+    "number": 2,
+    "title": "Backend Directory Scaffolding & Pyproject.toml",
+    "subsections": [
+      "2.1 Modular Layout & Directory Architecture",
+      "2.2 Managing Dependencies with pyproject.toml & requirements.txt",
+      "2.3 FastAPI Application Entrypoint (app/main.py)"
+    ],
+    "content": "## Chapter 2: Backend Directory Scaffolding & Pyproject.toml\n\n### 2.1 Modular Layout & Directory Architecture\n\nA clean FastAPI codebase groups files by architectural responsibility:\n\n```text\nbackend/\n├── pyproject.toml          # Tool configuration (pytest, ruff, mypy)\n├── requirements.txt        # Production dependencies\n├── Dockerfile              # Multi-stage container build manifest\n├── app/\n│   ├── main.py             # FastAPI entrypoint, CORS & middleware\n│   ├── core/               # Configuration settings & rate limiting\n│   ├── schemas/            # Pydantic v2 response & request models\n│   ├── services/           # Content loaders & GitHub proxy cache\n│   ├── api/                # API routers & v1 endpoint handlers\n│   └── data/               # Local JSON content repositories\n└── tests/                  # Pytest test suite\n```\n\n---\n\n### 2.2 Managing Dependencies with `pyproject.toml`\n\n`pyproject.toml` standardizes tool configurations (Pytest paths, Ruff lint rules, Python version targets):\n\n```toml\n[tool.pytest.ini_options]\npythonpath = [\".\"]\ntestpaths = [\"tests\"]\n\n[tool.ruff]\nline-length = 100\ntarget-version = \"py39\"\n```\n\n---\n\n### 2.3 FastAPI Application Entrypoint (`app/main.py`)\n\nInitialize the top-level FastAPI instance with CORS middleware, rate limit exception handlers, and security headers:\n\n```python\nfrom fastapi import FastAPI\nfrom fastapi.middleware.cors import CORSMiddleware\n\napp = FastAPI(\n    title=\"Personal OS API\",\n    version=\"1.0.0\",\n    docs_url=\"/docs\",\n    redoc_url=\"/redoc\",\n)\n\napp.add_middleware(\n    CORSMiddleware,\n    allow_origins=[\"http://localhost:5173\", \"https://chrislau.dev\"],\n    allow_methods=[\"GET\", \"OPTIONS\"],\n)\n\n@app.get(\"/health\")\nasync def health_check():\n    return {\"status\": \"ok\", \"service\": \"FastAPI Backend\"}\n```"
+  },
+  {
+    "id": "backend-chapter-3",
+    "number": 3,
+    "title": "Defining Strict Data Contracts with Pydantic v2",
+    "subsections": [
+      "3.1 Pydantic BaseModel vs Python Dataclasses",
+      "3.2 Request & Response Schemas (app/schemas/)",
+      "3.3 Automatic Type Validation & Error Handling"
+    ],
+    "content": "## Chapter 3: Defining Strict Data Contracts with Pydantic v2\n\n### 3.1 Pydantic `BaseModel` vs Dataclasses\n\nWhile Python dataclasses store data fields, **Pydantic v2** performs runtime data validation, coercion, serialization to JSON, and automatic OpenAPI schema generation:\n\n```python\nfrom pydantic import BaseModel, Field\nfrom typing import Optional, List\n\nclass ProjectResponse(BaseModel):\n    id: str\n    title: str\n    description: str\n    tech_stack: List[str] = Field(alias=\"techStack\")\n    github_url: Optional[str] = Field(default=None, alias=\"githubUrl\")\n    live_url: Optional[str] = Field(default=None, alias=\"liveUrl\")\n    featured: bool = True\n```\n\n---\n\n### 3.2 Field Aliases & CamelCase Serialization\n\nBy utilizing Pydantic `Field(alias=\"...\")`, the backend Python code uses standard `snake_case` variable names internally while serializing clean `camelCase` JSON matching the React frontend's TypeScript interfaces!"
+  },
+  {
+    "id": "backend-chapter-4",
+    "number": 4,
+    "title": "Building Public REST API Endpoints",
+    "subsections": [
+      "4.1 REST API Principles & Versioned Routers (/api/v1/)",
+      "4.2 Portfolio Content Endpoints (profile, projects, now, reading)",
+      "4.3 Query Parameter Filtering (?tag=)"
+    ],
+    "content": "## Chapter 4: Building Public REST API Endpoints\n\n### 4.1 Versioned Routers (`app/api/router.py`)\n\nGroup endpoints using FastAPI `APIRouter` to maintain clear API versioning:\n\n```python\nfrom fastapi import APIRouter\nfrom .endpoints import profile, projects, now\n\napi_router = APIRouter()\napi_router.include_router(profile.router, tags=[\"Profile\"])\napi_router.include_router(projects.router, tags=[\"Projects\"])\napi_router.include_router(now.router, tags=[\"Now\"])\n```\n\n---\n\n### 4.2 Query Parameter Filtering (`GET /api/projects?tag=React`)\n\nImplement clean query parameter filtering in endpoint handlers:\n\n```python\n@router.get(\"/projects\", response_model=List[ProjectResponse])\nasync def get_projects(tag: Optional[str] = None):\n    projects = await content_service.load_projects()\n    if tag:\n        return [p for p in projects if tag.lower() in [t.lower() for t in p.tech_stack]]\n    return projects\n```"
+  },
+  {
+    "id": "backend-chapter-5",
+    "number": 5,
+    "title": "Server-Side GitHub REST API Proxy & 15-Minute Cache",
+    "subsections": [
+      "5.1 Why Proxy External APIs Server-Side?",
+      "5.2 Async HTTPX Client (app/services/github_service.py)",
+      "5.3 Server-Side In-Memory 15-Minute TTL Cache"
+    ],
+    "content": "## Chapter 5: Server-Side GitHub REST API Proxy & 15-Minute Cache\n\n### 5.1 Why Proxy External APIs Server-Side?\n\nMaking unauthenticated GitHub API calls directly from client-side browsers exposes users to 60 requests/hour IP limits. Proxying server-side provides:\n- **Centralized In-Memory Caching**: Shared 15-minute TTL cache across all website visitors.\n- **Rate-Limit Prevention**: Cuts GitHub API calls by over 95%.\n- **Secret Concealment**: Hides optional GitHub API tokens on the server.\n\n---\n\n### 5.2 Server-Side In-Memory TTL Cache\n\n```python\nimport time\nfrom typing import Optional\n\nclass GitHubCache:\n    def __init__(self, ttl_seconds: int = 900):\n        self.ttl = ttl_seconds\n        self._data: Optional[dict] = None\n        self._timestamp: float = 0\n\n    def get(self) -> Optional[dict]:\n        if self._data and (time.time() - self._timestamp < self.ttl):\n            return self._data\n        return None\n\n    def set(self, data: dict):\n        self._data = data\n        self._timestamp = time.time()\n```"
+  },
+  {
+    "id": "backend-chapter-6",
+    "number": 6,
+    "title": "Security, Rate Limiting & Interactive Swagger UI",
+    "subsections": [
+      "6.1 CORS Middleware Setup (allow_origins)",
+      "6.2 IP Rate Limiting with slowapi (60 req/min)",
+      "6.3 Interactive Swagger UI (/docs) & ReDoc (/redoc)"
+    ],
+    "content": "## Chapter 6: Security, Rate Limiting & Interactive Swagger UI\n\n### 6.1 IP Rate Limiting with `slowapi`\n\nProtect your API endpoints from denial-of-service or scraping script abuse:\n\n```python\nfrom slowapi import Limiter\nfrom slowapi.util import get_remote_address\n\nlimiter = Limiter(key_func=get_remote_address)\n\n@router.get(\"/github-summary\")\n@limiter.limit(\"60/minute\")\nasync def get_github_summary(request: Request):\n    return await github_service.get_summary()\n```\n\n---\n\n### 6.2 Auto-Generated Swagger UI (`/docs`)\n\nFastAPI parses Pydantic response models and query parameters to automatically generate an interactive Swagger UI at `/docs` where users can test API calls directly!"
+  },
+  {
+    "id": "backend-chapter-7",
+    "number": 7,
+    "title": "Pytest Testing, Dockerization & Render Deployment",
+    "subsections": [
+      "7.1 Async API Testing with Pytest & TestClient",
+      "7.2 Multi-Stage Dockerfile (builder vs runner)",
+      "7.3 Frontend Fallback & Render Cloud Deployment"
+    ],
+    "content": "## Chapter 7: Pytest Testing, Dockerization & Render Deployment\n\n### 7.1 Async API Testing with Pytest\n\nTest backend status codes, JSON schema models, and rate limits using `httpx.AsyncClient`:\n\n```python\nimport pytest\nfrom httpx import AsyncClient\nfrom main import app\n\n@pytest.mark.asyncio\nasync def test_health_check():\n    async with AsyncClient(app=app, base_url=\"http://test\") as ac:\n        res = await ac.get(\"/health\")\n        assert res.status_code == 200\n        assert res.json()[\"status\"] == \"ok\"\n```\n\n---\n\n### 7.2 Multi-Stage `Dockerfile`\n\n```dockerfile\nFROM python:3.11-slim as builder\nWORKDIR /app\nCOPY requirements.txt .\nRUN pip install --no-cache-dir --prefix=/install -r requirements.txt\n\nFROM python:3.11-slim as runner\nWORKDIR /app\nCOPY --from=builder /install /install\nCOPY . /app\nEXPOSE 10000\nCMD [\"uvicorn\", \"main:app\", \"--host\", \"0.0.0.0\", \"--port\", \"10000\"]\n```\n\n---\n\n### 7.3 Seamless Frontend Fallback\n\nThe React frontend (`frontend/src/api/backend.ts`) queries `/api/projects`. If the Render server is offline, it catches the error and seamlessly falls back to static local data, guaranteeing 100% website uptime for public visitors!"
+  }
+]
