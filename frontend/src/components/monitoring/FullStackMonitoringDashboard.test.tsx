@@ -35,22 +35,15 @@ describe('FullStackMonitoringDashboard Component Unit Tests', () => {
 
   it('renders interactive action buttons', () => {
     renderComponent();
-    expect(screen.getByRole('button', { name: /Ping Health/i })).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: /Run Full E2E Diagnostic Test/i })
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Run Diagnostics/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Flush Cache/i })).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: /Simulate Offline Mode/i })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: /Export Diagnostic Log/i })
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Offline Mode/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Export Log/i })).toBeInTheDocument();
   });
 
-  it('runs E2E diagnostic suite when Run Full E2E Diagnostic Test button is clicked', async () => {
+  it('runs diagnostic suite when Run Diagnostics button is clicked', async () => {
     renderComponent();
-    const runBtn = screen.getByRole('button', { name: /Run Full E2E Diagnostic Test/i });
+    const runBtn = screen.getByRole('button', { name: /Run Diagnostics/i });
 
     fireEvent.click(runBtn);
 
@@ -62,12 +55,12 @@ describe('FullStackMonitoringDashboard Component Unit Tests', () => {
 
   it('toggles simulated offline mode when button is clicked', () => {
     renderComponent();
-    const toggleBtn = screen.getByRole('button', { name: /Simulate Offline Mode/i });
+    const toggleBtn = screen.getByRole('button', { name: /Offline Mode/i });
 
     fireEvent.click(toggleBtn);
-    expect(screen.getByText(/Simulated Offline: ON/i)).toBeInTheDocument();
+    expect(screen.getByText(/Offline: ON/i)).toBeInTheDocument();
 
     fireEvent.click(toggleBtn);
-    expect(screen.getByText(/Simulate Offline Mode/i)).toBeInTheDocument();
+    expect(screen.getByText(/Offline Mode/i)).toBeInTheDocument();
   });
 });

@@ -17,18 +17,17 @@ test.describe('Operational Monitoring Dashboard E2E Tests', () => {
     await expect(page.getByText('GitHub REST API', { exact: true })).toBeVisible();
 
     // 4. Verify Interactive Action Buttons
-    await expect(page.getByRole('button', { name: '🔄 Ping Health' })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Run Full E2E Diagnostic Test/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: '🔬 Run Diagnostics' })).toBeVisible();
     await expect(page.getByRole('button', { name: '🧹 Flush Cache' })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Simulate Offline Mode/i })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Export Diagnostic Log/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Offline Mode/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Export Log/i })).toBeVisible();
   });
 
   test('runs automated synthetic diagnostic suite on user interaction', async ({ page }) => {
     await page.goto('/monitoring');
     
     // Click diagnostic test button
-    const diagBtn = page.getByRole('button', { name: /Run Full E2E Diagnostic Test/i });
+    const diagBtn = page.getByRole('button', { name: '🔬 Run Diagnostics' });
     await diagBtn.click();
 
     // Assert synthetic diagnostics checklist renders items
@@ -40,13 +39,13 @@ test.describe('Operational Monitoring Dashboard E2E Tests', () => {
   test('toggles simulated offline mode toggle button', async ({ page }) => {
     await page.goto('/monitoring');
 
-    const offlineToggleBtn = page.getByRole('button', { name: /Simulate Offline Mode/i });
+    const offlineToggleBtn = page.getByRole('button', { name: '🔌 Offline Mode' });
     await offlineToggleBtn.click();
 
-    const activeToggleBtn = page.getByRole('button', { name: '⚙️ Simulated Offline: ON' });
+    const activeToggleBtn = page.getByRole('button', { name: '⚙️ Offline: ON' });
     await expect(activeToggleBtn).toBeVisible();
 
     await activeToggleBtn.click();
-    await expect(page.getByRole('button', { name: '🔌 Simulate Offline Mode' })).toBeVisible();
+    await expect(page.getByRole('button', { name: '🔌 Offline Mode' })).toBeVisible();
   });
 });

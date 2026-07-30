@@ -88,6 +88,7 @@ export const FullStackMonitoringDashboard: React.FC = () => {
 
   const handleRunDiagnostics = async () => {
     setIsRunningDiagnostics(true);
+    await refreshTelemetry();
     const results = await runE2EDiagnosticSuite();
     setDiagnosticSuite(results);
     setIsRunningDiagnostics(false);
@@ -137,19 +138,12 @@ export const FullStackMonitoringDashboard: React.FC = () => {
           <div className="monitoring-actions">
             <button
               type="button"
-              className="action-btn ping-btn"
-              onClick={refreshTelemetry}
-              title="Ping Backend & Benchmark Latency"
-            >
-              🔄 Ping Health
-            </button>
-            <button
-              type="button"
               className="action-btn diag-btn"
               onClick={handleRunDiagnostics}
               disabled={isRunningDiagnostics}
+              title="Ping Backend & Run 5-Step Synthetic Diagnostic Suite"
             >
-              {isRunningDiagnostics ? '⏳ Running Checks...' : '🔬 Run Full E2E Diagnostic Test'}
+              {isRunningDiagnostics ? '⏳ Running...' : '🔬 Run Diagnostics'}
             </button>
             <button
               type="button"
@@ -163,8 +157,9 @@ export const FullStackMonitoringDashboard: React.FC = () => {
               type="button"
               className={`action-btn toggle-offline-btn ${isSimulatedOffline ? 'active' : ''}`}
               onClick={handleToggleSimulatedOffline}
+              title="Toggle simulated offline mode"
             >
-              {isSimulatedOffline ? '⚙️ Simulated Offline: ON' : '🔌 Simulate Offline Mode'}
+              {isSimulatedOffline ? '⚙️ Offline: ON' : '🔌 Offline Mode'}
             </button>
             <button
               type="button"
@@ -172,7 +167,7 @@ export const FullStackMonitoringDashboard: React.FC = () => {
               onClick={handleExportReport}
               title="Download diagnostic log report as JSON"
             >
-              📥 Export Diagnostic Log (.json)
+              📥 Export Log
             </button>
           </div>
         </div>
