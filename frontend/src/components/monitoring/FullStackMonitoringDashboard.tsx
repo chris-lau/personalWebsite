@@ -254,7 +254,7 @@ export const FullStackMonitoringDashboard: React.FC = () => {
                       <span className="metric-value">
                         {storageAudit.is_cache_active
                           ? `ACTIVE (${storageAudit.github_cache_age_seconds ?? 0}s old)`
-                          : 'EMPTY / INACTIVE (visit /projects to populate)'}
+                          : 'EMPTY / INACTIVE'}
                       </span>
                     </div>
                   </>
