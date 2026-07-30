@@ -58,12 +58,15 @@ export const auditSessionStorage = (): SessionStorageAudit => {
           const val = sessionStorage.getItem(key) || '';
           bytes_used += key.length + val.length;
 
-          if (key.includes('github') || key.includes('cache')) {
+          if (key.includes('github') || key.includes('cache') || key.startsWith('gh_')) {
             is_cache_active = true;
             try {
               const parsed = JSON.parse(val);
               if (parsed && parsed.timestamp) {
-                github_cache_age_seconds = Math.round((Date.now() - parsed.timestamp) / 1000);
+                const age = Math.round((Date.now() - parsed.timestamp) / 1000);
+                if (github_cache_age_seconds === null || age < github_cache_age_seconds) {
+                  github_cache_age_seconds = age;
+                }
               }
             } catch {
               // ignore json parse error
