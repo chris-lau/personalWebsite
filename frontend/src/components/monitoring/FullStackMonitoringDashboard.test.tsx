@@ -26,10 +26,10 @@ describe('FullStackMonitoringDashboard Component Unit Tests', () => {
       screen.getByText(/1\. LIVE FULL-STACK ARCHITECTURE TOPOLOGY/i)
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/2\. BACKEND PROCESS TELEMETRY/i)
+      screen.getByText(/2\. FRONTEND BROWSER RUM & CACHE/i)
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/3\. FRONTEND BROWSER RUM & CACHE/i)
+      screen.getByText(/3\. BACKEND PROCESS TELEMETRY/i)
     ).toBeInTheDocument();
   });
 

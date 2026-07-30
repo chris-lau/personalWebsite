@@ -219,40 +219,8 @@ export const FullStackMonitoringDashboard: React.FC = () => {
 
         {/* 2. Telemetry Grid */}
         <div className="telemetry-grid">
-          <div className="telemetry-card backend-telemetry-card">
-            <h4 className="card-title">&gt; 2. BACKEND PROCESS TELEMETRY</h4>
-            {backendTelemetry ? (
-              <div className="telemetry-metrics">
-                <div className="metric-row">
-                  <span className="metric-label">Process Uptime:</span>
-                  <span className="metric-value">{backendTelemetry.process.uptime_seconds}s</span>
-                </div>
-                <div className="metric-row">
-                  <span className="metric-label">Memory RSS:</span>
-                  <span className="metric-value">{backendTelemetry.process.memory_rss_mb} MB</span>
-                </div>
-                <div className="metric-row">
-                  <span className="metric-label">Python Version:</span>
-                  <span className="metric-value">{backendTelemetry.process.python_version}</span>
-                </div>
-                <div className="metric-row">
-                  <span className="metric-label">Rate Limiter (slowapi):</span>
-                  <span className="metric-value">{backendTelemetry.rate_limit.active_window}</span>
-                </div>
-                <div className="metric-row">
-                  <span className="metric-label">Environment:</span>
-                  <span className="metric-value">{backendTelemetry.process.environment}</span>
-                </div>
-              </div>
-            ) : (
-              <div className="offline-fallback-notice">
-                <p>⚠️ FastAPI Backend Service Offline / Operating on Graceful Local Fallback Data.</p>
-              </div>
-            )}
-          </div>
-
           <div className="telemetry-card browser-rum-card">
-            <h4 className="card-title">&gt; 3. FRONTEND BROWSER RUM & CACHE</h4>
+            <h4 className="card-title">&gt; 2. FRONTEND BROWSER RUM & CACHE</h4>
             {browserMetrics && (
               <div className="telemetry-metrics">
                 <div className="metric-row">
@@ -291,6 +259,38 @@ export const FullStackMonitoringDashboard: React.FC = () => {
                     </div>
                   </>
                 )}
+              </div>
+            )}
+          </div>
+
+          <div className="telemetry-card backend-telemetry-card">
+            <h4 className="card-title">&gt; 3. BACKEND PROCESS TELEMETRY</h4>
+            {backendTelemetry ? (
+              <div className="telemetry-metrics">
+                <div className="metric-row">
+                  <span className="metric-label">Process Uptime:</span>
+                  <span className="metric-value">{backendTelemetry.process.uptime_seconds}s</span>
+                </div>
+                <div className="metric-row">
+                  <span className="metric-label">Memory RSS:</span>
+                  <span className="metric-value">{backendTelemetry.process.memory_rss_mb} MB</span>
+                </div>
+                <div className="metric-row">
+                  <span className="metric-label">Python Version:</span>
+                  <span className="metric-value">{backendTelemetry.process.python_version}</span>
+                </div>
+                <div className="metric-row">
+                  <span className="metric-label">Rate Limiter (slowapi):</span>
+                  <span className="metric-value">{backendTelemetry.rate_limit.active_window}</span>
+                </div>
+                <div className="metric-row">
+                  <span className="metric-label">Environment:</span>
+                  <span className="metric-value">{backendTelemetry.process.environment}</span>
+                </div>
+              </div>
+            ) : (
+              <div className="offline-fallback-notice">
+                <p>⚠️ FastAPI Backend Service Offline / Operating on Graceful Local Fallback Data.</p>
               </div>
             )}
           </div>
