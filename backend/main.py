@@ -19,9 +19,8 @@ app = FastAPI(
         "ℹ️ **Inactivity Cold Start Note:** Render free instances spin down after 15 mins of inactivity. Initial requests (including testing via Swagger UI `/docs`) may take ~50s to wake up the server container."
     ),
     version="1.0.0",
-    # Disable interactive API docs in production for security.
-    docs_url=None if settings.ENVIRONMENT == "production" else "/docs",
-    redoc_url=None if settings.ENVIRONMENT == "production" else "/redoc",
+    docs_url="/docs",
+    redoc_url="/redoc",
 )
 
 # 1. Attach Slowapi State & Exception Handler
