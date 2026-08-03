@@ -21,7 +21,7 @@ By injecting standardized security headers into **every outgoing HTTP response**
 
 ---
 
-## 2. Deep Dive: The 4 Core Security Headers
+## 2. Deep Dive: The 7 Core Security Headers
 
 ### 1. `X-Content-Type-Options: nosniff`
 * **Vulnerability Stopped**: **MIME-Sniffing Attacks**.
@@ -37,11 +37,27 @@ By injecting standardized security headers into **every outgoing HTTP response**
 * **Vulnerability Stopped**: **Reflected Cross-Site Scripting (XSS)**.
 * **How it works**: Detects when an attacker injects malicious JavaScript into URL query parameters.
 * **The Shield**: Tells legacy browser engines to immediately halt page rendering if a reflected script injection is detected.
+* **Note**: This header is deprecated in modern browsers (Chrome, Edge removed it) but is harmless and protects users on older browsers.
 
 ### 4. `Referrer-Policy: strict-origin-when-cross-origin`
 * **Vulnerability Stopped**: **Sensitive URL & Token Leakage**.
 * **How it works**: When a user clicks an external link on your site, the browser sends the full URL of the origin page in the HTTP `Referer` header.
 * **The Shield**: Strips internal query parameters and path data (e.g., `/api/projects?token=secret`), sending only your base domain name (`https://chrislau.dev`) to third-party destinations.
+
+### 5. `Strict-Transport-Security: max-age=31536000; includeSubDomains`
+* **Vulnerability Stopped**: **SSL Stripping / Protocol Downgrade Attacks**.
+* **How it works**: Without HSTS, a man-in-the-middle attacker on the same network could intercept the initial HTTP request and downgrade the connection before HTTPS is established.
+* **The Shield**: Tells the browser: *"For the next year (`31536000` seconds), always connect to this domain exclusively over HTTPS—never attempt a plaintext HTTP connection, even if the user types `http://`."* The `includeSubDomains` directive extends this protection to all subdomains.
+
+### 6. `Content-Security-Policy: default-src 'none'; frame-ancestors 'none'`
+* **Vulnerability Stopped**: **Cross-Site Scripting (XSS), Data Injection, Clickjacking**.
+* **How it works**: CSP is the most powerful browser security header. It defines a strict allowlist of what resources the browser is permitted to load and execute.
+* **The Shield**: For a JSON API that serves no HTML, scripts, or styles, `default-src 'none'` locks everything down—no scripts, no styles, no images, no connections. The `frame-ancestors 'none'` directive is the modern replacement for `X-Frame-Options: DENY`, preventing the response from being embedded in any frame.
+
+### 7. `Permissions-Policy: geolocation=(), microphone=(), camera=()`
+* **Vulnerability Stopped**: **Unauthorized Hardware Access**.
+* **How it works**: Browsers grant web pages access to device capabilities (camera, microphone, GPS). A compromised or malicious page could silently activate these without user awareness.
+* **The Shield**: Explicitly disables access to geolocation, microphone, and camera APIs, ensuring no JavaScript—first-party or third-party—can request these permissions.
 
 ---
 
@@ -90,6 +106,12 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["X-XSS-Protection"] = "1; mode=block"
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        # HSTS — enforce HTTPS for one year (site is HTTPS-only in prod).
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        # CSP — this is a JSON API; lock down to self.
+        response.headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none'"
+        # Disable unnecessary browser features.
+        response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
 
         return response
 ```
@@ -133,4 +155,7 @@ When deploying any web application or API:
 - [x] **Inject `nosniff`**: Force browsers to respect strict JSON MIME types.
 - [x] **Inject `DENY` frame options**: Prevent clickjacking inside transparent iframes.
 - [x] **Set strict referrer policy**: Protect internal URL query parameters from leaking.
+- [x] **Enable HSTS**: Force HTTPS for a year, blocking SSL stripping attacks.
+- [x] **Lock down with CSP**: Prevent script injection and unauthorized resource loading.
+- [x] **Disable hardware permissions**: Block camera, microphone, and geolocation access.
 - [x] **Automate verification in tests**: Add Pytest header assertions to prevent regressions.

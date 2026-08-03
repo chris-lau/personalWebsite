@@ -23,25 +23,34 @@ When a user triggers an API request, identifying that specific request in backen
 We solve this using a custom FastAPI middleware: **`CorrelationIDMiddleware`**.
 
 ```python
+import re
 import uuid
-from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
+from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
 
 class CorrelationIDMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
-        # Extract existing X-Request-ID or generate a new UUIDv4
-        request_id = request.headers.get("X-Request-ID", str(uuid.uuid4()))
+    # Allow word chars and hyphens, 1-128 chars.
+    # Rejects anything containing newlines, CRLF, spaces, or other injection vectors.
+    _VALID_REQUEST_ID = re.compile(r"^[\w\-]{1,128}$")
+
+    async def dispatch(self, request: Request, call_next) -> Response:
+        header_request_id = request.headers.get("X-Request-ID")
+        # Validate client-supplied ID to prevent header/log injection (CRLF, oversize).
+        if header_request_id and self._VALID_REQUEST_ID.match(header_request_id):
+            request_id = header_request_id
+        else:
+            request_id = str(uuid.uuid4())
         request.state.request_id = request_id
 
         response = await call_next(request)
-        
+
         # Attach X-Request-ID to response header for client correlation
         response.headers["X-Request-ID"] = request_id
         return response
 ```
 
-Every incoming request receives a unique UUIDv4. If the client passes an `X-Request-ID` header, the backend preserves it, enabling true end-to-end distributed request tracing!
+Every incoming request receives a unique UUIDv4. If the client passes an `X-Request-ID` header, the backend validates it against a strict character/length allowlist (`^[\w\-]{1,128}$`) before accepting it. This prevents **header injection and log injection attacks** — a malicious client cannot embed CRLF sequences or oversized payloads into your response headers or stderr logs. Invalid IDs are silently replaced with a fresh UUID.
 
 ---
 
@@ -76,7 +85,7 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
   "timestamp": "2026-07-29T03:30:00.000Z",
   "request_id": "a9e81b2c-3d4e-5f6a-7b8c-9d0e1f2a3b4c",
   "method": "GET",
-  "path": "/api/v1/telemetry",
+  "path": "/api/telemetry",
   "status_code": 200,
   "latency_ms": 1.45,
   "client_ip": "127.0.0.1",
@@ -90,21 +99,22 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
 
 Kubernetes and cloud platforms like Render use health probes to manage container lifecycles:
 
-- **`/health/live` (Liveness Probe)**: Fast endpoint returning `HTTP 200 {"status": "live"}` to verify the Python process has not deadlocked.
+- **`/health/live` (Liveness Probe)**: Fast endpoint returning `HTTP 200 {"status": "ok"}` to verify the Python process has not deadlocked.
 - **`/health/ready` (Readiness Probe)**: Deep probe inspecting memory usage (RSS in MB), uptime, and subsystem dependencies before routing production traffic to the container.
-- **`/api/v1/telemetry` (Operational Telemetry)**: Returns comprehensive runtime metrics including RSS memory, uptime seconds, rate limiter budgets, and proxy TTL cache stats.
+- **`/api/telemetry` (Operational Telemetry)**: Returns comprehensive runtime metrics including RSS memory, uptime seconds, rate limiter budgets, and GitHub proxy cache hit/miss stats.
 
 ```python
 @router.get("/health/ready")
-async def health_ready():
-    process = psutil.Process()
-    rss_mb = round(process.memory_info().rss / (1024 * 1024), 2)
-    return {
-        "status": "ready",
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "process_memory": {"rss_mb": rss_mb},
-        "subsystems": {"github_api_proxy": "degraded_or_healthy"}
+async def health_ready(request: Request):
+    memory_mb = _get_memory_rss_mb()
+    uptime = round(time.time() - START_TIME, 2)
+    checks = {
+        "process_memory": {"status": "ok", "rss_mb": memory_mb},
+        "process_uptime": {"status": "ok", "uptime_seconds": uptime},
+        "environment": {"status": "ok", "env": settings.ENVIRONMENT},
+        "cors_origins": {"status": "ok", "count": len(settings.cors_origins_list)},
     }
+    return ReadinessCheckResponse(status="healthy", timestamp=..., checks=checks)
 ```
 
 ---
@@ -129,7 +139,7 @@ export const getBrowserPerformanceMetrics = (): BrowserPerformanceMetrics => {
 ```
 
 ### Synthetic E2E Diagnostic Runner
-Our live monitoring console provides an automated 5-step synthetic diagnostic runner that tests client storage integrity, network round-trip time (RTT), backend readiness, proxy TTL cache status, and rate limit budgets in real-time.
+Our live monitoring console provides an automated 5-step synthetic diagnostic runner that tests client storage integrity, network round-trip time (RTT), backend readiness, GitHub proxy TTL cache status, and rate limit enforcement in real-time. Each check reports genuine pass/fail status based on actual HTTP responses — the GitHub proxy check verifies the `/api/github-summary` endpoint responds, and the rate-limiter check reads real `X-RateLimit-Limit` and `X-RateLimit-Remaining` response headers rather than assuming success.
 
 ---
 

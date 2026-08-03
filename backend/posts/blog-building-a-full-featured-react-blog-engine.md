@@ -2,7 +2,7 @@
 
 *A comprehensive, developer-friendly guide on how we designed, implemented, and tested a production-ready blog system in our React & TypeScript portfolio website.*
 
-> **TL;DR**: Build a modular 4-tier blog system by separating TypeScript data contracts (`BlogPost`), a pure data query layer (`blogPosts.ts` + Vite `?raw` markdown imports), presentational cards vs page views (`BlogCard`, `BlogListPage`, `BlogDetailPage`), and multi-theme layout routing (`LayoutRenderer` + `App.tsx`).
+> **TL;DR**: Build a modular 4-tier blog system by separating TypeScript data contracts (`BlogPost`), a pure data query layer (`blogPosts.ts` + Vite `import.meta.glob` auto-discovery), a shared `react-markdown` renderer (`MarkdownRenderer`), and multi-theme layout routing (`LayoutRenderer` + `App.tsx`).
 
 ---
 
@@ -91,34 +91,35 @@ export interface BlogPost {
 
 ---
 
-## Step 2: Building the Data Layer & Vite Raw Markdown Imports (`?raw`)
+## Step 2: Building the Data Layer & Vite `import.meta.glob` Auto-Discovery
 
-Instead of embedding multi-thousand-line string literals directly inside `blogPosts.ts` or forcing components to run complex asynchronous `fetch()` calls at runtime, we store markdown articles in individual `.md` files under `src/data/posts/` and leverage **Vite's Raw Asset Import capability (`?raw`)**:
+Instead of embedding multi-thousand-line string literals directly inside `blogPosts.ts` or forcing components to run complex asynchronous `fetch()` calls at runtime, we store markdown articles in individual `.md` files under `backend/posts/` and leverage **Vite's `import.meta.glob`** to auto-discover them at build time:
 
 ```typescript
 // frontend/src/data/blogPosts.ts
 import { BlogPost } from '../types/portfolio';
+import rawBlogMeta from '../../../backend/data/blog_posts.json';
 
-// 1. Import markdown content strings cleanly using Vite's ?raw suffix
-import buildingBlogEngineContent from './posts/blog-building-a-full-featured-react-blog-engine.md?raw';
-import demystifyingArchitectureContent from './posts/blog-demystifying-react-architecture-and-dev-tools.md?raw';
+// Auto-discover all blog post markdown files at build time.
+// Replaces manual ?raw imports that had to be kept in sync with a contentMap.
+const markdownFiles = import.meta.glob<string>('../../../backend/posts/blog-*.md', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
 
-// 2. Export metadata alongside imported content
-export const blogPostsData: BlogPost[] = [
-  {
-    id: 'building-a-full-featured-react-blog-engine',
-    slug: 'building-a-full-featured-react-blog-engine',
-    title: 'Building a Full-Featured Blog Engine in React & TypeScript',
-    description: 'A comprehensive guide on clean architecture, search, and multi-tier testing.',
-    date: '2026-07-26',
-    readTime: '8 min read',
-    tags: ['React', 'TypeScript', 'Architecture', 'Testing'],
-    author: 'Chris Lau',
-    featured: true,
-    content: buildingBlogEngineContent,
-  },
-  // ... other posts
-];
+// Build a filename -> content lookup from the glob results.
+const contentMap: Record<string, string> = {};
+for (const [path, content] of Object.entries(markdownFiles)) {
+  const filename = path.split('/').pop() || '';
+  contentMap[filename] = content;
+}
+
+// Attach markdown content to metadata from blog_posts.json.
+export const blogPostsData: BlogPost[] = (rawBlogMeta as Array<Omit<BlogPost, 'content'> & { markdownFile: string }>).map((item) => ({
+  ...item,
+  content: contentMap[item.markdownFile] || '',
+}));
 
 // Helper Functions
 export function getAllBlogPosts(): BlogPost[] {
@@ -143,6 +144,12 @@ export function getAllBlogTags(): string[] {
 }
 ```
 
+### Why `import.meta.glob` Instead of Manual `?raw` Imports?
+
+Previously, each blog post required four manual steps: (1) create the `.md` file, (2) add a JSON metadata entry, (3) add a static `import ... from '...md?raw'` line, and (4) add an entry to a hand-maintained `contentMap`. Forgetting any step silently produced a post with empty content and no error.
+
+`import.meta.glob` scans the `backend/posts/` directory at build time and automatically loads every `blog-*.md` file as a raw string. Adding a new post now requires only two steps: drop the `.md` file in the directory and add the JSON metadata entry. The glob pattern handles discovery automatically.
+
 ### TypeScript Module Declaration (`vite-env.d.ts`)
 To tell TypeScript how to handle `?raw` imports, we add a module declaration:
 
@@ -155,8 +162,8 @@ declare module '*.md?raw' {
 ```
 
 ### Key Architectural Benefits:
-1. **Single Source of Truth**: Editing a `.md` file in `src/data/posts/` automatically updates the site with zero manual copy-pasting into TypeScript strings.
-2. **Ultra-Clean Codebase**: Reduced `blogPosts.ts` from ~800 lines down to ~100 lines.
+1. **Single Source of Truth**: Editing a `.md` file in `backend/posts/` automatically updates the site with zero manual copy-pasting into TypeScript strings.
+2. **Auto-Discovery**: New posts are picked up automatically—no import lists to maintain.
 3. **Zero Component Side Effects & Fast Unit Testing**: Pure functions mean `getBlogPostBySlug` and `getAllBlogTags` can be tested in milliseconds via Vitest.
 4. **Compile-Time Bundling**: Vite bundles raw markdown text directly into JavaScript assets during `npm run build`, eliminating runtime network delays or loading spinners.
 
@@ -262,14 +269,15 @@ export const BlogListPage: React.FC = () => {
 };
 ```
 
-### C. Article Viewer Page (`BlogDetailPage.tsx`)
-`BlogDetailPage` uses React Router's `useParams` hook to read the `:slug` path parameter from the URL, fetches the post via `getBlogPostBySlug(slug)`, and renders structured markdown content sections:
+### C. Article Viewer Page (`BlogDetailPage.tsx`) & Shared Markdown Rendering
+`BlogDetailPage` uses React Router's `useParams` hook to read the `:slug` path parameter from the URL, fetches the post via `getBlogPostBySlug(slug)`, and renders full GFM markdown via a shared `<MarkdownRenderer>` component:
 
 ```tsx
 // frontend/src/pages/BlogDetailPage.tsx
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getBlogPostBySlug } from '../data/blogPosts';
+import { MarkdownRenderer } from '../components/markdown/MarkdownRenderer';
 
 export const BlogDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -293,17 +301,21 @@ export const BlogDetailPage: React.FC = () => {
 
       <header className="blog-detail-header">
         <div className="blog-detail-meta">
-          <span>{post.date}</span> • <span>{post.readTime}</span> • <span>By {post.author}</span>
+          <span>{post.updatedDate}</span> • <span>{post.readTime}</span> • <span>By {post.author}</span>
         </div>
         <h1 className="blog-detail-title">{post.title}</h1>
       </header>
 
       <hr className="blog-divider" />
-      <div className="blog-detail-content">{/* Render markdown blocks */}</div>
+      <div className="blog-detail-content">
+        <MarkdownRenderer content={post.content} variant="blog" />
+      </div>
     </article>
   );
 };
 ```
+
+The `<MarkdownRenderer>` component wraps `react-markdown` + `remark-gfm`, providing full GitHub-Flavored Markdown support: inline links (`[text](url)`), bold (`**text**`), inline code (`` `code` ``), fenced code blocks, GFM tables, ordered/unordered lists, blockquotes (with automatic **TL;DR** callout detection), and images. It accepts a `variant` prop (`"blog"` or `"reader"`) that maps rendered elements to the appropriate CSS class names for each theme. This shared component replaced two duplicated hand-rolled parsers (~300 lines combined) that previously lived inline in `BlogDetailPage` and `GuidebookPage`.
 
 
 ---
@@ -377,12 +389,12 @@ it('renders BlogListPage and filters by search input', () => {
     </MemoryRouter>
   );
 
-  expect(screen.getByText('TECHNICAL BLOG')).toBeDefined();
+  expect(screen.getByText('TECHNICAL BLOG')).toBeInTheDocument();
 
   const searchInput = screen.getByPlaceholderText(/Search posts/i);
   fireEvent.change(searchInput, { target: { value: 'Scaffolding' } });
 
-  expect(screen.getByText(/Demystifying Modern React Scaffolding/i)).toBeDefined();
+  expect(screen.getByText(/Demystifying Modern React Scaffolding/i)).toBeInTheDocument();
 });
 ```
 

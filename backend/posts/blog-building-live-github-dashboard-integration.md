@@ -12,9 +12,12 @@ Before writing code, we designed a clean separation of concerns across 6 distinc
 
 ```text
 [ GitHub REST API ]
-        │ (60 req/hr limit)
+        │ (5000 req/hr authenticated, 60 req/hr unauthenticated)
         ▼
-[ API Client & sessionStorage Cache ]  <-- Step 2 (15-min TTL per username)
+[ FastAPI Backend Proxy: /api/github-summary ]  <-- Server-side httpx + GITHUB_TOKEN
+        │ (15-min in-memory TTL cache)
+        ▼
+[ API Client & sessionStorage Cache ]  <-- Step 2 (client-side 15-min TTL per username)
         │
         ▼
 [ Custom React Hook: useGitHubData ]   <-- Step 3 (Reactive state management)
@@ -58,8 +61,8 @@ Renders <GitHubSpinner />             ▼ Checks sessionStorage
                                   NO
                                    │
                                    ▼
-                                Live fetch('api.github.com/users/chris-lau')
-                                   │
+                                fetch('/api/github-summary?username=chris-lau')
+                                   │  (backend proxy: authenticated GitHub API)
                                    ▼ Data Transformed & Sanitized
                                 State Update:
                                 user = { displayName: 'Chris Lau', ... }
@@ -81,7 +84,7 @@ Renders <GitHubSpinner />             ▼ Checks sessionStorage
 2. **Hook Execution**: `<GitHubDashboard />` invokes `useGitHubData()`. On initial synchronous render, `loading = true`, causing `<GitHubDashboard />` to render a loading spinner.
 3. **Asynchronous Data Retrieval**: `useGitHubData`'s `useEffect` fires `loadData('chris-lau')`. The API service checks `sessionStorage` for key `gh_user_chris-lau`:
    * **Cache Hit**: Resolves immediately without network traffic.
-   * **Cache Miss**: Executes `Promise.all()` fetching profile and repository arrays from `api.github.com`.
+   * **Cache Miss**: Calls the backend proxy at `/api/github-summary?username=chris-lau`, which fetches from GitHub's authenticated API (5000 req/hr via `GITHUB_TOKEN`) and returns both user and repos in a single response. If the backend is offline, the client falls back to calling GitHub directly (unauthenticated 60 req/hr).
 4. **Reactive Re-render**: Calling `setUser()`, `setRepos()`, and `setLoading(false)` triggers React's reconciliation engine:
    * **`<GitHubUsernameSelector />`** updates active chip highlighting (`@chris-lau`).
    * **`<GitHubSummary />`** receives `user` object and paints avatar, bio, follower counters, and top language bar.
@@ -136,40 +139,47 @@ By computing `isRecentlyUpdated` (checking if `pushed_at` is within the last 30 
 
 ---
 
-## Step 2: API Service & Caching Layer
+## Step 2: API Service & Backend Proxy
 
-### Overcoming GitHub API Rate Limits with `sessionStorage`
+### Overcoming GitHub API Rate Limits with Server-Side Proxy + `sessionStorage`
 
-Unauthenticated GET requests to the GitHub REST API are limited to **60 requests per hour per IP address**. Without caching, every tab switch or page re-navigation would consume API quota.
+Direct browser calls to the GitHub REST API are limited to **60 requests per hour per IP address** (unauthenticated). Since the dashboard lets visitors look up arbitrary usernames (`@facebook`, `@vercel`, etc.), a few clicks could exhaust the shared limit for all visitors behind the same IP.
 
-In [`src/api/github.ts`](file:///Users/chrislau/Documents/personalWebsite/frontend/src/api/github.ts), we built a lightweight `sessionStorage` caching wrapper with a 15-minute Time-To-Live (TTL):
+To solve this, the frontend routes GitHub requests through a **FastAPI backend proxy** (`GET /api/github-summary?username={user}`). The proxy uses `httpx` with an optional `GITHUB_TOKEN` environment variable, unlocking the **5000 req/hr** authenticated budget. It also maintains a 15-minute in-memory TTL cache so repeated lookups don't hit GitHub at all.
+
+On the client side, [`src/api/github.ts`](file:///Users/chrislau/Documents/personalWebsite/frontend/src/api/github.ts) wraps the proxy call with a `sessionStorage` cache layer:
 
 ```typescript
-const CACHE_TTL_MS = 15 * 60 * 1000; // 15 Minutes
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 export async function fetchGitHubUser(username: string): Promise<GitHubUser> {
   const cacheKey = `gh_user_${username.toLowerCase()}`;
-  const cached = sessionStorage.getItem(cacheKey);
+  const cached = getCache<GitHubUser>(cacheKey);
+  if (cached) return cached; // Return cached payload instantly!
 
-  if (cached) {
-    const { timestamp, data } = JSON.parse(cached);
-    if (Date.now() - timestamp < CACHE_TTL_MS) {
-      return data; // Return cached payload instantly!
+  // Try the backend proxy first (authenticated, higher rate limit).
+  try {
+    const res = await fetch(`${API_BASE_URL}/github-summary?username=${username}`);
+    if (res.ok) {
+      const body = await res.json();
+      setCache(cacheKey, body.user);      // Cache the user
+      setCache(`gh_repos_${username}`, body.repos); // Cache repos too
+      return body.user;
     }
+    if (res.status === 404) throw new Error(`GitHub user "${username}" was not found.`);
+    if (res.status === 403) throw new Error('GitHub API rate limit exceeded.');
+  } catch (err) {
+    // Fall through to direct GitHub fallback on network errors only.
+    if (err instanceof Error && (err.message.includes('not found') || err.message.includes('rate limit'))) throw err;
   }
 
-  const response = await fetch(`https://api.github.com/users/${encodeURIComponent(username)}`);
-  if (!response.ok) {
-    throw new Error(`GitHub user "@${username}" not found.`);
-  }
-
-  const rawData: GitHubUserResponse = await response.json();
-  const transformed = transformUserPayload(rawData);
-
-  sessionStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), data: transformed }));
-  return transformed;
+  // Fallback: direct GitHub API (unauthenticated, lower rate limit).
+  const res = await fetch(`https://api.github.com/users/${username}`);
+  // ... transform and cache
 }
 ```
+
+This two-layer caching strategy (backend in-memory + client `sessionStorage`) means most lookups never reach GitHub's servers at all.
 
 ### Why `sessionStorage` instead of `localStorage`?
 * `sessionStorage` persists data across page navigation during an active browser session.
@@ -290,13 +300,13 @@ To guarantee zero regressions, we verified the integration across three testing 
 
 ```bash
 # Result of automated verification:
-✓ 49/49 Vitest unit & component tests passing
+✓ 94/94 Vitest unit & component tests passing (incl. proxy + fallback paths)
 ✓ 5/5 Playwright E2E tests passing
-✓ Production build bundle compiled cleanly in 1.3s
+✓ Production build bundle compiled cleanly
 ```
 
 ---
 
 ## Conclusion
 
-Building a robust third-party API integration requires more than just calling `fetch()`. By decoupling raw API payloads into clean view models, implementing client-side `sessionStorage` caching, encapsulating state in custom hooks, and testing with Storybook and Vitest, we created a fast, rate-limit resilient, and interactive live dashboard.
+Building a robust third-party API integration requires more than just calling `fetch()`. By routing through a server-side proxy to unlock authenticated rate limits, decoupling raw API payloads into clean view models, implementing two-layer caching (backend in-memory + client `sessionStorage`), encapsulating state in custom hooks with race-condition guards, and testing with Storybook and Vitest, we created a fast, rate-limit resilient, and interactive live dashboard.
