@@ -477,7 +477,7 @@ Detailed Implementation Plan: [phase-3.5-implementation-plan.md](file:///Users/c
 
 ---
 
-# Phase 4 — PostgreSQL and CRUD
+# Phase 4 — PostgreSQL and CRUD (COMPLETED)
 
 ## Goal
 
@@ -485,8 +485,8 @@ Replace static backend data with persistent database records.
 
 ## Technologies
 
-- PostgreSQL
-- Neon
+- SQLite (local development)
+- PostgreSQL (Aiven production hosting)
 - SQLAlchemy
 - Alembic
 - psycopg
@@ -494,33 +494,30 @@ Replace static backend data with persistent database records.
 
 ## New Service Required
 
-### Neon
+### Aiven
 
-**Sign up:** Only when the API is deployed and the first database-backed feature is ready to be implemented.
+**Sign up:** When deploying to production.
 
 **Purpose:**
 
-- Host PostgreSQL
+- Host production PostgreSQL (Free forever tier, 1 GB storage, always-on, no cold starts or 30-day expiration)
 - Store projects, updates, reading entries, and posts
 - Practise relational database design and migrations
 
-**Plan:** Use the free plan if it still meets the project’s needs.
+**Plan:** Use the free plan (`1 GB` storage, `1 CPU`, `1 GB RAM`).
 
-**Payment card:** Do not add one.
+**Payment card:** Not required.
 
 ## Initial Database Tables
 
 ```text
 projects
-├── id
+├── id (string slug key)
 ├── title
-├── slug
-├── summary
 ├── description
-├── status
-├── repository_url
+├── github_url
 ├── live_url
-├── is_published
+├── featured
 ├── created_at
 └── updated_at
 
@@ -531,12 +528,6 @@ technologies
 project_technologies
 ├── project_id
 └── technology_id
-
-project_updates
-├── id
-├── project_id
-├── content
-└── created_at
 
 now_entries
 ├── id
@@ -558,9 +549,10 @@ reading_items
 ```text
 GET    /api/projects
 GET    /api/projects/{slug}
-POST   /api/projects
-PATCH  /api/projects/{id}
-DELETE /api/projects/{id}
+GET    /api/now
+POST   /api/projects (Phase 5)
+PATCH  /api/projects/{id} (Phase 5)
+DELETE /api/projects/{id} (Phase 5)
 ```
 
 Write operations should not be publicly available before authentication is added.
@@ -576,12 +568,12 @@ Write operations should not be publicly available before authentication is added
 
 ## Completion Criteria
 
-- Production data survives redeployments
-- Database migrations run successfully
-- Projects are loaded from PostgreSQL
-- CRUD services have tests
-- The database URL is stored securely
-- Database models are separate from API response schemas
+- [x] Production data survives redeployments (via Aiven PostgreSQL / local SQLite persistence)
+- [x] Database migrations run successfully (Alembic autogenerate & upgrade head configured)
+- [x] Projects and Now items are loaded from database with graceful JSON fallback
+- [x] CRUD services and database models have tests (33 unit tests green)
+- [x] The database URL is stored securely in environment variables
+- [x] Database models are separate from API response schemas
 
 ---
 

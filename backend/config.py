@@ -20,6 +20,9 @@ class Settings(BaseSettings):
     # GitHub API Token (Optional locally, recommended for production)
     GITHUB_TOKEN: str = Field(default="")
 
+    # Database connection URL
+    DATABASE_URL: str = Field(default="sqlite:///./personal_os.db")
+
     @property
     def cors_origins_list(self) -> list[str]:
         """Parse comma-separated ALLOWED_ORIGINS and CORS_ORIGINS into a clean list of strings."""

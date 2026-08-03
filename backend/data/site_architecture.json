@@ -72,6 +72,23 @@
     ]
   },
   {
+    "category": "DATABASE LAYER & PERSISTENT STORAGE (PHASE 4)",
+    "items": [
+      {
+        "name": "SQLAlchemy 2.0 ORM & Alembic Schema Migrations",
+        "desc": "Object-Relational Mapping (ORM) models for Projects, Technologies, Now Entries, and Reading Items, with automated Alembic schema migration management."
+      },
+      {
+        "name": "Environment-Aware Dual Database Architecture (SQLite & Aiven PostgreSQL)",
+        "desc": "Local development operates on a zero-config SQLite file database (personal_os.db), while production connects to a managed, free-tier Aiven PostgreSQL instance."
+      },
+      {
+        "name": "Resilient Fallback Mechanism & Seeding Pipeline",
+        "desc": "Idempotent JSON-to-SQL seeding pipeline (seed.py) and robust API fallback handlers returning local static data if the database is unseeded or unreachable."
+      }
+    ]
+  },
+  {
     "category": "PRODUCTION DEPLOYMENTS & CLOUD INFRASTRUCTURE",
     "items": [
       {
