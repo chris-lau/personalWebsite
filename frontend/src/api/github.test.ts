@@ -6,7 +6,7 @@ import {
   fetchGitHubUser,
   fetchGitHubRepos,
 } from './github';
-import { GitHubRepoResponse, GitHubUserResponse } from '../types/github';
+import { GitHubRepoResponse } from '../types/github';
 
 describe('github API utilities', () => {
   beforeEach(() => {
@@ -34,9 +34,33 @@ describe('github API utilities', () => {
       expect(formatRelativeTime(now.toISOString())).toBe('just now');
     });
 
+    it('returns formatted minutes ago', () => {
+      const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000);
+      expect(formatRelativeTime(fiveMinAgo.toISOString())).toBe('5m ago');
+    });
+
     it('returns formatted hours ago for recent dates', () => {
       const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
       expect(formatRelativeTime(twoHoursAgo.toISOString())).toBe('2h ago');
+    });
+
+    it('returns formatted days ago', () => {
+      const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
+      expect(formatRelativeTime(threeDaysAgo.toISOString())).toBe('3d ago');
+    });
+
+    it('returns formatted months ago', () => {
+      const twoMonthsAgo = new Date(Date.now() - 60 * 24 * 60 * 60 * 1000);
+      expect(formatRelativeTime(twoMonthsAgo.toISOString())).toBe('2mo ago');
+    });
+
+    it('returns formatted years ago', () => {
+      const twoYearsAgo = new Date(Date.now() - 730 * 24 * 60 * 60 * 1000);
+      expect(formatRelativeTime(twoYearsAgo.toISOString())).toBe('2y ago');
+    });
+
+    it('returns "recently" for empty string', () => {
+      expect(formatRelativeTime('')).toBe('recently');
     });
   });
 
@@ -76,46 +100,40 @@ describe('github API utilities', () => {
   });
 
   describe('fetchGitHubUser (mocked network requests)', () => {
-    it('fetches user data, transforms response, and uses sessionStorage cache', async () => {
-      const mockUserResponse: Partial<GitHubUserResponse> = {
-        login: 'chris-lau',
-        name: 'Chris Lau',
-        avatar_url: 'https://avatars.githubusercontent.com/u/12345',
-        html_url: 'https://github.com/chris-lau',
-        bio: 'Software engineer',
-        public_repos: 10,
-        followers: 25,
-        following: 5,
+    it('fetches user data via backend proxy and uses sessionStorage cache', async () => {
+      const mockProxyResponse = {
+        user: {
+          username: 'chris-lau',
+          displayName: 'Chris Lau',
+          avatarUrl: 'https://avatars.githubusercontent.com/u/12345',
+          profileUrl: 'https://github.com/chris-lau',
+          bio: 'Software engineer',
+          publicRepos: 10,
+          followers: 25,
+          following: 5,
+          topLanguages: [{ language: 'TypeScript', count: 3, percentage: 100, color: '#3178c6' }],
+        },
+        repos: [],
+        cached: false,
       };
 
-      const mockReposResponse: Partial<GitHubRepoResponse>[] = [
-        { language: 'TypeScript', fork: false },
-        { language: 'TypeScript', fork: false },
-        { language: 'Python', fork: false },
-      ];
-
       const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async (url) => {
-        if (typeof url === 'string' && url.includes('/repos')) {
-          return {
-            ok: true,
-            json: async () => mockReposResponse,
-          } as Response;
+        // The backend proxy endpoint.
+        if (typeof url === 'string' && url.includes('/github-summary')) {
+          return { ok: true, json: async () => mockProxyResponse } as Response;
         }
-        return {
-          ok: true,
-          json: async () => mockUserResponse,
-        } as Response;
+        return { ok: false, status: 0 } as Response;
       });
 
-      // First call fetches from API
+      // First call fetches from the backend proxy.
       const user = await fetchGitHubUser('chris-lau');
       expect(user.username).toBe('chris-lau');
       expect(user.displayName).toBe('Chris Lau');
       expect(user.topLanguages.length).toBeGreaterThan(0);
       expect(user.topLanguages[0].language).toBe('TypeScript');
-      expect(fetchSpy).toHaveBeenCalledTimes(2);
+      expect(fetchSpy).toHaveBeenCalledTimes(1);
 
-      // Second call uses sessionStorage cache (0 new fetch calls)
+      // Second call uses sessionStorage cache (0 new fetch calls).
       fetchSpy.mockClear();
       const cachedUser = await fetchGitHubUser('chris-lau');
       expect(cachedUser.username).toBe('chris-lau');
@@ -123,50 +141,89 @@ describe('github API utilities', () => {
     });
 
     it('throws custom error message on HTTP 404 user not found', async () => {
-      vi.spyOn(globalThis, 'fetch').mockResolvedValue({
-        ok: false,
-        status: 404,
-      } as Response);
+      vi.spyOn(globalThis, 'fetch').mockImplementation(async (url) => {
+        // Proxy returns 404, fallback also 404.
+        if (typeof url === 'string' && url.includes('/github-summary')) {
+          return { ok: false, status: 404 } as Response;
+        }
+        return { ok: false, status: 404 } as Response;
+      });
 
       await expect(fetchGitHubUser('nonexistent-user-12345')).rejects.toThrow(
         'GitHub user "nonexistent-user-12345" was not found.'
       );
     });
+
+    it('throws rate limit error on HTTP 403', async () => {
+      vi.spyOn(globalThis, 'fetch').mockImplementation(async (url) => {
+        if (typeof url === 'string' && url.includes('/github-summary')) {
+          return { ok: false, status: 403 } as Response;
+        }
+        return { ok: false, status: 403 } as Response;
+      });
+
+      await expect(fetchGitHubUser('chris-lau')).rejects.toThrow(
+        'GitHub API rate limit exceeded. Please try again in a few minutes.'
+      );
+    });
+
+    it('falls back to direct GitHub API when backend proxy is unreachable', async () => {
+      const mockUserResponse = {
+        login: 'chris-lau',
+        name: 'Chris Lau',
+        avatar_url: 'https://example.com/avatar.png',
+        html_url: 'https://github.com/chris-lau',
+        bio: 'Engineer',
+        public_repos: 5,
+        followers: 10,
+        following: 3,
+      };
+
+      vi.spyOn(globalThis, 'fetch').mockImplementation(async (url) => {
+        // Backend proxy throws (network error); direct GitHub API succeeds.
+        if (typeof url === 'string' && url.includes('/github-summary')) {
+          throw new Error('Network error');
+        }
+        if (typeof url === 'string' && url.includes('/repos')) {
+          return { ok: true, json: async () => [] } as Response;
+        }
+        return { ok: true, json: async () => mockUserResponse } as Response;
+      });
+
+      const user = await fetchGitHubUser('chris-lau');
+      expect(user.username).toBe('chris-lau');
+    });
   });
 
   describe('fetchGitHubRepos (mocked network requests)', () => {
-    it('fetches repo data, excludes forks, and uses sessionStorage cache', async () => {
-      const mockRepos: Partial<GitHubRepoResponse>[] = [
-        {
-          id: 1,
-          name: 'repo-one',
-          full_name: 'chris-lau/repo-one',
-          fork: false,
-          html_url: 'https://github.com/chris-lau/repo-one',
-          updated_at: new Date().toISOString(),
-          pushed_at: new Date().toISOString(),
-        },
-        {
-          id: 2,
-          name: 'forked-repo',
-          full_name: 'chris-lau/forked-repo',
-          fork: true,
-          html_url: 'https://github.com/chris-lau/forked-repo',
-          updated_at: new Date().toISOString(),
-        },
-      ];
+    it('fetches repo data via backend proxy, excludes forks, and caches', async () => {
+      // The backend proxy already excludes forks, so the response only has non-fork repos.
+      const mockProxyResponse = {
+        user: {},
+        repos: [
+          {
+            id: 1,
+            name: 'repo-one',
+            fullName: 'chris-lau/repo-one',
+            isFork: false,
+          },
+        ],
+        cached: false,
+      };
 
-      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue({
-        ok: true,
-        json: async () => mockRepos,
-      } as Response);
+      const fetchSpy = vi.spyOn(globalThis, 'fetch').mockImplementation(async (url) => {
+        if (typeof url === 'string' && url.includes('/github-summary')) {
+          return { ok: true, json: async () => mockProxyResponse } as Response;
+        }
+        return { ok: false, status: 0 } as Response;
+      });
 
       const repos = await fetchGitHubRepos('chris-lau');
-      expect(repos.length).toBe(1); // Excludes fork
+      expect(repos.length).toBe(1);
       expect(repos[0].name).toBe('repo-one');
       expect(fetchSpy).toHaveBeenCalledTimes(1);
 
-      // Cached call
+      // Cached call.
       fetchSpy.mockClear();
       const cachedRepos = await fetchGitHubRepos('chris-lau');
       expect(cachedRepos.length).toBe(1);

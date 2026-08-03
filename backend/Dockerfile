@@ -1,7 +1,7 @@
 # Multi-stage Dockerfile for FastAPI Backend Deployment on Render
 
 # --- Stage 1: Build & Dependencies ---
-FROM python:3.11-slim as builder
+FROM python:3.11-slim AS builder
 
 WORKDIR /app
 
@@ -16,7 +16,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
 
 # --- Stage 2: Production Runtime ---
-FROM python:3.11-slim as runner
+FROM python:3.11-slim AS runner
 
 WORKDIR /app
 
@@ -28,6 +28,11 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 COPY --from=builder /install /install
 COPY . /app
+
+# Run as a non-root user for hardening.
+RUN groupadd -r appuser && useradd -r -g appuser -s /sbin/nologin appuser \
+    && chown -R appuser:appuser /app
+USER appuser
 
 EXPOSE 10000
 

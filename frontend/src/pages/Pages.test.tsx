@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from '../context/ThemeContext';
 import { HomePage } from './HomePage';
 import { ProjectsPage } from './ProjectsPage';
 import { AboutPage } from './AboutPage';
@@ -17,11 +18,13 @@ describe('Page Components Unit Tests', () => {
   it('renders MonitoringPage telemetry console', () => {
     render(
       <MemoryRouter>
-        <MonitoringPage />
+        <ThemeProvider>
+          <MonitoringPage />
+        </ThemeProvider>
       </MemoryRouter>
     );
 
-    expect(screen.getByText('FULL-STACK OPERATIONAL MONITORING & TELEMETRY')).toBeDefined();
+    expect(screen.getByText('FULL-STACK OPERATIONAL MONITORING & TELEMETRY')).toBeInTheDocument();
   });
 
   it('renders BlogListPage and filters by search input and tag buttons', () => {
@@ -31,20 +34,18 @@ describe('Page Components Unit Tests', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('TECHNICAL BLOG')).toBeDefined();
+    expect(screen.getByText('TECHNICAL BLOG')).toBeInTheDocument();
 
     const searchInput = screen.getByPlaceholderText(/Search posts by keyword/i);
     fireEvent.change(searchInput, { target: { value: 'Scaffolding' } });
 
-    expect(screen.getByText(/Demystifying Modern React Scaffolding/i)).toBeDefined();
+    expect(screen.getByText(/Demystifying Modern React Scaffolding/i)).toBeInTheDocument();
 
-    // Reset search and test tag click
+    // Reset search and test tag click — getByRole throws if missing, so this is a real assertion.
     fireEvent.change(searchInput, { target: { value: '' } });
-    const reactTag = screen.queryByRole('button', { name: '#React' });
-    if (reactTag) {
-      fireEvent.click(reactTag);
-      expect(reactTag.className).toContain('active');
-    }
+    const reactTag = screen.getByRole('button', { name: '#React' });
+    fireEvent.click(reactTag);
+    expect(reactTag.className).toContain('active');
   });
 
   it('renders BlogDetailPage with content and related articles when valid slug provided', () => {
@@ -56,9 +57,13 @@ describe('Page Components Unit Tests', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('Demystifying Modern React Architecture: Data Contracts, Dev Servers, and Type-Safe State')).toBeDefined();
-    expect(screen.getByText('By Chris Lau')).toBeDefined();
-    expect(screen.getByText('RELATED ARTICLES')).toBeDefined();
+    expect(
+      screen.getByText(
+        'Demystifying Modern React Architecture: Data Contracts, Dev Servers, and Type-Safe State',
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByText('By Chris Lau')).toBeInTheDocument();
+    expect(screen.getByText('RELATED ARTICLES')).toBeInTheDocument();
   });
 
   it('renders BlogDetailPage error state when invalid slug provided', () => {
@@ -70,20 +75,19 @@ describe('Page Components Unit Tests', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('BLOG POST NOT FOUND')).toBeDefined();
+    expect(screen.getByText('BLOG POST NOT FOUND')).toBeInTheDocument();
   });
 
   it('renders HomePage with profile bio and featured section', () => {
-
     render(
       <MemoryRouter>
         <HomePage />
       </MemoryRouter>
     );
 
-    expect(screen.getByText('WELCOME')).toBeDefined();
-    expect(screen.getByText('FEATURED PROJECTS')).toBeDefined();
-    expect(screen.getByText('SKILLS SNAPSHOT')).toBeDefined();
+    expect(screen.getByText('WELCOME')).toBeInTheDocument();
+    expect(screen.getByText('FEATURED PROJECTS')).toBeInTheDocument();
+    expect(screen.getByText('SKILLS SNAPSHOT')).toBeInTheDocument();
   });
 
   it('renders AboutPage with skill matrix', () => {
@@ -93,8 +97,8 @@ describe('Page Components Unit Tests', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('ABOUT ME')).toBeDefined();
-    expect(screen.getByText('SKILL MATRIX')).toBeDefined();
+    expect(screen.getByText('ABOUT ME')).toBeInTheDocument();
+    expect(screen.getByText('SKILL MATRIX')).toBeInTheDocument();
   });
 
   it('renders ProjectsPage and handles tag filtering', () => {
@@ -104,23 +108,21 @@ describe('Page Components Unit Tests', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('FEATURED PORTFOLIO PROJECTS')).toBeDefined();
-    
+    expect(screen.getByText('FEATURED PORTFOLIO PROJECTS')).toBeInTheDocument();
+
     // Find all tags filter button
     const allButton = screen.getByRole('button', { name: 'All' });
     expect(allButton.className).toContain('active');
 
-    // Click a tech tag button if present
-    const reactTag = screen.queryByRole('button', { name: '#React' });
-    if (reactTag) {
-      fireEvent.click(reactTag);
-      expect(reactTag.className).toContain('active');
-    }
+    // Click a tech tag button — getByRole throws if missing, so this is a real assertion.
+    const reactTag = screen.getByRole('button', { name: '#React' });
+    fireEvent.click(reactTag);
+    expect(reactTag.className).toContain('active');
 
     // Switch to GitHub activity tab
     const githubTab = screen.getByRole('tab', { name: '🐙 Live GitHub Activity' });
     fireEvent.click(githubTab);
-    expect(screen.getByText('LIVE GITHUB ACTIVITY & REPOSITORIES')).toBeDefined();
+    expect(screen.getByText('LIVE GITHUB ACTIVITY & REPOSITORIES')).toBeInTheDocument();
   });
 
   it('renders ExperiencePage timeline items', () => {
@@ -130,7 +132,7 @@ describe('Page Components Unit Tests', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('CAREER & EXPERIENCE')).toBeDefined();
+    expect(screen.getByText('CAREER & EXPERIENCE')).toBeInTheDocument();
   });
 
   it('renders NowPage content', () => {
@@ -140,7 +142,7 @@ describe('Page Components Unit Tests', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText("WHAT I'M DOING NOW")).toBeDefined();
+    expect(screen.getByText("WHAT I'M DOING NOW")).toBeInTheDocument();
   });
 
   it('renders ContactPage options', () => {
@@ -150,7 +152,7 @@ describe('Page Components Unit Tests', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('GET IN TOUCH')).toBeDefined();
+    expect(screen.getByText('GET IN TOUCH')).toBeInTheDocument();
   });
 
   it('renders HowThisSiteWorksPage technical stack', () => {
@@ -160,7 +162,7 @@ describe('Page Components Unit Tests', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('HOW THIS SITE WORKS')).toBeDefined();
+    expect(screen.getByText('HOW THIS SITE WORKS')).toBeInTheDocument();
   });
 
   it('renders NotFoundPage with error state', () => {
@@ -170,7 +172,7 @@ describe('Page Components Unit Tests', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('ERROR 404')).toBeDefined();
-    expect(screen.getByText(/Return Home/i)).toBeDefined();
+    expect(screen.getByText('ERROR 404')).toBeInTheDocument();
+    expect(screen.getByText(/Return Home/i)).toBeInTheDocument();
   });
 });

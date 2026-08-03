@@ -1,6 +1,7 @@
 import sys
 import time
-from typing import Any, Dict
+from typing import Any
+
 from pydantic import BaseModel, Field
 
 START_TIME = time.time()
@@ -36,4 +37,4 @@ class TelemetryResponse(BaseModel):
 class ReadinessCheckResponse(BaseModel):
     status: str = Field(..., description="Overall readiness status: healthy or degraded")
     timestamp: str = Field(..., description="ISO 8601 server timestamp")
-    checks: Dict[str, Any] = Field(..., description="Subsystem readiness check results")
+    checks: dict[str, Any] = Field(..., description="Subsystem readiness check results")

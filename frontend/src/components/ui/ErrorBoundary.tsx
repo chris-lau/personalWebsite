@@ -1,4 +1,5 @@
 import { Component, ErrorInfo, ReactNode } from 'react';
+import './ErrorBoundary.css';
 
 interface Props {
   children?: ReactNode;
@@ -25,32 +26,14 @@ export class ErrorBoundary extends Component<Props, State> {
   public render() {
     if (this.state.hasError) {
       return (
-        <div style={{
-          padding: '3rem 1.5rem',
-          maxWidth: '600px',
-          margin: '4rem auto',
-          textAlign: 'center',
-          fontFamily: 'sans-serif',
-          color: '#ffffff',
-          backgroundColor: '#121316',
-          borderRadius: '8px',
-          border: '1px solid rgba(255, 255, 255, 0.15)',
-        }}>
-          <h2 style={{ color: '#f4ab6a', marginTop: 0 }}>Something went wrong</h2>
-          <p style={{ color: '#8b949e', marginBottom: '1.5rem' }}>
+        <div className="error-boundary-container">
+          <h2 className="error-boundary-title">Something went wrong</h2>
+          <p className="error-boundary-message">
             An unexpected error occurred while loading this page.
           </p>
           <button
             onClick={() => window.location.reload()}
-            style={{
-              padding: '0.6rem 1.2rem',
-              backgroundColor: '#f4ab6a',
-              color: '#121316',
-              border: 'none',
-              borderRadius: '4px',
-              fontWeight: 'bold',
-              cursor: 'pointer',
-            }}
+            className="error-boundary-reload-btn"
           >
             Reload Page
           </button>

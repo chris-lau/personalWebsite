@@ -1,12 +1,10 @@
-import json
-from pathlib import Path
-
 from fastapi import APIRouter, HTTPException
 
 from schemas.experience import ExperienceItemResponse
 
+from ._data import load_json
+
 router = APIRouter()
-DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data"
 
 
 @router.get(
@@ -15,9 +13,7 @@ DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data"
     summary="List Work & Education Experience",
 )
 def list_experience():
-    exp_path = DATA_DIR / "experience.json"
-    if not exp_path.exists():
+    try:
+        return load_json("experience.json")
+    except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Experience data not found")
-    with open(exp_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    return data

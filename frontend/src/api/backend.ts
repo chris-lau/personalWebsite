@@ -3,8 +3,7 @@ import { GitHubUser, GitHubRepo } from '../types/github';
 import { profileData } from '../data/profile';
 import { projectsData } from '../data/projects';
 import { nowData } from '../data/now';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+import { API_BASE_URL, fetchWithTimeout } from './config';
 
 export interface BackendGitHubSummary {
   user: GitHubUser;
@@ -15,19 +14,6 @@ export interface BackendResponse<T> {
   data: T;
   isFallback: boolean;
   error?: string;
-}
-
-async function fetchWithTimeout(url: string, timeoutMs: number = 3000): Promise<Response> {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const response = await fetch(url, { signal: controller.signal });
-    clearTimeout(id);
-    return response;
-  } catch (error) {
-    clearTimeout(id);
-    throw error;
-  }
 }
 
 /**

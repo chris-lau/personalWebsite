@@ -19,8 +19,9 @@ app = FastAPI(
         "ℹ️ **Inactivity Cold Start Note:** Render free instances spin down after 15 mins of inactivity. Initial requests (including testing via Swagger UI `/docs`) may take ~50s to wake up the server container."
     ),
     version="1.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc",
+    # Disable interactive API docs in production for security.
+    docs_url=None if settings.ENVIRONMENT == "production" else "/docs",
+    redoc_url=None if settings.ENVIRONMENT == "production" else "/redoc",
 )
 
 # 1. Attach Slowapi State & Exception Handler
@@ -37,8 +38,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins_list,
     allow_credentials=not is_wildcard,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET"],  # Read-only API — no need for POST/PUT/DELETE.
+    allow_headers=["Content-Type", "X-Request-ID"],
 )
 
 
@@ -58,9 +59,9 @@ async def global_exception_handler(request: Request, exc: Exception):
     )
 
 
-# 4. Health Check Endpoints
+# 4. Health Check Endpoints (convenience aliases under root; canonical
+#    versions live in the telemetry router under /api/health/*).
 @app.get("/health", tags=["Health"])
-@app.get("/health/live", tags=["Health"])
 @limiter.limit("120/minute")
 async def health_check(request: Request):
     return {

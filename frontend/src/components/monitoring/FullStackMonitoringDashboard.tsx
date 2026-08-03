@@ -21,13 +21,7 @@ import {
 import './FullStackMonitoringDashboard.css';
 
 export const FullStackMonitoringDashboard: React.FC = () => {
-  let theme = 'modern';
-  try {
-    const themeContext = useTheme();
-    if (themeContext) theme = themeContext.theme;
-  } catch {
-    // Graceful fallback if rendered outside ThemeProvider
-  }
+  const { theme } = useTheme();
 
   const [topology, setTopology] = useState<FullStackTopologyState>({
     frontend_status: 'healthy',
@@ -82,7 +76,12 @@ export const FullStackMonitoringDashboard: React.FC = () => {
 
   useEffect(() => {
     refreshTelemetry();
-    const interval = setInterval(refreshTelemetry, 10000);
+    const interval = setInterval(() => {
+      // Don't poll when the tab is hidden — avoids wasted requests.
+      if (document.visibilityState === 'visible') {
+        refreshTelemetry();
+      }
+    }, 10000);
     return () => clearInterval(interval);
   }, [refreshTelemetry]);
 
@@ -96,7 +95,15 @@ export const FullStackMonitoringDashboard: React.FC = () => {
 
   const handleFlushCache = () => {
     try {
-      sessionStorage.clear();
+      // Only clear GitHub-related cache keys — preserve other sessionStorage entries.
+      const keysToRemove: string[] = [];
+      for (let i = 0; i < sessionStorage.length; i++) {
+        const key = sessionStorage.key(i);
+        if (key && key.startsWith('gh_')) {
+          keysToRemove.push(key);
+        }
+      }
+      keysToRemove.forEach((key) => sessionStorage.removeItem(key));
       refreshTelemetry();
     } catch {
       // ignore

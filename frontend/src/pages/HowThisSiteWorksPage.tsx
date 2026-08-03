@@ -2,10 +2,8 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { siteArchitectureData } from '../data/siteArchitecture';
 import { BoxContainer } from '../components/ui/BoxContainer';
+import { BACKEND_ROOT_URL } from '../api/config';
 import './Pages.css';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
-const BACKEND_BASE_URL = API_BASE_URL.replace(/\/api$/, '');
 
 export const HowThisSiteWorksPage: React.FC = () => {
   return (
@@ -48,7 +46,7 @@ export const HowThisSiteWorksPage: React.FC = () => {
                 🎨 Live Storybook UI
               </a>
               <a
-                href={`${BACKEND_BASE_URL}/docs`}
+                href={`${BACKEND_ROOT_URL}/docs`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="explorer-badge-btn swagger"
@@ -56,7 +54,7 @@ export const HowThisSiteWorksPage: React.FC = () => {
                 ⚡ FastAPI Swagger UI (/docs)
               </a>
               <a
-                href={`${BACKEND_BASE_URL}/redoc`}
+                href={`${BACKEND_ROOT_URL}/redoc`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="explorer-badge-btn redoc"
@@ -64,7 +62,7 @@ export const HowThisSiteWorksPage: React.FC = () => {
                 📖 ReDoc Specs (/redoc)
               </a>
               <a
-                href={`${BACKEND_BASE_URL}/openapi.json`}
+                href={`${BACKEND_ROOT_URL}/openapi.json`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="explorer-badge-btn openapi"

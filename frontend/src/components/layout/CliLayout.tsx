@@ -1,7 +1,8 @@
-import { useState, useRef, useEffect, ReactNode } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { ReactNode, RefObject } from 'react';
+import { NavLink } from 'react-router-dom';
 import { ThemeToggle } from './ThemeToggle';
-import { NAV_GROUPS, NavGroupItem } from '../../config/navConfig';
+import { NAV_GROUPS } from '../../config/navConfig';
+import { useNavDropdown } from './useNavDropdown';
 import './CliLayout.css';
 
 interface CliLayoutProps {
@@ -9,57 +10,16 @@ interface CliLayoutProps {
 }
 
 export const CliLayout = ({ children }: CliLayoutProps) => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  const location = useLocation();
-  const navRef = useRef<HTMLDivElement>(null);
-
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen((prev) => !prev);
-  };
-
-  const closeMobileMenu = () => {
-    setMobileMenuOpen(false);
-    setActiveDropdown(null);
-  };
-
-  const toggleDropdown = (groupId: string) => {
-    setActiveDropdown((prev) => (prev === groupId ? null : groupId));
-  };
-
-  // Close dropdown on click outside or Escape key press
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setActiveDropdown(null);
-      }
-    };
-
-    const handleClickOutside = (e: MouseEvent) => {
-      if (navRef.current && !navRef.current.contains(e.target as Node)) {
-        setActiveDropdown(null);
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  // Close dropdown on route change
-  useEffect(() => {
-    setActiveDropdown(null);
-  }, [location.pathname]);
-
-  const isGroupActive = (group: NavGroupItem) => {
-    if (group.path) {
-      return location.pathname === group.path;
-    }
-    return group.children?.some((child) => location.pathname === child.path);
-  };
+  const {
+    navRef,
+    mobileMenuOpen,
+    activeDropdown,
+    toggleMobileMenu,
+    closeMobileMenu,
+    toggleDropdown,
+    setActiveDropdown,
+    isGroupActive,
+  } = useNavDropdown();
 
   return (
     <div className="cli-layout-container">
@@ -83,7 +43,7 @@ export const CliLayout = ({ children }: CliLayoutProps) => {
         </header>
 
         {/* Terminal Navigation Bar */}
-        <nav className="cli-nav-bar" aria-label="Terminal Navigation" ref={navRef}>
+        <nav className="cli-nav-bar" aria-label="Terminal Navigation" ref={navRef as RefObject<HTMLElement>}>
           <div className="cli-nav-header">
             <NavLink to="/" className="cli-prompt-link" onClick={closeMobileMenu}>
               <span className="cli-prompt-symbol" aria-hidden="true">$</span> home.sh

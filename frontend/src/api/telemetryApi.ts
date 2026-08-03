@@ -1,7 +1,5 @@
 import { BackendTelemetry, ReadinessResponse, DiagnosticCheckItem } from '../types/monitoring';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
-const BACKEND_ROOT_URL = API_BASE_URL.replace(/\/api$/, '');
+import { API_BASE_URL, BACKEND_ROOT_URL, fetchWithTimeout } from './config';
 
 export interface NetworkBenchmarkResult {
   latency_ms: number;
@@ -12,10 +10,7 @@ export interface NetworkBenchmarkResult {
 export async function benchmarkNetworkRTT(): Promise<NetworkBenchmarkResult> {
   const start = performance.now();
   try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 3000);
-    const res = await fetch(`${BACKEND_ROOT_URL}/health/live`, { signal: controller.signal });
-    clearTimeout(timer);
+    const res = await fetchWithTimeout(`${BACKEND_ROOT_URL}/health/live`);
     const latency = Math.round(performance.now() - start);
 
     if (res.ok) {
@@ -30,10 +25,7 @@ export async function benchmarkNetworkRTT(): Promise<NetworkBenchmarkResult> {
 
 export async function fetchBackendTelemetry(): Promise<{ data: BackendTelemetry | null; isFallback: boolean }> {
   try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 3000);
-    const res = await fetch(`${API_BASE_URL}/telemetry`, { signal: controller.signal });
-    clearTimeout(timer);
+    const res = await fetchWithTimeout(`${API_BASE_URL}/telemetry`);
 
     if (res.ok) {
       const data: BackendTelemetry = await res.json();
@@ -47,10 +39,7 @@ export async function fetchBackendTelemetry(): Promise<{ data: BackendTelemetry 
 
 export async function fetchBackendReadiness(): Promise<{ data: ReadinessResponse | null; isFallback: boolean }> {
   try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 3000);
-    const res = await fetch(`${BACKEND_ROOT_URL}/health/ready`, { signal: controller.signal });
-    clearTimeout(timer);
+    const res = await fetchWithTimeout(`${BACKEND_ROOT_URL}/health/ready`);
 
     if (res.ok) {
       const data: ReadinessResponse = await res.json();
@@ -141,45 +130,71 @@ export async function runE2EDiagnosticSuite(): Promise<DiagnosticCheckItem[]> {
   results[3].status = 'running';
   try {
     const start = performance.now();
-    const res = await fetch(`${API_BASE_URL}/github-summary`);
+    const res = await fetch(`${API_BASE_URL}/github-summary?username=chris-lau`);
     const lat = Math.round(performance.now() - start);
     if (res.ok) {
+      const body = await res.json();
+      const cacheNote = body.cached ? ' (served from in-memory cache)' : ' (fresh fetch)';
       results[3] = {
         ...results[3],
         status: 'pass',
         latency_ms: lat,
-        details: `GitHub summary fetched successfully in ${lat}ms.`,
+        details: `GitHub summary fetched in ${lat}ms${cacheNote}.`,
       };
     } else {
       results[3] = {
         ...results[3],
-        status: 'pass',
+        status: 'fail',
         latency_ms: lat,
-        details: `GitHub summary returned status ${res.status} (graceful fallback operational).`,
+        details: `GitHub proxy returned HTTP ${res.status}.`,
       };
     }
   } catch {
     results[3] = {
       ...results[3],
-      status: 'pass',
-      details: 'GitHub proxy probe offline (React frontend local fallback active).',
+      status: 'fail',
+      details: 'GitHub proxy unreachable (backend offline or network error).',
     };
   }
 
   // 5. Rate Limiter check
   results[4].status = 'running';
   try {
+    const start = performance.now();
     const res = await fetch(`${API_BASE_URL}/projects`);
-    results[4] = {
-      ...results[4],
-      status: 'pass',
-      details: `Rate limiter active. Current limit window: 60 req/min (HTTP status ${res.status}).`,
-    };
+    const lat = Math.round(performance.now() - start);
+    // Read real rate-limit headers if present (slowapi sets these).
+    const limit = res.headers.get('X-RateLimit-Limit');
+    const remaining = res.headers.get('X-RateLimit-Remaining');
+    const limitInfo = limit ? `${limit} req/min limit` : 'configured limit';
+    const remainingInfo = remaining !== null ? `, ${remaining} remaining` : '';
+    if (res.ok) {
+      results[4] = {
+        ...results[4],
+        status: 'pass',
+        latency_ms: lat,
+        details: `Rate limiter active (${limitInfo}${remainingInfo}). Responded HTTP ${res.status} in ${lat}ms.`,
+      };
+    } else if (res.status === 429) {
+      results[4] = {
+        ...results[4],
+        status: 'fail',
+        latency_ms: lat,
+        details: 'Rate limit exceeded (HTTP 429). Too many requests.',
+      };
+    } else {
+      results[4] = {
+        ...results[4],
+        status: 'fail',
+        latency_ms: lat,
+        details: `Rate limiter check failed: HTTP ${res.status}.`,
+      };
+    }
   } catch {
     results[4] = {
       ...results[4],
-      status: 'pass',
-      details: 'Rate limiter probe offline (graceful local state active).',
+      status: 'fail',
+      details: 'Rate limiter probe unreachable (backend offline).',
     };
   }
 

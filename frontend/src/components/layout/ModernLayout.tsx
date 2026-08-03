@@ -1,7 +1,8 @@
-import { useState, useRef, useEffect } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { RefObject } from 'react';
+import { NavLink } from 'react-router-dom';
 import { ThemeToggle } from './ThemeToggle';
-import { NAV_GROUPS, NavGroupItem } from '../../config/navConfig';
+import { NAV_GROUPS } from '../../config/navConfig';
+import { useNavDropdown } from './useNavDropdown';
 import './ModernLayout.css';
 
 interface ModernLayoutProps {
@@ -9,57 +10,16 @@ interface ModernLayoutProps {
 }
 
 export const ModernLayout = ({ children }: ModernLayoutProps) => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  const location = useLocation();
-  const navRef = useRef<HTMLInputElement>(null);
-
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen((prev) => !prev);
-  };
-
-  const closeMobileMenu = () => {
-    setMobileMenuOpen(false);
-    setActiveDropdown(null);
-  };
-
-  const toggleDropdown = (groupId: string) => {
-    setActiveDropdown((prev) => (prev === groupId ? null : groupId));
-  };
-
-  // Close dropdown on click outside or Escape key press
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setActiveDropdown(null);
-      }
-    };
-
-    const handleClickOutside = (e: MouseEvent) => {
-      if (navRef.current && !navRef.current.contains(e.target as Node)) {
-        setActiveDropdown(null);
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  // Close dropdown when route changes
-  useEffect(() => {
-    setActiveDropdown(null);
-  }, [location.pathname]);
-
-  const isGroupActive = (group: NavGroupItem) => {
-    if (group.path) {
-      return location.pathname === group.path;
-    }
-    return group.children?.some((child) => location.pathname === child.path);
-  };
+  const {
+    navRef,
+    mobileMenuOpen,
+    activeDropdown,
+    toggleMobileMenu,
+    closeMobileMenu,
+    toggleDropdown,
+    setActiveDropdown,
+    isGroupActive,
+  } = useNavDropdown();
 
   return (
     <div className="modern-layout-container">
@@ -69,7 +29,7 @@ export const ModernLayout = ({ children }: ModernLayoutProps) => {
 
       {/* Top Navigation Bar */}
       <header className="modern-header">
-        <div className="modern-nav-wrapper" ref={navRef}>
+        <div className="modern-nav-wrapper" ref={navRef as RefObject<HTMLDivElement>}>
           <NavLink to="/" className="modern-brand-logo" onClick={closeMobileMenu}>
             <span className="brand-initials">CL</span>
             <span className="brand-divider">/</span>

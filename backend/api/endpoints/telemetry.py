@@ -1,16 +1,19 @@
 import resource
 import sys
 import time
+
 from fastapi import APIRouter, Request
+
+from api.endpoints.github import get_cache_stats
 from config import settings
 from core.rate_limit import limiter
 from schemas.telemetry import (
+    START_TIME,
     CacheTelemetry,
     ProcessTelemetry,
     RateLimitTelemetry,
     ReadinessCheckResponse,
     TelemetryResponse,
-    START_TIME,
 )
 
 router = APIRouter()
@@ -68,16 +71,17 @@ async def get_telemetry(request: Request):
         environment=settings.ENVIRONMENT,
     )
 
+    github_hits, github_misses = get_cache_stats()
     cache_data = CacheTelemetry(
-        github_cache_hits=0,
-        github_cache_misses=0,
+        github_cache_hits=github_hits,
+        github_cache_misses=github_misses,
         ttl_seconds=900,
-        is_cached=False,
+        is_cached=github_hits > 0,
     )
 
     rate_limit_data = RateLimitTelemetry(
-        limit_per_minute=60,
-        active_window="60/minute",
+        limit_per_minute=settings.RATE_LIMIT_PER_MINUTE,
+        active_window=f"{settings.RATE_LIMIT_PER_MINUTE}/minute",
     )
 
     return TelemetryResponse(

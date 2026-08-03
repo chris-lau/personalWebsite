@@ -1,10 +1,11 @@
 def test_health_live(client):
-    """Verify GET /health/live returns 200 status ok."""
-    response = client.get("/health/live")
+    """Verify GET /api/health/live returns 200 status ok."""
+    response = client.get("/api/health/live")
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "ok"
     assert "service" in data
+    assert "timestamp" in data
 
 
 def test_health_ready(client):

@@ -1,8 +1,10 @@
 import json
 import logging
+import re
 import sys
 import time
 import uuid
+
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
@@ -21,9 +23,17 @@ if not logger.handlers:
 class CorrelationIDMiddleware(BaseHTTPMiddleware):
     """Middleware that injects or propagates a unique X-Request-ID header."""
 
+    # Allow word chars (letters, digits, underscore) and hyphens, 1-128 chars.
+    # Rejects anything containing newlines, CRLF, spaces, or other injection vectors.
+    _VALID_REQUEST_ID = re.compile(r"^[\w\-]{1,128}$")
+
     async def dispatch(self, request: Request, call_next) -> Response:
         header_request_id = request.headers.get("X-Request-ID")
-        request_id = header_request_id if header_request_id else str(uuid.uuid4())
+        # Validate client-supplied ID to prevent header/log injection (CRLF, oversize).
+        if header_request_id and self._VALID_REQUEST_ID.match(header_request_id):
+            request_id = header_request_id
+        else:
+            request_id = str(uuid.uuid4())
         request.state.request_id = request_id
 
         response: Response = await call_next(request)

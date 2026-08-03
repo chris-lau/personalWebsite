@@ -1154,3 +1154,33 @@
   background: rgba(73, 204, 144, 0.12);
   border-color: #49cc90;
 }
+
+/* --- Monitoring Page --- */
+
+.monitoring-page-highlights {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.highlight-card {
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border-color, #333);
+  border-radius: 4px;
+  background-color: var(--card-bg, rgba(0, 0, 0, 0.15));
+}
+
+.highlight-card-title {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85rem;
+  color: var(--accent-color, #3498db);
+  margin: 0 0 0.4rem 0;
+}
+
+.highlight-card-desc {
+  font-size: 0.8rem;
+  opacity: 0.85;
+  margin: 0;
+}

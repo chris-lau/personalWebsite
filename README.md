@@ -34,14 +34,15 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - **Performance & Mobile Optimization**: `useMemo` pre-parsed markdown node caching, container-relative instant scrolling (`scrollToReader()`), and CSS Grid `minmax(0, 1fr)` track sizing for responsive mobile reading without horizontal viewport overflow.
 
 - **Full-Featured Technical Blog Engine**:
-  - Modular Markdown storage in `frontend/src/data/posts/`.
-  - Vite raw static imports (`?raw`) with query helpers (`getAllBlogPosts`, `getBlogPostBySlug`, `getBlogPostsByTag`, `getGroupedBlogPostsByCategory`, `getRelatedBlogPosts`).
+  - Modular Markdown storage in `backend/posts/`, auto-discovered at build time via Vite's `import.meta.glob` (no manual import lists to maintain).
+  - Full GFM Markdown rendering via `react-markdown` + `remark-gfm` (shared `<MarkdownRenderer>` component supporting inline links, bold, code, tables, ordered/unordered lists, blockquotes with TL;DR callout detection, and images).
+  - Query helpers (`getAllBlogPosts`, `getBlogPostBySlug`, `getBlogPostsByTag`, `getGroupedBlogPostsByCategory`, `getRelatedBlogPosts`).
   - **Executive Summaries**: Every article features a prominent **TL;DR** callout box for instant comprehension.
   - **Category Grouping & Discovery**: Articles organized under clear technical categories (`React Architecture & Design Systems`, `Developer Workflows & Tooling`, `Testing & Quality Assurance`) with automated **Related Articles** suggestions.
   - Includes 13 technical articles covering React architecture, SPA routing mechanics & Cloudflare hosting, scaffolding, 4-tier testing strategies, design tokens, multi-theme context, beginner GitHub workflows, Technical Product Manager (TPM) frontend learning reflections, and interactive AI pair programming workflows.
 
 - **Live GitHub Activity & Repository Dashboard (`/projects`)**:
-  - Unauthenticated public requests to GitHub REST API (`api.github.com/users/{username}`).
+  - **Backend GitHub Proxy**: Server-side proxy endpoint (`GET /api/github-summary`) using `httpx` + optional `GITHUB_TOKEN` (5000 req/hr authenticated vs 60 req/hr unauthenticated), with a 15-minute in-memory TTL cache. Frontend calls the proxy and falls back to direct GitHub API if the backend is offline.
   - **Interactive Username Switcher**: Allows visitors to lookup any GitHub user/organization (default: `@chris-lau`, presets: `@facebook`, `@vercel`).
   - **30-Day Activity Filter & Highlights**: `⚡ Active (Past 30 Days)` pill filter and glowing `🔥 Active` badges on recently updated repos.
   - **Client-Side Caching**: 15-minute `sessionStorage` TTL cache prevents hitting GitHub's 60 req/hr rate limit.
@@ -63,7 +64,7 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
 
 - **Testing & Quality Assurance**:
   - Storybook 8 component catalog & accessibility auditing (`@storybook/addon-a11y`).
-  - Vitest + `@testing-library/react` unit & component integration tests (**75 / 75 passing tests** across 15 test files).
+  - Vitest + `@testing-library/react` unit & component integration tests (**94 / 94 passing tests** across 16 test files).
   - Playwright real-browser end-to-end (E2E) testing across all 3 themes (**9 / 9 passing tests** across 3 spec files).
 
 ---
@@ -84,22 +85,22 @@ personalWebsite/
 ├── phase-3.5-summary.md               # Phase 3.5 summary & completion log
 ├── backend/                           # Python FastAPI Backend Service
 │   ├── main.py                        # FastAPI entrypoint, CORS & error handlers
-│   ├── core/                          # CorrelationID & RequestLogging Middleware
-│   ├── schemas/                       # Telemetry Pydantic v2 data models
-│   ├── api/endpoints/                 # REST endpoints & telemetry (/health/ready)
+│   ├── core/                          # CorrelationID & RequestLogging & Security Middleware
+│   ├── schemas/                       # Pydantic v2 data models (incl. GitHub proxy)
+│   ├── api/endpoints/                 # REST endpoints, GitHub proxy, telemetry & health
 │   ├── data/                          # Backend Guidebook JSON repositories
-│   ├── tests/                         # Pytest test suite (22 tests)
-│   └── Dockerfile                     # Multi-stage container build for Render
+│   ├── tests/                         # Pytest test suite (32 tests)
+│   └── Dockerfile                     # Multi-stage container build (non-root) for Render
 └── frontend/                          # React 18 + TypeScript SPA app
     ├── .storybook/                    # Storybook 8 configuration
     ├── e2e/                           # Playwright end-to-end tests (3 spec files)
     ├── src/
-    │   ├── api/                       # REST client & telemetryApi client
-    │   ├── components/                # React UI, Blog, GitHub & Monitoring Dashboard
+    │   ├── api/                       # REST clients, shared config & telemetryApi
+    │   ├── components/                # UI, Blog, Markdown, GitHub & Monitoring Dashboard
     │   ├── context/                   # ThemeContext (Global 3-theme manager)
-    │   ├── data/                      # Frontend data importers
-    │   ├── hooks/                     # Custom React hooks (useGitHubData)
-    │   ├── pages/                     # Page views (MonitoringPage, HowThisSiteWorksPage)
+    │   ├── data/                      # Frontend data importers (import.meta.glob)
+    │   ├── hooks/                     # Custom React hooks (useGitHubData, useNavDropdown)
+    │   ├── pages/                     # Page views (lazy-loaded, code-split)
     │   ├── utils/                     # Telemetry utilities (RUM, audit & export)
     │   └── types/                     # TypeScript interfaces (monitoring.ts)
     ├── package.json
@@ -140,9 +141,9 @@ Phase 3.5 introduces an integrated, zero-cost, zero-cookie **Full-Stack Operatio
   - Storybook component cataloging (`FullStackMonitoringDashboard.stories.tsx`).
 * **Technical Observability Blog Post**:
   - *"Demystifying Full-Stack Operational Monitoring & Telemetry: Zero-Cost Observability from Browser RUM to FastAPI Middleware"*.
-* **Full-Stack Test Metrics (103 / 103 Total Tests Passing)**:
-  - **Backend**: **22 / 22 Pytest tests passing** (`./.venv/bin/pytest` in `backend/`).
-  - **Frontend**: **72 / 72 Vitest unit tests passing** across **14 test files** (`npm test` in `frontend/`).
+* **Full-Stack Test Metrics (135 / 135 Total Tests Passing)**:
+  - **Backend**: **32 / 32 Pytest tests passing** (`./.venv/bin/pytest` in `backend/`).
+  - **Frontend**: **94 / 94 Vitest unit tests passing** across **16 test files** (`npm test` in `frontend/`).
   - **E2E**: **9 / 9 Playwright E2E tests passing** across **3 spec files** (`npx playwright test`).
 
 Detailed summary: [phase-3.5-summary.md](file:///Users/chrislau/Documents/personalWebsite/phase-3.5-summary.md) | Implementation plan: [phase-3.5-implementation-plan.md](file:///Users/chrislau/Documents/personalWebsite/phase-3.5-implementation-plan.md)

@@ -5,6 +5,7 @@ import {
   GitHubRepo,
   LanguageStat,
 } from '../types/github';
+import { API_BASE_URL } from './config';
 
 const GITHUB_API_BASE = 'https://api.github.com';
 const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes cache TTL
@@ -128,13 +129,40 @@ export function transformGitHubRepo(raw: GitHubRepoResponse): GitHubRepo {
   };
 }
 
-// Fetch GitHub profile info for a given username
+// Fetch GitHub profile info for a given username.
+// Routes through the backend proxy to avoid the unauthenticated 60 req/hr
+// IP-shared limit. Falls back to direct GitHub API if the backend is offline.
 export async function fetchGitHubUser(username: string): Promise<GitHubUser> {
   const cleanUsername = username.trim().toLowerCase();
   const cacheKey = `gh_user_${cleanUsername}`;
   const cached = getCache<GitHubUser>(cacheKey);
   if (cached) return cached;
 
+  // Try backend proxy first.
+  try {
+    const res = await fetch(`${API_BASE_URL}/github-summary?username=${cleanUsername}`);
+    if (res.ok) {
+      const body = await res.json();
+      const userModel: GitHubUser = body.user as GitHubUser;
+      setCache(cacheKey, userModel);
+      // Cache repos too so fetchGitHubRepos doesn't re-fetch.
+      setCache(`gh_repos_${cleanUsername}`, body.repos as GitHubRepo[]);
+      return userModel;
+    }
+    if (res.status === 404) {
+      throw new Error(`GitHub user "${username}" was not found.`);
+    }
+    if (res.status === 403) {
+      throw new Error('GitHub API rate limit exceeded. Please try again in a few minutes.');
+    }
+    // Fall through to direct GitHub fallback on other errors.
+  } catch (err) {
+    // Re-throw user-facing errors (404/403) but fall back on network errors.
+    if (err instanceof Error && err.message.includes('not found')) throw err;
+    if (err instanceof Error && err.message.includes('rate limit')) throw err;
+  }
+
+  // Fallback: direct GitHub API (unauthenticated, lower rate limit).
   const res = await fetch(`${GITHUB_API_BASE}/users/${cleanUsername}`);
   if (!res.ok) {
     if (res.status === 404) {
@@ -168,13 +196,30 @@ export async function fetchGitHubUser(username: string): Promise<GitHubUser> {
   return userModel;
 }
 
-// Fetch public repositories for a given username
+// Fetch public repositories for a given username.
+// Uses the backend proxy (which returns both user + repos in one call), so if
+// the proxy was used in fetchGitHubUser, the repos are already cached.
 export async function fetchGitHubRepos(username: string): Promise<GitHubRepo[]> {
   const cleanUsername = username.trim().toLowerCase();
   const cacheKey = `gh_repos_${cleanUsername}`;
   const cached = getCache<GitHubRepo[]>(cacheKey);
   if (cached) return cached;
 
+  // Try backend proxy.
+  try {
+    const res = await fetch(`${API_BASE_URL}/github-summary?username=${cleanUsername}`);
+    if (res.ok) {
+      const body = await res.json();
+      const repos: GitHubRepo[] = body.repos as GitHubRepo[];
+      setCache(cacheKey, repos);
+      setCache(`gh_user_${cleanUsername}`, body.user as GitHubUser);
+      return repos;
+    }
+  } catch {
+    // Fall through to direct GitHub fallback.
+  }
+
+  // Fallback: direct GitHub API.
   const res = await fetch(
     `${GITHUB_API_BASE}/users/${cleanUsername}/repos?per_page=100&sort=pushed`
   );

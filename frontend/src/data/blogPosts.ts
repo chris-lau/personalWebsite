@@ -1,51 +1,21 @@
 import { BlogPost } from '../types/portfolio';
 import rawBlogMeta from '../../../backend/data/blog_posts.json';
 
-import buildingBlogEngineContent from '../../../backend/posts/blog-building-a-full-featured-react-blog-engine.md?raw';
-import demystifyingArchitectureContent from '../../../backend/posts/blog-demystifying-react-architecture-and-dev-tools.md?raw';
-import modularArchitectureContent from '../../../backend/posts/blog-modular-react-architecture-and-design-tokens.md?raw';
-import testingStorybookA11yContent from '../../../backend/posts/blog-testing-storybook-and-a11y-react-architecture.md?raw';
-import testingStrategyContent from '../../../backend/posts/blog-testing-strategy-vitest-happy-dom-and-playwright.md?raw';
-import frontendFoundationsQAContent from '../../../backend/posts/blog-frontend-foundations-q-and-a.md?raw';
-import demystifyingScaffoldingContent from '../../../backend/posts/blog-demystifying-react-scaffolding.md?raw';
-import howToAddANewThemeContent from '../../../backend/posts/blog-how-to-add-a-new-theme.md?raw';
-import howToPushProjectToGithubContent from '../../../backend/posts/blog-how-to-push-project-to-github.md?raw';
-import masterTestingStrategyContent from '../../../backend/posts/blog-master-frontend-testing-strategy.md?raw';
-import backendEngineerFrontendJourneyContent from '../../../backend/posts/blog-backend-engineer-learning-frontend-journey.md?raw';
-import learningFrontendViaAiPairProgrammingContent from '../../../backend/posts/blog-learning-frontend-via-ai-pair-programming.md?raw';
-import understandingSpaRoutingContent from '../../../backend/posts/blog-understanding-spa-routing-and-cloud-hosting.md?raw';
-import whyIsItCalledReactContent from '../../../backend/posts/blog-why-is-it-called-react.md?raw';
-import buildingLiveGithubDashboardContent from '../../../backend/posts/blog-building-live-github-dashboard-integration.md?raw';
-import demystifyingFastapiScaffoldingContent from '../../../backend/posts/blog-demystifying-fastapi-backend-scaffolding.md?raw';
-import whyEslintContent from '../../../backend/posts/blog-why-eslint-by-default-instead-of-biome.md?raw';
-import whatRuffDoesContent from '../../../backend/posts/blog-what-ruff-does-python-linter.md?raw';
-import demystifyingVenvContent from '../../../backend/posts/blog-demystifying-python-virtual-environments-venv.md?raw';
-import demystifyingSecurityHeadersContent from '../../../backend/posts/blog-demystifying-http-security-headers-fastapi.md?raw';
-import demystifyingMonitoringContent from '../../../backend/posts/blog-demystifying-full-stack-monitoring-and-telemetry.md?raw';
+// Auto-discover all blog post markdown files at build time.
+// Replaces 21 manual ?raw imports + a 22-entry contentMap that had to be kept in sync.
+const markdownFiles = import.meta.glob<string>('../../../backend/posts/blog-*.md', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
 
-const contentMap: Record<string, string> = {
-  'blog-demystifying-full-stack-monitoring-and-telemetry.md': demystifyingMonitoringContent,
-  'blog-demystifying-http-security-headers-fastapi.md': demystifyingSecurityHeadersContent,
-  'blog-demystifying-python-virtual-environments-venv.md': demystifyingVenvContent,
-  'blog-why-eslint-by-default-instead-of-biome.md': whyEslintContent,
-  'blog-what-ruff-does-python-linter.md': whatRuffDoesContent,
-  'blog-demystifying-fastapi-backend-scaffolding.md': demystifyingFastapiScaffoldingContent,
-  'blog-building-live-github-dashboard-integration.md': buildingLiveGithubDashboardContent,
-  'blog-why-is-it-called-react.md': whyIsItCalledReactContent,
-  'blog-understanding-spa-routing-and-cloud-hosting.md': understandingSpaRoutingContent,
-  'blog-learning-frontend-via-ai-pair-programming.md': learningFrontendViaAiPairProgrammingContent,
-  'blog-backend-engineer-learning-frontend-journey.md': backendEngineerFrontendJourneyContent,
-  'blog-master-frontend-testing-strategy.md': masterTestingStrategyContent,
-  'blog-how-to-add-a-new-theme.md': howToAddANewThemeContent,
-  'blog-building-a-full-featured-react-blog-engine.md': buildingBlogEngineContent,
-  'blog-demystifying-react-architecture-and-dev-tools.md': demystifyingArchitectureContent,
-  'blog-modular-react-architecture-and-design-tokens.md': modularArchitectureContent,
-  'blog-testing-storybook-and-a11y-react-architecture.md': testingStorybookA11yContent,
-  'blog-testing-strategy-vitest-happy-dom-and-playwright.md': testingStrategyContent,
-  'blog-frontend-foundations-q-and-a.md': frontendFoundationsQAContent,
-  'blog-demystifying-react-scaffolding.md': demystifyingScaffoldingContent,
-  'blog-how-to-push-project-to-github.md': howToPushProjectToGithubContent,
-};
+// Build a filename -> content lookup from the glob results.
+const contentMap: Record<string, string> = {};
+for (const [path, content] of Object.entries(markdownFiles)) {
+  // Extract just the filename (e.g. "blog-foo.md") from the full path.
+  const filename = path.split('/').pop() || '';
+  contentMap[filename] = content;
+}
 
 export const blogPostsData: BlogPost[] = (rawBlogMeta as Array<Omit<BlogPost, 'content'> & { markdownFile: string }>).map((item) => ({
   id: item.id,
