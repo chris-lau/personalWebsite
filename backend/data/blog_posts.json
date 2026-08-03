@@ -1,5 +1,18 @@
 [
   {
+    "id": "demystifying-database-integration-sqlite-postgres",
+    "slug": "demystifying-database-integration-sqlite-postgres",
+    "title": "Demystifying Relational Database Integration: Lessons Learned from SQLite Local Development to Aiven PostgreSQL Production",
+    "description": "An architectural deep-dive into integrating relational databases into FastAPI: dual SQLite/PostgreSQL setups, URI scheme normalization, Alembic migrations, seeding, and resilient JSON fallbacks.",
+    "updatedDate": "August 2026",
+    "readTime": "7 min read",
+    "tags": ["PostgreSQL", "SQLite", "SQLAlchemy", "FastAPI", "Alembic", "Backend", "Architecture"],
+    "author": "Chris Lau",
+    "category": "Backend Architecture & Security",
+    "featured": true,
+    "markdownFile": "blog-demystifying-database-integration-sqlite-postgres.md"
+  },
+  {
     "id": "demystifying-full-stack-monitoring-and-telemetry",
     "slug": "demystifying-full-stack-monitoring-and-telemetry",
     "title": "Demystifying Full-Stack Operational Monitoring & Telemetry: Zero-Cost Observability from Browser RUM to FastAPI Middleware",
