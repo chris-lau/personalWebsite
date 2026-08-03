@@ -25,7 +25,9 @@ if config.config_file_name is not None:
 # Set database URL dynamically from config settings
 db_url = settings.DATABASE_URL
 if db_url.startswith("postgres://"):
-    db_url = db_url.replace("postgres://", "postgresql://", 1)
+    db_url = db_url.replace("postgres://", "postgresql+psycopg://", 1)
+elif db_url.startswith("postgresql://") and not db_url.startswith("postgresql+"):
+    db_url = db_url.replace("postgresql://", "postgresql+psycopg://", 1)
 config.set_main_option("sqlalchemy.url", db_url)
 
 # add your model's MetaData object here

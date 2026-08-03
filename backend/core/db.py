@@ -3,10 +3,12 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 from config import settings
 
-# SQLAlchemy 2.0 requires 'postgresql://' instead of 'postgres://' (which is returned by Heroku/Render)
+# SQLAlchemy 2.0 with psycopg v3 requires 'postgresql+psycopg://' scheme
 db_url = settings.DATABASE_URL
 if db_url.startswith("postgres://"):
-    db_url = db_url.replace("postgres://", "postgresql://", 1)
+    db_url = db_url.replace("postgres://", "postgresql+psycopg://", 1)
+elif db_url.startswith("postgresql://") and not db_url.startswith("postgresql+"):
+    db_url = db_url.replace("postgresql://", "postgresql+psycopg://", 1)
 
 # SQLite-specific connection arguments for multi-threading in FastAPI
 connect_args = {}
