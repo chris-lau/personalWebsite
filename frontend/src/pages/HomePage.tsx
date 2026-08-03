@@ -20,6 +20,9 @@ export const HomePage = () => {
             )}
             <p className="hero-bio">{profileData.bio}</p>
             <div className="hero-links">
+              <Link to="/projects" className="link-button primary">
+                View my work &rarr;
+              </Link>
               {profileData.socials.map((s) => (
                 <a
                   key={s.platform}

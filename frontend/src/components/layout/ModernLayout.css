@@ -225,10 +225,8 @@
   padding: 1.25rem 2rem;
   border-radius: 16px;
   border: 1px solid var(--border-muted);
-  background: var(--bg-card, rgba(28, 30, 36, 0.7));
+  background: var(--bg-secondary);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;

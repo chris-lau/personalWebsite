@@ -6,7 +6,7 @@
 
 Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 
-> **Progress (2026-08-02):** Priority 1 fully complete (markdown renderer shipped, both pages migrated, 12 tests green). Priority 2.1 (promote Projects to top-level nav) and 2.2 (pure-click dropdowns) done. Priority 3.2 (phantom token sweep — 17 undefined tokens across 5 CSS files → real tokens), 3.3 (token de-dup), and 4.1/4.2 (scroll behavior + emoji→icons) also done. Verified: `tsc --noEmit` clean, `vite build` succeeds, 94/94 tests pass, zero phantom `var()` references remain.
+> **Progress (2026-08-03):** Priority 1 fully complete (markdown renderer shipped). Priority 2.1 (promote Projects to top-level nav), 2.2 (pure-click dropdowns), 2.4 (compact theme switcher — icon + dropdown) done. Priority 3.1 (homepage primary CTA), 3.2 (phantom token sweep), 3.3 (token de-dup), 3.4 (project grid reflow) done. Priority 4.1/4.2 (scroll behavior + emoji→icons), 4.3 (404 recovery links), 4.5 (backdrop-filter cleanup) done. **Remaining open:** 2.3 (System & Ops to footer — deferred per owner decision), 3.5 (skills proficiency signal), 4.4 (loading/error/empty states for data surfaces). Verified: `tsc --noEmit` clean, `vite build` succeeds, 96/96 tests pass, zero phantom `var()` references remain.
 
 ---
 
@@ -51,17 +51,16 @@ These three are the single highest-impact fix and are self-contained.
   - Add to footer as "Built with / Status" style links
   - Refs: `UI-UX-REVIEW.md` §6
 
-- [ ] **2.4 — Rethink theme switcher placement** *(Low effort · 🟠 High)*
-  - Move `[ MODERN | ASCII | CLI ]` from permanent header into a settings affordance (gear icon) or footer
+- [x] **2.4 — Rethink theme switcher placement** *(Low effort · 🟠 High)*
+  - Replaced the 150px 3-button segmented control with a ~36px icon button + dropdown menu (Modern/ASCII/CLI as direct-select options with active check). Resting footprint shrinks dramatically while preserving one-click access to any theme
   - Refs: `UI-UX-REVIEW.md` §7
 
 ---
 
 ## Priority 3 — Visual Hierarchy & Content (medium impact)
 
-- [ ] **3.1 — Add a primary CTA to the homepage hero** *(Low effort · 🟡 Medium)*
-  - Add one `.link-button.primary` CTA (e.g. "View my work →" → `/projects`)
-  - Demote socials to secondary
+- [x] **3.1 — Add a primary CTA to the homepage hero** *(Low effort · 🟡 Medium)*
+  - Added a primary "View my work →" CTA (`/projects`) ahead of the social links; socials remain as secondary buttons
   - Refs: `UI-UX-REVIEW.md` §8
 
 - [x] **3.2 — Fix phantom indigo palette (token vocabulary mismatch)** *(Medium effort · 🟡 Medium)*
@@ -75,8 +74,8 @@ These three are the single highest-impact fix and are self-contained.
   - Modern is the default and overrides nothing
   - Refs: `UI-UX-REVIEW.md` §11
 
-- [ ] **3.4 — Make Featured Projects grid reflow gracefully** *(Trivial · 🟡 Medium)*
-  - Switch `.project-grid` to `repeat(auto-fit, minmax(280px, 1fr))` or cap featured count to even
+- [x] **3.4 — Make Featured Projects grid reflow gracefully** *(Trivial · 🟡 Medium)*
+  - Switched `.project-grid` from fixed `repeat(2, 1fr)` to `repeat(auto-fit, minmax(280px, 1fr))` so orphan cards no longer stretch half-width
   - Refs: `UI-UX-REVIEW.md` §9
 
 - [ ] **3.5 — Add proficiency signal to Skills Snapshot** *(Medium effort · 🟡 Medium)*
@@ -95,8 +94,8 @@ These three are the single highest-impact fix and are self-contained.
   - `GuidebookPage.tsx` — swapped 📘 / 🐍 for `BookOpen` / `Server` icons with `aria-hidden="true"`; added flex alignment to `.projects-tab-btn`
   - Refs: `UI-UX-REVIEW.md` §14
 
-- [ ] **4.3 — Confirm NotFoundPage offers recovery links** *(Trivial · 🟢 Low)*
-  - Add 3–4 deep links (Projects, Blog, Home) to the 404
+- [x] **4.3 — Confirm NotFoundPage offers recovery links** *(Trivial · 🟢 Low)*
+  - Added Projects, Blog, and Experience deep links alongside "Return Home" in a `.not-found-recovery` link group
   - Refs: `UI-UX-REVIEW.md` §15
 
 - [ ] **4.4 — Verify loading/error/empty states for data surfaces** *(Medium effort · 🟢 Low)*
@@ -104,8 +103,8 @@ These three are the single highest-impact fix and are self-contained.
   - Lock in via Storybook stories
   - Refs: `UI-UX-REVIEW.md` §16
 
-- [ ] **4.5 — Reduce stacked `backdrop-filter: blur()` usage** *(Trivial · 🟢 Low)*
-  - Drop from footer card and project cards; keep in header
+- [x] **4.5 — Reduce stacked `backdrop-filter: blur()` usage** *(Trivial · 🟢 Low)*
+  - Removed redundant `backdrop-filter` from the modern footer card (nothing scrolls behind it); switched its background to solid `--bg-secondary`. Kept header + dropdown blur (both float over scrolling content)
   - Refs: `UI-UX-REVIEW.md` §17
 
 ---
