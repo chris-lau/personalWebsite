@@ -17,7 +17,6 @@ export const AsciiLayout = ({ children }: AsciiLayoutProps) => {
     toggleMobileMenu,
     closeMobileMenu,
     toggleDropdown,
-    setActiveDropdown,
     isGroupActive,
   } = useNavDropdown();
 
@@ -83,7 +82,6 @@ export const AsciiLayout = ({ children }: AsciiLayoutProps) => {
                 <li
                   key={group.id}
                   className={`ascii-nav-item has-dropdown ${isOpen ? 'dropdown-open' : ''}`}
-                  onMouseEnter={() => !mobileMenuOpen && setActiveDropdown(group.id)}
                 >
                   <button
                     type="button"

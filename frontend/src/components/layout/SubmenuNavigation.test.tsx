@@ -18,15 +18,18 @@ describe('Submenu Navigation Component Tests', () => {
       </ThemeProvider>
     );
 
-    // Verify top-level triggers are rendered
-    const aboutTrigger = screen.getByRole('button', { name: /About/i });
+    // Verify top-level triggers are rendered.
+    // Projects is now a direct top-level link (promoted out of Work & Writing).
+    const aboutTrigger = screen.getByRole('button', { name: /^About$/i });
     const workTrigger = screen.getByRole('button', { name: /Work & Writing/i });
     const systemTrigger = screen.getByRole('button', { name: /System & Ops/i });
+    const projectsLink = screen.getByRole('link', { name: /^Projects$/i });
     const contactLink = screen.getByRole('link', { name: /Contact/i });
 
     expect(aboutTrigger).toBeDefined();
     expect(workTrigger).toBeDefined();
     expect(systemTrigger).toBeDefined();
+    expect(projectsLink).toBeDefined();
     expect(contactLink).toBeDefined();
 
     // Dropdown should be initially closed (aria-expanded = false)
@@ -44,6 +47,13 @@ describe('Submenu Navigation Component Tests', () => {
     // Pressing Escape should close dropdown
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(aboutTrigger.getAttribute('aria-expanded')).toBe('false');
+
+    // Work & Writing dropdown should now contain only Blog + Book (Projects was promoted)
+    fireEvent.click(workTrigger);
+    expect(screen.getByRole('menuitem', { name: /^Blog$/i })).toBeDefined();
+    expect(screen.getByRole('menuitem', { name: /^Book$/i })).toBeDefined();
+    // Projects must NOT appear as a submenu item anymore
+    expect(screen.queryAllByRole('menuitem', { name: /^Projects$/i })).toHaveLength(0);
   });
 
   it('renders CLI layout grouped navigation submenus', () => {

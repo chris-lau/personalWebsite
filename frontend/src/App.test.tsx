@@ -93,12 +93,9 @@ describe('App Router & Integration Tests', () => {
 
     expect(await screen.findByText('WELCOME')).toBeInTheDocument();
 
-    // Open Work & Writing dropdown, then click Projects menu item in navigation header
-    const workTrigger = screen.getByRole('button', { name: /Work & Writing/i });
-    fireEvent.click(workTrigger);
-
-    const projectsItem = screen.getByRole('menuitem', { name: /Projects/i });
-    fireEvent.click(projectsItem);
+    // Projects is now a direct top-level link (promoted out of Work & Writing dropdown)
+    const projectsLink = screen.getByRole('link', { name: /^Projects$/i });
+    fireEvent.click(projectsLink);
 
     expect(await screen.findByText('FEATURED PORTFOLIO PROJECTS')).toBeInTheDocument();
   });

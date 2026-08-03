@@ -17,7 +17,6 @@ export const ModernLayout = ({ children }: ModernLayoutProps) => {
     toggleMobileMenu,
     closeMobileMenu,
     toggleDropdown,
-    setActiveDropdown,
     isGroupActive,
   } = useNavDropdown();
 
@@ -75,7 +74,6 @@ export const ModernLayout = ({ children }: ModernLayoutProps) => {
                   <li
                     key={group.id}
                     className={`modern-nav-item has-dropdown ${isOpen ? 'dropdown-open' : ''}`}
-                    onMouseEnter={() => !mobileMenuOpen && setActiveDropdown(group.id)}
                   >
                     <button
                       type="button"

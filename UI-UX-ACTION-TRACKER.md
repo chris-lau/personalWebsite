@@ -6,7 +6,7 @@
 
 Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 
-> **Progress (2026-08-02):** Priority 1 fully complete (markdown renderer shipped, both pages migrated, 12 tests green). Priority 3.2 (phantom token sweep — 17 undefined tokens across 5 CSS files → real tokens), 3.3 (token de-dup), and 4.1/4.2 (scroll behavior + emoji→icons) also done. Verified: `tsc --noEmit` clean, `vite build` succeeds, 94/94 tests pass, zero phantom `var()` references remain.
+> **Progress (2026-08-02):** Priority 1 fully complete (markdown renderer shipped, both pages migrated, 12 tests green). Priority 2.1 (promote Projects to top-level nav) and 2.2 (pure-click dropdowns) done. Priority 3.2 (phantom token sweep — 17 undefined tokens across 5 CSS files → real tokens), 3.3 (token de-dup), and 4.1/4.2 (scroll behavior + emoji→icons) also done. Verified: `tsc --noEmit` clean, `vite build` succeeds, 94/94 tests pass, zero phantom `var()` references remain.
 
 ---
 
@@ -37,14 +37,13 @@ These three are the single highest-impact fix and are self-contained.
 
 ## Priority 2 — Information Architecture & Navigation (high impact, low effort)
 
-- [ ] **2.1 — Promote primary destinations to top-level nav** *(Low effort · 🟠 High)*
-  - In `navConfig.ts`, surface Projects, Blog, Experience as direct links
-  - Keep About and System as the only dropdowns
+- [x] **2.1 — Promote primary destinations to top-level nav** *(Low effort · 🟠 High)*
+  - Promoted Projects to a direct top-level link in `navConfig.ts`; Work & Writing dropdown now contains Blog + Book/Guidebook (2 items)
+  - Final nav: `[ About ▾ | Projects | Work & Writing ▾ | System & Ops ▾ | Contact ]`
   - Refs: `UI-UX-REVIEW.md` §4
 
-- [ ] **2.2 — Fix dropdown hover/click conflict; pick one model** *(Low effort · 🟠 High)*
-  - In `ModernLayout.tsx:118`, move to pure-click open/close (works on touch + keyboard)
-  - Remove the `onMouseEnter` handler or make it augment (not replace) click
+- [x] **2.2 — Fix dropdown hover/click conflict; pick one model** *(Low effort · 🟠 High)*
+  - Removed `onMouseEnter` hover handlers in all 3 layouts (Modern, ASCII, CLI); dropdowns now open by click only — works identically on desktop, touch, and keyboard
   - Refs: `UI-UX-REVIEW.md` §5
 
 - [ ] **2.3 — Demote "System & Ops" to the footer** *(Low effort · 🟠 High)*

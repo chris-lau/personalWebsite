@@ -17,7 +17,6 @@ export const CliLayout = ({ children }: CliLayoutProps) => {
     toggleMobileMenu,
     closeMobileMenu,
     toggleDropdown,
-    setActiveDropdown,
     isGroupActive,
   } = useNavDropdown();
 
@@ -83,7 +82,6 @@ export const CliLayout = ({ children }: CliLayoutProps) => {
                 <li
                   key={group.id}
                   className={`cli-tab-item has-dropdown ${isOpen ? 'dropdown-open' : ''}`}
-                  onMouseEnter={() => !mobileMenuOpen && setActiveDropdown(group.id)}
                 >
                   <button
                     type="button"

@@ -42,17 +42,18 @@ export const NAV_GROUPS: NavGroupItem[] = [
     ],
   },
   {
+    id: 'projects',
+    modernLabel: 'Projects',
+    cliLabel: 'projects/',
+    asciiLabel: 'PROJECTS',
+    path: '/projects',
+  },
+  {
     id: 'work',
     modernLabel: 'Work & Writing',
     cliLabel: 'work/',
     asciiLabel: 'WORK',
     children: [
-      {
-        path: '/projects',
-        modernLabel: 'Projects',
-        cliLabel: 'projects/',
-        asciiLabel: 'PROJECTS',
-      },
       {
         path: '/blog',
         modernLabel: 'Blog',
