@@ -110,12 +110,16 @@ describe('App Router & Integration Tests', () => {
     // Wait for the lazy-loaded page to render the layout.
     await screen.findByText('WELCOME');
 
-    const asciiSegmentBtn = screen.getByRole('radio', { name: /Set theme to ASCII/i });
-    expect(asciiSegmentBtn).toBeInTheDocument();
+    // Open the compact theme switcher and select ASCII.
+    const themeTrigger = screen.getByRole('button', { name: /Theme:.+select theme/i });
+    fireEvent.click(themeTrigger);
 
-    fireEvent.click(asciiSegmentBtn);
+    fireEvent.click(screen.getByRole('menuitemradio', { name: /ASCII/i }));
 
-    const updatedAsciiBtn = screen.getByRole('radio', { name: /Set theme to ASCII/i });
-    expect(updatedAsciiBtn.getAttribute('aria-checked')).toEqual('true');
+    // The ThemeProvider applies the active theme to <html data-theme="...">.
+    // Assert via that side effect (the meaningful, render-affecting outcome),
+    // which is robust against act()/batching quirks in the deeper lazy-loaded tree.
+    await screen.findByText('WELCOME');
+    expect(document.documentElement.getAttribute('data-theme')).toBe('ascii');
   });
 });
