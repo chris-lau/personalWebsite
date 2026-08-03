@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { BookOpen, Server } from 'lucide-react';
 import { guidebookChapters, backendGuidebookChapters } from '../data/guidebookData';
 import { BoxContainer } from '../components/ui/BoxContainer';
 import { MarkdownRenderer } from '../components/markdown/MarkdownRenderer';
@@ -24,7 +25,7 @@ export const GuidebookPage: React.FC = () => {
     if (readerRef.current) {
       const yOffset = -80;
       const y = readerRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      window.scrollTo({ top: y, behavior: 'instant' });
+      window.scrollTo({ top: y, behavior: 'auto' });
     }
   };
 
@@ -70,7 +71,7 @@ export const GuidebookPage: React.FC = () => {
                 className={`projects-tab-btn ${activeVolume === 'frontend' ? 'active' : ''}`}
                 onClick={() => handleSelectVolume('frontend')}
               >
-                📘 Vol 1: Frontend Architecture (Ch 1–9)
+                <BookOpen size={16} aria-hidden="true" /> Vol 1: Frontend Architecture (Ch 1–9)
               </button>
               <button
                 type="button"
@@ -79,7 +80,7 @@ export const GuidebookPage: React.FC = () => {
                 className={`projects-tab-btn ${activeVolume === 'backend' ? 'active' : ''}`}
                 onClick={() => handleSelectVolume('backend')}
               >
-                🐍 Vol 2: FastAPI Backend Engine (Ch 1–7)
+                <Server size={16} aria-hidden="true" /> Vol 2: FastAPI Backend Engine (Ch 1–7)
               </button>
             </div>
           </div>

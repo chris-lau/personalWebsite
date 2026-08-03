@@ -17,7 +17,7 @@
   padding: 0.75rem 1rem;
   background-color: var(--bg-secondary, rgba(255, 255, 255, 0.03));
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15));
-  border-radius: var(--border-radius-md, 8px);
+  border-radius: 8px;
 }
 
 .gh-selector-form {
@@ -32,7 +32,7 @@
   padding: 0.55rem 0.85rem;
   background: var(--bg-primary, #0c0d10);
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2));
-  border-radius: var(--border-radius-sm, 4px);
+  border-radius: 4px;
   color: var(--text-primary, #ffffff);
   font-size: 0.9rem;
   font-family: var(--font-family, inherit);
@@ -55,7 +55,7 @@
   background-color: var(--accent-primary, #6366f1);
   color: var(--text-inverse, #121316);
   border: none;
-  border-radius: var(--border-radius-sm, 4px);
+  border-radius: 4px;
   font-weight: 700;
   font-size: 0.88rem;
   font-family: var(--font-family, inherit);
@@ -156,7 +156,7 @@
   padding: 1.5rem;
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.3);
-  border-radius: var(--border-radius-md, 8px);
+  border-radius: 8px;
   text-align: center;
 }
 
@@ -186,7 +186,7 @@
   padding: 1.25rem;
   background-color: var(--bg-secondary, rgba(255, 255, 255, 0.03));
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15));
-  border-radius: var(--border-radius-md, 8px);
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -238,7 +238,7 @@
 
 .gh-bio {
   font-size: 0.88rem;
-  color: var(--text-secondary, #cccccc);
+  color: var(--text-muted);
   margin: 0;
   line-height: 1.4;
 }
@@ -300,7 +300,7 @@
   flex-wrap: wrap;
   gap: 0.85rem;
   font-size: 0.8rem;
-  color: var(--text-secondary, #cccccc);
+  color: var(--text-muted);
 }
 
 .gh-legend-item {
@@ -338,7 +338,7 @@
   padding: 0.55rem 0.85rem;
   background: var(--bg-primary, rgba(0, 0, 0, 0.2));
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2));
-  border-radius: var(--border-radius-sm, 4px);
+  border-radius: 4px;
   color: var(--text-primary, #ffffff);
   font-size: 0.88rem;
   font-family: var(--font-family, inherit);
@@ -368,7 +368,7 @@
   font-family: var(--font-family, inherit);
   background: var(--bg-secondary, rgba(255, 255, 255, 0.05));
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2));
-  border-radius: var(--border-radius-sm, 4px);
+  border-radius: 4px;
   color: var(--text-primary, #ffffff);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -386,7 +386,7 @@
   padding: 0.45rem 0.85rem;
   background: var(--bg-primary, rgba(0, 0, 0, 0.2));
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2));
-  border-radius: var(--border-radius-sm, 4px);
+  border-radius: 4px;
   color: var(--text-primary, #ffffff);
   font-size: 0.82rem;
   font-family: var(--font-family, inherit);
@@ -419,7 +419,7 @@
   padding: 1.1rem;
   background-color: var(--bg-secondary, rgba(255, 255, 255, 0.03));
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15));
-  border-radius: var(--border-radius-md, 8px);
+  border-radius: 8px;
   transition: transform 0.2s ease, border-color 0.2s ease;
   min-height: 180px;
 }
@@ -470,7 +470,7 @@
 
 .gh-repo-desc {
   font-size: 0.85rem;
-  color: var(--text-secondary, #cccccc);
+  color: var(--text-muted);
   line-height: 1.4;
   margin: 0 0 0.75rem 0;
   display: -webkit-box;

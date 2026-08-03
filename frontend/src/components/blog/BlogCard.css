@@ -1,5 +1,5 @@
 .blog-card {
-  border: var(--border-style);
+  border: 1px solid var(--border-muted);
   padding: 1.25rem;
   margin-bottom: 1.25rem;
   background-color: rgba(255, 255, 255, 0.02);
@@ -7,7 +7,7 @@
 }
 
 .blog-card:hover {
-  border-color: var(--accent-color);
+  border-color: var(--accent-secondary);
 }
 
 .blog-card-meta {
@@ -32,7 +32,7 @@
 }
 
 .blog-card-title a:hover {
-  color: var(--accent-color);
+  color: var(--accent-secondary);
   text-decoration: underline;
 }
 
