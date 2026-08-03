@@ -152,6 +152,28 @@ Phase 3.5 introduces an integrated, zero-cost, zero-cookie **Full-Stack Operatio
 
 Detailed summary: [phase-3.5-summary.md](file:///Users/chrislau/Documents/personalWebsite/phase-3.5-summary.md) | Implementation plan: [phase-3.5-implementation-plan.md](file:///Users/chrislau/Documents/personalWebsite/phase-3.5-implementation-plan.md)
 
+---
+
+## 🗄️ Phase 4 — PostgreSQL Database & CRUD Integration (COMPLETED)
+
+Phase 4 transitions the backend from static JSON loading to a persistent relational database using SQLAlchemy 2.0 ORM and Alembic migrations.
+
+### Architectural Highlights
+* **Environment-Aware Dual Database Setup**:
+  - **Local Development:** Zero-config file-based SQLite database (`sqlite:///./personal_os.db`).
+  - **Production:** Managed free-tier Aiven PostgreSQL instance (`DATABASE_URL`).
+* **SQLAlchemy 2.0 & Alembic Migrations**:
+  - Relational database models for `Project`, `Technology`, `NowEntry`, and `ReadingItem` in `backend/core/models.py`.
+  - Schema version management via Alembic (`0101177364df_initial_schema_migration.py`).
+* **Data Seeding & Resilience Pipeline**:
+  - Idempotent seed script (`seed.py`) converting legacy JSON data into database rows.
+  - Automatic fallback handler in `/api/projects` and `/api/now` returning static local JSON if the database is unreachable or unseeded, guaranteeing 100% website uptime.
+* **Full Test Metrics (135 / 135 Total Tests Passing)**:
+  - **Backend**: **33 / 33 Pytest unit tests passing** (including `tests/test_database.py`).
+  - **Frontend**: **96 / 96 Vitest unit tests passing** across **16 test files**.
+  - **E2E**: **6 / 6 Playwright E2E tests passing**.
+
+Detailed summary: [phase-4-summary.md](file:///Users/chrislau/Documents/personalWebsite/phase-4-summary.md) | Implementation plan: [phase-4-implementation-plan.md](file:///Users/chrislau/Documents/personalWebsite/phase-4-implementation-plan.md)
 
 ---
 
@@ -171,6 +193,7 @@ The project uses environment variables for configuring both frontend and backend
 | :--- | :--- | :--- | :--- |
 | `ENVIRONMENT` | Yes | `development` / `production` | Environment runtime flag (`development`, `production`, `test`). |
 | `PORT` | Optional | `8000` (or `10000` on Render) | Port for Uvicorn web server to listen on. |
+| `DATABASE_URL` | Optional | `sqlite:///./personal_os.db` | Connection URI for PostgreSQL (Aiven) or SQLite database. |
 | `ALLOWED_ORIGINS` | Optional | `http://localhost:5173,https://chrislau.dev` | Comma-separated list of allowed CORS origins. |
 | `RATE_LIMIT_PER_MINUTE` | Optional | `60` | Max requests per minute per IP address (`slowapi`). |
 | `GITHUB_TOKEN` | Optional | `""` | Optional personal access token for higher GitHub REST API rate limits server-side. |
