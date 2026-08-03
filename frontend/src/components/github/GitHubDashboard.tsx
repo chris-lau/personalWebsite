@@ -127,7 +127,11 @@ export const GitHubDashboard: React.FC = () => {
             </span>
           </div>
 
-          {filteredAndSortedRepos.length === 0 ? (
+          {repos.length === 0 ? (
+            <div className="gh-empty-state">
+              <p>This user has no public repositories.</p>
+            </div>
+          ) : filteredAndSortedRepos.length === 0 ? (
             <div className="gh-empty-state">
               <p>No repositories match your search or filter criteria.</p>
               <button

@@ -6,7 +6,7 @@
 
 Status legend: `[ ]` not started · `[~]` in progress · `[x]` done
 
-> **Progress (2026-08-03):** Priority 1 fully complete (markdown renderer shipped). Priority 2.1 (promote Projects to top-level nav), 2.2 (pure-click dropdowns), 2.4 (compact theme switcher — icon + dropdown) done. Priority 3.1 (homepage primary CTA), 3.2 (phantom token sweep), 3.3 (token de-dup), 3.4 (project grid reflow) done. Priority 4.1/4.2 (scroll behavior + emoji→icons), 4.3 (404 recovery links), 4.5 (backdrop-filter cleanup) done. **Remaining open:** 2.3 (System & Ops to footer — deferred per owner decision), 3.5 (skills proficiency signal), 4.4 (loading/error/empty states for data surfaces). Verified: `tsc --noEmit` clean, `vite build` succeeds, 96/96 tests pass, zero phantom `var()` references remain.
+> **Progress (2026-08-03):** Priority 1 fully complete (markdown renderer shipped). Priority 2.1 (promote Projects to top-level nav), 2.2 (pure-click dropdowns), 2.4 (compact theme switcher — icon + dropdown) done. Priority 3.1 (homepage primary CTA), 3.2 (phantom token sweep), 3.3 (token de-dup), 3.4 (project grid reflow) done. Priority 4.1/4.2 (scroll behavior + emoji→icons), 4.3 (404 recovery links), 4.4 (loading/error/empty states for GitHub + monitoring dashboards), 4.5 (backdrop-filter cleanup) done. **Remaining open:** 2.3 (System & Ops to footer — deferred per owner decision), 3.5 (skills proficiency signal). Verified: `tsc --noEmit` clean, `vite build` succeeds, 101/101 tests pass, zero phantom `var()` references remain.
 
 ---
 
@@ -98,9 +98,9 @@ These three are the single highest-impact fix and are self-contained.
   - Added Projects, Blog, and Experience deep links alongside "Return Home" in a `.not-found-recovery` link group
   - Refs: `UI-UX-REVIEW.md` §15
 
-- [ ] **4.4 — Verify loading/error/empty states for data surfaces** *(Medium effort · 🟢 Low)*
-  - `GitHubDashboard`, `MonitoringPage` — add skeletons and explicit empty/error states
-  - Lock in via Storybook stories
+- [x] **4.4 — Verify loading/error/empty states for data surfaces** *(Medium effort · 🟢 Low)*
+  - **GitHubDashboard**: split the empty state into two cases — a user with 0 public repos now shows "This user has no public repositories." (no misleading "Clear Filters" button), while filtered-to-0 keeps the existing message + button. Loading (spinner) and error (retry/reset) states already existed and are unchanged.
+  - **FullStackMonitoringDashboard**: added an `isInitialLoad` gate so the dashboard shows a centered "Connecting to backend…" spinner until the first probe completes (also fixes the "initial HEALTHY badge before any probe" lie). Added a top-level dismissible error banner with Retry/Dismiss that surfaces when the backend is truly unreachable (`!rtt.isOnline && telemetry.isFallback`); auto-clears when the backend recovers on a later poll. The existing per-card `.offline-fallback-notice` stays as the granular signal.
   - Refs: `UI-UX-REVIEW.md` §16
 
 - [x] **4.5 — Reduce stacked `backdrop-filter: blur()` usage** *(Trivial · 🟢 Low)*

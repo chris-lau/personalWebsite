@@ -37,6 +37,9 @@ export const FullStackMonitoringDashboard: React.FC = () => {
   const [diagnosticSuite, setDiagnosticSuite] = useState<DiagnosticCheckItem[]>([]);
   const [isRunningDiagnostics, setIsRunningDiagnostics] = useState<boolean>(false);
   const [isSimulatedOffline, setIsSimulatedOffline] = useState<boolean>(false);
+  const [isInitialLoad, setIsInitialLoad] = useState<boolean>(true);
+  const [showErrorBanner, setShowErrorBanner] = useState<boolean>(false);
+  const [isRetrying, setIsRetrying] = useState<boolean>(false);
 
   const refreshTelemetry = useCallback(async () => {
     const rum = getBrowserPerformanceMetrics();
@@ -53,6 +56,7 @@ export const FullStackMonitoringDashboard: React.FC = () => {
         last_check_timestamp: new Date().toLocaleTimeString(),
       });
       setBackendTelemetry(null);
+      setIsInitialLoad(false);
       return;
     }
 
@@ -72,6 +76,11 @@ export const FullStackMonitoringDashboard: React.FC = () => {
     } else {
       setBackendTelemetry(null);
     }
+
+    // Surface a top-level error banner only when the backend is truly unreachable
+    // (network probe offline AND telemetry is falling back to local data).
+    setShowErrorBanner(!rtt.isOnline && telemetry.isFallback);
+    setIsInitialLoad(false);
   }, [isSimulatedOffline]);
 
   useEffect(() => {
@@ -114,6 +123,12 @@ export const FullStackMonitoringDashboard: React.FC = () => {
     setIsSimulatedOffline((prev) => !prev);
   };
 
+  const handleRetry = async () => {
+    setIsRetrying(true);
+    await refreshTelemetry();
+    setIsRetrying(false);
+  };
+
   const handleExportReport = () => {
     exportDiagnosticReport({
       timestamp: new Date().toISOString(),
@@ -129,6 +144,38 @@ export const FullStackMonitoringDashboard: React.FC = () => {
   return (
     <div className={`fullstack-monitoring-dashboard theme-${theme}`}>
       <BoxContainer title="FULL-STACK OPERATIONAL MONITORING & TELEMETRY DASHBOARD">
+        {isInitialLoad ? (
+          <div className="monitoring-loading" role="status" aria-live="polite">
+            <div className="monitoring-spinner" aria-hidden="true" />
+            <p>Connecting to backend…</p>
+          </div>
+        ) : (
+          <>
+            {showErrorBanner && (
+              <div className="monitoring-error-banner" role="alert">
+                <span className="monitoring-error-message">
+                  ⚠️ Backend unreachable — showing fallback data.
+                </span>
+                <div className="monitoring-error-actions">
+                  <button
+                    type="button"
+                    className="action-btn monitoring-retry-btn"
+                    onClick={handleRetry}
+                    disabled={isRetrying}
+                  >
+                    {isRetrying ? 'Retrying…' : 'Retry'}
+                  </button>
+                  <button
+                    type="button"
+                    className="action-btn monitoring-dismiss-btn"
+                    onClick={() => setShowErrorBanner(false)}
+                  >
+                    Dismiss
+                  </button>
+                </div>
+              </div>
+            )}
+
         <div className="monitoring-header">
           <div className="status-overview">
             <span className={`status-badge ${topology.backend_status}`}>
@@ -328,6 +375,8 @@ export const FullStackMonitoringDashboard: React.FC = () => {
               ))}
             </div>
           </section>
+        )}
+          </>
         )}
       </BoxContainer>
     </div>

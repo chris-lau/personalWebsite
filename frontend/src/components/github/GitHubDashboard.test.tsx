@@ -135,4 +135,25 @@ describe('GitHubDashboard component suite', () => {
 
     expect(setUsernameMock).toHaveBeenCalledWith('facebook');
   });
+
+  it('renders a distinct empty state for a user with no public repositories', () => {
+    vi.spyOn(useGitHubDataModule, 'useGitHubData').mockReturnValue({
+      username: 'empty-user',
+      setUsername: vi.fn(),
+      resetDefault: vi.fn(),
+      user: { ...mockUser, username: 'empty-user', publicRepos: 0 },
+      repos: [],
+      loading: false,
+      error: null,
+      refetch: vi.fn(),
+      isDefaultUser: false,
+    });
+
+    render(<GitHubDashboard />);
+
+    // Distinct message for genuinely-empty user (not the filter message)
+    expect(screen.getByText(/This user has no public repositories/i)).toBeDefined();
+    // The "Clear Filters" button must NOT appear — there's nothing to filter
+    expect(screen.queryByRole('button', { name: /Clear Filters/i })).toBeNull();
+  });
 });
