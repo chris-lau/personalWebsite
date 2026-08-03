@@ -14,8 +14,18 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
         # HSTS — enforce HTTPS for one year (site is HTTPS-only in prod).
         response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
-        # CSP — this is a JSON API; lock down to self.
-        response.headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none'"
+        # CSP — JSON API default locked to 'none', but allow Swagger/ReDoc CDN assets for docs
+        if request.url.path in ("/docs", "/redoc", "/openapi.json"):
+            response.headers["Content-Security-Policy"] = (
+                "default-src 'self'; "
+                "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+                "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+                "img-src 'self' data: https://fastapi.tiangolo.com https://cdn.jsdelivr.net; "
+                "worker-src 'self' blob:;"
+            )
+        else:
+            response.headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none'"
+
         # Disable unnecessary browser features.
         response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
         return response
