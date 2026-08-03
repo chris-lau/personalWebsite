@@ -83,13 +83,17 @@ personalWebsite/
 ├── phase-3-summary.md                 # Phase 3 summary & completion log
 ├── phase-3.5-implementation-plan.md   # Phase 3.5 execution plan & checklist
 ├── phase-3.5-summary.md               # Phase 3.5 summary & completion log
+├── phase-4-implementation-plan.md     # Phase 4 execution plan & checklist
+├── phase-4-summary.md                 # Phase 4 summary & completion log
 ├── backend/                           # Python FastAPI Backend Service
 │   ├── main.py                        # FastAPI entrypoint, CORS & error handlers
-│   ├── core/                          # CorrelationID & RequestLogging & Security Middleware
+│   ├── core/                          # DB configuration, models, middleware & rate limiting
 │   ├── schemas/                       # Pydantic v2 data models (incl. GitHub proxy)
 │   ├── api/endpoints/                 # REST endpoints, GitHub proxy, telemetry & health
 │   ├── data/                          # Backend Guidebook JSON repositories
-│   ├── tests/                         # Pytest test suite (32 tests)
+│   ├── migrations/                    # Alembic database migration revisions
+│   ├── seed.py                        # Idempotent database seeding pipeline
+│   ├── tests/                         # Pytest test suite (33 tests)
 │   └── Dockerfile                     # Multi-stage container build (non-root) for Render
 └── frontend/                          # React 18 + TypeScript SPA app
     ├── .storybook/                    # Storybook 8 configuration
