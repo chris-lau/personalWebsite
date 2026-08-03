@@ -3,9 +3,12 @@ import sys
 import time
 
 from fastapi import APIRouter, Request
+from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
 
 from api.endpoints.github import get_cache_stats
 from config import settings
+from core.db import SessionLocal
 from core.rate_limit import limiter
 from schemas.telemetry import (
     START_TIME,
@@ -26,6 +29,33 @@ def _get_memory_rss_mb() -> float:
     return round(rss / 1024, 2)
 
 
+def _check_database() -> dict:
+    """Run a lightweight DB liveness probe.
+
+    Opens a short-lived session and executes ``SELECT 1``. Returns an
+    ``{"status": "ok", "latency_ms": ...}`` dict on success, or
+    ``{"status": "unhealthy", "error": ...}`` on failure. The readiness
+    probe as a whole is reported as ``degraded`` (rather than failing)
+    because data endpoints transparently fall back to static JSON, so the
+    API remains functional without the database.
+    """
+    start = time.perf_counter()
+    try:
+        db = SessionLocal()
+        try:
+            db.execute(text("SELECT 1"))
+        finally:
+            db.close()
+        latency_ms = round((time.perf_counter() - start) * 1000, 2)
+        return {"status": "ok", "latency_ms": latency_ms}
+    except SQLAlchemyError as exc:
+        latency_ms = round((time.perf_counter() - start) * 1000, 2)
+        return {"status": "unhealthy", "latency_ms": latency_ms, "error": str(exc)}
+    except Exception as exc:  # pragma: no cover - defensive catch-all
+        latency_ms = round((time.perf_counter() - start) * 1000, 2)
+        return {"status": "unhealthy", "latency_ms": latency_ms, "error": str(exc)}
+
+
 @router.get("/health/live", tags=["Health"])
 @limiter.limit("120/minute")
 async def health_live(request: Request):
@@ -44,15 +74,22 @@ async def health_ready(request: Request):
     memory_mb = _get_memory_rss_mb()
     uptime = round(time.time() - START_TIME, 2)
 
+    db_check = _check_database()
+
     checks = {
         "process_memory": {"status": "ok", "rss_mb": memory_mb},
         "process_uptime": {"status": "ok", "uptime_seconds": uptime},
         "environment": {"status": "ok", "env": settings.ENVIRONMENT},
         "cors_origins": {"status": "ok", "count": len(settings.cors_origins_list)},
+        "database": db_check,
     }
 
+    # The API serves cached/JSON data when the database is unreachable, so a
+    # DB failure degrades rather than breaks the service.
+    overall_status = "degraded" if db_check["status"] != "ok" else "healthy"
+
     return ReadinessCheckResponse(
-        status="healthy",
+        status=overall_status,
         timestamp=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         checks=checks,
     )
