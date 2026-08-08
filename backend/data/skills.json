@@ -9,6 +9,15 @@
       "Agile & Scrum (CSPO)",
       "Cross-functional Leadership",
       "Requirements Gathering & Specs"
+    ],
+    "detailedSkills": [
+      { "name": "Product Management & Development", "level": "core" },
+      { "name": "Technology Roadmapping", "level": "core" },
+      { "name": "AI Surveillance & Governance", "level": "core" },
+      { "name": "Agentic Automation", "level": "core" },
+      { "name": "Agile & Scrum (CSPO)", "level": "core" },
+      { "name": "Cross-functional Leadership", "level": "proficient" },
+      { "name": "Requirements Gathering & Specs", "level": "proficient" }
     ]
   },
   {
@@ -18,6 +27,12 @@
       "REST APIs & Architecture",
       "GraphDB & Database Modeling",
       "Industrial Automation & PLCs"
+    ],
+    "detailedSkills": [
+      { "name": "SaaS & Cloud Platforms", "level": "core" },
+      { "name": "REST APIs & Architecture", "level": "core" },
+      { "name": "GraphDB & Database Modeling", "level": "proficient" },
+      { "name": "Industrial Automation & PLCs", "level": "proficient" }
     ]
   },
   {
@@ -28,6 +43,13 @@
       "Certified Scrum Product Owner® (CSPO) - Scrum Alliance",
       "Pragmatic Marketing Certified (PMC-II)",
       "P.Eng. Professional Engineer (Non-Practising)"
+    ],
+    "detailedSkills": [
+      { "name": "MBA - USC Marshall School of Business (Dean's List)", "level": "core" },
+      { "name": "B.A.Sc. Computer Engineering - University of British Columbia", "level": "core" },
+      { "name": "Certified Scrum Product Owner® (CSPO) - Scrum Alliance", "level": "core" },
+      { "name": "Pragmatic Marketing Certified (PMC-II)", "level": "proficient" },
+      { "name": "P.Eng. Professional Engineer (Non-Practising)", "level": "proficient" }
     ]
   },
   {
@@ -35,6 +57,11 @@
     "skills": [
       "English (Native/Bilingual)",
       "Chinese (Native/Bilingual)"
+    ],
+    "detailedSkills": [
+      { "name": "English (Native/Bilingual)", "level": "core" },
+      { "name": "Chinese (Native/Bilingual)", "level": "core" }
     ]
   }
 ]
+

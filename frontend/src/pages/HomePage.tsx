@@ -79,11 +79,21 @@ export const HomePage = () => {
               <div key={cat.category} className="skill-group">
                 <span className="skill-cat-label">{cat.category}:</span>
                 <div className="skill-chips">
-                  {cat.skills.map((skill) => (
-                    <span key={skill} className="skill-chip">
-                      {skill}
-                    </span>
-                  ))}
+                  {(cat.detailedSkills || cat.skills.map(s => ({ name: s, level: 'core' as const }))).map((skillItem) => {
+                    const name = typeof skillItem === 'string' ? skillItem : skillItem.name;
+                    const level = typeof skillItem === 'string' ? 'core' : (skillItem.level || 'core');
+                    return (
+                      <span
+                        key={name}
+                        className={`skill-chip ${level === 'core' ? 'skill-chip-core' : 'skill-chip-proficient'}`}
+                        title={level === 'core' ? 'Core Expertise' : 'Proficient'}
+                      >
+                        {level === 'core' && <span className="skill-badge-dot" aria-hidden="true">★ </span>}
+                        {name}
+                      </span>
+                    );
+                  })}
+
                 </div>
               </div>
             ))}

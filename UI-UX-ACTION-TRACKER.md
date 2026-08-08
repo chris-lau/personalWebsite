@@ -78,9 +78,12 @@ These three are the single highest-impact fix and are self-contained.
   - Switched `.project-grid` from fixed `repeat(2, 1fr)` to `repeat(auto-fit, minmax(280px, 1fr))` so orphan cards no longer stretch half-width
   - Refs: `UI-UX-REVIEW.md` §9
 
-- [ ] **3.5 — Add proficiency signal to Skills Snapshot** *(Medium effort · 🟡 Medium)*
-  - Group by tier (Core / Familiar) or highlight top 3 per category
+- [x] **3.5 — Add proficiency signal to Skills Snapshot** *(Medium effort · 🟡 Medium)*
+  - Added `detailedSkills` schema to `backend/data/skills.json` with `level: 'core' | 'proficient'`.
+  - Updated `SkillCategory` interface in `frontend/src/types/portfolio.ts`.
+  - Enhanced `HomePage.tsx` and `AboutPage.tsx` with star indicator icons (`★`), highlighted border styling for Core skills, and clear `[Core / Proficient]` badge tags.
   - Refs: `UI-UX-REVIEW.md` §10
+
 
 ---
 
