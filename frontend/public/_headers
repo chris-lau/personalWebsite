@@ -1,0 +1,13 @@
+# Cache headers for Cloudflare Pages
+#
+# Hashed build assets (Vite emits these to /assets/ with content-hash filenames)
+# are safe to cache immutably: a filename change == a new file, so stale caches
+# never serve a wrong version. One year is the conventional max-age.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# index.html must always be revalidated so a new deployment's main bundle
+# reference is picked up immediately — this is what prevents browsers from
+# holding a stale main bundle that points at chunks which no longer exist.
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate
