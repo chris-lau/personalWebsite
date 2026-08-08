@@ -38,8 +38,8 @@ export const ModernLayout = ({ children }: ModernLayoutProps) => {
           <nav className={`modern-nav ${mobileMenuOpen ? 'open' : ''}`} aria-label="Main Navigation">
             <ul className="modern-nav-list">
               {NAV_GROUPS.map((group) => {
-
                 const active = isGroupActive(group);
+
 
                 if (group.path) {
                   return (
