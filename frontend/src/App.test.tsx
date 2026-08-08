@@ -122,4 +122,29 @@ describe('App Router & Integration Tests', () => {
     await screen.findByText('WELCOME');
     expect(document.documentElement.getAttribute('data-theme')).toBe('ascii');
   });
+
+  it('renders all 3 layout themes (Modern, ASCII, CLI) without triggering ErrorBoundary', async () => {
+    const { unmount } = render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>
+    );
+
+    await screen.findByText('WELCOME');
+    expect(screen.queryByText('Something went wrong')).toBeNull();
+
+    // Switch to ASCII
+    const themeTrigger = screen.getByRole('button', { name: /Theme:.+select theme/i });
+    fireEvent.click(themeTrigger);
+    fireEvent.click(screen.getByRole('menuitemradio', { name: /ASCII/i }));
+    expect(screen.queryByText('Something went wrong')).toBeNull();
+
+    // Switch to CLI
+    fireEvent.click(screen.getByRole('button', { name: /Theme:.+select theme/i }));
+    fireEvent.click(screen.getByRole('menuitemradio', { name: /CLI/i }));
+    expect(screen.queryByText('Something went wrong')).toBeNull();
+
+    unmount();
+  });
 });
+
