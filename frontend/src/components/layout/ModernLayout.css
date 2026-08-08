@@ -30,6 +30,11 @@
   gap: 1rem;
 }
 
+.modern-nav {
+  margin-left: auto;
+}
+
+
 .modern-brand-logo {
   display: flex;
   align-items: center;

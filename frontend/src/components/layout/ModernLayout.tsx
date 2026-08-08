@@ -35,21 +35,10 @@ export const ModernLayout = ({ children }: ModernLayoutProps) => {
             <span className="brand-title">Chris Lau</span>
           </NavLink>
 
-          <div className="modern-nav-controls">
-            <ThemeToggle />
-            <button
-              className="modern-mobile-menu-toggle"
-              onClick={toggleMobileMenu}
-              aria-expanded={mobileMenuOpen}
-              aria-label="Toggle navigation menu"
-            >
-              {mobileMenuOpen ? '✕' : '☰'}
-            </button>
-          </div>
-
           <nav className={`modern-nav ${mobileMenuOpen ? 'open' : ''}`} aria-label="Main Navigation">
             <ul className="modern-nav-list">
               {NAV_GROUPS.map((group) => {
+
                 const active = isGroupActive(group);
 
                 if (group.path) {
@@ -114,6 +103,19 @@ export const ModernLayout = ({ children }: ModernLayoutProps) => {
               })}
             </ul>
           </nav>
+
+          <div className="modern-nav-controls">
+            <ThemeToggle />
+            <button
+              className="modern-mobile-menu-toggle"
+              onClick={toggleMobileMenu}
+              aria-expanded={mobileMenuOpen}
+              aria-label="Toggle navigation menu"
+            >
+              {mobileMenuOpen ? '✕' : '☰'}
+            </button>
+          </div>
+
         </div>
       </header>
 
