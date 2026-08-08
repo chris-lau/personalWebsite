@@ -41,6 +41,12 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - **Category Grouping & Discovery**: Articles organized under clear technical categories (`React Architecture & Design Systems`, `Developer Workflows & Tooling`, `Testing & Quality Assurance`) with automated **Related Articles** suggestions.
   - Includes 13 technical articles covering React architecture, SPA routing mechanics & Cloudflare hosting, scaffolding, 4-tier testing strategies, design tokens, multi-theme context, beginner GitHub workflows, Technical Product Manager (TPM) frontend learning reflections, and interactive AI pair programming workflows.
 
+- **AI Chat Widget ("Chat with Chris")**:
+  - **Retrieval-Grounded Q&A**: A visitor-facing chat widget that answers questions using the site's blog posts, guidebooks, and profile as context — no hallucination about unrelated topics.
+  - **Streaming Replies (SSE)**: Replies stream token-by-token over Server-Sent Events for a responsive UX.
+  - **Multi-Provider, One SDK**: A single OpenAI-compatible client (`POST /api/chat`) serves Gemini, DeepSeek, and OpenAI behind a UI model switcher — only providers with a configured key appear in the dropdown.
+  - **Defensive Boundaries**: Strict system prompt resists prompt injection; per-IP rate limit (`CHAT_RATE_LIMIT_PER_MINUTE`) and bounded conversation history control cost/abuse.
+
 - **Live GitHub Activity & Repository Dashboard (`/projects`)**:
   - **Backend GitHub Proxy**: Server-side proxy endpoint (`GET /api/github-summary`) using `httpx` + optional `GITHUB_TOKEN` (5000 req/hr authenticated vs 60 req/hr unauthenticated), with a 15-minute in-memory TTL cache. Frontend calls the proxy and falls back to direct GitHub API if the backend is offline.
   - **Interactive Username Switcher**: Allows visitors to lookup any GitHub user/organization (default: `@chris-lau`, presets: `@facebook`, `@vercel`).
@@ -197,6 +203,11 @@ The project uses environment variables for configuring both frontend and backend
 | `ALLOWED_ORIGINS` | Optional | `http://localhost:5173,https://chrislau.dev` | Comma-separated list of allowed CORS origins. |
 | `RATE_LIMIT_PER_MINUTE` | Optional | `60` | Max requests per minute per IP address (`slowapi`). |
 | `GITHUB_TOKEN` | Optional | `""` | Optional personal access token for higher GitHub REST API rate limits server-side. |
+| `GEMINI_API_KEY` | Optional | `""` | Gemini API key. Enables Gemini models in the chat widget. |
+| `DEEPSEEK_API_KEY` | Optional | `""` | DeepSeek API key. Enables DeepSeek models in the chat widget. |
+| `OPENAI_API_KEY` | Optional | `""` | OpenAI API key. Enables GPT models in the chat widget. |
+| `CHAT_DEFAULT_MODEL` | Optional | `gemini-2.0-flash` | Default model id when the visitor doesn't pick one. |
+| `CHAT_RATE_LIMIT_PER_MINUTE` | Optional | `10` | Stricter per-IP rate limit for `POST /api/chat` (separate from `RATE_LIMIT_PER_MINUTE`). |
 
 ---
 

@@ -124,7 +124,7 @@ describe('FullStackMonitoringDashboard Component Unit Tests', () => {
   it('shows an error banner when the backend is unreachable', async () => {
     vi.spyOn(telemetryApi, 'benchmarkNetworkRTT').mockResolvedValue({
       isOnline: false,
-      latency_ms: null,
+      latency_ms: 0,
       status: 'offline',
     });
     vi.spyOn(telemetryApi, 'fetchBackendTelemetry').mockResolvedValue({
@@ -154,7 +154,7 @@ describe('FullStackMonitoringDashboard Component Unit Tests', () => {
   it('dismisses the error banner when Dismiss is clicked', async () => {
     vi.spyOn(telemetryApi, 'benchmarkNetworkRTT').mockResolvedValue({
       isOnline: false,
-      latency_ms: null,
+      latency_ms: 0,
       status: 'offline',
     });
     vi.spyOn(telemetryApi, 'fetchBackendTelemetry').mockResolvedValue({

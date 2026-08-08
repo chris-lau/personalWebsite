@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { LayoutRenderer } from './components/layout/LayoutRenderer';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
+import { ChatWidget } from './components/chat/ChatWidget';
 
 // Route-level code splitting: each page loads on demand.
 const HomePage = lazy(() => import('./pages/HomePage').then((m) => ({ default: m.HomePage })));
@@ -65,6 +66,8 @@ export const App: React.FC = () => {
           </Suspense>
         </ErrorBoundary>
       </LayoutRenderer>
+      {/* Global chat widget — floats above all three theme layouts. */}
+      <ChatWidget />
     </ThemeProvider>
   );
 };

@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from .endpoints import (
+    chat,
     experience,
     github,
     guidebook,
@@ -23,4 +24,5 @@ api_router.include_router(posts.router, tags=["Blog Posts"])
 api_router.include_router(guidebook.router, tags=["Guidebook"])
 api_router.include_router(github.router, tags=["GitHub Proxy"])
 api_router.include_router(telemetry.router, tags=["Telemetry & Health"])
+api_router.include_router(chat.router, tags=["Chat"])
 

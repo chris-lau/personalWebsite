@@ -4,6 +4,8 @@ import {
   fetchProjects,
   fetchNow,
   fetchGitHubSummary,
+  fetchChatModels,
+  sendChatMessage,
 } from './backend';
 
 describe('backend API client & local fallback mechanism', () => {
@@ -160,6 +162,107 @@ describe('backend API client & local fallback mechanism', () => {
       expect(res.isFallback).toBe(true);
       expect(res.data).toBeNull();
       expect(res.error).toBe('Backend error');
+    });
+  });
+
+  describe('fetchChatModels', () => {
+    it('returns model list when backend is reachable', async () => {
+      const mockModels = {
+        models: [{ id: 'gemini-2.0-flash', label: 'gemini-2.0-flash', provider: 'gemini' }],
+        defaultModel: 'gemini-2.0-flash',
+      };
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+        ok: true,
+        json: async () => mockModels,
+      } as Response);
+
+      const res = await fetchChatModels();
+      expect(res.isFallback).toBe(false);
+      expect(res.data?.models.length).toBe(1);
+      expect(res.data?.defaultModel).toBe('gemini-2.0-flash');
+    });
+
+    it('returns null data with fallback flag when backend is down', async () => {
+      vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('Offline'));
+
+      const res = await fetchChatModels();
+      expect(res.isFallback).toBe(true);
+      expect(res.data).toBeNull();
+      expect(res.error).toBe('Offline');
+    });
+  });
+
+  describe('sendChatMessage', () => {
+    /** Build a fake SSE Response whose body streams the given data lines. */
+    function makeSSEResponse(dataLines: string[]): Response {
+      const encoder = new TextEncoder();
+      const stream = new ReadableStream({
+        start(controller) {
+          for (const line of dataLines) {
+            controller.enqueue(encoder.encode(`data: ${line}\n\n`));
+          }
+          controller.close();
+        },
+      });
+      return { ok: true, body: stream } as Response;
+    }
+
+    it('parses token chunks and invokes onToken for each', async () => {
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+        makeSSEResponse([
+          JSON.stringify({ token: 'Hello' }),
+          JSON.stringify({ token: ', ' }),
+          JSON.stringify({ token: 'world!' }),
+          JSON.stringify({ done: true }),
+        ]),
+      );
+
+      const tokens: string[] = [];
+      const result = await sendChatMessage(
+        { message: 'hi', history: [], model: 'gemini-2.0-flash' },
+        (t) => tokens.push(t),
+      );
+
+      expect(result.isFallback).toBe(false);
+      expect(tokens).toEqual(['Hello', ', ', 'world!']);
+    });
+
+    it('returns fallback on a non-200 response', async () => {
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue({ ok: false, status: 503 } as Response);
+
+      const result = await sendChatMessage(
+        { message: 'hi', history: [], model: 'gemini-2.0-flash' },
+        () => {},
+      );
+      expect(result.isFallback).toBe(true);
+      expect(result.error).toBe('HTTP 503');
+    });
+
+    it('returns fallback when an error chunk arrives mid-stream', async () => {
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+        makeSSEResponse([
+          JSON.stringify({ token: 'partial…' }),
+          JSON.stringify({ error: 'upstream blew up' }),
+        ]),
+      );
+
+      const result = await sendChatMessage(
+        { message: 'hi', history: [], model: 'gemini-2.0-flash' },
+        () => {},
+      );
+      expect(result.isFallback).toBe(true);
+      expect(result.error).toBe('upstream blew up');
+    });
+
+    it('returns fallback when fetch itself throws', async () => {
+      vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('Network down'));
+
+      const result = await sendChatMessage(
+        { message: 'hi', history: [], model: 'gemini-2.0-flash' },
+        () => {},
+      );
+      expect(result.isFallback).toBe(true);
+      expect(result.error).toBe('Network down');
     });
   });
 });
