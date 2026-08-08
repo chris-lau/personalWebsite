@@ -10,7 +10,10 @@ export interface NetworkBenchmarkResult {
 export async function benchmarkNetworkRTT(): Promise<NetworkBenchmarkResult> {
   const start = performance.now();
   try {
-    const res = await fetchWithTimeout(`${BACKEND_ROOT_URL}/health/live`);
+    let res = await fetchWithTimeout(`${API_BASE_URL}/health/live`);
+    if (!res.ok) {
+      res = await fetchWithTimeout(`${BACKEND_ROOT_URL}/health/live`);
+    }
     const latency = Math.round(performance.now() - start);
 
     if (res.ok) {

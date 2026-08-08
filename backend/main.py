@@ -70,6 +70,15 @@ async def health_check(request: Request):
     }
 
 
+@app.get("/health/live", tags=["Health"])
+@limiter.limit("120/minute")
+async def health_live_check(request: Request):
+    return {
+        "status": "ok",
+        "service": "Personal OS FastAPI Backend",
+    }
+
+
 @app.get("/health/ready", tags=["Health"])
 @limiter.limit("60/minute")
 async def health_ready_check(request: Request):
