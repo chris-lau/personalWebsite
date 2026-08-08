@@ -170,7 +170,9 @@
 }
 
 .skill-chip {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
   padding: 0.2rem 0.55rem;
   font-size: 0.8rem;
   font-family: var(--font-family);
@@ -179,6 +181,23 @@
   border: 1px solid var(--border-muted);
   color: var(--text-primary);
 }
+
+.skill-chip-core {
+  border-color: var(--accent-primary);
+  background-color: var(--bg-secondary);
+  font-weight: 500;
+}
+
+.skill-chip-proficient {
+  opacity: 0.88;
+}
+
+.skill-badge-dot,
+.skill-badge-star {
+  color: var(--accent-primary);
+  font-size: 0.75rem;
+}
+
 
 .link-button {
   display: inline-flex;
@@ -336,9 +355,43 @@
 }
 
 .skill-pill {
-  padding-left: 0;
-  margin-left: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.85rem;
+  font-family: var(--font-family);
+  border-radius: 4px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-muted);
+  color: var(--text-primary);
 }
+
+.skill-pill-core {
+  border-color: var(--accent-primary);
+  font-weight: 500;
+}
+
+.skill-pill-proficient {
+  opacity: 0.9;
+}
+
+.skill-tier-badge {
+  font-size: 0.7rem;
+  padding: 0.05rem 0.3rem;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-muted);
+  color: var(--text-muted);
+}
+
+.skill-pill-core .skill-tier-badge {
+  color: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
 
 /* Timeline */
 .timeline {

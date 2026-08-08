@@ -36,10 +36,17 @@ export interface Experience {
   highlights: string[];
 }
 
+export interface SkillItem {
+  name: string;
+  level?: 'core' | 'proficient';
+}
+
 export interface SkillCategory {
   category: string;
   skills: string[];
+  detailedSkills?: SkillItem[];
 }
+
 
 export interface NowState {
   lastUpdated: string;
