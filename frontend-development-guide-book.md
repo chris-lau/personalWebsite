@@ -399,6 +399,22 @@ test('navigates through core page routes', async ({ page }) => {
 
 ---
 
+### Chapter 8.4: SPA Deployment & Live Production Integrations
+
+Deploying the compiled React Single Page Application (`dist/`) to **Cloudflare Pages** requires linking client API calls to the production backend:
+
+- **Build Environment Variable**: `VITE_API_URL` set to `https://personalwebsite-w1mp.onrender.com/api`.
+- **SPA Fallback Rule (`frontend/public/_redirects`)**:
+  ```text
+  /*  /index.html  200
+  ```
+- **Live Deployment Matrix**:
+  - **React SPA**: [https://chrislau.dev](https://chrislau.dev)
+  - **Storybook UI Workshop**: [https://chris-lau-storybook.pages.dev](https://chris-lau-storybook.pages.dev)
+  - **FastAPI Docker Backend**: [https://personalwebsite-w1mp.onrender.com](https://personalwebsite-w1mp.onrender.com)
+
+---
+
 ### Summary Checklist for Frontend Excellence
 - [x] Standard 7 Vite/React/TS boilerplate files configured.
 - [x] Design Tokens mapped to CSS variables under `[data-theme]`.
@@ -406,3 +422,4 @@ test('navigates through core page routes', async ({ page }) => {
 - [x] React Context global state management for theme persistence.
 - [x] 3-layer SPA client-side routing with `react-router-dom`.
 - [x] 3-tier testing suite (Vitest Unit/Integration + Storybook a11y + Playwright E2E).
+- [x] Production Cloudflare Pages SPA deployment with `_redirects` and live Render backend connection (`VITE_API_URL`).

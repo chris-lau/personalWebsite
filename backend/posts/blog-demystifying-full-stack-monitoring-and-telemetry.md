@@ -99,22 +99,26 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
 
 Kubernetes and cloud platforms like Render use health probes to manage container lifecycles:
 
-- **`/health/live` (Liveness Probe)**: Fast endpoint returning `HTTP 200 {"status": "ok"}` to verify the Python process has not deadlocked.
-- **`/health/ready` (Readiness Probe)**: Deep probe inspecting memory usage (RSS in MB), uptime, and subsystem dependencies before routing production traffic to the container.
-- **`/api/telemetry` (Operational Telemetry)**: Returns comprehensive runtime metrics including RSS memory, uptime seconds, rate limiter budgets, and GitHub proxy cache hit/miss stats.
+- **`/health/live` & `/api/health/live` (Liveness Probes)**: Fast endpoints returning `HTTP 200 {"status": "ok"}` to verify the Python process has not deadlocked. Dual-path routing ensures both root and `/api` probes resolve seamlessly.
+- **`/health/ready` & `/api/health/ready` (Readiness Probes)**: Deep probes inspecting memory usage (RSS in MB), uptime, environment configuration, and executing a live `SELECT 1` database query against Aiven PostgreSQL. If the database is unreachable, the readiness status degrades gracefully without throwing a 500 error screen.
+- **`/api/telemetry` (Operational Telemetry)**: Returns comprehensive runtime metrics including RSS memory, uptime seconds, rate limiter budgets (`slowapi`), and GitHub proxy cache hit/miss stats.
 
 ```python
-@router.get("/health/ready")
+@router.get("/health/ready", response_model=ReadinessCheckResponse)
 async def health_ready(request: Request):
     memory_mb = _get_memory_rss_mb()
     uptime = round(time.time() - START_TIME, 2)
+    db_check = _check_database()  # Executes SELECT 1 probe against SessionLocal()
+
     checks = {
         "process_memory": {"status": "ok", "rss_mb": memory_mb},
         "process_uptime": {"status": "ok", "uptime_seconds": uptime},
         "environment": {"status": "ok", "env": settings.ENVIRONMENT},
         "cors_origins": {"status": "ok", "count": len(settings.cors_origins_list)},
+        "database": db_check,
     }
-    return ReadinessCheckResponse(status="healthy", timestamp=..., checks=checks)
+    overall_status = "degraded" if db_check["status"] != "ok" else "healthy"
+    return ReadinessCheckResponse(status=overall_status, timestamp=..., checks=checks)
 ```
 
 ---

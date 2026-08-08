@@ -15,3 +15,5 @@ This comprehensive guidebook breaks down how to design, build, test, containeriz
 - **Chapter 5**: Server-Side GitHub REST API Proxy & 15-Minute Cache
 - **Chapter 6**: Security, Rate Limiting & Interactive Swagger UI
 - **Chapter 7**: Pytest Testing, Dockerization & Render Deployment
+- **Chapter 8**: Full-Stack Operational Telemetry, Correlation IDs & Health Probes (`/health/live` & `/health/ready`)
+- **Chapter 9**: Relational Database Integration, ORM Models & Alembic Migrations (SQLite & Aiven PostgreSQL)

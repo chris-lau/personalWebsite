@@ -568,11 +568,12 @@ Write operations should not be publicly available before authentication is added
 
 ## Completion Criteria
 
-- [x] Production data survives redeployments (via Aiven PostgreSQL / local SQLite persistence)
+- [x] Production data survives redeployments (via Aiven PostgreSQL `pg-378b5735-mr-92f4.d.aivencloud.com:26355` / local SQLite persistence)
+- [x] Live Render backend deployment verified online at [`https://personalwebsite-w1mp.onrender.com`](https://personalwebsite-w1mp.onrender.com)
 - [x] Database migrations run successfully (Alembic autogenerate & upgrade head configured)
-- [x] Projects and Now items are loaded from database with graceful JSON fallback
-- [x] CRUD services and database models have tests (33 unit tests green)
-- [x] The database URL is stored securely in environment variables
+- [x] Projects, Technologies, Reading items, and Now items are loaded from database with graceful JSON fallback
+- [x] CRUD services, database models, and telemetry probes have tests (40 unit tests green)
+- [x] The database URL is stored securely in environment variables (`DATABASE_URL`)
 - [x] Database models are separate from API response schemas
 
 ---

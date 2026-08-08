@@ -83,6 +83,16 @@ Create a file located at `frontend/public/_redirects`:
 
 Once Cloudflare serves `index.html`, the browser runs the JavaScript bundle, React initializes, reads `window.location.pathname`, and instantly mounts the correct route component!
 
+### Live Production Deployment Matrix
+
+The application is deployed across specialized cloud providers:
+
+| Target | Cloud Host | Build Command | Output | Live URL |
+| :--- | :--- | :--- | :--- | :--- |
+| **React Frontend SPA** | Cloudflare Pages | `npm run build` | `dist` | [https://chrislau.dev](https://chrislau.dev) |
+| **Component Storybook** | Cloudflare Pages | `npm run build-storybook` | `storybook-static` | [https://chris-lau-storybook.pages.dev](https://chris-lau-storybook.pages.dev) |
+| **FastAPI Backend Service** | Render (Docker) | `docker build` | N/A (Port 10000) | [https://personalwebsite-w1mp.onrender.com](https://personalwebsite-w1mp.onrender.com) |
+
 ### Cloudflare Dashboard Build Settings Summary
 
 When connecting your Git repository to Cloudflare Pages, use these settings:
@@ -92,6 +102,7 @@ When connecting your Git repository to Cloudflare Pages, use these settings:
 | **Root Directory** | `frontend` | Root directory containing `package.json` |
 | **Build Command** | `npm run build` | Runs `tsc && vite build` |
 | **Build Output Directory** | `dist` | Production static bundle path |
+| **Environment Variables** | `VITE_API_URL` = `https://personalwebsite-w1mp.onrender.com/api` | Connects React SPA to production FastAPI backend |
 
 ---
 
