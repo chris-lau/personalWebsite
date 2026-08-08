@@ -106,13 +106,21 @@ export async function runE2EDiagnosticSuite(): Promise<DiagnosticCheckItem[]> {
   // 2. Network RTT check
   results[1].status = 'running';
   const rtt = await benchmarkNetworkRTT();
+  const isProdLocalhostMismatch =
+    typeof window !== 'undefined' &&
+    window.location.hostname !== 'localhost' &&
+    window.location.hostname !== '127.0.0.1' &&
+    API_BASE_URL.includes('localhost');
+
   results[1] = {
     ...results[1],
     status: rtt.isOnline ? 'pass' : 'fail',
     latency_ms: rtt.latency_ms,
     details: rtt.isOnline
       ? `Successfully pinged /health/live in ${rtt.latency_ms}ms.`
-      : `Failed to reach backend endpoint (offline / local fallback active).`,
+      : isProdLocalhostMismatch
+      ? `VITE_API_URL is unset in Cloudflare Pages (compiled target: ${API_BASE_URL}). Set VITE_API_URL in Cloudflare Pages settings to your Render backend URL.`
+      : `Failed to reach backend endpoint (${API_BASE_URL} is offline / local fallback active).`,
   };
 
   // 3. Backend Readiness check
