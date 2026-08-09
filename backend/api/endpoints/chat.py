@@ -14,6 +14,9 @@ Design notes:
 * A defensive system prompt bounds the model to on-topic answers and resists
   prompt-injection attempts ("ignore previous instructions…").
 * Rate limiting is stricter than the global default (``CHAT_RATE_LIMIT_PER_MINUTE``).
+* Daily caps (``CHAT_DAILY_GLOBAL_LIMIT`` / ``CHAT_DAILY_PER_IP_LIMIT``) bound the
+  total LLM spend per UTC day. In-memory counters reset at midnight; a redeploy
+  also resets them. This is a cost/abuse backstop, not a hard SLA.
 """
 
 from __future__ import annotations
@@ -21,11 +24,14 @@ from __future__ import annotations
 import functools
 import json
 import logging
+import threading
 from collections.abc import AsyncIterator
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from openai import AsyncOpenAI
+from slowapi.util import get_remote_address
 
 from config import settings
 from core.rate_limit import limiter
@@ -38,6 +44,77 @@ logger = logging.getLogger(__name__)
 
 # Maximum prior turns retained in the prompt to bound input token cost.
 MAX_HISTORY_TURNS = 6
+
+
+# ---------------------------------------------------------------------------
+# Daily request caps (cost/abuse backstop)
+# ---------------------------------------------------------------------------
+#
+# In-memory counters that bound total chat requests per UTC day. The global
+# cap protects the LLM budget across all visitors; the per-IP cap is a
+# fairness backstop. Both reset at UTC midnight and on process restart.
+# This intentionally trades precision (no DB, no cross-instance sync) for
+# zero infra — fine for a single-instance Render deployment. If chat ever
+# runs across multiple workers/instances, promote this to Redis or similar.
+
+
+class _DailyCounter:
+    """Thread-safe daily counter keyed by a string (IP or ``"__global__"``).
+
+    Resets all buckets when the UTC date rolls over.
+    """
+
+    def __init__(self) -> None:
+        self._lock = threading.Lock()
+        self._counts: dict[str, int] = {}
+        self._day: str = _utc_today()
+
+    def _maybe_roll(self) -> None:
+        today = _utc_today()
+        if today != self._day:
+            self._counts.clear()
+            self._day = today
+
+    def check_and_increment(self, key: str, limit: int) -> bool:
+        """Return True if ``key`` is under ``limit`` and should proceed.
+
+        Atomically increments the counter when allowed; leaves it untouched
+        when the limit would be exceeded. A ``limit <= 0`` disables the check.
+        """
+        if limit <= 0:
+            return True
+        with self._lock:
+            self._maybe_roll()
+            current = self._counts.get(key, 0)
+            if current >= limit:
+                return False
+            self._counts[key] = current + 1
+            return True
+
+    def decrement(self, key: str) -> None:
+        """Undo one increment for ``key`` (clamped at 0)."""
+        with self._lock:
+            self._maybe_roll()
+            current = self._counts.get(key, 0)
+            self._counts[key] = max(0, current - 1)
+
+    # Test helper — not used in request path.
+    def reset(self) -> None:
+        with self._lock:
+            self._counts.clear()
+            self._day = _utc_today()
+
+
+def _utc_today() -> str:
+    """Current UTC date as ``YYYY-MM-DD`` (used as the bucket rollover key)."""
+    # NOTE: kept on `timezone.utc` (not `datetime.UTC`) because the runtime
+    # venv is Python 3.9; `datetime.UTC` is 3.11+. Ruff targets py311, hence
+    # the suppression.
+    return datetime.now(timezone.utc).strftime("%Y-%m-%d")  # noqa: UP017
+
+
+_GLOBAL_KEY = "__global__"
+_daily = _DailyCounter()
 
 
 # ---------------------------------------------------------------------------
@@ -265,6 +342,22 @@ async def chat(request: Request, payload: ChatRequest):
         raise HTTPException(
             status_code=503,
             detail="Chat is not configured (no provider API keys set).",
+        )
+
+    # Daily cost/abuse caps (checked before streaming so we return a clean 429).
+    client_ip = get_remote_address(request)
+    if not _daily.check_and_increment(_GLOBAL_KEY, settings.CHAT_DAILY_GLOBAL_LIMIT):
+        raise HTTPException(
+            status_code=429,
+            detail="The daily chat budget for this site has been reached. Please try again tomorrow.",
+        )
+    if not _daily.check_and_increment(client_ip, settings.CHAT_DAILY_PER_IP_LIMIT):
+        # Roll back the global increment so a rejected per-IP request doesn't
+        # consume the global budget.
+        _daily.decrement(_GLOBAL_KEY)
+        raise HTTPException(
+            status_code=429,
+            detail="You've reached the daily chat limit from your address. Please try again tomorrow.",
         )
 
     model_id = payload.model or settings.CHAT_DEFAULT_MODEL

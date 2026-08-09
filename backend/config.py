@@ -28,6 +28,11 @@ class Settings(BaseSettings):
     CHAT_DEFAULT_MODEL: str = Field(default="gemini-2.0-flash")
     # Stricter per-IP limit than the global RATE_LIMIT_PER_MINUTE.
     CHAT_RATE_LIMIT_PER_MINUTE: int = Field(default=10)
+    # Daily cost-abuse caps (in-memory, reset at UTC midnight). The global cap
+    # protects the LLM budget across all visitors; the per-IP cap is a fairness
+    # backstop against a single user monopolizing it. Set to 0 to disable.
+    CHAT_DAILY_GLOBAL_LIMIT: int = Field(default=200)
+    CHAT_DAILY_PER_IP_LIMIT: int = Field(default=30)
 
     # Database connection URL
     DATABASE_URL: str = Field(default="sqlite:///./personal_os.db")
