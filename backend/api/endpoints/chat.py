@@ -165,9 +165,11 @@ def _provider_for_model(model_id: str) -> str:
     for provider, (_, _, models) in _PROVIDERS.items():
         if model_id in models:
             return provider
-    # Default to the provider of the configured default model so unknown ids
-    # don't 500 — they fall back to the default's provider routing.
-    return _provider_for_model(settings.CHAT_DEFAULT_MODEL)
+    # Safe fallback: only recurse once if different, else default to "gemini".
+    # Prevents infinite recursion when CHAT_DEFAULT_MODEL itself is unrecognized.
+    if model_id != settings.CHAT_DEFAULT_MODEL:
+        return _provider_for_model(settings.CHAT_DEFAULT_MODEL)
+    return "gemini"
 
 
 def _get_client(model_id: str) -> AsyncOpenAI:

@@ -514,6 +514,7 @@ async def test_meta_server_emitted_even_with_empty_stream(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_meta_always_emitted_even_without_finish_reason(monkeypatch):
+<<<<<<< HEAD
     """``meta`` event is always emitted, defaulting ``finish_reason`` to ``"unknown"``."""
     chunks = [_make_fake_chunk(content="Hi")]
     events, _ = await _collect_stream_events("gemini-2.0-flash", chunks, monkeypatch)
@@ -522,3 +523,17 @@ async def test_meta_always_emitted_even_without_finish_reason(monkeypatch):
     assert len(meta_events) == 1
     assert meta_events[0]["finish_reason"] == "unknown"
     assert meta_events[0]["model"] == "gemini-2.0-flash"
+
+
+def test_provider_for_model_defaults_to_gemini_on_unrecognized(client, monkeypatch):
+    """Unrecognized model that also matches default should not recurse infinitely."""
+    monkeypatch.setattr(chat.settings, "CHAT_DEFAULT_MODEL", "nonexistent-model")
+    # Should return "gemini" (safe fallback) instead of RecursionError
+    assert chat._provider_for_model("nonexistent-model") == "gemini"
+
+
+def test_provider_for_model_falls_back_to_default_provider(client, monkeypatch):
+    """Recognized default model is used as fallback for unknown model ids."""
+    monkeypatch.setattr(chat.settings, "CHAT_DEFAULT_MODEL", "gemini-2.0-flash")
+    # Unknown model falls back to gemini's provider
+    assert chat._provider_for_model("totally-unknown-model") == "gemini"
