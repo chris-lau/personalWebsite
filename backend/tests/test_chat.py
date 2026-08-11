@@ -2,9 +2,20 @@
 
 The provider call is mocked (``_generate_stream`` is monkeypatched) so no
 network or API key is required to run these tests.
+
+Test strategy (Phase 1f):
+
+1. **Event-shape tests** monkeypatch ``_generate_stream`` and assert the SSE
+   wire format (tokens, meta, meta_server, usage, done arrive in order).
+
+2. **Provider-aware ``stream_options`` + usage extraction tests** mock
+   ``_get_client`` (NOT ``_generate_stream``) so the real generator body runs.
+   This lets us assert on the ``create(...)`` kwargs and observe usage-chunk
+   extraction without hitting the network.
 """
 
 import json
+from types import SimpleNamespace
 
 import pytest
 
@@ -39,6 +50,14 @@ def with_gemini_key(monkeypatch):
 
 
 @pytest.fixture
+def with_all_keys(monkeypatch):
+    """Configure all provider keys for cross-provider tests."""
+    monkeypatch.setattr(chat.settings, "GEMINI_API_KEY", "test-gemini-key")
+    monkeypatch.setattr(chat.settings, "DEEPSEEK_API_KEY", "test-deepseek-key")
+    monkeypatch.setattr(chat.settings, "OPENAI_API_KEY", "test-openai-key")
+
+
+@pytest.fixture
 def no_keys(monkeypatch):
     """Disable all provider keys to exercise the 503 path."""
     monkeypatch.setattr(chat.settings, "GEMINI_API_KEY", "")
@@ -46,10 +65,84 @@ def no_keys(monkeypatch):
     monkeypatch.setattr(chat.settings, "OPENAI_API_KEY", "")
 
 
+# ---------------------------------------------------------------------------
+# Fake generators (event-shape tests monkeypatch _generate_stream)
+# ---------------------------------------------------------------------------
+
+
 async def _fake_stream(*args, **kwargs):
-    """Drop-in for ``_generate_stream`` that yields canned tokens."""
-    for token in ("Hello", ", ", "world!"):
-        yield token
+    """Drop-in for ``_generate_stream`` that yields structured event dicts."""
+    yield {"token": "Hello"}
+    yield {"token": ", "}
+    yield {"token": "world!"}
+    yield {"meta": {"finish_reason": "stop", "model": "gemini-2.0-flash"}}
+    yield {"meta_server": {"server_pre_llm_ms": 2.1, "server_llm_to_first_token_ms": 180.4}}
+    yield {"usage": {"prompt_tokens": 100, "completion_tokens": 5, "total_tokens": 105}}
+
+
+# ---------------------------------------------------------------------------
+# Helpers for client-mock tests (provider-aware stream_options + usage)
+# ---------------------------------------------------------------------------
+
+
+def _make_fake_chunk(content=None, finish_reason=None, usage=None, empty_choices=False):
+    """Build a lightweight fake ``ChatCompletionChunk``-like object."""
+    if empty_choices:
+        choices = []
+    elif content is not None or finish_reason is not None:
+        delta = SimpleNamespace(content=content)
+        choices = [SimpleNamespace(delta=delta, finish_reason=finish_reason)]
+    else:
+        choices = []
+    return SimpleNamespace(choices=choices, usage=usage)
+
+
+class _AsyncChunks:
+    """A lightweight async iterator wrapping a list of fake chunks."""
+
+    def __init__(self, chunks):
+        self._chunks = chunks
+
+    def __aiter__(self):
+        return self
+
+    async def __anext__(self):
+        if not self._chunks:
+            raise StopAsyncIteration
+        return self._chunks.pop(0)
+
+
+def _make_fake_client(chunks, captured):
+    """Return a fake ``AsyncOpenAI`` whose ``create`` yields *chunks*.
+
+    ``captured`` is a dict that will be populated with the ``kwargs`` passed
+    to ``create()`` so tests can assert on them.
+    """
+
+    async def _fake_create(**kwargs):
+        captured.update(kwargs)
+        return _AsyncChunks(chunks)
+
+    completions = SimpleNamespace(create=_fake_create)
+    return SimpleNamespace(chat=SimpleNamespace(completions=completions))
+
+
+async def _collect_stream_events(model_id, chunks, monkeypatch):
+    """Run the real ``_generate_stream`` with a fake client, collecting events.
+
+    Returns the list of yielded dicts.
+    """
+    captured_kwargs: dict = {}
+    fake_client = _make_fake_client(chunks, captured_kwargs)
+    monkeypatch.setattr(chat, "_get_client", lambda m: fake_client)
+
+    events = []
+    async for event in chat._generate_stream(
+        fake_client, model_id, "test system prompt", [], "hello",
+        request_start=1000.0,
+    ):
+        events.append(event)
+    return events, captured_kwargs
 
 
 # ---------------------------------------------------------------------------
@@ -76,11 +169,12 @@ def test_list_chat_models_empty_when_no_keys(client, no_keys):
 
 
 # ---------------------------------------------------------------------------
-# POST /api/chat
+# POST /api/chat — event-shape tests (monkeypatch _generate_stream)
 # ---------------------------------------------------------------------------
 
 
-def test_chat_streams_tokens(client, with_gemini_key, monkeypatch):
+def test_chat_streams_structured_events(client, with_gemini_key, monkeypatch):
+    """Tokens, meta, meta_server, usage, and done all arrive in order."""
     monkeypatch.setattr(chat, "_generate_stream", _fake_stream)
 
     response = client.post(
@@ -89,30 +183,57 @@ def test_chat_streams_tokens(client, with_gemini_key, monkeypatch):
     )
     assert response.status_code == 200
 
-    # Parse the SSE stream: collect data payloads.
-    tokens = []
-    saw_done = False
+    # Parse the SSE stream: collect all event payloads.
+    events: list[dict] = []
     for line in response.text.splitlines():
         if line.startswith("data: "):
-            payload = json.loads(line[len("data: "):])
-            if "token" in payload:
-                tokens.append(payload["token"])
-            elif payload.get("done"):
-                saw_done = True
+            events.append(json.loads(line[len("data: "):]))
 
+    # Token events
+    tokens = [e["token"] for e in events if "token" in e]
     assert "".join(tokens) == "Hello, world!"
-    assert saw_done is True
 
+    # Meta event
+    meta_events = [e["meta"] for e in events if "meta" in e]
+    assert len(meta_events) == 1
+    assert meta_events[0]["finish_reason"] == "stop"
+    assert meta_events[0]["model"] == "gemini-2.0-flash"
 
-def test_chat_rejects_empty_message(client, with_gemini_key):
-    # FastAPI returns 422 when min_length=1 is violated.
-    response = client.post("/api/chat", json={"message": ""})
-    assert response.status_code == 422
+    # Meta_server event
+    server_events = [e["meta_server"] for e in events if "meta_server" in e]
+    assert len(server_events) == 1
+    assert server_events[0]["server_pre_llm_ms"] == pytest.approx(2.1)
+    assert server_events[0]["server_llm_to_first_token_ms"] == pytest.approx(180.4)
 
+    # Usage event
+    usage_events = [e["usage"] for e in events if "usage" in e]
+    assert len(usage_events) == 1
+    assert usage_events[0]["prompt_tokens"] == 100
+    assert usage_events[0]["completion_tokens"] == 5
+    assert usage_events[0]["total_tokens"] == 105
 
-def test_chat_503_when_no_keys_configured(client, no_keys):
-    response = client.post("/api/chat", json={"message": "hello"})
-    assert response.status_code == 503
+    # Done sentinel (must be last)
+    assert events[-1] == {"done": True}
+
+    # Event order: all tokens first, then meta, then meta_server, then usage,
+    # then done.
+    event_types = []
+    for e in events:
+        if "token" in e:
+            event_types.append("token")
+        elif "meta" in e:
+            event_types.append("meta")
+        elif "meta_server" in e:
+            event_types.append("meta_server")
+        elif "usage" in e:
+            event_types.append("usage")
+        elif "done" in e:
+            event_types.append("done")
+    assert event_types == [
+        "token", "token", "token",
+        "meta", "meta_server", "usage",
+        "done",
+    ]
 
 
 def test_chat_emits_error_chunk_on_provider_failure(client, with_gemini_key, monkeypatch):
@@ -125,6 +246,17 @@ def test_chat_emits_error_chunk_on_provider_failure(client, with_gemini_key, mon
     response = client.post("/api/chat", json={"message": "hi"})
     assert response.status_code == 200  # headers already sent
     assert '"error"' in response.text
+
+
+def test_chat_rejects_empty_message(client, with_gemini_key):
+    # FastAPI returns 422 when min_length=1 is violated.
+    response = client.post("/api/chat", json={"message": ""})
+    assert response.status_code == 422
+
+
+def test_chat_503_when_no_keys_configured(client, no_keys):
+    response = client.post("/api/chat", json={"message": "hello"})
+    assert response.status_code == 503
 
 
 # ---------------------------------------------------------------------------
@@ -243,3 +375,150 @@ def test_seconds_to_utc_midnight_is_positive():
     assert isinstance(seconds, int)
     assert 0 < seconds <= 86400  # between 0 and 24 hours
 
+
+# ---------------------------------------------------------------------------
+# Provider-aware stream_options tests (mock _get_client, NOT _generate_stream)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_openai_includes_stream_options(monkeypatch):
+    """OpenAI provider should pass ``stream_options={"include_usage": True}``."""
+    chunks = [_make_fake_chunk(content="Hi", finish_reason="stop")]
+    _, kwargs = await _collect_stream_events("gpt-4o-mini", chunks, monkeypatch)
+    assert kwargs.get("stream_options") == {"include_usage": True}
+
+
+@pytest.mark.asyncio
+async def test_deepseek_includes_stream_options(monkeypatch):
+    """DeepSeek provider should pass ``stream_options={"include_usage": True}``."""
+    chunks = [_make_fake_chunk(content="Hi", finish_reason="stop")]
+    _, kwargs = await _collect_stream_events("deepseek-chat", chunks, monkeypatch)
+    assert kwargs.get("stream_options") == {"include_usage": True}
+
+
+@pytest.mark.asyncio
+async def test_gemini_omits_stream_options(monkeypatch):
+    """Gemini provider should NOT pass ``stream_options`` (it 400s)."""
+    chunks = [_make_fake_chunk(content="Hi", finish_reason="stop")]
+    _, kwargs = await _collect_stream_events("gemini-2.0-flash", chunks, monkeypatch)
+    assert "stream_options" not in kwargs
+
+
+@pytest.mark.asyncio
+async def test_gemini_25_flash_omits_stream_options(monkeypatch):
+    """Gemini 2.5 Flash should also omit ``stream_options``."""
+    chunks = [_make_fake_chunk(content="Hi", finish_reason="stop")]
+    _, kwargs = await _collect_stream_events("gemini-2.5-flash", chunks, monkeypatch)
+    assert "stream_options" not in kwargs
+
+
+# ---------------------------------------------------------------------------
+# Usage extraction tests (mock _get_client)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_usage_extracted_from_empty_choices_chunk(monkeypatch):
+    """The final chunk with ``choices=[]`` + ``usage`` should be yielded."""
+    usage_obj = SimpleNamespace(prompt_tokens=50, completion_tokens=10, total_tokens=60)
+    chunks = [
+        _make_fake_chunk(content="Hi"),
+        _make_fake_chunk(content=" there", finish_reason="stop"),
+        _make_fake_chunk(empty_choices=True, usage=usage_obj),
+    ]
+    events, _ = await _collect_stream_events("gpt-4o-mini", chunks, monkeypatch)
+
+    # Tokens
+    assert [e["token"] for e in events if "token" in e] == ["Hi", " there"]
+
+    # Meta
+    meta = [e["meta"] for e in events if "meta" in e]
+    assert len(meta) == 1
+    assert meta[0]["finish_reason"] == "stop"
+
+    # Usage
+    usage_events = [e["usage"] for e in events if "usage" in e]
+    assert len(usage_events) == 1
+    assert usage_events[0]["prompt_tokens"] == 50
+    assert usage_events[0]["completion_tokens"] == 10
+    assert usage_events[0]["total_tokens"] == 60
+
+
+@pytest.mark.asyncio
+async def test_no_usage_when_not_reported(monkeypatch):
+    """If no chunk carries usage data, no ``usage`` event should be emitted."""
+    chunks = [
+        _make_fake_chunk(content="Hi", finish_reason="stop"),
+    ]
+    events, _ = await _collect_stream_events("gemini-2.0-flash", chunks, monkeypatch)
+
+    assert not any("usage" in e for e in events)
+    # But meta_server and meta should still be present
+    assert any("meta_server" in e for e in events)
+    assert any("meta" in e for e in events)
+
+
+@pytest.mark.asyncio
+async def test_openai_no_usage_chunk_graceful(monkeypatch):
+    """OpenAI sent ``stream_options`` but the provider returned no usage chunk —
+    should emit tokens + meta + meta_server with no crash and no ``usage`` event."""
+    chunks = [
+        _make_fake_chunk(content="Hi", finish_reason="stop"),
+        # No trailing empty-choices chunk with usage — provider may drop it.
+    ]
+    events, kwargs = await _collect_stream_events("gpt-4o-mini", chunks, monkeypatch)
+
+    # stream_options was sent
+    assert kwargs.get("stream_options") == {"include_usage": True}
+    # Tokens arrived
+    assert [e["token"] for e in events if "token" in e] == ["Hi"]
+    # No usage event — provider didn't send one
+    assert not any("usage" in e for e in events)
+    # Meta and meta_server still emitted
+    assert any("meta" in e for e in events)
+    assert any("meta_server" in e for e in events)
+
+
+# ---------------------------------------------------------------------------
+# Server timing tests (mock _get_client)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_meta_server_contains_both_segments(monkeypatch):
+    """``meta_server`` should carry ``server_pre_llm_ms`` and ``server_llm_to_first_token_ms``."""
+    chunks = [_make_fake_chunk(content="Hi", finish_reason="stop")]
+    events, _ = await _collect_stream_events("gpt-4o-mini", chunks, monkeypatch)
+
+    server_events = [e["meta_server"] for e in events if "meta_server" in e]
+    assert len(server_events) == 1
+    assert server_events[0]["server_pre_llm_ms"] is not None
+    assert server_events[0]["server_llm_to_first_token_ms"] is not None
+    # Both should be non-negative numbers (ms)
+    assert server_events[0]["server_pre_llm_ms"] >= 0
+    assert server_events[0]["server_llm_to_first_token_ms"] >= 0
+
+
+@pytest.mark.asyncio
+async def test_meta_server_emitted_even_with_empty_stream(monkeypatch):
+    """``meta_server`` is always emitted — ``server_pre_llm_ms`` is pre-calculated."""
+    events, _ = await _collect_stream_events("gemini-2.0-flash", [], monkeypatch)
+
+    server_events = [e["meta_server"] for e in events if "meta_server" in e]
+    assert len(server_events) == 1
+    assert server_events[0]["server_pre_llm_ms"] >= 0
+    # No chunks arrived, so llm-to-first-token should be None
+    assert server_events[0]["server_llm_to_first_token_ms"] is None
+
+
+@pytest.mark.asyncio
+async def test_meta_always_emitted_even_without_finish_reason(monkeypatch):
+    """``meta`` event is always emitted, defaulting ``finish_reason`` to ``"unknown"``."""
+    chunks = [_make_fake_chunk(content="Hi")]
+    events, _ = await _collect_stream_events("gemini-2.0-flash", chunks, monkeypatch)
+
+    meta_events = [e["meta"] for e in events if "meta" in e]
+    assert len(meta_events) == 1
+    assert meta_events[0]["finish_reason"] == "unknown"
+    assert meta_events[0]["model"] == "gemini-2.0-flash"
