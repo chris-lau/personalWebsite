@@ -143,6 +143,7 @@ def test_chat_429_when_global_daily_limit_reached(client, with_gemini_key, monke
     second = client.post("/api/chat", json={"message": "again"})
     assert second.status_code == 429
     assert "daily chat budget" in second.json()["detail"]
+    assert "Retry-After" in second.headers
 
 
 def test_chat_429_when_per_ip_daily_limit_reached(client, with_gemini_key, monkeypatch):
@@ -156,6 +157,7 @@ def test_chat_429_when_per_ip_daily_limit_reached(client, with_gemini_key, monke
     second = client.post("/api/chat", json={"message": "again"})
     assert second.status_code == 429
     assert "daily chat limit" in second.json()["detail"]
+    assert "Retry-After" in second.headers
 
 
 def test_per_ip_rejection_does_not_consume_global_budget(client, with_gemini_key, monkeypatch):
@@ -187,6 +189,19 @@ def test_daily_limit_zero_disables_cap(client, with_gemini_key, monkeypatch):
     for _ in range(5):
         response = client.post("/api/chat", json={"message": "hi"})
         assert response.status_code == 200
+
+
+def test_missing_provider_key_does_not_burn_daily_cap(client, no_keys, monkeypatch):
+    # With no keys configured, _get_client raises 503 before caps are checked.
+    # The daily counters should remain untouched.
+    monkeypatch.setattr(chat.settings, "CHAT_DAILY_GLOBAL_LIMIT", 1)
+    monkeypatch.setattr(chat.settings, "CHAT_DAILY_PER_IP_LIMIT", 1)
+
+    response = client.post("/api/chat", json={"message": "hi"})
+    assert response.status_code == 503
+
+    # Global and per-IP counters should still be empty.
+    assert chat._daily._counts.get(chat._GLOBAL_KEY, 0) == 0
 
 
 # ---------------------------------------------------------------------------
@@ -221,4 +236,10 @@ def test_daily_counter_decrement_clamps_at_zero():
     assert counter._counts[chat._GLOBAL_KEY] == 1
     counter.decrement(chat._GLOBAL_KEY)
     assert counter._counts[chat._GLOBAL_KEY] == 0
+
+
+def test_seconds_to_utc_midnight_is_positive():
+    seconds = chat._seconds_to_utc_midnight()
+    assert isinstance(seconds, int)
+    assert 0 < seconds <= 86400  # between 0 and 24 hours
 

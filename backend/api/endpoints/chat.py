@@ -24,9 +24,10 @@ from __future__ import annotations
 import functools
 import json
 import logging
+import math
 import threading
 from collections.abc import AsyncIterator
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, UTC
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
@@ -107,10 +108,14 @@ class _DailyCounter:
 
 def _utc_today() -> str:
     """Current UTC date as ``YYYY-MM-DD`` (used as the bucket rollover key)."""
-    # NOTE: kept on `timezone.utc` (not `datetime.UTC`) because the runtime
-    # venv is Python 3.9; `datetime.UTC` is 3.11+. Ruff targets py311, hence
-    # the suppression.
-    return datetime.now(timezone.utc).strftime("%Y-%m-%d")  # noqa: UP017
+    return datetime.now(UTC).strftime("%Y-%m-%d")
+
+
+def _seconds_to_utc_midnight() -> int:
+    """Seconds remaining until the next UTC midnight (for Retry-After)."""
+    now = datetime.now(UTC)
+    tomorrow = (now + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+    return math.ceil((tomorrow - now).total_seconds())
 
 
 _GLOBAL_KEY = "__global__"
@@ -344,12 +349,18 @@ async def chat(request: Request, payload: ChatRequest):
             detail="Chat is not configured (no provider API keys set).",
         )
 
-    # Daily cost/abuse caps (checked before streaming so we return a clean 429).
+    model_id = payload.model or settings.CHAT_DEFAULT_MODEL
+    client = _get_client(model_id)  # raises 503 if the provider's key is missing
+
+    # Daily cost/abuse caps (checked after provider resolution so a missing-key
+    # 503 doesn't burn a daily slot).
     client_ip = get_remote_address(request)
+    retry_after = str(_seconds_to_utc_midnight())
     if not _daily.check_and_increment(_GLOBAL_KEY, settings.CHAT_DAILY_GLOBAL_LIMIT):
         raise HTTPException(
             status_code=429,
             detail="The daily chat budget for this site has been reached. Please try again tomorrow.",
+            headers={"Retry-After": retry_after},
         )
     if not _daily.check_and_increment(client_ip, settings.CHAT_DAILY_PER_IP_LIMIT):
         # Roll back the global increment so a rejected per-IP request doesn't
@@ -358,10 +369,8 @@ async def chat(request: Request, payload: ChatRequest):
         raise HTTPException(
             status_code=429,
             detail="You've reached the daily chat limit from your address. Please try again tomorrow.",
+            headers={"Retry-After": retry_after},
         )
-
-    model_id = payload.model or settings.CHAT_DEFAULT_MODEL
-    client = _get_client(model_id)  # raises 503 if the provider's key is missing
     system_prompt = _build_system_prompt()
     request_id = getattr(request.state, "request_id", "unknown")
 
