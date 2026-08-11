@@ -13,19 +13,19 @@ export const ContactPage = () => {
             </p>
 
             <div className="contact-action-box">
-              <a 
-                href="mailto:contact@chrislau.dev" 
+              <a
+                href={`mailto:${profileData.email}`}
                 className="link-button primary contact-email-btn"
               >
-                ✉ Send an Email (contact@chrislau.dev)
+                ✉ Send an Email ({profileData.email})
               </a>
             </div>
 
             <div className="contact-links">
               <div className="contact-row">
                 <span className="platform-name">Email:</span>
-                <a href="mailto:contact@chrislau.dev" className="link-button">
-                  contact@chrislau.dev
+                <a href={`mailto:${profileData.email}`} className="link-button">
+                  {profileData.email}
                 </a>
               </div>
               {profileData.socials.map((s) => (
