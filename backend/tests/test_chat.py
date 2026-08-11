@@ -514,7 +514,6 @@ async def test_meta_server_emitted_even_with_empty_stream(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_meta_always_emitted_even_without_finish_reason(monkeypatch):
-<<<<<<< HEAD
     """``meta`` event is always emitted, defaulting ``finish_reason`` to ``"unknown"``."""
     chunks = [_make_fake_chunk(content="Hi")]
     events, _ = await _collect_stream_events("gemini-2.0-flash", chunks, monkeypatch)

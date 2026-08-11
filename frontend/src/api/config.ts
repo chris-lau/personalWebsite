@@ -44,7 +44,7 @@ const DEFAULT_PRICING: ModelPricing = Object.freeze({ input_per_1m: 0, output_pe
 
 /** Verified 2026-08-10 from official provider pricing pages. */
 export const MODEL_PRICING: Readonly<Record<string, ModelPricing>> = Object.freeze({
-  'gemini-2.0-flash':    Object.freeze({ input_per_1m: 0.075,  output_per_1m: 0.30 }),
+  'gemini-2.0-flash':    Object.freeze({ input_per_1m: 0.10,   output_per_1m: 0.40 }),
   'gemini-2.5-flash':    Object.freeze({ input_per_1m: 0.15,   output_per_1m: 0.60 }),
   'deepseek-chat':       Object.freeze({ input_per_1m: 0.14,   output_per_1m: 0.28 }),
   'deepseek-reasoner':   Object.freeze({ input_per_1m: 0.55,   output_per_1m: 2.19 }),

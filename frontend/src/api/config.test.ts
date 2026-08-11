@@ -56,7 +56,8 @@ describe('getModelPricing', () => {
     const a = getModelPricing('unknown-model');
     const b = getModelPricing('unknown-model');
     expect(a).not.toBe(b);
-    a.input_per_1m = 999;
+    // Mutate via cast to bypass readonly — proves the copies are independent.
+    (a as { input_per_1m: number }).input_per_1m = 999;
     expect(b.input_per_1m).toBe(0);
   });
 
