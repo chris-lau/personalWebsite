@@ -1,6 +1,6 @@
 # Chat Observability — Companion Mode
 
-> **Overall Status:** IN PROGRESS — Phases 1–3 complete, Phases 4–7 remaining.
+> **Overall Status:** IN PROGRESS — Phases 1–4 complete, Phases 5–7 remaining.
 > **Branch:** `feat/chat-observability`
 > **Last updated:** 2026-08-15
 

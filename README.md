@@ -46,7 +46,7 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - **Streaming Replies (SSE)**: Replies stream token-by-token over Server-Sent Events for a responsive UX.
   - **Multi-Provider, One SDK**: A single OpenAI-compatible client (`POST /api/chat`) serves Gemini, DeepSeek, and OpenAI behind a UI model switcher — only providers with a configured key appear in the dropdown.
   - **Defensive Boundaries**: Strict system prompt resists prompt injection; per-IP rate limit (`CHAT_RATE_LIMIT_PER_MINUTE`) plus daily caps (`CHAT_DAILY_GLOBAL_LIMIT` / `CHAT_DAILY_PER_IP_LIMIT`) and bounded conversation history control cost/abuse.
-  - **Chat Observability (Backend — Phases 1–2 Complete)**: The SSE stream now emits structured event dicts (`token`, `meta`, `meta_server`, `usage`, `done`, `error`) instead of raw strings. Real token usage (`prompt_tokens`/`completion_tokens`) is reported for OpenAI and DeepSeek via provider-aware `stream_options` (Gemini is correctly excluded). Two server-side timing segments (`server_pre_llm_ms` for routing/prompt-build overhead, `server_llm_to_first_token_ms` for LLM inference to first token) enable TTFT decomposition: `ttft_client_ms ≈ network_rtt + server_pre_llm_ms + server_llm_to_first_token_ms`. Frontend types (`ChatMessageMetrics`, `ChatSessionSummary`, `StreamProgress`) and a pricing table (`MODEL_PRICING` with `Object.freeze` + `Readonly`) define the typed contract for upcoming observability UI phases (data layer, `useChat` hook, observability panel, companion layout).
+  - **Chat Observability (Phases 1–4 Complete)**: The SSE stream emits structured event dicts (`token`, `meta`, `meta_server`, `usage`, `done`, `error`). Real token usage (`prompt_tokens`/`completion_tokens`) is reported for OpenAI and DeepSeek via provider-aware `stream_options` (Gemini is correctly excluded). Two server-side timing segments (`server_pre_llm_ms` for routing/prompt-build overhead, `server_llm_to_first_token_ms` for LLM inference to first token) enable TTFT decomposition: `ttft_client_ms ≈ network_rtt + server_pre_llm_ms + server_llm_to_first_token_ms`. Frontend types (`ChatMessageMetrics`, `ChatSessionSummary`, `StreamProgress`) and a pricing table (`MODEL_PRICING` with `Object.freeze` + `Readonly`) define the typed contract. The data layer (`sendChatMessage`) parses SSE events into `ChatMessageMetrics` with TTFT measurement and fallback token estimation. The `useChat` hook accumulates per-message metrics via `metricsMap` and tracks live streaming progress (`streamProgress`) with chunk-counting refs and interval-based `chunks_per_sec` reporting, with cleanup on stream complete, `clearChat`, and unmount.
 
 - **Live GitHub Activity & Repository Dashboard (`/projects`)**:
   - **Backend GitHub Proxy**: Server-side proxy endpoint (`GET /api/github-summary`) using `httpx` + optional `GITHUB_TOKEN` (5000 req/hr authenticated vs 60 req/hr unauthenticated), with a 15-minute in-memory TTL cache. Frontend calls the proxy and falls back to direct GitHub API if the backend is offline.
@@ -71,7 +71,7 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
 
 - **Testing & Quality Assurance**:
   - Storybook 8 component catalog & accessibility auditing (`@storybook/addon-a11y`).
-  - Vitest + `@testing-library/react` unit & component integration tests (**138 / 138 passing tests** across 20 test files).
+  - Vitest + `@testing-library/react` unit & component integration tests (**142 / 142 passing tests** across 20 test files).
   - Playwright real-browser end-to-end (E2E) testing across all 3 themes (**9 / 9 passing tests** across 3 spec files).
   - Pytest backend unit & integration tests (**60 / 60 passing tests**).
 
@@ -191,7 +191,7 @@ A visitor-facing RAG chat widget answering questions grounded in the site's blog
 
 **Implementation plan:** [ai-chat-implementation-plan.md](file:///Users/chrislau/Documents/personalWebsite/ai-chat-implementation-plan.md) | **Review:** [ai-chat-plan-review.md](file:///Users/chrislau/Documents/personalWebsite/ai-chat-plan-review.md)
 
-### Chat Observability — IN PROGRESS (Phases 1–2 Complete, Phases 3–6 Remaining)
+### Chat Observability — IN PROGRESS (Phases 1–4 Complete, Phases 5–7 Remaining)
 
 A real-time observability dashboard transforming the chat widget into a companion-mode split-panel layout (chat left, observability right). The backend emits structured SSE events with token usage and server-side timing; the frontend measures TTFT, streaming throughput, and per-message cost.
 
@@ -201,8 +201,8 @@ A real-time observability dashboard transforming the chat widget into a companio
 |---|---|---|
 | 1. Backend SSE | ✅ Complete | Structured event dicts, provider-aware `stream_options`, two-segment `meta_server` timing |
 | 2. Frontend Types | ✅ Complete | `ChatMessageMetrics`, `ChatSessionSummary`, `StreamProgress`, `MODEL_PRICING` table |
-| 3. Data Layer | 🔲 Pending | Timed, metric-emitting `sendChatMessage` with SSE parsing, fallback token estimation |
-| 4. `useChat` Hook | 🔲 Pending | `metricsMap`, `streamProgress`, ref-based chunk counting, cleanup on abort/clear |
+| 3. Data Layer | ✅ Complete | Timed, metric-emitting `sendChatMessage` with SSE parsing, fallback token estimation |
+| 4. `useChat` Hook | ✅ Complete | `metricsMap`, `streamProgress`, ref-based chunk counting, cleanup on abort/clear |
 | 5. Observability Panel | 🔲 Pending | Session summary card, latency sparkline, live streaming indicator, per-message metrics with segmented TTFT bar |
 | 6. Companion Layout | 🔲 Pending | Split-panel UX, mobile tabs, companion-class on `<section>`, localStorage toggle persistence |
 | 7. Tests | 🔲 Pending | Backend event-shape/stream_options/usage tests; frontend SSE parsing, chunk honesty, clearChat reset, companion-class regression |
