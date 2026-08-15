@@ -121,7 +121,7 @@ describe('Page Components Unit Tests', () => {
     expect(reactTag.className).toContain('active');
 
     // Switch to GitHub activity tab
-    const githubTab = screen.getByRole('tab', { name: '🐙 Live GitHub Activity' });
+    const githubTab = screen.getByRole('tab', { name: /Live GitHub Activity/i });
     fireEvent.click(githubTab);
     expect(screen.getByText('LIVE GITHUB ACTIVITY & REPOSITORIES')).toBeInTheDocument();
   });

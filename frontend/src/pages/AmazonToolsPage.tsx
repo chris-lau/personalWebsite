@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ShoppingBag, TrendingUp, Calculator, Search, Bookmark } from 'lucide-react';
 import { OpportunityFinder } from '../components/amazon/OpportunityFinder';
 import { UnitEconomicsCalculator } from '../components/amazon/UnitEconomicsCalculator';
 import { ReviewGapScanner } from '../components/amazon/ReviewGapScanner';
@@ -27,7 +28,8 @@ export const AmazonToolsPage: React.FC = () => {
     <div className="page-container amazon-tools-page">
       <header className="page-header">
         <h1 className="page-title">
-          <span>🛍️</span> Amazon Seller Trend & Opportunity Suite
+          <ShoppingBag size={28} aria-hidden="true" style={{ color: 'var(--accent-primary)' }} />
+          <span>Amazon Seller Trend & Opportunity Suite</span>
         </h1>
         <p className="page-description">
           An interactive intelligence toolkit for Amazon private label sellers and brand builders.
@@ -39,9 +41,12 @@ export const AmazonToolsPage: React.FC = () => {
       {/* Cross-Tool State Banner if a niche was selected from Opportunity Finder */}
       {selectedNiche && activeTab !== 'trends' && (
         <div className="active-niche-banner">
-          <span>
-            📌 Loaded Active Niche: <strong>{selectedNiche.name}</strong> (Category:{' '}
-            {selectedNiche.category}, Avg Price: ${selectedNiche.avgPrice.toFixed(2)})
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+            <Bookmark size={16} aria-hidden="true" style={{ color: 'var(--accent-primary)' }} />
+            <span>
+              Loaded Active Niche: <strong>{selectedNiche.name}</strong> (Category:{' '}
+              {selectedNiche.category}, Avg Price: ${selectedNiche.avgPrice.toFixed(2)})
+            </span>
           </span>
           <button
             type="button"
@@ -60,21 +65,24 @@ export const AmazonToolsPage: React.FC = () => {
           className={`amazon-tab-btn ${activeTab === 'trends' ? 'active' : ''}`}
           onClick={() => setActiveTab('trends')}
         >
-          <span>📈</span> Product Trend & Opportunity Finder
+          <TrendingUp size={16} aria-hidden="true" />
+          <span>Product Trend & Opportunity Finder</span>
         </button>
         <button
           type="button"
           className={`amazon-tab-btn ${activeTab === 'calculator' ? 'active' : ''}`}
           onClick={() => setActiveTab('calculator')}
         >
-          <span>🧮</span> Unit Economics & Profit Simulator
+          <Calculator size={16} aria-hidden="true" />
+          <span>Unit Economics & Profit Simulator</span>
         </button>
         <button
           type="button"
           className={`amazon-tab-btn ${activeTab === 'review_gap' ? 'active' : ''}`}
           onClick={() => setActiveTab('review_gap')}
         >
-          <span>🔍</span> Review Gap & Listing Prompt Scanner
+          <Search size={16} aria-hidden="true" />
+          <span>Review Gap & Listing Prompt Scanner</span>
         </button>
       </nav>
 

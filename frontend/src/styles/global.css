@@ -49,13 +49,32 @@ li {
   margin-left: 0;
 }
 
-/* Root App Container */
+/* Root App Container — layout wrappers handle their own padding and constraints */
 #root {
   width: 100%;
-  max-width: var(--container-max-width);
-  padding: 2rem 1rem;
-  margin: 0 auto;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
+}
+
+/* Touch & Mobile Interaction Baseline */
+button, a, input, select, textarea {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Mobile Input Zoom Prevention (iOS Safari requires >= 16px to prevent auto-zoom on focus) */
+@media (max-width: 768px) {
+  input[type="text"],
+  input[type="search"],
+  input[type="number"],
+  input[type="email"],
+  input[type="url"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
 }
 
 /* Headings & Section Header Colors */

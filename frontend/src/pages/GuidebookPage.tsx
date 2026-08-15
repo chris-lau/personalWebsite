@@ -9,6 +9,7 @@ import './GuidebookPage.css';
 export const GuidebookPage: React.FC = () => {
   const [activeVolume, setActiveVolume] = useState<'frontend' | 'backend'>('frontend');
   const [activeChapterId, setActiveChapterId] = useState<string>('chapter-1');
+  const [mobileTocOpen, setMobileTocOpen] = useState<boolean>(false);
   const readerRef = useRef<HTMLDivElement>(null);
 
   const currentChapters = activeVolume === 'frontend' ? guidebookChapters : backendGuidebookChapters;
@@ -33,11 +34,13 @@ export const GuidebookPage: React.FC = () => {
     setActiveVolume(volume);
     const firstChapterId = volume === 'frontend' ? 'chapter-1' : 'backend-chapter-1';
     setActiveChapterId(firstChapterId);
+    setMobileTocOpen(false);
     scrollToReader();
   };
 
   const handleSelectChapter = (chapterId: string) => {
     setActiveChapterId(chapterId);
+    setMobileTocOpen(false);
     scrollToReader();
   };
 
@@ -92,10 +95,21 @@ export const GuidebookPage: React.FC = () => {
         {/* Sidebar Table of Contents */}
         <aside className="guidebook-sidebar" aria-label="Table of Contents">
           <div className="sidebar-inner">
-            <h2 className="sidebar-heading">
-              &gt; {activeVolume === 'frontend' ? 'VOL 1 TABLE OF CONTENTS' : 'VOL 2 TABLE OF CONTENTS'}
-            </h2>
-            <nav className="chapter-nav">
+            <div className="sidebar-header-row">
+              <h2 className="sidebar-heading">
+                &gt; {activeVolume === 'frontend' ? 'VOL 1 TOC' : 'VOL 2 TOC'} (Ch {activeChapter.number}/{currentChapters.length})
+              </h2>
+              <button
+                type="button"
+                className="mobile-toc-toggle-btn"
+                onClick={() => setMobileTocOpen((prev) => !prev)}
+                aria-expanded={mobileTocOpen}
+                aria-label="Toggle table of contents"
+              >
+                {mobileTocOpen ? 'Hide Chapters ▴' : 'Choose Chapter ▾'}
+              </button>
+            </div>
+            <nav className={`chapter-nav ${mobileTocOpen ? 'mobile-open' : ''}`}>
               <ul className="chapter-list">
                 {currentChapters.map((ch) => (
                   <li key={ch.id} className="chapter-item">

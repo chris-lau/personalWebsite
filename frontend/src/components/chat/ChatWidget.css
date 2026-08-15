@@ -424,13 +424,28 @@
   border: 0;
 }
 
-/* ===== Mobile ===== */
+/* ===== Mobile Backdrop & Viewport ===== */
+
+.chat-backdrop {
+  display: none;
+}
 
 @media (max-width: 480px) {
+  .chat-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    z-index: 1000;
+  }
+
   .chat-panel {
     width: calc(100vw - 1.5rem);
     right: 0.75rem;
     bottom: 0.75rem;
+    max-height: min(520px, 80dvh);
   }
 
   /* Companion mode goes full width on small mobile */
