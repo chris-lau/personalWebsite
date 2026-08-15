@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { ChatMessage, ChatModelInfo } from '../types/chat';
+import { ChatMessage, ChatModelInfo, ChatMessageMetrics } from '../types/chat';
 import { sendChatMessage, fetchChatModels } from '../api/backend';
 
 const FALLBACK_REPLY =
@@ -23,6 +23,8 @@ export interface UseChatState {
   setSelectedModel: (model: string) => void;
   sendMessage: (text: string) => Promise<void>;
   clearChat: () => void;
+  /** Per-message observability metrics, keyed by assistant message id. */
+  metricsMap: Map<string, ChatMessageMetrics>;
 }
 
 /**
@@ -36,6 +38,7 @@ export function useChat(): UseChatState {
   const [isFallback, setIsFallback] = useState<boolean>(false);
   const [models, setModels] = useState<ChatModelInfo[]>([]);
   const [selectedModel, setSelectedModel] = useState<string>('');
+  const [metricsMap, setMetricsMap] = useState<Map<string, ChatMessageMetrics>>(new Map());
 
   // Track the in-flight request so we can abort it on unmount / clear.
   const abortRef = useRef<AbortController | null>(null);
@@ -82,10 +85,18 @@ export function useChat(): UseChatState {
 
       const result = await sendChatMessage(
         { message: trimmed, history, model: selectedModel, signal: controller.signal },
-        (token) => {
-          setMessages((prev) =>
-            prev.map((m) => (m.id === assistantMessage.id ? { ...m, content: m.content + token } : m)),
-          );
+        {
+          onToken: (token) => {
+            setMessages((prev) =>
+              prev.map((m) => (m.id === assistantMessage.id ? { ...m, content: m.content + token } : m)),
+            );
+          },
+          onFirstToken: () => {
+            // Phase 4 will add stream progress tracking here.
+          },
+          onComplete: (metrics) => {
+            setMetricsMap((prev) => new Map(prev).set(assistantMessage.id, metrics));
+          },
         },
       );
 
@@ -110,6 +121,7 @@ export function useChat(): UseChatState {
   const clearChat = useCallback(() => {
     abortRef.current?.abort();
     setMessages([]);
+    setMetricsMap(new Map());
     setError(null);
     setIsFallback(false);
   }, []);
@@ -131,5 +143,6 @@ export function useChat(): UseChatState {
     setSelectedModel,
     sendMessage,
     clearChat,
+    metricsMap,
   };
 }
