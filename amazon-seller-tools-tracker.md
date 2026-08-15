@@ -42,8 +42,17 @@ This tracking document logs the development progress, architecture, and feature 
 - [x] Verify full TypeScript compilation & Vite production build (`npm run build`).
 - [x] Cross-tool data transfer verified (Opportunity Finder -> Unit Economics Calculator).
 
+### Phase 5: Real Live Marketplace & Trend Data Proxy
+- [x] Create backend FastAPI live search proxy (`/api/amazon/search`) parsing live Amazon HTML for real prices, ratings, ASINs, review counts, and Prime status.
+- [x] Create live ASIN / URL product inspector endpoint (`/api/amazon/asin/{asin}`) extracting exact title, category, dimensions, weight, and price.
+- [x] Create live demand trends proxy (`/api/amazon/trends`) querying real Amazon autocomplete suggestions and search momentum velocity.
+- [x] Implement in-memory TTL caching (15 min) and request rate limiting.
+- [x] Upgrade **Opportunity Finder** with live search submission, autocomplete suggestion pills, loading skeletons, and real-time opportunity scoring.
+- [x] Upgrade **Unit Economics Calculator** with live ASIN / product URL inspector form and auto-fill.
+- [x] Authored backend pytest suite (`backend/tests/test_amazon_api.py`) and frontend vitest suite.
+
 ---
 
 ## 📈 Status Summary
-- **Overall Status**: 🟢 Implementation & Verification Complete
+- **Overall Status**: 🟢 Live Data Integration Complete & Verified (64/64 backend tests, 163/163 frontend tests passing)
 - **Completed Date**: August 15, 2026

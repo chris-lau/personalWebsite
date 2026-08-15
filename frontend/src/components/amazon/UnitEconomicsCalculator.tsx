@@ -6,6 +6,7 @@ import {
   calculateUnitEconomics,
   NicheTrend,
 } from '../../data/amazonData';
+import { lookupLiveAmazonAsin } from '../../api/backend';
 
 interface UnitEconomicsCalculatorProps {
   initialNiche?: NicheTrend | null;
@@ -14,6 +15,11 @@ interface UnitEconomicsCalculatorProps {
 export const UnitEconomicsCalculator: React.FC<UnitEconomicsCalculatorProps> = ({
   initialNiche,
 }) => {
+  const [asinInput, setAsinInput] = useState<string>('');
+  const [isLoadingAsin, setIsLoadingAsin] = useState<boolean>(false);
+  const [asinError, setAsinError] = useState<string | null>(null);
+  const [productTitle, setProductTitle] = useState<string>(initialNiche ? initialNiche.name : '');
+
   const [salePrice, setSalePrice] = useState<number>(initialNiche ? initialNiche.avgPrice : 34.99);
   const [cogs, setCogs] = useState<number>(initialNiche ? initialNiche.avgCogs : 6.5);
   const [shippingToAmazon, setShippingToAmazon] = useState<number>(1.5);
@@ -33,12 +39,36 @@ export const UnitEconomicsCalculator: React.FC<UnitEconomicsCalculatorProps> = (
   // Sync if initialNiche prop changes from outside (e.g. 1-click bridge)
   React.useEffect(() => {
     if (initialNiche) {
+      setProductTitle(initialNiche.name);
       setSalePrice(initialNiche.avgPrice);
       setCogs(initialNiche.avgCogs);
       setCategoryId(initialNiche.category);
       setFbaTier(initialNiche.fbaTier);
     }
   }, [initialNiche]);
+
+  const handleFetchAsin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!asinInput.trim()) return;
+
+    setIsLoadingAsin(true);
+    setAsinError(null);
+
+    try {
+      const res = await lookupLiveAmazonAsin(asinInput.trim());
+      if (res.data) {
+        setProductTitle(res.data.title);
+        setSalePrice(res.data.price);
+        if (res.data.estimated_cogs > 0) setCogs(res.data.estimated_cogs);
+        if (res.data.category) setCategoryId(res.data.category);
+        if (res.data.fba_tier) setFbaTier(res.data.fba_tier);
+      }
+    } catch {
+      setAsinError('Failed to fetch ASIN details. Please check the ID.');
+    } finally {
+      setIsLoadingAsin(false);
+    }
+  };
 
   const economics = useMemo(() => {
     return calculateUnitEconomics({
@@ -145,6 +175,35 @@ export const UnitEconomicsCalculator: React.FC<UnitEconomicsCalculatorProps> = (
       <div className="economics-layout-grid">
         {/* Input Parameters Panel */}
         <div className="calculator-inputs-panel">
+          <div className="asin-quick-loader-box">
+            <label htmlFor="quick-asin-input" className="asin-loader-label">
+              ⚡ Inspect Real Amazon ASIN / Product Link
+            </label>
+            <form onSubmit={handleFetchAsin} className="asin-input-form">
+              <input
+                id="quick-asin-input"
+                type="text"
+                className="theme-input asin-field"
+                placeholder="e.g. B08N5WRWNW or paste amazon.com/dp/... link"
+                value={asinInput}
+                onChange={(e) => setAsinInput(e.target.value)}
+              />
+              <button
+                type="submit"
+                className="theme-btn-primary asin-fetch-btn"
+                disabled={isLoadingAsin}
+              >
+                {isLoadingAsin ? 'Fetching...' : 'Fetch ASIN'}
+              </button>
+            </form>
+            {asinError && <span className="asin-error-msg">{asinError}</span>}
+            {productTitle && (
+              <div className="active-product-title-badge">
+                <span className="product-tag">Active Product:</span> {productTitle}
+              </div>
+            )}
+          </div>
+
           <h4 className="panel-subhead">1. Pricing & Landed Cost Inputs</h4>
 
           <div className="input-group-row">

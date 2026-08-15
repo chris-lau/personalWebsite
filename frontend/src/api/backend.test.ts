@@ -6,6 +6,9 @@ import {
   fetchGitHubSummary,
   fetchChatModels,
   sendChatMessage,
+  searchLiveAmazonProducts,
+  lookupLiveAmazonAsin,
+  fetchLiveAmazonTrends,
 } from './backend';
 
 describe('backend API client & local fallback mechanism', () => {
@@ -379,6 +382,92 @@ describe('backend API client & local fallback mechanism', () => {
       // onToken but doesn't trigger onFirstToken because trim().length === 0.
       expect(callbacks.onFirstToken).toHaveBeenCalledTimes(1);
       expect(callbacks.onToken).toHaveBeenCalledTimes(2); // '   ' and 'real'
+    });
+  });
+
+  describe('Amazon Live API Methods', () => {
+    it('searchLiveAmazonProducts handles successful live response', async () => {
+      const mockSearchData = {
+        query: 'desk mat',
+        category: 'all',
+        total_results: 1,
+        products: [
+          {
+            asin: 'B08N5WRWNW',
+            title: 'Sample Desk Mat',
+            price: 29.99,
+            rating: 4.6,
+            reviews_count: 500,
+            image_url: '',
+            product_url: 'https://www.amazon.com/dp/B08N5WRWNW',
+            is_prime: true,
+            category: 'office_products',
+            fba_tier: 'large_standard',
+          },
+        ],
+        is_live: true,
+        cached: false,
+      };
+
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+        ok: true,
+        json: async () => mockSearchData,
+      } as Response);
+
+      const res = await searchLiveAmazonProducts('desk mat');
+      expect(res.isFallback).toBe(false);
+      expect(res.data.products.length).toBe(1);
+      expect(res.data.products[0].asin).toBe('B08N5WRWNW');
+    });
+
+    it('lookupLiveAmazonAsin handles successful ASIN inspection', async () => {
+      const mockAsinData = {
+        asin: 'B08N5WRWNW',
+        title: 'Felt Desk Pad',
+        price: 32.5,
+        rating: 4.7,
+        reviews_count: 620,
+        category: 'office_products',
+        category_name: 'Office & Workstation Products',
+        fba_tier: 'large_standard',
+        fba_tier_label: 'Large Standard (16 oz - 20 lbs)',
+        image_url: '',
+        product_url: 'https://www.amazon.com/dp/B08N5WRWNW',
+        bullets: ['Premium felt'],
+        weight_lb: 1.2,
+        estimated_cogs: 7.0,
+        is_live: true,
+      };
+
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+        ok: true,
+        json: async () => mockAsinData,
+      } as Response);
+
+      const res = await lookupLiveAmazonAsin('B08N5WRWNW');
+      expect(res.isFallback).toBe(false);
+      expect(res.data.title).toBe('Felt Desk Pad');
+      expect(res.data.price).toBe(32.5);
+    });
+
+    it('fetchLiveAmazonTrends returns live trends and velocity', async () => {
+      const mockTrendData = {
+        query: 'espresso',
+        trend_points: [{ date: 'Week 1', value: 80 }],
+        growth_velocity_pct: 120,
+        suggestions: ['espresso tamper', 'espresso cup'],
+        is_live: true,
+      };
+
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+        ok: true,
+        json: async () => mockTrendData,
+      } as Response);
+
+      const res = await fetchLiveAmazonTrends('espresso');
+      expect(res.isFallback).toBe(false);
+      expect(res.data.growth_velocity_pct).toBe(120);
+      expect(res.data.suggestions).toContain('espresso tamper');
     });
   });
 });

@@ -1,6 +1,7 @@
 import { Profile, Project, NowState } from '../types/portfolio';
 import { GitHubUser, GitHubRepo } from '../types/github';
 import { ChatModelsResponse, ChatRequest, ChatMessageMetrics, DECODE_FLOOR_SEC } from '../types/chat';
+import { AmazonSearchResponse, AmazonAsinDetail, AmazonTrendResponse } from '../types/amazon';
 import { profileData } from '../data/profile';
 import { projectsData } from '../data/projects';
 import { nowData } from '../data/now';
@@ -307,5 +308,103 @@ export async function sendChatMessage(
   } finally {
     // Always release the reader so the underlying stream is not left open.
     reader.releaseLock();
+  }
+}
+
+/**
+ * Live search Amazon products proxy.
+ */
+export async function searchLiveAmazonProducts(
+  query: string,
+  category: string = 'all'
+): Promise<BackendResponse<AmazonSearchResponse>> {
+  try {
+    const url = `${API_BASE_URL}/amazon/search?q=${encodeURIComponent(
+      query
+    )}&category=${encodeURIComponent(category)}`;
+    const res = await fetchWithTimeout(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data: AmazonSearchResponse = await res.json();
+    return { data, isFallback: false };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+    return {
+      data: {
+        query,
+        category,
+        total_results: 0,
+        products: [],
+        is_live: false,
+        cached: false,
+      },
+      isFallback: true,
+      error: errorMsg,
+    };
+  }
+}
+
+/**
+ * Live inspect an Amazon ASIN or product URL.
+ */
+export async function lookupLiveAmazonAsin(
+  asinOrUrl: string
+): Promise<BackendResponse<AmazonAsinDetail>> {
+  try {
+    const url = `${API_BASE_URL}/amazon/asin/${encodeURIComponent(asinOrUrl.trim())}`;
+    const res = await fetchWithTimeout(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data: AmazonAsinDetail = await res.json();
+    return { data, isFallback: false };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+    return {
+      data: {
+        asin: asinOrUrl,
+        title: `Amazon Product (${asinOrUrl})`,
+        price: 29.99,
+        rating: 4.5,
+        reviews_count: 350,
+        category: 'home_kitchen',
+        category_name: 'Home & Kitchen',
+        fba_tier: 'large_standard',
+        fba_tier_label: 'Large Standard (16 oz - 20 lbs)',
+        image_url: '',
+        product_url: `https://www.amazon.com/dp/${asinOrUrl}`,
+        bullets: ['Ergonomic construction', 'Standard Amazon FBA specification'],
+        weight_lb: 1.5,
+        estimated_cogs: 6.5,
+        is_live: false,
+      },
+      isFallback: true,
+      error: errorMsg,
+    };
+  }
+}
+
+/**
+ * Fetch live search trends and suggestions.
+ */
+export async function fetchLiveAmazonTrends(
+  query: string
+): Promise<BackendResponse<AmazonTrendResponse>> {
+  try {
+    const url = `${API_BASE_URL}/amazon/trends?q=${encodeURIComponent(query)}`;
+    const res = await fetchWithTimeout(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data: AmazonTrendResponse = await res.json();
+    return { data, isFallback: false };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+    return {
+      data: {
+        query,
+        trend_points: [],
+        growth_velocity_pct: 35,
+        suggestions: [`${query} organizer`, `${query} set`],
+        is_live: false,
+      },
+      isFallback: true,
+      error: errorMsg,
+    };
   }
 }

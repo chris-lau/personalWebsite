@@ -33,8 +33,8 @@ describe('Amazon Individual Components Test Suite', () => {
       expect(screen.getByText(/Orthopedic Elevated Ceramic Slow Feeder/i)).toBeInTheDocument();
       expect(screen.queryByText(/Borosilicate Cold Brew/i)).not.toBeInTheDocument();
 
-      // Click Reset Filters
-      const resetBtn = screen.getByRole('button', { name: /Reset Filters/i });
+      // Click Reset Filters / Reset to Featured
+      const resetBtn = screen.getByRole('button', { name: /Reset to Featured|Reset Filters/i });
       fireEvent.click(resetBtn);
 
       expect(screen.getByText(/Borosilicate Cold Brew/i)).toBeInTheDocument();
@@ -61,6 +61,26 @@ describe('Amazon Individual Components Test Suite', () => {
       const modalLoadBtn = screen.getByRole('button', { name: /Load into Financial Simulator/i });
       fireEvent.click(modalLoadBtn);
       expect(mockEconomics).toHaveBeenCalledTimes(1);
+    });
+
+    it('submits live Amazon keyword search form', async () => {
+      const mockEconomics = vi.fn();
+      const mockPrompt = vi.fn();
+
+      render(
+        <OpportunityFinder
+          onSelectNicheForEconomics={mockEconomics}
+          onSelectNicheForPrompt={mockPrompt}
+        />
+      );
+
+      const searchInput = screen.getByPlaceholderText(/Search live Amazon keywords/i);
+      fireEvent.change(searchInput, { target: { value: 'Cold Brew Maker' } });
+
+      const searchSubmitBtn = screen.getByRole('button', { name: /Search Live Amazon/i });
+      fireEvent.click(searchSubmitBtn);
+
+      expect(searchInput).toHaveValue('Cold Brew Maker');
     });
   });
 
@@ -99,6 +119,18 @@ describe('Amazon Individual Components Test Suite', () => {
 
       expect(writeTextSpy).toHaveBeenCalled();
       expect(await screen.findByText(/✓ Copied Summary!/i)).toBeInTheDocument();
+    });
+
+    it('handles live ASIN inspection form submit', async () => {
+      render(<UnitEconomicsCalculator />);
+
+      const asinInput = screen.getByPlaceholderText(/e.g. B08N5WRWNW/i);
+      fireEvent.change(asinInput, { target: { value: 'B08N5WRWNW' } });
+
+      const fetchBtn = screen.getByRole('button', { name: /Fetch ASIN/i });
+      fireEvent.click(fetchBtn);
+
+      expect(asinInput).toHaveValue('B08N5WRWNW');
     });
   });
 
