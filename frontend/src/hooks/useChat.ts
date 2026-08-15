@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { ChatMessage, ChatModelInfo, ChatMessageMetrics } from '../types/chat';
+import { ChatMessage, ChatModelInfo, ChatMessageMetrics, StreamProgress } from '../types/chat';
 import { sendChatMessage, fetchChatModels } from '../api/backend';
 
 const FALLBACK_REPLY =
@@ -25,6 +25,8 @@ export interface UseChatState {
   clearChat: () => void;
   /** Per-message observability metrics, keyed by assistant message id. */
   metricsMap: Map<string, ChatMessageMetrics>;
+  /** Live stream progress while a reply is in flight; null otherwise. */
+  streamProgress: StreamProgress | null;
 }
 
 /**
@@ -39,9 +41,15 @@ export function useChat(): UseChatState {
   const [models, setModels] = useState<ChatModelInfo[]>([]);
   const [selectedModel, setSelectedModel] = useState<string>('');
   const [metricsMap, setMetricsMap] = useState<Map<string, ChatMessageMetrics>>(new Map());
+  const [streamProgress, setStreamProgress] = useState<StreamProgress | null>(null);
 
   // Track the in-flight request so we can abort it on unmount / clear.
   const abortRef = useRef<AbortController | null>(null);
+
+  // Refs for live progress tracking (mutable, avoid stale closures)
+  const chunkCountRef = useRef<number>(0);
+  const streamStartRef = useRef<number>(0);
+  const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Load available models once on mount.
   useEffect(() => {
@@ -87,12 +95,24 @@ export function useChat(): UseChatState {
         { message: trimmed, history, model: selectedModel, signal: controller.signal },
         {
           onToken: (token) => {
+            chunkCountRef.current += 1;
             setMessages((prev) =>
               prev.map((m) => (m.id === assistantMessage.id ? { ...m, content: m.content + token } : m)),
             );
           },
           onFirstToken: () => {
-            // Phase 4 will add stream progress tracking here.
+            chunkCountRef.current = 0;
+            streamStartRef.current = performance.now();
+            progressIntervalRef.current = setInterval(() => {
+              const elapsed = performance.now() - streamStartRef.current;
+              const chunks = chunkCountRef.current;
+              const cps = elapsed > 0 ? chunks / (elapsed / 1000) : 0;
+              setStreamProgress({
+                elapsed_ms: Math.round(elapsed),
+                chunks_received: chunks,
+                chunks_per_sec: Math.round(cps * 10) / 10,
+              });
+            }, 500);
           },
           onComplete: (metrics) => {
             setMetricsMap((prev) => new Map(prev).set(assistantMessage.id, metrics));
@@ -100,6 +120,12 @@ export function useChat(): UseChatState {
         },
       );
 
+      // Clear progress interval and reset live readout
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+        progressIntervalRef.current = null;
+      }
+      setStreamProgress(null);
       setLoading(false);
 
       if (result.isFallback) {
@@ -120,16 +146,24 @@ export function useChat(): UseChatState {
 
   const clearChat = useCallback(() => {
     abortRef.current?.abort();
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
     setMessages([]);
     setMetricsMap(new Map());
+    setStreamProgress(null);
     setError(null);
     setIsFallback(false);
   }, []);
 
-  // Abort any in-flight stream when the hook unmounts.
+  // Abort any in-flight stream and clear progress interval on unmount.
   useEffect(() => {
     return () => {
       abortRef.current?.abort();
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+      }
     };
   }, []);
 
@@ -144,5 +178,6 @@ export function useChat(): UseChatState {
     sendMessage,
     clearChat,
     metricsMap,
+    streamProgress,
   };
 }
