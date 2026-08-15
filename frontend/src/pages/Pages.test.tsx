@@ -13,6 +13,7 @@ import { MonitoringPage } from './MonitoringPage';
 import { NotFoundPage } from './NotFoundPage';
 import { BlogListPage } from './BlogListPage';
 import { BlogDetailPage } from './BlogDetailPage';
+import { AmazonToolsPage } from './AmazonToolsPage';
 
 describe('Page Components Unit Tests', () => {
   it('renders MonitoringPage telemetry console', () => {
@@ -163,6 +164,18 @@ describe('Page Components Unit Tests', () => {
     );
 
     expect(screen.getByText('HOW THIS SITE WORKS')).toBeInTheDocument();
+  });
+
+  it('renders AmazonToolsPage suite', () => {
+    render(
+      <MemoryRouter>
+        <ThemeProvider>
+          <AmazonToolsPage />
+        </ThemeProvider>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText(/Amazon Seller Trend & Opportunity Suite/i)).toBeInTheDocument();
   });
 
   it('renders NotFoundPage with error state', () => {

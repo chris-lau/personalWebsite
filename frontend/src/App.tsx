@@ -33,6 +33,9 @@ const MonitoringPage = lazy(() =>
 const GuidebookPage = lazy(() =>
   import('./pages/GuidebookPage').then((m) => ({ default: m.GuidebookPage })),
 );
+const AmazonToolsPage = lazy(() =>
+  import('./pages/AmazonToolsPage').then((m) => ({ default: m.AmazonToolsPage })),
+);
 const NotFoundPage = lazy(() =>
   import('./pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage })),
 );
@@ -55,6 +58,7 @@ export const App: React.FC = () => {
               <Route path="/projects" element={<ProjectsPage />} />
               <Route path="/blog" element={<BlogListPage />} />
               <Route path="/blog/:slug" element={<BlogDetailPage />} />
+              <Route path="/amazon-tools" element={<AmazonToolsPage />} />
               <Route path="/guidebook" element={<GuidebookPage />} />
               <Route path="/experience" element={<ExperiencePage />} />
               <Route path="/now" element={<NowPage />} />

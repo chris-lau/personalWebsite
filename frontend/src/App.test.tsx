@@ -1,7 +1,21 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import App from './App';
+
+vi.mock('./hooks/useChat', () => ({
+  useChat: () => ({
+    messages: [],
+    loading: false,
+    error: null,
+    isFallback: false,
+    models: [],
+    selectedModel: '',
+    setSelectedModel: vi.fn(),
+    sendMessage: vi.fn(),
+    clearChat: vi.fn(),
+  }),
+}));
 
 describe('App Router & Integration Tests', () => {
   it('renders home page by default at route "/"', async () => {
@@ -11,7 +25,7 @@ describe('App Router & Integration Tests', () => {
       </MemoryRouter>
     );
 
-    expect(await screen.findByText('WELCOME')).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'WELCOME', level: 3 }, { timeout: 4000 })).toBeInTheDocument();
   });
 
   it('renders about page at route "/about"', async () => {

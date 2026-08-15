@@ -27,3 +27,8 @@ Thumbs.db
 
 # Databases
 *.db
+
+# Test Coverage & Static Storybook Artifacts
+coverage/
+frontend/coverage/
+frontend/storybook-static/
