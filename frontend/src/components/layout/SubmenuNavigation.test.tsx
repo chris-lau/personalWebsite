@@ -48,9 +48,10 @@ describe('Submenu Navigation Component Tests', () => {
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(aboutTrigger.getAttribute('aria-expanded')).toBe('false');
 
-    // Work & Writing dropdown should now contain only Blog + Book (Projects was promoted)
+    // Work & Writing dropdown should now contain Blog + Amazon Seller Tools + Book (Projects was promoted)
     fireEvent.click(workTrigger);
     expect(screen.getByRole('menuitem', { name: /^Blog$/i })).toBeDefined();
+    expect(screen.getByRole('menuitem', { name: /^Amazon Seller Tools$/i })).toBeDefined();
     expect(screen.getByRole('menuitem', { name: /^Book$/i })).toBeDefined();
     // Projects must NOT appear as a submenu item anymore
     expect(screen.queryAllByRole('menuitem', { name: /^Projects$/i })).toHaveLength(0);

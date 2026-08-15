@@ -61,6 +61,12 @@ export const NAV_GROUPS: NavGroupItem[] = [
         asciiLabel: 'BLOG',
       },
       {
+        path: '/amazon-tools',
+        modernLabel: 'Amazon Seller Tools',
+        cliLabel: 'amazon-tools.sh',
+        asciiLabel: 'AMZ-TOOLS',
+      },
+      {
         path: '/guidebook',
         modernLabel: 'Book',
         cliLabel: 'book.md',
