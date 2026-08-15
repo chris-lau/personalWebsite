@@ -57,9 +57,9 @@ describe('useChat hook', () => {
 
     // sendChatMessage calls onToken for each streamed chunk.
     (sendChatMessage as ReturnType<typeof vi.fn>).mockImplementation(
-      async (_req: unknown, onToken: (t: string) => void) => {
-        onToken('Hi ');
-        onToken('there');
+      async (_req: unknown, callbacks: { onToken: (t: string) => void }) => {
+        callbacks.onToken('Hi ');
+        callbacks.onToken('there');
         return { isFallback: false };
       },
     );

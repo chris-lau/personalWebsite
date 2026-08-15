@@ -207,6 +207,15 @@ describe('backend API client & local fallback mechanism', () => {
       return { ok: true, body: stream } as Response;
     }
 
+    /** Default no-op callbacks for tests that don't care about specific callbacks. */
+    function noopCallbacks() {
+      return {
+        onToken: vi.fn(),
+        onFirstToken: vi.fn(),
+        onComplete: vi.fn(),
+      };
+    }
+
     it('parses token chunks and invokes onToken for each', async () => {
       vi.spyOn(globalThis, 'fetch').mockResolvedValue(
         makeSSEResponse([
@@ -217,14 +226,17 @@ describe('backend API client & local fallback mechanism', () => {
         ]),
       );
 
-      const tokens: string[] = [];
+      const callbacks = noopCallbacks();
       const result = await sendChatMessage(
         { message: 'hi', history: [], model: 'gemini-2.5-flash' },
-        (t) => tokens.push(t),
+        callbacks,
       );
 
       expect(result.isFallback).toBe(false);
-      expect(tokens).toEqual(['Hello', ', ', 'world!']);
+      expect(callbacks.onToken).toHaveBeenCalledWith('Hello');
+      expect(callbacks.onToken).toHaveBeenCalledWith(', ');
+      expect(callbacks.onToken).toHaveBeenCalledWith('world!');
+      expect(callbacks.onToken).toHaveBeenCalledTimes(3);
     });
 
     it('returns fallback on a non-200 response', async () => {
@@ -232,7 +244,7 @@ describe('backend API client & local fallback mechanism', () => {
 
       const result = await sendChatMessage(
         { message: 'hi', history: [], model: 'gemini-2.5-flash' },
-        () => {},
+        noopCallbacks(),
       );
       expect(result.isFallback).toBe(true);
       expect(result.error).toBe('HTTP 503');
@@ -248,7 +260,7 @@ describe('backend API client & local fallback mechanism', () => {
 
       const result = await sendChatMessage(
         { message: 'hi', history: [], model: 'gemini-2.5-flash' },
-        () => {},
+        noopCallbacks(),
       );
       expect(result.isFallback).toBe(true);
       expect(result.error).toBe('upstream blew up');
@@ -259,10 +271,114 @@ describe('backend API client & local fallback mechanism', () => {
 
       const result = await sendChatMessage(
         { message: 'hi', history: [], model: 'gemini-2.5-flash' },
-        () => {},
+        noopCallbacks(),
       );
       expect(result.isFallback).toBe(true);
       expect(result.error).toBe('Network down');
+    });
+
+    it('parses meta, meta_server, and usage events and builds metrics', async () => {
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+        makeSSEResponse([
+          JSON.stringify({ token: 'Hello' }),
+          JSON.stringify({ token: ' world' }),
+          JSON.stringify({ meta: { finish_reason: 'stop', model: 'deepseek-chat' } }),
+          JSON.stringify({ meta_server: { server_pre_llm_ms: 5.2, server_llm_to_first_token_ms: 180.4 } }),
+          JSON.stringify({ usage: { prompt_tokens: 100, completion_tokens: 3, total_tokens: 103 } }),
+          JSON.stringify({ done: true }),
+        ]),
+      );
+
+      const callbacks = noopCallbacks();
+      const result = await sendChatMessage(
+        { message: 'hi', history: [], model: 'gemini-2.5-flash' },
+        callbacks,
+      );
+
+      expect(result.isFallback).toBe(false);
+      expect(result.metrics).toBeDefined();
+      const m = result.metrics!;
+
+      // TTFT and duration should be positive numbers
+      expect(m.ttft_client_ms).toBeGreaterThanOrEqual(0);
+      expect(m.total_duration_ms).toBeGreaterThanOrEqual(0);
+
+      // Backend-reported metadata
+      expect(m.finish_reason).toBe('stop');
+      expect(m.model).toBe('deepseek-chat'); // backend-reported overrides request model
+      expect(m.server_pre_llm_ms).toBeCloseTo(5.2);
+      expect(m.server_llm_to_first_token_ms).toBeCloseTo(180.4);
+
+      // Usage from backend
+      expect(m.prompt_tokens).toBe(100);
+      expect(m.completion_tokens).toBe(3);
+      expect(m.total_tokens).toBe(103);
+      expect(m.token_count_estimated).toBe(false);
+
+      // Cost: deepseek-chat pricing (0.14/1M input, 0.28/1M output)
+      // prompt: 100/1M * 0.14 = 0.000014, completion: 3/1M * 0.28 = 0.00000084
+      // total ≈ 0.00001484 → rounded to 0.000015
+      expect(m.estimated_cost_usd).toBeGreaterThan(0);
+
+      // Throughput should be > 0 with real completion tokens
+      expect(m.effective_tokens_per_second).toBeGreaterThan(0);
+      expect(m.decode_tokens_per_second).toBeGreaterThan(0);
+
+      // Callbacks invoked
+      expect(callbacks.onFirstToken).toHaveBeenCalledTimes(1);
+      expect(callbacks.onComplete).toHaveBeenCalledTimes(1);
+      expect(callbacks.onComplete).toHaveBeenCalledWith(m);
+    });
+
+    it('falls back to token estimation when usage is absent', async () => {
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+        makeSSEResponse([
+          JSON.stringify({ token: 'Hi there friend' }),
+          JSON.stringify({ done: true }),
+        ]),
+      );
+
+      const callbacks = noopCallbacks();
+      const result = await sendChatMessage(
+        { message: 'hi', history: [], model: 'gemini-2.5-flash' },
+        callbacks,
+      );
+
+      expect(result.isFallback).toBe(false);
+      const m = result.metrics!;
+
+      // Should estimate tokens from content ("Hi there friend" = 3 words → ~4 tokens)
+      expect(m.token_count_estimated).toBe(true);
+      expect(m.prompt_tokens).toBeNull();
+      expect(m.completion_tokens).toBe(4); // Math.round(3 * 1.33)
+      expect(m.total_tokens).toBe(4);
+
+      // Throughput should be 0 for estimated tokens
+      expect(m.effective_tokens_per_second).toBe(0);
+      expect(m.decode_tokens_per_second).toBe(0);
+    });
+
+    it('skips empty/whitespace tokens for TTFT measurement', async () => {
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+        makeSSEResponse([
+          JSON.stringify({ token: '' }),
+          JSON.stringify({ token: '   ' }),
+          JSON.stringify({ token: 'real' }),
+          JSON.stringify({ done: true }),
+        ]),
+      );
+
+      const callbacks = noopCallbacks();
+      await sendChatMessage(
+        { message: 'hi', history: [], model: 'gemini-2.5-flash' },
+        callbacks,
+      );
+
+      // onFirstToken should only fire once, after the first non-whitespace token ('real')
+      // Empty string is falsy so onToken never fires for it; whitespace-only '   ' fires
+      // onToken but doesn't trigger onFirstToken because trim().length === 0.
+      expect(callbacks.onFirstToken).toHaveBeenCalledTimes(1);
+      expect(callbacks.onToken).toHaveBeenCalledTimes(2); // '   ' and 'real'
     });
   });
 });
