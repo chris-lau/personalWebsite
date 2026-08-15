@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str = Field(default="")
     DEEPSEEK_API_KEY: str = Field(default="")
     OPENAI_API_KEY: str = Field(default="")
-    CHAT_DEFAULT_MODEL: str = Field(default="gemini-2.0-flash")
+    CHAT_DEFAULT_MODEL: str = Field(default="gemini-2.5-flash")
     # Stricter per-IP limit than the global RATE_LIMIT_PER_MINUTE.
     CHAT_RATE_LIMIT_PER_MINUTE: int = Field(default=10)
     # Daily cost-abuse caps (in-memory, reset at UTC midnight). The global cap

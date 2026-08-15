@@ -168,8 +168,8 @@ describe('backend API client & local fallback mechanism', () => {
   describe('fetchChatModels', () => {
     it('returns model list when backend is reachable', async () => {
       const mockModels = {
-        models: [{ id: 'gemini-2.0-flash', label: 'gemini-2.0-flash', provider: 'gemini' }],
-        defaultModel: 'gemini-2.0-flash',
+        models: [{ id: 'gemini-2.5-flash', label: 'gemini-2.5-flash', provider: 'gemini' }],
+        defaultModel: 'gemini-2.5-flash',
       };
       vi.spyOn(globalThis, 'fetch').mockResolvedValue({
         ok: true,
@@ -179,7 +179,7 @@ describe('backend API client & local fallback mechanism', () => {
       const res = await fetchChatModels();
       expect(res.isFallback).toBe(false);
       expect(res.data?.models.length).toBe(1);
-      expect(res.data?.defaultModel).toBe('gemini-2.0-flash');
+      expect(res.data?.defaultModel).toBe('gemini-2.5-flash');
     });
 
     it('returns null data with fallback flag when backend is down', async () => {
@@ -219,7 +219,7 @@ describe('backend API client & local fallback mechanism', () => {
 
       const tokens: string[] = [];
       const result = await sendChatMessage(
-        { message: 'hi', history: [], model: 'gemini-2.0-flash' },
+        { message: 'hi', history: [], model: 'gemini-2.5-flash' },
         (t) => tokens.push(t),
       );
 
@@ -231,7 +231,7 @@ describe('backend API client & local fallback mechanism', () => {
       vi.spyOn(globalThis, 'fetch').mockResolvedValue({ ok: false, status: 503 } as Response);
 
       const result = await sendChatMessage(
-        { message: 'hi', history: [], model: 'gemini-2.0-flash' },
+        { message: 'hi', history: [], model: 'gemini-2.5-flash' },
         () => {},
       );
       expect(result.isFallback).toBe(true);
@@ -247,7 +247,7 @@ describe('backend API client & local fallback mechanism', () => {
       );
 
       const result = await sendChatMessage(
-        { message: 'hi', history: [], model: 'gemini-2.0-flash' },
+        { message: 'hi', history: [], model: 'gemini-2.5-flash' },
         () => {},
       );
       expect(result.isFallback).toBe(true);
@@ -258,7 +258,7 @@ describe('backend API client & local fallback mechanism', () => {
       vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('Network down'));
 
       const result = await sendChatMessage(
-        { message: 'hi', history: [], model: 'gemini-2.0-flash' },
+        { message: 'hi', history: [], model: 'gemini-2.5-flash' },
         () => {},
       );
       expect(result.isFallback).toBe(true);

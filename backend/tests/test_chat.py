@@ -63,7 +63,7 @@ def test_list_chat_models_returns_configured_models(client, with_gemini_key):
     body = response.json()
     assert body["default_model"] == chat.settings.CHAT_DEFAULT_MODEL
     ids = [m["id"] for m in body["models"]]
-    assert "gemini-2.0-flash" in ids
+    assert "gemini-2.5-flash" in ids
     # DeepSeek/OpenAI are not configured, so they must not appear.
     assert not any(m["provider"] == "deepseek" for m in body["models"])
     assert not any(m["provider"] == "openai" for m in body["models"])

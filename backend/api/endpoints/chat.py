@@ -27,7 +27,9 @@ import logging
 import math
 import threading
 from collections.abc import AsyncIterator
-from datetime import datetime, timedelta, UTC
+from datetime import datetime, timedelta, timezone
+
+UTC = timezone.utc
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
@@ -133,7 +135,7 @@ _PROVIDERS: dict[str, tuple[str, str, list[str]]] = {
     "gemini": (
         "https://generativelanguage.googleapis.com/v1beta/openai/",
         "GEMINI_API_KEY",
-        ["gemini-2.0-flash", "gemini-2.5-flash"],
+        ["gemini-2.5-flash"],
     ),
     "deepseek": (
         "https://api.deepseek.com/v1",

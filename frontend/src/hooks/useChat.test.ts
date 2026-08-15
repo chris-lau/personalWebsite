@@ -18,8 +18,8 @@ describe('useChat hook', () => {
   it('loads available models on mount', async () => {
     (fetchChatModels as ReturnType<typeof vi.fn>).mockResolvedValue({
       data: {
-        models: [{ id: 'gemini-2.0-flash', label: 'gemini-2.0-flash', provider: 'gemini' }],
-        defaultModel: 'gemini-2.0-flash',
+        models: [{ id: 'gemini-2.5-flash', label: 'gemini-2.5-flash', provider: 'gemini' }],
+        defaultModel: 'gemini-2.5-flash',
       },
       isFallback: false,
     });
@@ -29,13 +29,13 @@ describe('useChat hook', () => {
     await waitFor(() => {
       expect(result.current.models.length).toBe(1);
     });
-    expect(result.current.selectedModel).toBe('gemini-2.0-flash');
+    expect(result.current.selectedModel).toBe('gemini-2.5-flash');
     expect(result.current.isFallback).toBe(false);
   });
 
   it('marks fallback when no models are configured', async () => {
     (fetchChatModels as ReturnType<typeof vi.fn>).mockResolvedValue({
-      data: { models: [], defaultModel: 'gemini-2.0-flash' },
+      data: { models: [], defaultModel: 'gemini-2.5-flash' },
       isFallback: false,
     });
 
@@ -49,8 +49,8 @@ describe('useChat hook', () => {
   it('appends a user message and streams the assistant reply', async () => {
     (fetchChatModels as ReturnType<typeof vi.fn>).mockResolvedValue({
       data: {
-        models: [{ id: 'gemini-2.0-flash', label: 'gemini-2.0-flash', provider: 'gemini' }],
-        defaultModel: 'gemini-2.0-flash',
+        models: [{ id: 'gemini-2.5-flash', label: 'gemini-2.5-flash', provider: 'gemini' }],
+        defaultModel: 'gemini-2.5-flash',
       },
       isFallback: false,
     });
@@ -84,8 +84,8 @@ describe('useChat hook', () => {
   it('clearChat resets the conversation', async () => {
     (fetchChatModels as ReturnType<typeof vi.fn>).mockResolvedValue({
       data: {
-        models: [{ id: 'gemini-2.0-flash', label: 'gemini-2.0-flash', provider: 'gemini' }],
-        defaultModel: 'gemini-2.0-flash',
+        models: [{ id: 'gemini-2.5-flash', label: 'gemini-2.5-flash', provider: 'gemini' }],
+        defaultModel: 'gemini-2.5-flash',
       },
       isFallback: false,
     });
@@ -109,8 +109,8 @@ describe('useChat hook', () => {
   it('sets fallback when the stream fails', async () => {
     (fetchChatModels as ReturnType<typeof vi.fn>).mockResolvedValue({
       data: {
-        models: [{ id: 'gemini-2.0-flash', label: 'gemini-2.0-flash', provider: 'gemini' }],
-        defaultModel: 'gemini-2.0-flash',
+        models: [{ id: 'gemini-2.5-flash', label: 'gemini-2.5-flash', provider: 'gemini' }],
+        defaultModel: 'gemini-2.5-flash',
       },
       isFallback: false,
     });

@@ -206,7 +206,7 @@ The project uses environment variables for configuring both frontend and backend
 | `GEMINI_API_KEY` | Optional | `""` | Gemini API key. Enables Gemini models in the chat widget. |
 | `DEEPSEEK_API_KEY` | Optional | `""` | DeepSeek API key. Enables DeepSeek models in the chat widget. |
 | `OPENAI_API_KEY` | Optional | `""` | OpenAI API key. Enables GPT models in the chat widget. |
-| `CHAT_DEFAULT_MODEL` | Optional | `gemini-2.0-flash` | Default model id when the visitor doesn't pick one. |
+| `CHAT_DEFAULT_MODEL` | Optional | `gemini-2.5-flash` | Default model id when the visitor doesn't pick one. |
 | `CHAT_RATE_LIMIT_PER_MINUTE` | Optional | `10` | Stricter per-IP rate limit for `POST /api/chat` (separate from `RATE_LIMIT_PER_MINUTE`). |
 | `CHAT_DAILY_GLOBAL_LIMIT` | Optional | `200` | Total chat requests allowed per UTC day across all visitors (cost/abuse backstop; in-memory, resets at midnight). `0` disables. |
 | `CHAT_DAILY_PER_IP_LIMIT` | Optional | `30` | Per-IP daily chat request cap (fairness backstop). `0` disables. |
