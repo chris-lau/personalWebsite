@@ -1,8 +1,8 @@
 /**
  * Shared API configuration.
  *
- * Single source of truth for the backend base URL and the fetch-with-timeout
- * utility used across all API clients.
+ * Single source of truth for the backend base URL, the fetch-with-timeout
+ * utility, and model pricing used across all API clients.
  */
 
 export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
@@ -28,4 +28,33 @@ export async function fetchWithTimeout(
   } finally {
     clearTimeout(timer);
   }
+}
+
+// ---------------------------------------------------------------------------
+// Model pricing — per-1M-token input/output costs for observability
+// ---------------------------------------------------------------------------
+
+export interface ModelPricing {
+  readonly input_per_1m: number;
+  readonly output_per_1m: number;
+}
+
+/** Safe default for unknown models — no NaN risk in cost calculations. */
+const DEFAULT_PRICING: ModelPricing = Object.freeze({ input_per_1m: 0, output_per_1m: 0 });
+
+/** Verified 2026-08-10 from official provider pricing pages. */
+export const MODEL_PRICING: Readonly<Record<string, ModelPricing>> = Object.freeze({
+  'gemini-2.0-flash':    Object.freeze({ input_per_1m: 0.10,   output_per_1m: 0.40 }),
+  'gemini-2.5-flash':    Object.freeze({ input_per_1m: 0.15,   output_per_1m: 0.60 }),
+  'deepseek-chat':       Object.freeze({ input_per_1m: 0.14,   output_per_1m: 0.28 }),
+  'deepseek-reasoner':   Object.freeze({ input_per_1m: 0.55,   output_per_1m: 2.19 }),
+  'gpt-4o-mini':         Object.freeze({ input_per_1m: 0.15,   output_per_1m: 0.60 }),
+});
+
+/**
+ * Safe lookup — unknown models default to free (zero cost, no NaN).
+ * Always use this function; never dereference MODEL_PRICING directly.
+ */
+export function getModelPricing(modelId: string): ModelPricing {
+  return MODEL_PRICING[modelId] ?? { ...DEFAULT_PRICING };
 }

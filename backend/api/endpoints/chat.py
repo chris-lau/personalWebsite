@@ -26,10 +26,10 @@ import json
 import logging
 import math
 import threading
+import time
 from collections.abc import AsyncIterator
-from datetime import datetime, timedelta, timezone
-
-UTC = timezone.utc
+from datetime import datetime, timedelta, UTC
+from typing import Any
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
@@ -150,14 +150,26 @@ _PROVIDERS: dict[str, tuple[str, str, list[str]]] = {
 }
 
 
+# Provider capability flags — update as providers add support.
+# Verified 2026-08-10: DeepSeek documents OpenAI-compatible stream_options;
+# Gemini's /v1beta/openai bridge does NOT accept it (returns HTTP 400).
+PROVIDER_SUPPORTS_USAGE: dict[str, bool] = {
+    "openai": True,
+    "deepseek": True,
+    "gemini": False,
+}
+
+
 def _provider_for_model(model_id: str) -> str:
     """Return the provider key whose catalog contains ``model_id``."""
     for provider, (_, _, models) in _PROVIDERS.items():
         if model_id in models:
             return provider
-    # Default to the provider of the configured default model so unknown ids
-    # don't 500 — they fall back to the default's provider routing.
-    return _provider_for_model(settings.CHAT_DEFAULT_MODEL)
+    # Safe fallback: only recurse once if different, else default to "gemini".
+    # Prevents infinite recursion when CHAT_DEFAULT_MODEL itself is unrecognized.
+    if model_id != settings.CHAT_DEFAULT_MODEL:
+        return _provider_for_model(settings.CHAT_DEFAULT_MODEL)
+    return "gemini"
 
 
 def _get_client(model_id: str) -> AsyncOpenAI:
@@ -290,11 +302,13 @@ async def _generate_stream(
     system_prompt: str,
     history: list[ChatMessage],
     user_message: str,
-) -> AsyncIterator[str]:
-    """Yield token strings from the provider's streaming completions API.
+    *,
+    request_start: float,
+) -> AsyncIterator[dict[str, Any]]:
+    """Yield structured event dicts from the provider's streaming completions API.
 
     Kept as a standalone coroutine so tests can monkeypatch it to avoid network
-    calls.
+    calls. Returns dicts (not raw strings) so the caller serializes via ``_sse()``.
     """
     messages = [{"role": "system", "content": system_prompt}]
     # Bound history to the most recent turns to control input token cost.
@@ -302,15 +316,58 @@ async def _generate_stream(
         messages.append({"role": msg.role, "content": msg.content})
     messages.append({"role": "user", "content": user_message})
 
+    # Provider-aware stream_options: only include when the provider supports it.
+    provider = _provider_for_model(model)
+    use_stream_options = PROVIDER_SUPPORTS_USAGE.get(provider, False)
+
+    llm_start = time.monotonic()
+    server_pre_llm_ms: float = round((llm_start - request_start) * 1000, 2)
     stream = await client.chat.completions.create(
         model=model,
         messages=messages,
         stream=True,
+        **({"stream_options": {"include_usage": True}} if use_stream_options else {}),
     )
+
+    last_finish_reason: str | None = None
+    usage_data: dict | None = None
+    server_llm_to_first_token_ms: float | None = None
+    first_chunk = True
+
     async for chunk in stream:
-        delta = chunk.choices[0].delta.content if chunk.choices else None
-        if delta:
-            yield delta
+        if first_chunk:
+            now = time.monotonic()
+            server_llm_to_first_token_ms = round((now - llm_start) * 1000, 2)
+            first_chunk = False
+
+        # Token extraction (existing guard handles choices=[] chunk safely)
+        if chunk.choices:
+            delta = chunk.choices[0].delta.content if chunk.choices[0].delta else None
+            finish_reason = chunk.choices[0].finish_reason
+            if finish_reason:
+                last_finish_reason = finish_reason
+            if delta:
+                yield {"token": delta}
+
+        # Usage rides on the final empty-choices chunk when stream_options is set.
+        # ``usage`` is always defined on ChatCompletionChunk (Optional), so check
+        # it directly rather than via hasattr (which is always True for SDK
+        # dataclasses).
+        if chunk.usage:
+            usage_data = {
+                "prompt_tokens": chunk.usage.prompt_tokens,
+                "completion_tokens": chunk.usage.completion_tokens,
+                "total_tokens": chunk.usage.total_tokens,
+            }
+
+    # Emit metadata (always), server timing, and usage after the token stream.
+    yield {"meta": {"finish_reason": last_finish_reason or "unknown", "model": model}}
+    yield {"meta_server": {
+        "server_pre_llm_ms": server_pre_llm_ms,
+        "server_llm_to_first_token_ms": server_llm_to_first_token_ms,
+    }}
+    if usage_data:
+        yield {"usage": usage_data}
 
 
 def _sse(payload: dict) -> str:
@@ -337,13 +394,18 @@ async def chat(request: Request, payload: ChatRequest):
 
     SSE wire format::
 
-        data: {"token": "..."}\\n\\n        # incremental reply text
-        data: {"done": true}\\n\\n           # stream complete
-        data: {"error": "..."}\\n\\n         # mid-stream failure (then close)
+        data: {"token": "..."}\\n\\n                          # incremental reply text
+        data: {"meta": {"finish_reason": "stop", ...}}\\n\\n  # generation metadata
+        data: {"meta_server": {"server_pre_llm_ms": N, ...}}\\n\\n  # server-side timing
+        data: {"usage": {"prompt_tokens": N, ...}}\\n\\n       # token counts
+        data: {"done": true}\\n\\n                             # stream complete
+        data: {"error": "..."}\\n\\n                           # mid-stream failure
 
     A non-200 status (e.g. 503 when no key is configured) is returned as a
     normal JSON error before streaming begins.
     """
+    request_start = time.monotonic()  # captured FIRST — rate limiter already ran in decorator
+
     models = _configured_models()
     if not models:
         raise HTTPException(
@@ -378,10 +440,11 @@ async def chat(request: Request, payload: ChatRequest):
 
     async def event_stream() -> AsyncIterator[str]:
         try:
-            async for token in _generate_stream(
-                client, model_id, system_prompt, payload.history, payload.message
+            async for event in _generate_stream(
+                client, model_id, system_prompt, payload.history, payload.message,
+                request_start=request_start,
             ):
-                yield _sse({"token": token})
+                yield _sse(event)
             yield _sse({"done": True})
         except Exception as exc:  # noqa: BLE001 — surface any failure to the client
             logger.error("[request_id=%s] chat stream error: %s", request_id, exc)

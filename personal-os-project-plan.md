@@ -578,6 +578,49 @@ Write operations should not be publicly available before authentication is added
 
 ---
 
+# Phase 4.5 — AI Chat Widget + Chat Observability (IN PROGRESS — Phases 1–2 Complete)
+
+## Goal
+
+Add a visitor-facing AI chat widget ("Chat with Chris") grounded in the site's content, with real-time observability instrumentation for latency, throughput, and cost.
+
+## AI Chat Widget (IMPLEMENTED)
+
+A retrieval-grounded Q&A chat widget using the site's blog posts, guidebooks, and profile as context (~71K tokens — no vector DB needed). Streams replies token-by-token over Server-Sent Events via a single OpenAI-compatible SDK wrapper supporting Gemini, DeepSeek, and OpenAI behind a UI model switcher. Defensive boundaries: strict system prompt, per-IP rate limiting, daily caps, bounded conversation history.
+
+Implementation plan: [ai-chat-implementation-plan.md](ai-chat-implementation-plan.md) | Review: [ai-chat-plan-review.md](ai-chat-plan-review.md)
+
+## Chat Observability (IN PROGRESS — Phases 1–2 of 7 Complete)
+
+Transforms the chat widget into a companion-mode split-panel layout with a real-time observability dashboard. The backend emits structured SSE events with token usage and two-segment server-side timing; the frontend will measure TTFT, streaming throughput, and per-message cost.
+
+Full plan: [PLAN-chat-observability.md](PLAN-chat-observability.md)
+
+| Phase | Status | What Ships |
+|---|---|---|
+| 1. Backend SSE | ✅ Complete | Structured event dicts, provider-aware `stream_options`, two-segment `meta_server` timing |
+| 2. Frontend Types | ✅ Complete | `ChatMessageMetrics`, `ChatSessionSummary`, `StreamProgress`, `MODEL_PRICING` table |
+| 3. Data Layer | 🔲 Pending | Timed, metric-emitting `sendChatMessage`, SSE parsing, fallback token estimation |
+| 4. `useChat` Hook | 🔲 Pending | `metricsMap`, `streamProgress`, ref-based chunk counting, cleanup |
+| 5. Observability Panel | 🔲 Pending | Session summary, latency sparkline, live indicator, per-message metrics with segmented TTFT bar |
+| 6. Companion Layout | 🔲 Pending | Split-panel UX, mobile tabs, localStorage toggle persistence |
+| 7. Tests | 🔲 Pending | Backend + frontend regression coverage |
+
+## Completion Criteria
+
+- [x] Chat widget streams replies via SSE with multi-provider support
+- [x] Backend emits structured event dicts with token usage and server timing
+- [x] Provider-aware `stream_options` (OpenAI ✅, DeepSeek ✅, Gemini ❌)
+- [x] Frontend types and pricing table define typed contract
+- [x] Backend tests: 60/60 passing (event-shape, stream_options, usage extraction, server timing, daily caps)
+- [ ] Frontend data layer parses SSE events into metrics objects
+- [ ] `useChat` hook accumulates per-message metrics and live stream progress
+- [ ] Observability panel renders session summary, sparkline, and per-message detail
+- [ ] Companion layout with split-panel and mobile tabs
+- [ ] Full test coverage for all observability phases
+
+---
+
 # Phase 5 — Authentication and Admin Dashboard
 
 ## Goal
