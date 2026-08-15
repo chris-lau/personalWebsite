@@ -46,6 +46,7 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - **Streaming Replies (SSE)**: Replies stream token-by-token over Server-Sent Events for a responsive UX.
   - **Multi-Provider, One SDK**: A single OpenAI-compatible client (`POST /api/chat`) serves Gemini, DeepSeek, and OpenAI behind a UI model switcher — only providers with a configured key appear in the dropdown.
   - **Defensive Boundaries**: Strict system prompt resists prompt injection; per-IP rate limit (`CHAT_RATE_LIMIT_PER_MINUTE`) plus daily caps (`CHAT_DAILY_GLOBAL_LIMIT` / `CHAT_DAILY_PER_IP_LIMIT`) and bounded conversation history control cost/abuse.
+  - **Chat Observability (Backend — Phases 1–2 Complete)**: The SSE stream now emits structured event dicts (`token`, `meta`, `meta_server`, `usage`, `done`, `error`) instead of raw strings. Real token usage (`prompt_tokens`/`completion_tokens`) is reported for OpenAI and DeepSeek via provider-aware `stream_options` (Gemini is correctly excluded). Two server-side timing segments (`server_pre_llm_ms` for routing/prompt-build overhead, `server_llm_to_first_token_ms` for LLM inference to first token) enable TTFT decomposition: `ttft_client_ms ≈ network_rtt + server_pre_llm_ms + server_llm_to_first_token_ms`. Frontend types (`ChatMessageMetrics`, `ChatSessionSummary`, `StreamProgress`) and a pricing table (`MODEL_PRICING` with `Object.freeze` + `Readonly`) define the typed contract for upcoming observability UI phases (data layer, `useChat` hook, observability panel, companion layout).
 
 - **Live GitHub Activity & Repository Dashboard (`/projects`)**:
   - **Backend GitHub Proxy**: Server-side proxy endpoint (`GET /api/github-summary`) using `httpx` + optional `GITHUB_TOKEN` (5000 req/hr authenticated vs 60 req/hr unauthenticated), with a 15-minute in-memory TTL cache. Frontend calls the proxy and falls back to direct GitHub API if the backend is offline.
@@ -70,8 +71,9 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
 
 - **Testing & Quality Assurance**:
   - Storybook 8 component catalog & accessibility auditing (`@storybook/addon-a11y`).
-  - Vitest + `@testing-library/react` unit & component integration tests (**94 / 94 passing tests** across 16 test files).
+  - Vitest + `@testing-library/react` unit & component integration tests (**102 / 102 passing tests** across 18 test files).
   - Playwright real-browser end-to-end (E2E) testing across all 3 themes (**9 / 9 passing tests** across 3 spec files).
+  - Pytest backend unit & integration tests (**60 / 60 passing tests**).
 
 ---
 
@@ -91,28 +93,30 @@ personalWebsite/
 ├── phase-3.5-summary.md               # Phase 3.5 summary & completion log
 ├── phase-4-implementation-plan.md     # Phase 4 execution plan & checklist
 ├── phase-4-summary.md                 # Phase 4 summary & completion log
+├── ai-chat-implementation-plan.md     # AI chat widget implementation plan
+├── ai-chat-plan-review.md             # AI chat plan review report
 ├── backend/                           # Python FastAPI Backend Service
 │   ├── main.py                        # FastAPI entrypoint, CORS & error handlers
 │   ├── core/                          # DB configuration, models, middleware & rate limiting
 │   ├── schemas/                       # Pydantic v2 data models (incl. GitHub proxy)
-│   ├── api/endpoints/                 # REST endpoints, GitHub proxy, telemetry & health
-│   ├── data/                          # Backend Guidebook JSON repositories
+│   ├── api/endpoints/                 # REST endpoints, GitHub proxy, chat (SSE), telemetry & health
+│   ├── data/                          # Backend data (blog posts JSON, Guidebook repos)
 │   ├── migrations/                    # Alembic database migration revisions
 │   ├── seed.py                        # Idempotent database seeding pipeline
-│   ├── tests/                         # Pytest test suite (33 tests)
+│   ├── tests/                         # Pytest test suite (60 tests)
 │   └── Dockerfile                     # Multi-stage container build (non-root) for Render
 └── frontend/                          # React 18 + TypeScript SPA app
     ├── .storybook/                    # Storybook 8 configuration
     ├── e2e/                           # Playwright end-to-end tests (3 spec files)
     ├── src/
-    │   ├── api/                       # REST clients, shared config & telemetryApi
-    │   ├── components/                # UI, Blog, Markdown, GitHub & Monitoring Dashboard
+    │   ├── api/                       # REST clients, chat SSE, config (MODEL_PRICING), telemetryApi
+    │   ├── components/                # UI, Blog, Chat, Markdown, GitHub & Monitoring Dashboard
     │   ├── context/                   # ThemeContext (Global 3-theme manager)
     │   ├── data/                      # Frontend data importers (import.meta.glob)
-    │   ├── hooks/                     # Custom React hooks (useGitHubData, useNavDropdown)
+    │   ├── hooks/                     # Custom React hooks (useGitHubData, useChat, useNavDropdown)
     │   ├── pages/                     # Page views (lazy-loaded, code-split)
     │   ├── utils/                     # Telemetry utilities (RUM, audit & export)
-    │   └── types/                     # TypeScript interfaces (monitoring.ts)
+    │   └── types/                     # TypeScript interfaces (monitoring.ts, chat.ts)
     ├── package.json
     ├── vite.config.ts
     └── tsconfig.json
@@ -151,10 +155,6 @@ Phase 3.5 introduces an integrated, zero-cost, zero-cookie **Full-Stack Operatio
   - Storybook component cataloging (`FullStackMonitoringDashboard.stories.tsx`).
 * **Technical Observability Blog Post**:
   - *"Demystifying Full-Stack Operational Monitoring & Telemetry: Zero-Cost Observability from Browser RUM to FastAPI Middleware"*.
-* **Full-Stack Test Metrics (135 / 135 Total Tests Passing)**:
-  - **Backend**: **32 / 32 Pytest tests passing** (`./.venv/bin/pytest` in `backend/`).
-  - **Frontend**: **94 / 94 Vitest unit tests passing** across **16 test files** (`npm test` in `frontend/`).
-  - **E2E**: **9 / 9 Playwright E2E tests passing** across **3 spec files** (`npx playwright test`).
 
 Detailed summary: [phase-3.5-summary.md](file:///Users/chrislau/Documents/personalWebsite/phase-3.5-summary.md) | Implementation plan: [phase-3.5-implementation-plan.md](file:///Users/chrislau/Documents/personalWebsite/phase-3.5-implementation-plan.md)
 
@@ -175,11 +175,37 @@ Phase 4 transitions the backend from static JSON loading to a persistent relatio
   - Idempotent seed script (`seed.py`) converting legacy JSON data into database rows.
   - Automatic fallback handler in `/api/projects` and `/api/now` returning static local JSON if the database is unreachable or unseeded, guaranteeing 100% website uptime.
 * **Full Test Metrics (135 / 135 Total Tests Passing)**:
-  - **Backend**: **33 / 33 Pytest unit tests passing** (including `tests/test_database.py`).
-  - **Frontend**: **96 / 96 Vitest unit tests passing** across **16 test files**.
-  - **E2E**: **6 / 6 Playwright E2E tests passing**.
+  - **Backend**: **60 / 60 Pytest unit tests passing** (including `tests/test_database.py`, `tests/test_chat.py`).
+  - **Frontend**: **102 / 102 Vitest unit tests passing** across **18 test files**.
+  - **E2E**: **9 / 9 Playwright E2E tests passing**.
 
 Detailed summary: [phase-4-summary.md](file:///Users/chrislau/Documents/personalWebsite/phase-4-summary.md) | Implementation plan: [phase-4-implementation-plan.md](file:///Users/chrislau/Documents/personalWebsite/phase-4-implementation-plan.md)
+
+---
+
+## 🤖 AI Chat Widget + Chat Observability
+
+### AI Chat Widget ("Chat with Chris") — IMPLEMENTED
+
+A visitor-facing RAG chat widget answering questions grounded in the site's blog posts, guidebooks, and profile (~71K token context — no vector DB needed). Streams replies token-by-token over Server-Sent Events via a single OpenAI-compatible SDK wrapper supporting Gemini, DeepSeek, and OpenAI behind a UI model switcher.
+
+**Implementation plan:** [ai-chat-implementation-plan.md](file:///Users/chrislau/Documents/personalWebsite/ai-chat-implementation-plan.md) | **Review:** [ai-chat-plan-review.md](file:///Users/chrislau/Documents/personalWebsite/ai-chat-plan-review.md)
+
+### Chat Observability — IN PROGRESS (Phases 1–2 Complete, Phases 3–6 Remaining)
+
+A real-time observability dashboard transforming the chat widget into a companion-mode split-panel layout (chat left, observability right). The backend emits structured SSE events with token usage and server-side timing; the frontend measures TTFT, streaming throughput, and per-message cost.
+
+**Full plan:** [PLAN-chat-observability.md](file:///Users/chrislau/Documents/personalWebsite/PLAN-chat-observability.md)
+
+| Phase | Status | What Ships |
+|---|---|---|
+| 1. Backend SSE | ✅ Complete | Structured event dicts, provider-aware `stream_options`, two-segment `meta_server` timing |
+| 2. Frontend Types | ✅ Complete | `ChatMessageMetrics`, `ChatSessionSummary`, `StreamProgress`, `MODEL_PRICING` table |
+| 3. Data Layer | 🔲 Pending | Timed, metric-emitting `sendChatMessage` with SSE parsing, fallback token estimation |
+| 4. `useChat` Hook | 🔲 Pending | `metricsMap`, `streamProgress`, ref-based chunk counting, cleanup on abort/clear |
+| 5. Observability Panel | 🔲 Pending | Session summary card, latency sparkline, live streaming indicator, per-message metrics with segmented TTFT bar |
+| 6. Companion Layout | 🔲 Pending | Split-panel UX, mobile tabs, companion-class on `<section>`, localStorage toggle persistence |
+| 7. Tests | 🔲 Pending | Backend event-shape/stream_options/usage tests; frontend SSE parsing, chunk honesty, clearChat reset, companion-class regression |
 
 ---
 
