@@ -66,7 +66,7 @@ export const FBA_TIERS: FbaTierConfig[] = [
   {
     id: 'large_standard',
     label: 'Large Standard (16 oz - 20 lbs, max 18x14x8 in)',
-    maxWeightLb: 3.0,
+    maxWeightLb: 20.0,
     standardFee: 4.75,
     lowPriceFee: 3.15,
     description: 'Most common Amazon catalog products (desk pads, pet bowls, kitchen organizers, water bottles)',
@@ -74,7 +74,7 @@ export const FBA_TIERS: FbaTierConfig[] = [
   {
     id: 'large_bulky',
     label: 'Large Bulky / Oversize (up to 50 lbs, max 59 in length)',
-    maxWeightLb: 20.0,
+    maxWeightLb: 50.0,
     standardFee: 9.73,
     lowPriceFee: 7.5,
     description: 'Bulky items requiring special freight routing (ergonomic chairs, large cat trees, shelving units)',
@@ -82,7 +82,7 @@ export const FBA_TIERS: FbaTierConfig[] = [
   {
     id: 'extra_large',
     label: 'Extra-Large (50+ lbs)',
-    maxWeightLb: 70.0,
+    maxWeightLb: 150.0,
     standardFee: 26.33,
     lowPriceFee: 22.0,
     description: 'Heavy machinery, gym equipment, large furniture assemblies',

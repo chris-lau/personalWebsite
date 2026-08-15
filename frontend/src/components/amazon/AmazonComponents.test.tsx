@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { OpportunityFinder } from './OpportunityFinder';
 import { UnitEconomicsCalculator } from './UnitEconomicsCalculator';
 import { ReviewGapScanner } from './ReviewGapScanner';
@@ -8,6 +8,10 @@ import { SAMPLE_NICHE_TRENDS } from '../../data/amazonData';
 describe('Amazon Individual Components Test Suite', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   describe('OpportunityFinder', () => {

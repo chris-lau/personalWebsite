@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SAMPLE_NICHE_TRENDS, NicheTrend } from '../../data/amazonData';
+import { SAMPLE_NICHE_TRENDS, AMAZON_CATEGORY_FEES, NicheTrend } from '../../data/amazonData';
 
 interface ReviewGapScannerProps {
   initialNiche?: NicheTrend | null;
@@ -22,10 +22,14 @@ export const ReviewGapScanner: React.FC<ReviewGapScannerProps> = ({ initialNiche
   const activeNiche =
     SAMPLE_NICHE_TRENDS.find((n) => n.id === selectedNicheId) || SAMPLE_NICHE_TRENDS[0];
 
+  const categoryName =
+    AMAZON_CATEGORY_FEES.find((c) => c.id === activeNiche.category)?.name ||
+    activeNiche.category;
+
   const generatedPrompt = `Act as an expert Amazon FBA Brand Strategist and Product Designer.
 
 Product Concept: ${activeNiche.name}
-Category: ${activeNiche.category}
+Category: ${categoryName}
 
 Top Identified Competitor Weaknesses & Customer Pain Points:
 ${activeNiche.painPoints.map((p, i) => `${i + 1}. ${p}`).join('\n')}

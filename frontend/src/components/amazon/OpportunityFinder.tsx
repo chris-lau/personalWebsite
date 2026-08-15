@@ -21,6 +21,23 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [reviewFilter, setReviewFilter] = useState<string>('all');
   const [selectedModalNiche, setSelectedModalNiche] = useState<NicheTrend | null>(null);
+  const closeButtonRef = React.useRef<HTMLButtonElement>(null);
+
+  // Focus close button on modal open and handle Escape key dismiss
+  React.useEffect(() => {
+    if (!selectedModalNiche) return;
+
+    closeButtonRef.current?.focus();
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedModalNiche(null);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedModalNiche]);
 
   const filteredNiches = useMemo(() => {
     return SAMPLE_NICHE_TRENDS.filter((niche) => {
@@ -247,11 +264,18 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
 
       {/* Detail Modal */}
       {selectedModalNiche && (
-        <div className="modal-overlay" onClick={() => setSelectedModalNiche(null)}>
+        <div
+          className="modal-overlay"
+          onClick={() => setSelectedModalNiche(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-niche-title"
+        >
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>{selectedModalNiche.name}</h3>
+              <h3 id="modal-niche-title">{selectedModalNiche.name}</h3>
               <button
+                ref={closeButtonRef}
                 type="button"
                 className="close-modal-btn"
                 onClick={() => setSelectedModalNiche(null)}

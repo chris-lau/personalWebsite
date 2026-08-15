@@ -1,11 +1,8 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
 import { AmazonToolsPage } from './AmazonToolsPage';
 import { ThemeProvider } from '../context/ThemeContext';
-
-// Mock scroll
-window.scrollTo = vi.fn();
 
 const renderWithProviders = () => {
   return render(
@@ -18,6 +15,13 @@ const renderWithProviders = () => {
 };
 
 describe('AmazonToolsPage', () => {
+  beforeEach(() => {
+    vi.stubGlobal('scrollTo', vi.fn());
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
   it('renders the header and tabs correctly', () => {
     renderWithProviders();
 

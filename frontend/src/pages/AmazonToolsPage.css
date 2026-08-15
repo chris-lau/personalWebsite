@@ -806,34 +806,34 @@
 /* ==========================================================================
    CLI Theme Specific Adaptations
    ========================================================================== */
-body[data-theme='cli'] .amazon-tab-btn.active {
+[data-theme='cli'] .amazon-tab-btn.active {
   background: #33ff33;
   color: #000000;
   border-color: #33ff33;
 }
 
-body[data-theme='cli'] .tool-intro-card,
-body[data-theme='cli'] .filter-panel-card,
-body[data-theme='cli'] .niche-card,
-body[data-theme='cli'] .calculator-inputs-panel,
-body[data-theme='cli'] .calculator-outputs-panel,
-body[data-theme='cli'] .gap-analysis-card,
-body[data-theme='cli'] .ai-prompt-generator-card {
+[data-theme='cli'] .tool-intro-card,
+[data-theme='cli'] .filter-panel-card,
+[data-theme='cli'] .niche-card,
+[data-theme='cli'] .calculator-inputs-panel,
+[data-theme='cli'] .calculator-outputs-panel,
+[data-theme='cli'] .gap-analysis-card,
+[data-theme='cli'] .ai-prompt-generator-card {
   border: 1px solid #33ff33;
   background: #050505;
   border-radius: 0;
 }
 
-body[data-theme='cli'] .theme-btn-primary {
+[data-theme='cli'] .theme-btn-primary {
   background: #33ff33;
   color: #000000;
   border-radius: 0;
   font-family: monospace;
 }
 
-body[data-theme='cli'] .theme-input,
-body[data-theme='cli'] .theme-select,
-body[data-theme='cli'] .theme-textarea {
+[data-theme='cli'] .theme-input,
+[data-theme='cli'] .theme-select,
+[data-theme='cli'] .theme-textarea {
   border: 1px solid #33ff33;
   border-radius: 0;
   background: #000000;
@@ -844,16 +844,18 @@ body[data-theme='cli'] .theme-textarea {
 /* ==========================================================================
    ASCII Theme Specific Adaptations
    ========================================================================== */
-body[data-theme='ascii'] .tool-intro-card,
-body[data-theme='ascii'] .filter-panel-card,
-body[data-theme='ascii'] .niche-card,
-body[data-theme='ascii'] .calculator-inputs-panel,
-body[data-theme='ascii'] .calculator-outputs-panel {
+[data-theme='ascii'] .tool-intro-card,
+[data-theme='ascii'] .filter-panel-card,
+[data-theme='ascii'] .niche-card,
+[data-theme='ascii'] .calculator-inputs-panel,
+[data-theme='ascii'] .calculator-outputs-panel,
+[data-theme='ascii'] .gap-analysis-card,
+[data-theme='ascii'] .ai-prompt-generator-card {
   border: 1px dashed #d97706;
   background: #2b231d;
 }
 
-body[data-theme='ascii'] .amazon-tab-btn.active {
+[data-theme='ascii'] .amazon-tab-btn.active {
   background: #d97706;
   color: #ffffff;
   border-color: #d97706;

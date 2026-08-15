@@ -67,12 +67,27 @@ export const UnitEconomicsCalculator: React.FC<UnitEconomicsCalculatorProps> = (
   const monthlyGrossRevenue = salePrice * monthlyUnits;
   const monthlyTotalProfit = economics.netProfit * monthlyUnits;
 
-  // Percentage breakdown for visual stacked bar
+  // Percentage breakdown for visual stacked bar (normalized so sum equals 100%)
   const priceSafe = salePrice > 0 ? salePrice : 1;
-  const landedPct = Math.min(100, Math.max(0, (economics.landedCost / priceSafe) * 100));
-  const amazonFeePct = Math.min(100, Math.max(0, (economics.totalAmazonFees / priceSafe) * 100));
-  const adSpendPct = Math.min(100, Math.max(0, (economics.adSpendPerUnit / priceSafe) * 100));
-  const netProfitPct = Math.max(0, economics.netMarginPct);
+  const rawLanded = (economics.landedCost / priceSafe) * 100;
+  const rawAmazon = (economics.totalAmazonFees / priceSafe) * 100;
+  const rawAds = (economics.adSpendPerUnit / priceSafe) * 100;
+  const rawReturns = (economics.returnsCostPerUnit / priceSafe) * 100;
+  const totalCostPct = rawLanded + rawAmazon + rawAds + rawReturns;
+
+  let landedPct = rawLanded;
+  let amazonFeePct = rawAmazon;
+  let adSpendPct = rawAds;
+  let netProfitPct = Math.max(0, economics.netMarginPct);
+
+  // If costs exceed revenue (unprofitable), normalize cost segments so total bar width is 100%
+  if (totalCostPct > 100) {
+    const scale = 100 / totalCostPct;
+    landedPct = rawLanded * scale;
+    amazonFeePct = rawAmazon * scale;
+    adSpendPct = rawAds * scale;
+    netProfitPct = 0;
+  }
 
   const handleCopySummary = async () => {
     const summary = `### Amazon Product Sourcing & Economics Summary
