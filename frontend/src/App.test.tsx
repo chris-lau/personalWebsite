@@ -14,6 +14,8 @@ vi.mock('./hooks/useChat', () => ({
     setSelectedModel: vi.fn(),
     sendMessage: vi.fn(),
     clearChat: vi.fn(),
+    metricsMap: new Map(),
+    streamProgress: null,
   }),
 }));
 

@@ -71,7 +71,7 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
 
 - **Testing & Quality Assurance**:
   - Storybook 8 component catalog & accessibility auditing (`@storybook/addon-a11y`).
-  - Vitest + `@testing-library/react` unit & component integration tests (**142 / 142 passing tests** across 20 test files).
+  - Vitest + `@testing-library/react` unit & component integration tests (**180 / 180 passing tests** across 24 test files).
   - Playwright real-browser end-to-end (E2E) testing across all 3 themes (**9 / 9 passing tests** across 3 spec files).
   - Pytest backend unit & integration tests (**60 / 60 passing tests**).
 
@@ -176,7 +176,7 @@ Phase 4 transitions the backend from static JSON loading to a persistent relatio
   - Automatic fallback handler in `/api/projects` and `/api/now` returning static local JSON if the database is unreachable or unseeded, guaranteeing 100% website uptime.
 * **Full Test Metrics (211 / 211 Total Tests Passing)**:
   - **Backend**: **60 / 60 Pytest unit tests passing** (including `tests/test_database.py`, `tests/test_chat.py`).
-  - **Frontend**: **142 / 142 Vitest unit tests passing** across **20 test files**.
+  - **Frontend**: **180 / 180 Vitest unit tests passing** across **24 test files**.
   - **E2E**: **9 / 9 Playwright E2E tests passing**.
 
 Detailed summary: [phase-4-summary.md](file:///Users/chrislau/Documents/personalWebsite/phase-4-summary.md) | Implementation plan: [phase-4-implementation-plan.md](file:///Users/chrislau/Documents/personalWebsite/phase-4-implementation-plan.md)

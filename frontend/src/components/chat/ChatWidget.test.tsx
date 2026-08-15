@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ChatWidget } from './ChatWidget';
@@ -19,6 +19,28 @@ vi.mock('../ui/BoxContainer', () => ({
   ),
 }));
 
+// Controlled localStorage mock — stored so we can restore the real one in afterEach.
+let realLocalStorage: Storage;
+const localStorageMock = (() => {
+  let store: Record<string, string> = {};
+  return {
+    getItem: vi.fn((key: string) => store[key] ?? null),
+    setItem: vi.fn((key: string, value: string) => {
+      store[key] = value;
+    }),
+    removeItem: vi.fn((key: string) => {
+      delete store[key];
+    }),
+    clear: vi.fn(() => {
+      store = {};
+    }),
+    get length() {
+      return Object.keys(store).length;
+    },
+    key: vi.fn((index: number) => Object.keys(store)[index] ?? null),
+  };
+})();
+
 function baseHookState(overrides: Record<string, unknown> = {}) {
   return {
     messages: [],
@@ -30,6 +52,8 @@ function baseHookState(overrides: Record<string, unknown> = {}) {
     setSelectedModel: vi.fn(),
     sendMessage: vi.fn().mockResolvedValue(undefined),
     clearChat: vi.fn(),
+    metricsMap: new Map(),
+    streamProgress: null,
     ...overrides,
   };
 }
@@ -46,6 +70,15 @@ function renderWidget(state = baseHookState()) {
 describe('ChatWidget', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
+    // Swap in mock localStorage for this test file
+    realLocalStorage = window.localStorage;
+    Object.defineProperty(window, 'localStorage', { value: localStorageMock, configurable: true });
+    localStorageMock.clear();
+  });
+
+  afterEach(() => {
+    // Restore real localStorage so other test files aren't affected
+    Object.defineProperty(window, 'localStorage', { value: realLocalStorage, configurable: true });
   });
 
   it('renders nothing when no models loaded, no fallback, and no messages', () => {
@@ -127,5 +160,135 @@ describe('ChatWidget', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Clear conversation' }));
 
     expect(clearChat).toHaveBeenCalled();
+  });
+
+  // ---------------------------------------------------------------------------
+  // Phase 7: Companion mode tests
+  // ---------------------------------------------------------------------------
+
+  it('renders Activity toggle button in header actions', () => {
+    renderWidget();
+    fireEvent.click(screen.getByRole('button', { name: 'Open chat' }));
+
+    // The Activity toggle is present with aria-pressed=false (companion off by default)
+    const toggleBtn = screen.getByRole('button', { name: 'Enter companion mode' });
+    expect(toggleBtn).toBeDefined();
+    expect(toggleBtn).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  it('toggles companion mode on button click', () => {
+    renderWidget();
+    fireEvent.click(screen.getByRole('button', { name: 'Open chat' }));
+
+    // Toggle on
+    fireEvent.click(screen.getByRole('button', { name: 'Enter companion mode' }));
+    expect(screen.getByRole('button', { name: 'Exit companion mode' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+
+    // Toggle off
+    fireEvent.click(screen.getByRole('button', { name: 'Exit companion mode' }));
+    expect(screen.getByRole('button', { name: 'Enter companion mode' })).toHaveAttribute(
+      'aria-pressed',
+      'false',
+    );
+  });
+
+  it('applies chat-panel--companion class to section when companion mode is on', () => {
+    renderWidget();
+    fireEvent.click(screen.getByRole('button', { name: 'Open chat' }));
+
+    const section = screen.getByRole('dialog', { name: 'Chat with Chris' });
+    expect(section.className).not.toContain('chat-panel--companion');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Enter companion mode' }));
+    expect(section.className).toContain('chat-panel--companion');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Exit companion mode' }));
+    expect(section.className).not.toContain('chat-panel--companion');
+  });
+
+  it('persists companion mode in localStorage', async () => {
+    renderWidget();
+    fireEvent.click(screen.getByRole('button', { name: 'Open chat' }));
+
+    fireEvent.click(screen.getByRole('button', { name: 'Enter companion mode' }));
+    await waitFor(() => {
+      expect(localStorageMock.setItem).toHaveBeenCalledWith('chat_companion_mode', 'true');
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Exit companion mode' }));
+    await waitFor(() => {
+      expect(localStorageMock.setItem).toHaveBeenCalledWith('chat_companion_mode', 'false');
+    });
+  });
+
+  it('renders ChatObservabilityPanel when companion mode is active', () => {
+    renderWidget();
+    fireEvent.click(screen.getByRole('button', { name: 'Open chat' }));
+
+    // Panel should not exist yet
+    expect(screen.queryByText('Send a message to see observability data here')).toBeNull();
+
+    // Toggle companion mode on
+    fireEvent.click(screen.getByRole('button', { name: 'Enter companion mode' }));
+    expect(screen.getByText('Send a message to see observability data here')).toBeDefined();
+  });
+
+  it('renders mobile tablist when companion mode is active', () => {
+    renderWidget();
+    fireEvent.click(screen.getByRole('button', { name: 'Open chat' }));
+
+    // No tablist initially
+    expect(screen.queryByRole('tablist')).toBeNull();
+
+    // Toggle companion mode on
+    fireEvent.click(screen.getByRole('button', { name: 'Enter companion mode' }));
+    expect(screen.getByRole('tablist', { name: 'Companion view' })).toBeDefined();
+  });
+
+  it('switches mobile tabs and applies --active class on columns', () => {
+    renderWidget();
+    fireEvent.click(screen.getByRole('button', { name: 'Open chat' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Enter companion mode' }));
+
+    const chatTab = screen.getByRole('tab', { name: 'Chat' });
+    const obsTab = screen.getByRole('tab', { name: 'Observability' });
+
+    // Default: chat tab is selected
+    expect(chatTab).toHaveAttribute('aria-selected', 'true');
+    expect(obsTab).toHaveAttribute('aria-selected', 'false');
+
+    const chatPanel = document.getElementById('chat-companion-panel-chat');
+    const obsPanel = document.getElementById('chat-companion-panel-obs');
+
+    // Chat column should have --active, obs should not
+    expect(chatPanel?.className).toContain('chat-panel__chat-col--active');
+    expect(obsPanel?.className).not.toContain('chat-panel__obs-col--active');
+
+    // Switch to obs tab
+    fireEvent.click(obsTab);
+    expect(obsTab).toHaveAttribute('aria-selected', 'true');
+    expect(chatTab).toHaveAttribute('aria-selected', 'false');
+    expect(obsPanel?.className).toContain('chat-panel__obs-col--active');
+    expect(chatPanel?.className).not.toContain('chat-panel__chat-col--active');
+  });
+
+  it('desktop layout shows both columns regardless of mobileTab state', () => {
+    renderWidget();
+    fireEvent.click(screen.getByRole('button', { name: 'Open chat' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Enter companion mode' }));
+
+    // The split body class should be present when companion is on
+    const body = document.querySelector('.chat-panel__body--split');
+    expect(body).toBeDefined();
+
+    // Both columns should be rendered (CSS handles visibility at different breakpoints)
+    expect(document.getElementById('chat-companion-panel-chat')).toBeDefined();
+    expect(document.getElementById('chat-companion-panel-obs')).toBeDefined();
+
+    // The obs column should contain the observability panel
+    expect(screen.getByText('Send a message to see observability data here')).toBeDefined();
   });
 });

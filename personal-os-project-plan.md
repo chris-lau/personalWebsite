@@ -578,7 +578,7 @@ Write operations should not be publicly available before authentication is added
 
 ---
 
-# Phase 4.5 — AI Chat Widget + Chat Observability (IN PROGRESS — Phases 1–4 Complete)
+# Phase 4.5 — AI Chat Widget + Chat Observability (COMPLETE)
 
 ## Goal
 
@@ -590,9 +590,9 @@ A retrieval-grounded Q&A chat widget using the site's blog posts, guidebooks, an
 
 Implementation plan: [ai-chat-implementation-plan.md](ai-chat-implementation-plan.md) | Review: [ai-chat-plan-review.md](ai-chat-plan-review.md)
 
-## Chat Observability (IN PROGRESS — Phases 1–4 of 7 Complete)
+## Chat Observability (COMPLETE — All 7 Phases)
 
-Transforms the chat widget into a companion-mode split-panel layout with a real-time observability dashboard. The backend emits structured SSE events with token usage and two-segment server-side timing; the frontend will measure TTFT, streaming throughput, and per-message cost.
+Transforms the chat widget into a companion-mode split-panel layout with a real-time observability dashboard. The backend emits structured SSE events with token usage and two-segment server-side timing; the frontend measures TTFT, streaming throughput, and per-message cost.
 
 Full plan: [PLAN-chat-observability.md](PLAN-chat-observability.md)
 
@@ -602,9 +602,9 @@ Full plan: [PLAN-chat-observability.md](PLAN-chat-observability.md)
 | 2. Frontend Types | ✅ Complete | `ChatMessageMetrics`, `ChatSessionSummary`, `StreamProgress`, `MODEL_PRICING` table |
 | 3. Data Layer | ✅ Complete | Timed, metric-emitting `sendChatMessage`, SSE parsing, fallback token estimation |
 | 4. `useChat` Hook | ✅ Complete | `metricsMap`, `streamProgress`, ref-based chunk counting, cleanup |
-| 5. Observability Panel | 🔲 Pending | Session summary, latency sparkline, live indicator, per-message metrics with segmented TTFT bar |
-| 6. Companion Layout | 🔲 Pending | Split-panel UX, mobile tabs, localStorage toggle persistence |
-| 7. Tests | 🔲 Pending | Backend + frontend regression coverage |
+| 5. Observability Panel | ✅ Complete | Session summary, latency sparkline, live indicator, per-message metrics with segmented TTFT bar |
+| 6. Companion Layout | ✅ Complete | Split-panel UX, mobile tabs, localStorage toggle persistence |
+| 7. Tests | ✅ Complete | Frontend regression coverage (180/180 Vitest passing) |
 
 ## Completion Criteria
 
@@ -615,9 +615,9 @@ Full plan: [PLAN-chat-observability.md](PLAN-chat-observability.md)
 - [x] Backend tests: 60/60 passing (event-shape, stream_options, usage extraction, server timing, daily caps)
 - [x] Frontend data layer parses SSE events into metrics objects
 - [x] `useChat` hook accumulates per-message metrics and live stream progress
-- [ ] Observability panel renders session summary, sparkline, and per-message detail
-- [ ] Companion layout with split-panel and mobile tabs
-- [ ] Full test coverage for all observability phases
+- [x] Observability panel renders session summary, sparkline, and per-message detail
+- [x] Companion layout with split-panel and mobile tabs
+- [x] Full test coverage for all observability phases
 
 ---
 
