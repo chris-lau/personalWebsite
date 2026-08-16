@@ -359,10 +359,10 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
                 <div className="metric-box">
                   <span className="metric-label">Est. Demand</span>
                   <span className="metric-val">{niche.searchVolume.toLocaleString()} / mo</span>
-                  <span className="metric-sub text-green">+{niche.searchVolumeGrowthPct}% velocity</span>
+                  <span className="metric-sub text-green">+{niche.searchVolumeGrowthPct}% est. velocity</span>
                 </div>
                 <div className="metric-box">
-                  <span className="metric-label">Live Price</span>
+                  <span className="metric-label">{isLiveMarketplace ? 'Live Price' : 'Benchmark Price'}</span>
                   <span className="metric-val">${niche.avgPrice.toFixed(2)}</span>
                   <span className="metric-sub">Est. Net Margin: ~{eco.netMarginPct}%</span>
                 </div>
@@ -448,7 +448,7 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
                     <strong>Est. Monthly Velocity:</strong> ~
                     {selectedModalNiche.searchVolume.toLocaleString()} searches (
                     <span className="text-green">
-                      +{selectedModalNiche.searchVolumeGrowthPct}% momentum
+                      +{selectedModalNiche.searchVolumeGrowthPct}% est. momentum
                     </span>
                     )
                   </li>

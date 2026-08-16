@@ -17,7 +17,9 @@ export interface AmazonSearchResponse {
   total_results: number;
   products: AmazonProductItem[];
   is_live: boolean;
+  source: 'live_marketplace' | 'simulated_benchmark';
   cached: boolean;
+  note: string;
 }
 
 export interface AmazonAsinDetail {
@@ -36,6 +38,7 @@ export interface AmazonAsinDetail {
   weight_lb: number;
   estimated_cogs: number;
   is_live: boolean;
+  source: 'live_marketplace' | 'simulated_benchmark';
 }
 
 export interface GoogleTrendPoint {
@@ -49,4 +52,5 @@ export interface AmazonTrendResponse {
   growth_velocity_pct: number;
   suggestions: string[];
   is_live: boolean;
+  source: 'live_autocomplete' | 'simulated_benchmark';
 }

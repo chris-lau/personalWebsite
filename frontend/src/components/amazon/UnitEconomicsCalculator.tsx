@@ -56,13 +56,28 @@ export const UnitEconomicsCalculator: React.FC<UnitEconomicsCalculatorProps> = (
 
     try {
       const res = await lookupLiveAmazonAsin(asinInput.trim());
-      if (res.data) {
-        setProductTitle(res.data.title);
-        setSalePrice(res.data.price);
-        if (res.data.estimated_cogs > 0) setCogs(res.data.estimated_cogs);
-        if (res.data.category) setCategoryId(res.data.category);
-        if (res.data.fba_tier) setFbaTier(res.data.fba_tier);
+
+      if (!res.data) {
+        setAsinError(res.error || 'Failed to fetch ASIN details. Please check the ID.');
+        return;
       }
+
+      // `lookupLiveAmazonAsin` never throws — it returns benchmark fallback
+      // data with `isFallback`/`is_live` flags. Surface that state instead of
+      // silently filling the form with estimates.
+      if (res.isFallback || !res.data.is_live) {
+        setAsinError(
+          res.error
+            ? `Live lookup unavailable (${res.error}) — showing benchmark estimates.`
+            : 'Amazon blocked the live request — showing benchmark estimates.'
+        );
+      }
+
+      setProductTitle(res.data.title);
+      setSalePrice(res.data.price);
+      if (res.data.estimated_cogs > 0) setCogs(res.data.estimated_cogs);
+      if (res.data.category) setCategoryId(res.data.category);
+      if (res.data.fba_tier) setFbaTier(res.data.fba_tier);
     } catch {
       setAsinError('Failed to fetch ASIN details. Please check the ID.');
     } finally {

@@ -828,6 +828,36 @@
   animation: pulse-dot 2s infinite;
 }
 
+/* Degraded state: live request blocked/unavailable, benchmark data shown */
+.live-status-pill.status-simulated {
+  color: #d97706;
+  background: rgba(217, 119, 6, 0.1);
+  border-color: rgba(217, 119, 6, 0.35);
+}
+
+.live-indicator-dot.dot-warning {
+  background: #f59e0b;
+  box-shadow: 0 0 8px #f59e0b;
+}
+
+.live-note-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: #b45309;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.live-note-icon {
+  flex-shrink: 0;
+}
+
 @keyframes pulse-dot {
   0% {
     transform: scale(0.95);
@@ -1033,4 +1063,24 @@
   background: #d97706;
   color: #ffffff;
   border-color: #d97706;
+}
+/* Empty state card shown when no niches/products match the filters */
+.empty-results-card {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  border-radius: 12px;
+  border: 1px dashed rgba(148, 163, 184, 0.4);
+  background: rgba(148, 163, 184, 0.05);
+}
+
+.empty-results-card h4 {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+}
+
+.empty-results-card p {
+  margin: 0;
+  font-size: 0.88rem;
+  opacity: 0.75;
 }

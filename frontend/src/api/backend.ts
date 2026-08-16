@@ -335,7 +335,9 @@ export async function searchLiveAmazonProducts(
         total_results: 0,
         products: [],
         is_live: false,
+        source: 'simulated_benchmark',
         cached: false,
+        note: '',
       },
       isFallback: true,
       error: errorMsg,
@@ -344,23 +346,33 @@ export async function searchLiveAmazonProducts(
 }
 
 /**
+ * Extract a 10-character Amazon ASIN from a raw ASIN or a product URL
+ * (e.g. "B08N5WRWNW" or "https://www.amazon.com/dp/B08N5WRWNW").
+ */
+function extractAmazonAsin(input: string): string | null {
+  const trimmed = input.trim();
+  const urlMatch = trimmed.match(/(?:\/dp\/|\/gp\/product\/|\/d\/)([A-Z0-9]{10})/i);
+  if (urlMatch) return urlMatch[1].toUpperCase();
+  const asinMatch = trimmed.match(/\b([A-Z0-9]{10})\b/i);
+  return asinMatch ? asinMatch[1].toUpperCase() : null;
+}
+
+/**
  * Live inspect an Amazon ASIN or product URL.
+ *
+ * The ASIN is always extracted client-side so the request path only ever
+ * carries a bare 10-character ASIN (URL-encoded full links would decode to
+ * slashes server-side and 404 the `/asin/{asin}` route).
  */
 export async function lookupLiveAmazonAsin(
   asinOrUrl: string
 ): Promise<BackendResponse<AmazonAsinDetail>> {
-  try {
-    const url = `${API_BASE_URL}/amazon/asin/${encodeURIComponent(asinOrUrl.trim())}`;
-    const res = await fetchWithTimeout(url);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data: AmazonAsinDetail = await res.json();
-    return { data, isFallback: false };
-  } catch (err: unknown) {
-    const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+  const asin = extractAmazonAsin(asinOrUrl);
+  if (!asin) {
     return {
       data: {
-        asin: asinOrUrl,
-        title: `Amazon Product (${asinOrUrl})`,
+        asin: asinOrUrl.trim(),
+        title: `Amazon Product (${asinOrUrl.trim()})`,
         price: 29.99,
         rating: 4.5,
         reviews_count: 350,
@@ -369,11 +381,45 @@ export async function lookupLiveAmazonAsin(
         fba_tier: 'large_standard',
         fba_tier_label: 'Large Standard (16 oz - 20 lbs)',
         image_url: '',
-        product_url: `https://www.amazon.com/dp/${asinOrUrl}`,
+        product_url: `https://www.amazon.com/dp/${asinOrUrl.trim()}`,
+        bullets: [],
+        weight_lb: 1.5,
+        estimated_cogs: 6.5,
+        is_live: false,
+        source: 'simulated_benchmark',
+      },
+      isFallback: true,
+      error:
+        'Invalid input — provide a 10-character ASIN (e.g. B08N5WRWNW) or an amazon.com/dp/… link.',
+    };
+  }
+
+  try {
+    const url = `${API_BASE_URL}/amazon/asin/${asin}`;
+    const res = await fetchWithTimeout(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data: AmazonAsinDetail = await res.json();
+    return { data, isFallback: false };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+    return {
+      data: {
+        asin,
+        title: `Amazon Product (${asin})`,
+        price: 29.99,
+        rating: 4.5,
+        reviews_count: 350,
+        category: 'home_kitchen',
+        category_name: 'Home & Kitchen',
+        fba_tier: 'large_standard',
+        fba_tier_label: 'Large Standard (16 oz - 20 lbs)',
+        image_url: '',
+        product_url: `https://www.amazon.com/dp/${asin}`,
         bullets: ['Ergonomic construction', 'Standard Amazon FBA specification'],
         weight_lb: 1.5,
         estimated_cogs: 6.5,
         is_live: false,
+        source: 'simulated_benchmark',
       },
       isFallback: true,
       error: errorMsg,
@@ -402,6 +448,7 @@ export async function fetchLiveAmazonTrends(
         growth_velocity_pct: 35,
         suggestions: [`${query} organizer`, `${query} set`],
         is_live: false,
+        source: 'simulated_benchmark',
       },
       isFallback: true,
       error: errorMsg,
