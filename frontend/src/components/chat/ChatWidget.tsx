@@ -117,6 +117,15 @@ export const ChatWidget: React.FC = () => {
         <span className="chat-launcher__pulse" aria-hidden="true" />
       </button>
 
+      {/* Mobile Backdrop Overlay */}
+      {open && (
+        <div
+          className="chat-backdrop"
+          onClick={() => setOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Chat panel — companion modifier goes on <section> for width rule */}
       <section
         className={`chat-panel ${open ? 'chat-panel--open' : ''} ${companionMode ? 'chat-panel--companion' : ''}`}

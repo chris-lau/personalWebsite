@@ -122,11 +122,15 @@
   background: transparent;
   border: 1px solid var(--border-muted);
   color: var(--text-primary);
-  font-size: 1.2rem;
-  padding: 0.25rem 0.6rem;
+  font-size: 1.25rem;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0.4rem 0.65rem;
   border-radius: 6px;
   cursor: pointer;
   line-height: 1;
+  align-items: center;
+  justify-content: center;
 }
 
 .modern-mobile-menu-toggle:hover {
@@ -283,7 +287,7 @@
   }
 
   .modern-mobile-menu-toggle {
-    display: block;
+    display: inline-flex;
   }
 
   .modern-nav {
@@ -295,6 +299,18 @@
 
   .modern-nav.open {
     display: block;
+    animation: modernNavSlideDown 0.2s ease-out;
+  }
+
+  @keyframes modernNavSlideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .modern-nav-list {
@@ -306,10 +322,12 @@
   .modern-nav-link,
   .modern-nav-dropdown-toggle {
     white-space: nowrap;
-    font-size: 0.9rem;
-    padding: 0.5rem 0.75rem;
+    font-size: 0.95rem;
+    min-height: 44px;
+    padding: 0.65rem 0.85rem;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     width: 100%;
   }
 
@@ -319,14 +337,23 @@
     box-shadow: none;
     background-color: rgba(255, 255, 255, 0.03);
     border: none;
-    border-left: 2px solid var(--border-muted);
+    border-left: 2px solid var(--accent-primary);
     border-radius: 0;
     margin: 0.25rem 0 0.5rem 0.75rem;
-    padding: 0.25rem 0 0.25rem 0.5rem;
+    padding: 0.35rem 0 0.35rem 0.5rem;
+    gap: 0.2rem;
   }
 
   .modern-dropdown-menu.show {
     display: flex;
+  }
+
+  .modern-dropdown-item {
+    font-size: 0.9rem;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    padding: 0.55rem 0.85rem;
   }
 
   .modern-content-wrapper {

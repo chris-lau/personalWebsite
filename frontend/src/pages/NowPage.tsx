@@ -1,4 +1,5 @@
 import React from 'react';
+import { BookOpen } from 'lucide-react';
 import { nowData } from '../data/now';
 import { BoxContainer } from '../components/ui/BoxContainer';
 import './Pages.css';
@@ -29,7 +30,10 @@ export const NowPage: React.FC = () => {
               <h3>&gt; CURRENTLY READING</h3>
               <ul>
                 {nowData.reading.map((book, i) => (
-                  <li key={i}>📖 {book}</li>
+                  <li key={i} className="inline-icon-label">
+                    <BookOpen size={14} aria-hidden="true" className="inline-icon accent" />
+                    <span>{book}</span>
+                  </li>
                 ))}
               </ul>
             </div>

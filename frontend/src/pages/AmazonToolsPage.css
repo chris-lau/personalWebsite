@@ -730,34 +730,35 @@
 
 .theme-slider {
   width: 100%;
-  accent-color: var(--accent-primary, #3b82f6);
+  accent-color: var(--accent-primary);
   cursor: pointer;
 }
 
 .theme-btn-primary {
-  background: var(--accent-primary, #3b82f6);
-  color: #ffffff;
+  background: var(--accent-primary);
+  color: var(--text-inverse, #121316);
   border: none;
-  padding: 0.5rem 0.85rem;
+  padding: 0.55rem 0.95rem;
   border-radius: 6px;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: opacity 0.2s ease, transform 0.1s ease;
   white-space: nowrap;
 }
 
 .theme-btn-primary:hover {
-  background: #2563eb;
+  opacity: 0.9;
+  transform: translateY(-1px);
 }
 
 .theme-btn-secondary {
-  background: var(--surface-hover, rgba(255, 255, 255, 0.08));
-  color: var(--text-primary, #ffffff);
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.12));
-  padding: 0.5rem 0.85rem;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 0.55rem 0.95rem;
   border-radius: 6px;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s ease;
@@ -770,22 +771,22 @@
 
 .theme-btn-outline {
   background: transparent;
-  color: var(--text-muted, #94a3b8);
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
-  padding: 0.5rem 0.75rem;
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+  padding: 0.55rem 0.85rem;
   border-radius: 6px;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   cursor: pointer;
 }
 
 .theme-btn-outline:hover {
-  color: var(--text-primary, #ffffff);
-  border-color: var(--text-muted, #94a3b8);
+  color: var(--text-primary);
+  border-color: var(--accent-primary);
 }
 
 .btn-sm {
-  padding: 0.35rem 0.65rem;
-  font-size: 0.75rem;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8rem;
 }
 
 .badge-pill {
@@ -807,9 +808,9 @@
    CLI Theme Specific Adaptations
    ========================================================================== */
 [data-theme='cli'] .amazon-tab-btn.active {
-  background: #33ff33;
-  color: #000000;
-  border-color: #33ff33;
+  background: var(--accent-secondary);
+  color: var(--bg-primary);
+  border-color: var(--accent-secondary);
 }
 
 [data-theme='cli'] .tool-intro-card,
@@ -819,26 +820,26 @@
 [data-theme='cli'] .calculator-outputs-panel,
 [data-theme='cli'] .gap-analysis-card,
 [data-theme='cli'] .ai-prompt-generator-card {
-  border: 1px solid #33ff33;
-  background: #050505;
-  border-radius: 0;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  border-radius: 4px;
 }
 
 [data-theme='cli'] .theme-btn-primary {
-  background: #33ff33;
-  color: #000000;
-  border-radius: 0;
-  font-family: monospace;
+  background: var(--accent-primary);
+  color: var(--bg-primary);
+  border-radius: 4px;
+  font-family: var(--font-family);
 }
 
 [data-theme='cli'] .theme-input,
 [data-theme='cli'] .theme-select,
 [data-theme='cli'] .theme-textarea {
-  border: 1px solid #33ff33;
-  border-radius: 0;
-  background: #000000;
-  color: #33ff33;
-  font-family: monospace;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-family);
 }
 
 /* ==========================================================================
@@ -851,12 +852,73 @@
 [data-theme='ascii'] .calculator-outputs-panel,
 [data-theme='ascii'] .gap-analysis-card,
 [data-theme='ascii'] .ai-prompt-generator-card {
-  border: 1px dashed #d97706;
-  background: #2b231d;
+  border: 1px dashed var(--border-color);
+  background: var(--bg-secondary);
+  border-radius: 0;
 }
 
 [data-theme='ascii'] .amazon-tab-btn.active {
-  background: #d97706;
-  color: #ffffff;
-  border-color: #d97706;
+  background: var(--accent-primary);
+  color: var(--bg-primary);
+  border-color: var(--accent-primary);
+}
+
+/* ==========================================================================
+   Mobile & Responsive Breakpoints for Amazon Suite (< 640px)
+   ========================================================================== */
+@media (max-width: 640px) {
+  .amazon-tools-page .page-title {
+    font-size: 1.65rem;
+  }
+
+  .niche-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .niche-card-actions {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .niche-card-actions button {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+    padding: 0.65rem 0.85rem;
+    min-height: 42px;
+  }
+
+  .niche-metrics-row {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .input-group-row {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .modal-overlay {
+    padding: 0.75rem;
+  }
+
+  .modal-content {
+    padding: 1rem;
+    max-height: 85vh;
+  }
+
+  .modal-footer {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .modal-footer button {
+    width: 100%;
+    min-height: 42px;
+  }
 }

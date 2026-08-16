@@ -90,3 +90,16 @@
   padding: 0;
 }
 
+@media (max-width: 640px) {
+  [data-theme="modern"] .box-container {
+    padding: 1.25rem 1rem;
+    border-radius: 12px;
+  }
+
+  [data-theme="modern"] .box-section-heading {
+    font-size: 1.45rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.65rem;
+  }
+}
+

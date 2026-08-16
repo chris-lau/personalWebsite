@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { Activity, Sparkles, Terminal, BookOpen, FileCode, Info } from 'lucide-react';
 import { siteArchitectureData } from '../data/siteArchitecture';
 import { BoxContainer } from '../components/ui/BoxContainer';
 import { BACKEND_ROOT_URL } from '../api/config';
@@ -15,19 +16,9 @@ export const HowThisSiteWorksPage: React.FC = () => {
           </p>
 
           {/* Render Cold Start Note */}
-          <p
-            className="cold-start-note"
-            style={{
-              fontSize: '0.8rem',
-              opacity: 0.85,
-              margin: '0.75rem 0 1rem 0',
-              padding: '0.4rem 0.75rem',
-              borderLeft: '3px solid var(--accent-color, #3498db)',
-              backgroundColor: 'var(--card-bg, rgba(0, 0, 0, 0.1))',
-              borderRadius: '0 4px 4px 0',
-            }}
-          >
-            ℹ️ <strong>Backend Cold Start Note:</strong> Free-tier cloud instances (Render) spin down after 15 mins of inactivity. Initial requests (including Swagger UI <code>/docs</code> &amp; diagnostic probes) may take ~50s to wake up the backend container. Subsequent requests respond in &lt;50ms.
+          <p className="cold-start-note">
+            <Info size={15} aria-hidden="true" className="inline-icon" />
+            <strong>Backend Cold Start Note:</strong> Free-tier cloud instances (Render) spin down after 15 mins of inactivity. Initial requests (including Swagger UI <code>/docs</code> &amp; diagnostic probes) may take ~50s to wake up the backend container. Subsequent requests respond in &lt;50ms.
           </p>
 
           {/* Top Quick Explorer Bar */}
@@ -35,7 +26,8 @@ export const HowThisSiteWorksPage: React.FC = () => {
             <h3 className="quick-explorer-title">&gt; LIVE EXPLORERS & OPERATIONAL CONSOLES</h3>
             <div className="quick-explorer-buttons">
               <NavLink to="/monitoring" className="explorer-badge-btn monitoring">
-                📊 Live Monitoring Console (/monitoring)
+                <Activity size={15} aria-hidden="true" />
+                <span>Live Monitoring Console (/monitoring)</span>
               </NavLink>
               <a
                 href="https://chris-lau-storybook.pages.dev"
@@ -43,7 +35,8 @@ export const HowThisSiteWorksPage: React.FC = () => {
                 rel="noopener noreferrer"
                 className="explorer-badge-btn storybook"
               >
-                🎨 Live Storybook UI
+                <Sparkles size={15} aria-hidden="true" />
+                <span>Live Storybook UI</span>
               </a>
               <a
                 href={`${BACKEND_ROOT_URL}/docs`}
@@ -51,7 +44,8 @@ export const HowThisSiteWorksPage: React.FC = () => {
                 rel="noopener noreferrer"
                 className="explorer-badge-btn swagger"
               >
-                ⚡ FastAPI Swagger UI (/docs)
+                <Terminal size={15} aria-hidden="true" />
+                <span>FastAPI Swagger UI (/docs)</span>
               </a>
               <a
                 href={`${BACKEND_ROOT_URL}/redoc`}
@@ -59,7 +53,8 @@ export const HowThisSiteWorksPage: React.FC = () => {
                 rel="noopener noreferrer"
                 className="explorer-badge-btn redoc"
               >
-                📖 ReDoc Specs (/redoc)
+                <BookOpen size={15} aria-hidden="true" />
+                <span>ReDoc Specs (/redoc)</span>
               </a>
               <a
                 href={`${BACKEND_ROOT_URL}/openapi.json`}
@@ -67,7 +62,8 @@ export const HowThisSiteWorksPage: React.FC = () => {
                 rel="noopener noreferrer"
                 className="explorer-badge-btn openapi"
               >
-                📋 OpenAPI Schema
+                <FileCode size={15} aria-hidden="true" />
+                <span>OpenAPI Schema</span>
               </a>
             </div>
           </div>

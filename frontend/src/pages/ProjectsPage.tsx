@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { Folder, GitBranch } from 'lucide-react';
 import { projectsData } from '../data/projects';
 import { BoxContainer } from '../components/ui/BoxContainer';
 import { GitHubDashboard } from '../components/github/GitHubDashboard';
@@ -30,7 +31,8 @@ export const ProjectsPage: React.FC = () => {
             className={`projects-tab-btn ${activeTab === 'featured' ? 'active' : ''}`}
             onClick={() => setActiveTab('featured')}
           >
-            📁 Featured Projects
+            <Folder size={16} aria-hidden="true" />
+            <span>Featured Projects</span>
           </button>
           <button
             type="button"
@@ -39,7 +41,8 @@ export const ProjectsPage: React.FC = () => {
             className={`projects-tab-btn ${activeTab === 'github' ? 'active' : ''}`}
             onClick={() => setActiveTab('github')}
           >
-            🐙 Live GitHub Activity
+            <GitBranch size={16} aria-hidden="true" />
+            <span>Live GitHub Activity</span>
           </button>
         </div>
 

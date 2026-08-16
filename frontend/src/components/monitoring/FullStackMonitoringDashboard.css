@@ -157,7 +157,7 @@
 
   .node-subtitle {
     font-size: 0.75rem;
-    opacity: 0.7;
+    color: var(--text-muted);
     margin-bottom: 0.5rem;
   }
 
@@ -207,7 +207,7 @@
   .connector-label {
     font-family: var(--font-family);
     font-size: 0.7rem;
-    opacity: 0.8;
+    color: var(--text-muted);
   }
 
   .arrow {
@@ -261,11 +261,12 @@
   font-size: 0.8rem;
 
   .metric-label {
-    opacity: 0.8;
+    color: var(--text-muted);
   }
 
   .metric-value {
     font-weight: 700;
+    color: var(--text-primary);
   }
 }
 

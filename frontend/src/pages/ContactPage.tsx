@@ -1,3 +1,4 @@
+import { Mail } from 'lucide-react';
 import { profileData } from '../data/profile';
 import { BoxContainer } from '../components/ui/BoxContainer';
 import './Pages.css';
@@ -15,9 +16,10 @@ export const ContactPage = () => {
             <div className="contact-action-box">
               <a
                 href={`mailto:${profileData.email}`}
-                className="link-button primary contact-email-btn"
+                className="link-button primary contact-email-btn inline-icon-label centered"
               >
-                ✉ Send an Email ({profileData.email})
+                <Mail size={16} aria-hidden="true" className="inline-icon" />
+                <span>Send an Email ({profileData.email})</span>
               </a>
             </div>
 
