@@ -1,7 +1,7 @@
 # Chat Observability — Companion Mode
 
 > **Overall Status:** COMPLETE — All 7 phases implemented and tested.
-> **Branch:** `feat/chat-observability`
+> **Branch:** `feat/chat-observability` (merged to `main`)
 > **Last updated:** 2026-08-15
 
 ## Summary
@@ -34,9 +34,9 @@ Each phase is independently shippable and produces a concrete, reviewable artifa
 | **2. Types** | ✅ Complete | `ChatMessageMetrics`, `ChatSessionSummary`, `StreamProgress` | A typed contract the rest of the frontend compiles against. Defines the effective-vs-decode throughput split and the div-by-zero guards up front, so no later phase silently ships `Infinity tok/s`. |
 | **3. Data layer** | ✅ Complete | Timed, metric-emitting `sendChatMessage` | The one function that turns a raw SSE byte stream into a `ChatMessageMetrics` object — TTFT measured at the first non-empty token, `meta`/`meta_server`/`usage` parsed, fallback token estimation when usage is absent. After this phase you can `console.log` full per-message metrics from the console even with no UI. |
 | **4. `useChat` hook** | ✅ Complete | Observability state in the hook | `metricsMap` accumulates per-message metrics; `streamProgress` drives the live readout via chunk-counting refs (honest "chunks/sec"); cleanup on abort/unmount/clear prevents leaks and stale UI. The hook remains the single source of truth for message execution — the panel is a pure render of its state. |
-| **5. Observability panel** | 🔲 Pending | The visual dashboard itself | Everything in "What the visitor sees" above: session card, sparkline, live indicator, per-message list with the segmented TTFT bar. This is the phase that turns numbers into insight — the segmented bar is what teaches a visitor *where* latency lives. Empty state included so it never looks broken on first open. |
-| **6. Companion layout** | 🔲 Pending | The split-panel UX + mobile tabs | Wires the panel into `ChatWidget` behind a persisted toggle, with smooth width transition, independent column scrolling, model-aware mobile tabs (full ARIA tablist wiring), and the companion-class fix that actually widens the panel. After this phase the feature is user-facing and complete. |
-| **7. Tests** | 🔲 Pending | Regression coverage for every claim above | Backend: structured events, provider-aware `stream_options`, usage-chunk handling, server-timing capture. Frontend: SSE parsing + both throughput fields, chunk-vs-token honesty, `clearChat` reset, companion-class application, tab-driven column switching. Guards specifically against the bugs caught in review (stale summary after clear, broken mobile tabs, Infinity throughput). |
+| **5. Observability panel** | ✅ Complete | The visual dashboard itself | Everything in "What the visitor sees" above: session card, sparkline, live indicator, per-message list with the segmented TTFT bar. This is the phase that turns numbers into insight — the segmented bar is what teaches a visitor *where* latency lives. Empty state included so it never looks broken on first open. |
+| **6. Companion layout** | ✅ Complete | The split-panel UX + mobile tabs | Wires the panel into `ChatWidget` behind a persisted toggle, with smooth width transition, independent column scrolling, model-aware mobile tabs (full ARIA tablist wiring), and the companion-class fix that actually widens the panel. After this phase the feature is user-facing and complete. |
+| **7. Tests** | ✅ Complete | Regression coverage for every claim above | Backend: structured events, provider-aware `stream_options`, usage-chunk handling, server-timing capture. Frontend: SSE parsing + both throughput fields, chunk-vs-token honesty, `clearChat` reset, companion-class application, tab-driven column switching. Guards specifically against the bugs caught in review (stale summary after clear, broken mobile tabs, Infinity throughput). 180/180 Vitest passing. |
 
 **Recommended phasing for review:** Phases 1–4 can land as one backend+data PR (no visible UX change, fully testable). Phase 5 is a self-contained component PR (develop against a fixture `metricsMap`). Phase 6 is the integration PR that turns it on for users. Phase 7 spans all three but each test file should land with the code it covers.
 

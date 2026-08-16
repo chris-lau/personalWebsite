@@ -1,7 +1,7 @@
 # AI Feature: "Chat with Chris" — RAG Chat Widget
 
-> **Status:** Implemented (chat widget live; observability all 7 phases complete on `feat/chat-observability` branch).
-> **Date:** 2026-08-02 (original plan), 2026-08-15 (status update)
+> **Status:** Implemented (chat widget live; observability all 7 phases complete, merged to `main`).
+> **Date:** 2026-08-02 (original plan), 2026-08-16 (final update)
 
 ## Overview
 Add a visitor-facing chat widget that answers questions grounded in your blog posts, guidebooks, and profile. Streams replies token-by-token (SSE) for a responsive UX, with a model switcher on the UI (Gemini / DeepSeek / GPT — all via one OpenAI-compatible SDK wrapper).
