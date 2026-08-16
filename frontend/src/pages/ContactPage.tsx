@@ -16,10 +16,9 @@ export const ContactPage = () => {
             <div className="contact-action-box">
               <a
                 href={`mailto:${profileData.email}`}
-                className="link-button primary contact-email-btn"
-                style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}
+                className="link-button primary contact-email-btn inline-icon-label centered"
               >
-                <Mail size={16} aria-hidden="true" />
+                <Mail size={16} aria-hidden="true" className="inline-icon" />
                 <span>Send an Email ({profileData.email})</span>
               </a>
             </div>

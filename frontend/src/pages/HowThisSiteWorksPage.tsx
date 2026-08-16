@@ -17,7 +17,7 @@ export const HowThisSiteWorksPage: React.FC = () => {
 
           {/* Render Cold Start Note */}
           <p className="cold-start-note">
-            <Info size={15} aria-hidden="true" style={{ verticalAlign: 'text-bottom', marginRight: '0.4rem', display: 'inline' }} />
+            <Info size={15} aria-hidden="true" className="inline-icon" />
             <strong>Backend Cold Start Note:</strong> Free-tier cloud instances (Render) spin down after 15 mins of inactivity. Initial requests (including Swagger UI <code>/docs</code> &amp; diagnostic probes) may take ~50s to wake up the backend container. Subsequent requests respond in &lt;50ms.
           </p>
 

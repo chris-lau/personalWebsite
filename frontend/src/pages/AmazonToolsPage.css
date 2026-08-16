@@ -864,9 +864,9 @@
 }
 
 /* ==========================================================================
-   Mobile & Responsive Breakpoints for Amazon Suite (< 680px)
+   Mobile & Responsive Breakpoints for Amazon Suite (< 640px)
    ========================================================================== */
-@media (max-width: 680px) {
+@media (max-width: 640px) {
   .amazon-tools-page .page-title {
     font-size: 1.65rem;
   }

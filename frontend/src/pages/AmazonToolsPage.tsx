@@ -41,8 +41,8 @@ export const AmazonToolsPage: React.FC = () => {
       {/* Cross-Tool State Banner if a niche was selected from Opportunity Finder */}
       {selectedNiche && activeTab !== 'trends' && (
         <div className="active-niche-banner">
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
-            <Bookmark size={16} aria-hidden="true" style={{ color: 'var(--accent-primary)' }} />
+          <span className="inline-icon-label">
+            <Bookmark size={16} aria-hidden="true" className="inline-icon" />
             <span>
               Loaded Active Niche: <strong>{selectedNiche.name}</strong> (Category:{' '}
               {selectedNiche.category}, Avg Price: ${selectedNiche.avgPrice.toFixed(2)})

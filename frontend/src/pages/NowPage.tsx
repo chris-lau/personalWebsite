@@ -30,8 +30,8 @@ export const NowPage: React.FC = () => {
               <h3>&gt; CURRENTLY READING</h3>
               <ul>
                 {nowData.reading.map((book, i) => (
-                  <li key={i} style={{ display: 'flex', alignItems: 'center' }}>
-                    <BookOpen size={14} aria-hidden="true" style={{ marginRight: '0.4rem', color: 'var(--accent-primary)', flexShrink: 0 }} />
+                  <li key={i} className="inline-icon-label">
+                    <BookOpen size={14} aria-hidden="true" className="inline-icon" style={{ color: 'var(--accent-primary)' }} />
                     <span>{book}</span>
                   </li>
                 ))}
