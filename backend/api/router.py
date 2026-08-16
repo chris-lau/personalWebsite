@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from .endpoints import (
+    amazon,
     chat,
     experience,
     github,
@@ -25,4 +26,5 @@ api_router.include_router(guidebook.router, tags=["Guidebook"])
 api_router.include_router(github.router, tags=["GitHub Proxy"])
 api_router.include_router(telemetry.router, tags=["Telemetry & Health"])
 api_router.include_router(chat.router, tags=["Chat"])
+api_router.include_router(amazon.router, tags=["Amazon Seller Tools"])
 

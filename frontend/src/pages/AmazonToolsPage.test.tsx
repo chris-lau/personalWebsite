@@ -61,7 +61,7 @@ describe('AmazonToolsPage', () => {
   it('filters niches based on search query', () => {
     renderWithProviders();
 
-    const searchInput = screen.getByPlaceholderText(/e.g. Desk, Coffee, Ceramic, Travel.../i);
+    const searchInput = screen.getByPlaceholderText(/Search live Amazon keywords/i);
     fireEvent.change(searchInput, { target: { value: 'Coffee' } });
 
     expect(screen.getByText(/Borosilicate Cold Brew Coffee Maker/i)).toBeInTheDocument();

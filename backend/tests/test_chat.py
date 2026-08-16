@@ -15,6 +15,7 @@ Test strategy (Phase 1f):
 """
 
 import json
+import time
 from types import SimpleNamespace
 
 import pytest
@@ -139,7 +140,7 @@ async def _collect_stream_events(model_id, chunks, monkeypatch):
     events = []
     async for event in chat._generate_stream(
         fake_client, model_id, "test system prompt", [], "hello",
-        request_start=1000.0,
+        request_start=time.monotonic(),
     ):
         events.append(event)
     return events, captured_kwargs

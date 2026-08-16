@@ -28,7 +28,7 @@ import math
 import threading
 import time
 from collections.abc import AsyncIterator
-from datetime import datetime, timedelta, UTC
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from fastapi import APIRouter, HTTPException, Request
@@ -110,12 +110,12 @@ class _DailyCounter:
 
 def _utc_today() -> str:
     """Current UTC date as ``YYYY-MM-DD`` (used as the bucket rollover key)."""
-    return datetime.now(UTC).strftime("%Y-%m-%d")
+    return datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
 
 def _seconds_to_utc_midnight() -> int:
     """Seconds remaining until the next UTC midnight (for Retry-After)."""
-    now = datetime.now(UTC)
+    now = datetime.now(timezone.utc)
     tomorrow = (now + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
     return math.ceil((tomorrow - now).total_seconds())
 

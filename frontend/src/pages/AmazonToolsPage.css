@@ -805,6 +805,210 @@
 }
 
 /* ==========================================================================
+   Live Search & Real Data Elements
+   ========================================================================== */
+.live-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+}
+
+.live-indicator-dot {
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #10b981;
+  animation: pulse-dot 2s infinite;
+}
+
+/* Degraded state: live request blocked/unavailable, benchmark data shown */
+.live-status-pill.status-simulated {
+  color: #d97706;
+  background: rgba(217, 119, 6, 0.1);
+  border-color: rgba(217, 119, 6, 0.35);
+}
+
+.live-indicator-dot.dot-warning {
+  background: #f59e0b;
+  box-shadow: 0 0 8px #f59e0b;
+}
+
+.live-note-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: #b45309;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.live-note-icon {
+  flex-shrink: 0;
+}
+
+@keyframes pulse-dot {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+}
+
+.live-search-form {
+  margin-bottom: 1.25rem;
+}
+
+.search-bar-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.live-search-input {
+  flex: 1;
+  font-size: 0.95rem;
+  padding: 0.75rem 1rem;
+}
+
+.search-submit-btn {
+  padding: 0.75rem 1.25rem;
+  font-size: 0.9rem;
+}
+
+.live-suggestions-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+  padding: 0.5rem 0.75rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+}
+
+.suggestions-label {
+  font-size: 0.75rem;
+  color: var(--text-muted, #94a3b8);
+  font-weight: 600;
+}
+
+.suggestions-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.suggestion-tag-btn {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  color: #93c5fd;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.suggestion-tag-btn:hover {
+  background: rgba(59, 130, 246, 0.25);
+  color: #ffffff;
+}
+
+.loading-live-banner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  padding: 1.25rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.spinner-icon {
+  font-size: 1.75rem;
+  animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.asin-quick-loader-box {
+  background: rgba(59, 130, 246, 0.06);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.asin-loader-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent-primary, #3b82f6);
+  margin-bottom: 0.5rem;
+}
+
+.asin-input-form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.asin-field {
+  flex: 1;
+}
+
+.asin-fetch-btn {
+  padding: 0.5rem 1rem;
+}
+
+.asin-error-msg {
+  display: block;
+  font-size: 0.8rem;
+  color: #ef4444;
+  margin-top: 0.4rem;
+}
+
+.active-product-title-badge {
+  font-size: 0.8rem;
+  margin-top: 0.6rem;
+  padding: 0.4rem 0.6rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  color: var(--text-primary, #f8fafc);
+  line-height: 1.4;
+}
+
+.product-tag {
+  font-weight: 700;
+  color: #93c5fd;
+}
+
+/* ==========================================================================
    CLI Theme Specific Adaptations
    ========================================================================== */
 [data-theme='cli'] .amazon-tab-btn.active {
@@ -921,4 +1125,24 @@
     width: 100%;
     min-height: 42px;
   }
+}
+/* Empty state card shown when no niches/products match the filters */
+.empty-results-card {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  border-radius: 12px;
+  border: 1px dashed rgba(148, 163, 184, 0.4);
+  background: rgba(148, 163, 184, 0.05);
+}
+
+.empty-results-card h4 {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+}
+
+.empty-results-card p {
+  margin: 0;
+  font-size: 0.88rem;
+  opacity: 0.75;
 }

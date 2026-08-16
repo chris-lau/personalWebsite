@@ -1,6 +1,7 @@
 import { Profile, Project, NowState } from '../types/portfolio';
 import { GitHubUser, GitHubRepo } from '../types/github';
 import { ChatModelsResponse, ChatRequest, ChatMessageMetrics, DECODE_FLOOR_SEC } from '../types/chat';
+import { AmazonSearchResponse, AmazonAsinDetail, AmazonTrendResponse } from '../types/amazon';
 import { profileData } from '../data/profile';
 import { projectsData } from '../data/projects';
 import { nowData } from '../data/now';
@@ -37,7 +38,7 @@ export async function fetchProfile(): Promise<BackendResponse<Profile>> {
  */
 export async function fetchProjects(tag?: string): Promise<BackendResponse<Project[]>> {
   try {
-    const url = tag 
+    const url = tag
       ? `${API_BASE_URL}/projects?tag=${encodeURIComponent(tag)}`
       : `${API_BASE_URL}/projects`;
     const res = await fetchWithTimeout(url);
@@ -307,5 +308,150 @@ export async function sendChatMessage(
   } finally {
     // Always release the reader so the underlying stream is not left open.
     reader.releaseLock();
+  }
+}
+
+/**
+ * Live search Amazon products proxy.
+ */
+export async function searchLiveAmazonProducts(
+  query: string,
+  category: string = 'all'
+): Promise<BackendResponse<AmazonSearchResponse>> {
+  try {
+    const url = `${API_BASE_URL}/amazon/search?q=${encodeURIComponent(
+      query
+    )}&category=${encodeURIComponent(category)}`;
+    const res = await fetchWithTimeout(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data: AmazonSearchResponse = await res.json();
+    return { data, isFallback: false };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+    return {
+      data: {
+        query,
+        category,
+        total_results: 0,
+        products: [],
+        is_live: false,
+        source: 'simulated_benchmark',
+        cached: false,
+        note: '',
+      },
+      isFallback: true,
+      error: errorMsg,
+    };
+  }
+}
+
+/**
+ * Extract a 10-character Amazon ASIN from a raw ASIN or a product URL
+ * (e.g. "B08N5WRWNW" or "https://www.amazon.com/dp/B08N5WRWNW").
+ */
+function extractAmazonAsin(input: string): string | null {
+  const trimmed = input.trim();
+  const urlMatch = trimmed.match(/(?:\/dp\/|\/gp\/product\/|\/d\/)([A-Z0-9]{10})/i);
+  if (urlMatch) return urlMatch[1].toUpperCase();
+  const asinMatch = trimmed.match(/\b([A-Z0-9]{10})\b/i);
+  return asinMatch ? asinMatch[1].toUpperCase() : null;
+}
+
+/**
+ * Live inspect an Amazon ASIN or product URL.
+ *
+ * The ASIN is always extracted client-side so the request path only ever
+ * carries a bare 10-character ASIN (URL-encoded full links would decode to
+ * slashes server-side and 404 the `/asin/{asin}` route).
+ */
+export async function lookupLiveAmazonAsin(
+  asinOrUrl: string
+): Promise<BackendResponse<AmazonAsinDetail>> {
+  const asin = extractAmazonAsin(asinOrUrl);
+  if (!asin) {
+    return {
+      data: {
+        asin: asinOrUrl.trim(),
+        title: `Amazon Product (${asinOrUrl.trim()})`,
+        price: 29.99,
+        rating: 4.5,
+        reviews_count: 350,
+        category: 'home_kitchen',
+        category_name: 'Home & Kitchen',
+        fba_tier: 'large_standard',
+        fba_tier_label: 'Large Standard (16 oz - 20 lbs)',
+        image_url: '',
+        product_url: `https://www.amazon.com/dp/${asinOrUrl.trim()}`,
+        bullets: [],
+        weight_lb: 1.5,
+        estimated_cogs: 6.5,
+        is_live: false,
+        source: 'simulated_benchmark',
+      },
+      isFallback: true,
+      error:
+        'Invalid input — provide a 10-character ASIN (e.g. B08N5WRWNW) or an amazon.com/dp/… link.',
+    };
+  }
+
+  try {
+    const url = `${API_BASE_URL}/amazon/asin/${asin}`;
+    const res = await fetchWithTimeout(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data: AmazonAsinDetail = await res.json();
+    return { data, isFallback: false };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+    return {
+      data: {
+        asin,
+        title: `Amazon Product (${asin})`,
+        price: 29.99,
+        rating: 4.5,
+        reviews_count: 350,
+        category: 'home_kitchen',
+        category_name: 'Home & Kitchen',
+        fba_tier: 'large_standard',
+        fba_tier_label: 'Large Standard (16 oz - 20 lbs)',
+        image_url: '',
+        product_url: `https://www.amazon.com/dp/${asin}`,
+        bullets: ['Ergonomic construction', 'Standard Amazon FBA specification'],
+        weight_lb: 1.5,
+        estimated_cogs: 6.5,
+        is_live: false,
+        source: 'simulated_benchmark',
+      },
+      isFallback: true,
+      error: errorMsg,
+    };
+  }
+}
+
+/**
+ * Fetch live search trends and suggestions.
+ */
+export async function fetchLiveAmazonTrends(
+  query: string
+): Promise<BackendResponse<AmazonTrendResponse>> {
+  try {
+    const url = `${API_BASE_URL}/amazon/trends?q=${encodeURIComponent(query)}`;
+    const res = await fetchWithTimeout(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data: AmazonTrendResponse = await res.json();
+    return { data, isFallback: false };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+    return {
+      data: {
+        query,
+        trend_points: [],
+        growth_velocity_pct: 35,
+        suggestions: [`${query} organizer`, `${query} set`],
+        is_live: false,
+        source: 'simulated_benchmark',
+      },
+      isFallback: true,
+      error: errorMsg,
+    };
   }
 }
