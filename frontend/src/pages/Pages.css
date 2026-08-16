@@ -353,22 +353,6 @@
   color: var(--accent-primary);
 }
 
-/* Inline Icon Layout Helpers */
-.inline-icon-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.inline-icon-label.centered {
-  justify-content: center;
-}
-
-.inline-icon {
-  flex-shrink: 0;
-  vertical-align: text-bottom;
-}
-
 /* Skill Matrix Alignment */
 .skills-matrix {
   display: flex;

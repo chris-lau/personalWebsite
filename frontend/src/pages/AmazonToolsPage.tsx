@@ -28,7 +28,7 @@ export const AmazonToolsPage: React.FC = () => {
     <div className="page-container amazon-tools-page">
       <header className="page-header">
         <h1 className="page-title">
-          <ShoppingBag size={28} aria-hidden="true" style={{ color: 'var(--accent-primary)' }} />
+          <ShoppingBag size={28} aria-hidden="true" className="inline-icon accent" />
           <span>Amazon Seller Trend & Opportunity Suite</span>
         </h1>
         <p className="page-description">
@@ -42,7 +42,7 @@ export const AmazonToolsPage: React.FC = () => {
       {selectedNiche && activeTab !== 'trends' && (
         <div className="active-niche-banner">
           <span className="inline-icon-label">
-            <Bookmark size={16} aria-hidden="true" className="inline-icon" />
+            <Bookmark size={16} aria-hidden="true" className="inline-icon accent" />
             <span>
               Loaded Active Niche: <strong>{selectedNiche.name}</strong> (Category:{' '}
               {selectedNiche.category}, Avg Price: ${selectedNiche.avgPrice.toFixed(2)})

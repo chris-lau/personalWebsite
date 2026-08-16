@@ -31,7 +31,7 @@ export const NowPage: React.FC = () => {
               <ul>
                 {nowData.reading.map((book, i) => (
                   <li key={i} className="inline-icon-label">
-                    <BookOpen size={14} aria-hidden="true" className="inline-icon" style={{ color: 'var(--accent-primary)' }} />
+                    <BookOpen size={14} aria-hidden="true" className="inline-icon accent" />
                     <span>{book}</span>
                   </li>
                 ))}
