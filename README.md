@@ -62,6 +62,14 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - **Tabbed Navigation**: Accessible tab control on Projects page (`📁 Featured Projects` vs `🐙 Live GitHub Activity`).
   - **Storybook Stories**: Isolated visual component workshops for `<GitHubSummary />`, `<GitHubRepoCard />`, and `<GitHubUsernameSelector />`.
 
+- **Amazon Seller Intelligence & Opportunity Suite (`/amazon-tools`)**:
+  - **Live Product Search & Scraping Proxy**: FastAPI backend proxy (`GET /api/amazon/search`, `GET /api/amazon/asin/{asin}`) parsing live Amazon marketplace HTML for real product cards, live prices, customer reviews, ratings, and Prime eligibility with in-memory TTL caching.
+  - **Demand Velocity & Autocomplete Proxy**: Real-time Amazon search autocomplete suggestions and demand momentum velocity proxy (`GET /api/amazon/trends`).
+  - **Niche Opportunity Finder**: Search and filter 12+ product micro-niches with automated 0–100 Opportunity Scores based on search velocity, competition level, and price sweet spots.
+  - **2026 FBA Unit Economics Calculator**: Precise profit & margin simulator supporting 2026 Amazon fee schedules, Low-Price FBA fee breaks, referral rate tiers, dimensional weight logic, and Markdown sourcing summary export.
+  - **Review Gap & AI Listing Scanner**: Aggregates competitor complaint themes and generates prompt engineering templates for product differentiation.
+  - **Truthful Data Flagging & Degradation UI**: Differentiates live marketplace data from simulated benchmarks (`is_live` flags, `source` discriminators, warning status pills, and informative note banners).
+
 - **Accessibility, Mobile Responsiveness & UX**:
   - **Edge-to-Edge Full-Bleed Resets**: Reset `#root` container with dynamic viewport units (`100dvh`) ensuring full-bleed sticky header across mobile screens.
   - **Universal Breakpoints**: Standardized mobile responsive layouts on a clean 640px / 768px / 900px hierarchy.
@@ -79,7 +87,7 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - Storybook 8 component catalog & accessibility auditing (`@storybook/addon-a11y`).
   - Vitest + `@testing-library/react` unit & component integration tests (**180 / 180 passing tests** across 24 test files).
   - Playwright real-browser end-to-end (E2E) testing across all 3 themes (**9 / 9 passing tests** across 3 spec files).
-  - Pytest backend unit & integration tests (**60 / 60 passing tests**).
+  - Pytest backend unit & integration tests (**66 / 66 passing tests**).
 
 ---
 
