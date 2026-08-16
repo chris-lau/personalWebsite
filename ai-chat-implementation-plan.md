@@ -1,6 +1,6 @@
 # AI Feature: "Chat with Chris" — RAG Chat Widget
 
-> **Status:** Implemented (chat widget live; observability Phases 1–4 complete on `feat/chat-observability` branch).
+> **Status:** Implemented (chat widget live; observability all 7 phases complete on `feat/chat-observability` branch).
 > **Date:** 2026-08-02 (original plan), 2026-08-15 (status update)
 
 ## Overview

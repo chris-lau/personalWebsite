@@ -1,7 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, Trash2, Zap } from 'lucide-react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
+import { MessageCircle, X, Send, Trash2, Zap, Activity } from 'lucide-react';
 import { BoxContainer } from '../ui/BoxContainer';
 import { useChat } from '../../hooks/useChat';
+import { ChatObservabilityPanel } from './ChatObservabilityPanel';
+import type { ChatSessionSummary } from '../../types/chat';
 import './ChatWidget.css';
 
 const STARTER_QUESTIONS = [
@@ -10,6 +12,8 @@ const STARTER_QUESTIONS = [
   'What is the frontend guidebook about?',
   'How does this site handle monitoring?',
 ];
+
+const COMPANION_STORAGE_KEY = 'chat_companion_mode';
 
 export const ChatWidget: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
@@ -27,7 +31,43 @@ export const ChatWidget: React.FC = () => {
     setSelectedModel,
     sendMessage,
     clearChat,
+    metricsMap,
+    streamProgress,
   } = useChat();
+
+  // Companion mode toggle — persisted in localStorage
+  const [companionMode, setCompanionMode] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(COMPANION_STORAGE_KEY) === 'true';
+    } catch {
+      return false;
+    }
+  });
+  useEffect(() => {
+    try {
+      localStorage.setItem(COMPANION_STORAGE_KEY, String(companionMode));
+    } catch {
+      // Private browsing / SSR — silently ignore
+    }
+  }, [companionMode]);
+
+  // Mobile tab state (only relevant when companionMode is true)
+  const [mobileTab, setMobileTab] = useState<'chat' | 'obs'>('chat');
+
+  // Session summary — derived from metricsMap, lives at component level
+  const sessionSummary = useMemo<ChatSessionSummary | null>(() => {
+    if (metricsMap.size === 0) return null;
+    const entries = Array.from(metricsMap.values());
+    return {
+      message_count: entries.length,
+      total_prompt_tokens: entries.reduce((s, m) => s + (m.prompt_tokens ?? 0), 0),
+      total_completion_tokens: entries.reduce((s, m) => s + (m.completion_tokens ?? 0), 0),
+      total_estimated_cost_usd: entries.reduce((s, m) => s + m.estimated_cost_usd, 0),
+      avg_ttft_client_ms: entries.reduce((s, m) => s + m.ttft_client_ms, 0) / entries.length,
+      avg_duration_ms: entries.reduce((s, m) => s + m.total_duration_ms, 0) / entries.length,
+      latency_history: entries.map((m) => m.total_duration_ms),
+    };
+  }, [metricsMap]);
 
   // Auto-scroll to the latest message as tokens stream in.
   useEffect(() => {
@@ -77,9 +117,9 @@ export const ChatWidget: React.FC = () => {
         <span className="chat-launcher__pulse" aria-hidden="true" />
       </button>
 
-      {/* Chat panel */}
+      {/* Chat panel — companion modifier goes on <section> for width rule */}
       <section
-        className={`chat-panel ${open ? 'chat-panel--open' : ''}`}
+        className={`chat-panel ${open ? 'chat-panel--open' : ''} ${companionMode ? 'chat-panel--companion' : ''}`}
         role="dialog"
         aria-label="Chat with Chris"
         aria-hidden={!open}
@@ -119,6 +159,16 @@ export const ChatWidget: React.FC = () => {
               )}
               <button
                 type="button"
+                className={`chat-panel__icon-btn ${companionMode ? 'chat-panel__icon-btn--active' : ''}`}
+                onClick={() => setCompanionMode(!companionMode)}
+                aria-label={companionMode ? 'Exit companion mode' : 'Enter companion mode'}
+                aria-pressed={companionMode}
+                title="Toggle observability"
+              >
+                <Activity size={16} aria-hidden="true" />
+              </button>
+              <button
+                type="button"
                 className="chat-panel__icon-btn"
                 onClick={() => setOpen(false)}
                 aria-label="Close chat"
@@ -139,64 +189,120 @@ export const ChatWidget: React.FC = () => {
             </div>
           )}
 
-          <div className="chat-panel__messages" ref={scrollRef}>
-            {messages.length === 0 ? (
-              <div className="chat-panel__empty">
-                <p className="chat-panel__greeting">
-                  Ask me anything about Chris&apos;s blog posts, guidebooks, or experience.
-                </p>
-                <div className="chat-panel__starters">
-                  {STARTER_QUESTIONS.map((q) => (
-                    <button
-                      key={q}
-                      type="button"
-                      className="chat-panel__starter"
-                      onClick={() => handleStarter(q)}
-                      disabled={loading}
-                    >
-                      {q}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              messages.map((m) => (
-                <div key={m.id} className={`chat-msg chat-msg--${m.role}`}>
-                  <span className="chat-msg__role">{m.role === 'user' ? 'YOU' : 'CHRIS'}</span>
-                  <span className="chat-msg__content">
-                    {m.content}
-                    {loading && m.role === 'assistant' && m.content === '' && (
-                      <span className="chat-msg__cursor" aria-label="typing">
-                        ▋
+          {/* Mobile tab toggle (rendered only in companion mode).
+              Full WAI-ARIA tablist wiring. */}
+          {companionMode && (
+            <div className="chat-panel__tabs" role="tablist" aria-label="Companion view">
+              <button
+                role="tab"
+                id="chat-companion-tab-chat"
+                aria-selected={mobileTab === 'chat'}
+                aria-controls="chat-companion-panel-chat"
+                className={`chat-panel__tab ${mobileTab === 'chat' ? 'chat-panel__tab--active' : ''}`}
+                onClick={() => setMobileTab('chat')}
+              >
+                Chat
+              </button>
+              <button
+                role="tab"
+                id="chat-companion-tab-obs"
+                aria-selected={mobileTab === 'obs'}
+                aria-controls="chat-companion-panel-obs"
+                className={`chat-panel__tab ${mobileTab === 'obs' ? 'chat-panel__tab--active' : ''}`}
+                onClick={() => setMobileTab('obs')}
+              >
+                Observability
+              </button>
+            </div>
+          )}
+
+          <div className={`chat-panel__body ${companionMode ? 'chat-panel__body--split' : ''}`}>
+            {/* Left column — chat messages + input.
+                Conditional role="tabpanel": only meaningful in companion mode. */}
+            <div
+              id="chat-companion-panel-chat"
+              role={companionMode ? 'tabpanel' : undefined}
+              aria-labelledby={companionMode ? 'chat-companion-tab-chat' : undefined}
+              className={`chat-panel__chat-col ${mobileTab === 'chat' ? 'chat-panel__chat-col--active' : ''}`}
+            >
+              <div className="chat-panel__messages" ref={scrollRef}>
+                {messages.length === 0 ? (
+                  <div className="chat-panel__empty">
+                    <p className="chat-panel__greeting">
+                      Ask me anything about Chris&apos;s blog posts, guidebooks, or experience.
+                    </p>
+                    <div className="chat-panel__starters">
+                      {STARTER_QUESTIONS.map((q) => (
+                        <button
+                          key={q}
+                          type="button"
+                          className="chat-panel__starter"
+                          onClick={() => handleStarter(q)}
+                          disabled={loading}
+                        >
+                          {q}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  messages.map((m) => (
+                    <div key={m.id} className={`chat-msg chat-msg--${m.role}`}>
+                      <span className="chat-msg__role">{m.role === 'user' ? 'YOU' : 'CHRIS'}</span>
+                      <span className="chat-msg__content">
+                        {m.content}
+                        {loading && m.role === 'assistant' && m.content === '' && (
+                          <span className="chat-msg__cursor" aria-label="typing">
+                            ▋
+                          </span>
+                        )}
                       </span>
-                    )}
-                  </span>
-                </div>
-              ))
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <form className="chat-panel__input-row" onSubmit={handleSubmit}>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  className="chat-panel__input"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder={loading ? 'Waiting for reply…' : 'Ask a question…'}
+                  disabled={loading}
+                  maxLength={2000}
+                  aria-label="Message"
+                />
+                <button
+                  type="submit"
+                  className="chat-panel__send"
+                  disabled={!input.trim() || loading}
+                  aria-label="Send message"
+                >
+                  <Send size={16} aria-hidden="true" />
+                </button>
+              </form>
+            </div>
+
+            {/* Right column — observability (only in companion mode). */}
+            {companionMode && (
+              <div
+                id="chat-companion-panel-obs"
+                role="tabpanel"
+                aria-labelledby="chat-companion-tab-obs"
+                className={`chat-panel__obs-col ${mobileTab === 'obs' ? 'chat-panel__obs-col--active' : ''}`}
+              >
+                <ChatObservabilityPanel
+                  metricsMap={metricsMap}
+                  sessionSummary={sessionSummary}
+                  isStreaming={loading}
+                  streamProgress={streamProgress}
+                  messages={messages}
+                />
+              </div>
             )}
           </div>
-
-          <form className="chat-panel__input-row" onSubmit={handleSubmit}>
-            <input
-              ref={inputRef}
-              type="text"
-              className="chat-panel__input"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder={loading ? 'Waiting for reply…' : 'Ask a question…'}
-              disabled={loading}
-              maxLength={2000}
-              aria-label="Message"
-            />
-            <button
-              type="submit"
-              className="chat-panel__send"
-              disabled={!input.trim() || loading}
-              aria-label="Send message"
-            >
-              <Send size={16} aria-hidden="true" />
-            </button>
-          </form>
         </BoxContainer>
       </section>
     </>

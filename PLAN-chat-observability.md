@@ -1,6 +1,6 @@
 # Chat Observability — Companion Mode
 
-> **Overall Status:** IN PROGRESS — Phases 1–4 complete, Phases 5–7 remaining.
+> **Overall Status:** COMPLETE — All 7 phases implemented and tested.
 > **Branch:** `feat/chat-observability`
 > **Last updated:** 2026-08-15
 
@@ -548,7 +548,7 @@ Add new fields: `metricsMap`, `streamProgress`. (`loading` already exists and is
 
 ---
 
-## Phase 5: ChatObservabilityPanel component
+## Phase 5: ChatObservabilityPanel component ✅ COMPLETE
 
 **New file: `frontend/src/components/chat/ChatObservabilityPanel.tsx`**
 
@@ -613,7 +613,7 @@ Sections (top to bottom):
 
 ---
 
-## Phase 6: ChatWidget companion mode layout
+## Phase 6: ChatWidget companion mode layout ✅ COMPLETE
 
 **File: `frontend/src/components/chat/ChatWidget.tsx`**
 
@@ -860,7 +860,7 @@ Both columns scroll independently. The parent `overflow: hidden` prevents a sing
 
 ---
 
-## Phase 7: Tests
+## Phase 7: Tests ✅ COMPLETE
 
 **Backend:**
 - `backend/tests/test_chat.py` —
