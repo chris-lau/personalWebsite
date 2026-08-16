@@ -21,28 +21,34 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - Consolidated 10 flat navigation items down to 3 intuitive top-level categories (**About** ▾, **Work & Writing** ▾, **System & Ops** ▾) + standalone **Contact** link.
   - **Logo / Brand (`CL / Chris Lau`)**: Direct link to Home (`/`).
   - **`About` ▾**: Bio & Profile (`/about`), Experience & Career (`/experience`), What I'm Doing Now (`/now`).
-  - **`Work & Writing` ▾**: Portfolio Projects (`/projects`), Technical Blog (`/blog`), Engineering Book (`/guidebook`).
+  - **`Work & Writing` ▾**: Portfolio Projects (`/projects`), Technical Blog (`/blog`), Engineering Guidebooks (`/guidebook`), Amazon Seller Suite (`/amazon-tools`).
   - **`System & Ops` ▾**: Site Architecture & Stack (`/how-this-site-works`), Ops Dashboard (`/monitoring`).
   - **`Contact`**: Standalone CTA link (`/contact`).
   - **Theme-Specific Submenu Adaptations**: Glassmorphism floating cards in Modern theme, Unix folder structures (`about/`, `work/`, `sys/`) in CLI theme, and ASCII border popover boxes (`+--- ABOUT ---+`) in ASCII theme.
   - **Accessibility & UX**: W3C ARIA disclosure semantics (`aria-expanded`, `aria-haspopup="true"`, `aria-controls`), keyboard `Escape` key close, auto-dismiss on outside click, and responsive mobile drawer accordion collapse.
 
-- **Interactive Frontend Development Guidebook App (`/guidebook`)**:
-  - Full 9-chapter interactive guidebook: *Building Modern Web Applications: A Step-by-Step Guide for Frontend Beginners*.
-  - Features sticky Table of Contents sidebar, markdown canvas rendering, syntax-highlighted line-by-line code blocks, WCAG tables, and next/prev chapter pagination buttons.
-  - Includes **Chapter 9: Consuming External REST APIs & Client-Side Caching** (decoupling API view models, 15-minute `sessionStorage` TTL caching, custom hooks, and Storybook stories).
+- **Interactive Dual Engineering Guidebook App (`/guidebook`)**:
+  - **Dual Interactive Books (16 Chapters Total)**:
+    - **Book 1: Frontend Foundations**: *Building Modern Web Applications: A Step-by-Step Guide for Frontend Beginners* (9 chapters: React fundamentals, component design, state management, SPA routing, API caching, testing strategies).
+    - **Book 2: Backend Architecture**: *Production-Ready Backend Engineering: A Step-by-Step Guide for Python & FastAPI* (7 chapters: REST design, Pydantic schemas, middleware, database integration, Alembic migrations, SSE streaming, Docker containerization).
+  - Features dynamic book toggle switcher, collapsible mobile Table of Contents (`Choose Chapter ▾`), syntax-highlighted code blocks, WCAG tables, and next/prev chapter pagination buttons.
   - **Performance & Mobile Optimization**: `useMemo` pre-parsed markdown node caching, container-relative instant scrolling (`scrollToReader()`), and CSS Grid `minmax(0, 1fr)` track sizing for responsive mobile reading without horizontal viewport overflow.
 
-- **Full-Featured Technical Blog Engine**:
+- **Amazon Seller Trend & Opportunity Suite (`/amazon-tools`)**:
+  - **Opportunity Finder**: Interactive discovery tool analyzing 12 high-velocity product niches with customizable demand vs. competition scoring, search volume filters, and category toggles.
+  - **2026 FBA Unit Economics & Profit Margin Calculator**: Dynamic financial simulator modeling accurate 2026 Amazon fulfillment fee tiers, category-specific referral rates, TACoS ad spend, landed COGS, and breakeven margins.
+  - **Competitor Review Sentiment & Gap Analysis**: Product intelligence dashboard synthesizing sentiment weaknesses across 100+ customer reviews with instant AI prompt generation for product redesign.
+  - **Keyword Velocity & Trends Explorer**: Search volume tracking and growth velocity indicator identifying trending product terms before seasonal demand spikes.
+
+- **Full-Featured Technical Blog Engine (`/blog`)**:
   - Modular Markdown storage in `backend/posts/`, auto-discovered at build time via Vite's `import.meta.glob` (no manual import lists to maintain).
   - Full GFM Markdown rendering via `react-markdown` + `remark-gfm` (shared `<MarkdownRenderer>` component supporting inline links, bold, code, tables, ordered/unordered lists, blockquotes with TL;DR callout detection, and images).
   - Query helpers (`getAllBlogPosts`, `getBlogPostBySlug`, `getBlogPostsByTag`, `getGroupedBlogPostsByCategory`, `getRelatedBlogPosts`).
   - **Executive Summaries**: Every article features a prominent **TL;DR** callout box for instant comprehension.
-  - **Category Grouping & Discovery**: Articles organized under clear technical categories (`React Architecture & Design Systems`, `Developer Workflows & Tooling`, `Testing & Quality Assurance`) with automated **Related Articles** suggestions.
-  - Includes 13 technical articles covering React architecture, SPA routing mechanics & Cloudflare hosting, scaffolding, 4-tier testing strategies, design tokens, multi-theme context, beginner GitHub workflows, Technical Product Manager (TPM) frontend learning reflections, and interactive AI pair programming workflows.
+  - **Category Grouping & Discovery**: **22 technical articles** organized under 4 categories (`Backend Architecture & Security`, `React Architecture & Design Systems`, `Developer Workflows & Tooling`, `Testing & Quality Assurance`) with automated **Related Articles** suggestions.
 
 - **AI Chat Widget ("Chat with Chris")**:
-  - **Retrieval-Grounded Q&A**: A visitor-facing chat widget that answers questions using the site's blog posts, guidebooks, and profile as context — no hallucination about unrelated topics.
+  - **Retrieval-Grounded Q&A**: A visitor-facing chat widget that answers questions using the site's blog posts, guidebooks, and profile as context (~71K tokens) — no hallucination about unrelated topics.
   - **Streaming Replies (SSE)**: Replies stream token-by-token over Server-Sent Events for a responsive UX.
   - **Multi-Provider, One SDK**: A single OpenAI-compatible client (`POST /api/chat`) serves Gemini, DeepSeek, and OpenAI behind a UI model switcher — only providers with a configured key appear in the dropdown.
   - **Defensive Boundaries**: Strict system prompt resists prompt injection; per-IP rate limit (`CHAT_RATE_LIMIT_PER_MINUTE`) plus daily caps (`CHAT_DAILY_GLOBAL_LIMIT` / `CHAT_DAILY_PER_IP_LIMIT`) and bounded conversation history control cost/abuse.
@@ -56,13 +62,13 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - **Tabbed Navigation**: Accessible tab control on Projects page (`📁 Featured Projects` vs `🐙 Live GitHub Activity`).
   - **Storybook Stories**: Isolated visual component workshops for `<GitHubSummary />`, `<GitHubRepoCard />`, and `<GitHubUsernameSelector />`.
 
-- **Accessibility & UX**:
-  - Top-level React **`ErrorBoundary`** component catching runtime errors and displaying graceful recovery UI.
-  - Defensive `try/catch` wrappers around `localStorage` and `sessionStorage` for strict browser privacy modes (Chrome/Safari incognito).
-  - Screen reader fallback markup (`.sr-only`).
-  - `aria-hidden` attributes on visual ASCII framing elements.
-  - Responsive mobile navigation drawer toggle (`☰`/`✕`) in `ModernLayout` (hidden on desktop viewports).
-  - Direct `mailto:contact@chrislau.dev` contact link on `/contact`.
+- **Accessibility, Mobile Responsiveness & UX**:
+  - **Edge-to-Edge Full-Bleed Resets**: Reset `#root` container with dynamic viewport units (`100dvh`) ensuring full-bleed sticky header across mobile screens.
+  - **Universal Breakpoints**: Standardized mobile responsive layouts on a clean 640px / 768px / 900px hierarchy.
+  - **Touch Target Scaling**: Mobile navigation hamburger toggles, theme pills, and action buttons enlarged to >= 40–44px for comfortable touch manipulation (`touch-action: manipulation`).
+  - **Non-Destructive iOS Zoom Prevention**: 16px base input sizing with `:not()` exclusions preserving compact micro-controls.
+  - **Accessible Icon System**: Semantic Lucide SVG icons replacing raw emojis with high-contrast text tokens (`var(--text-muted)` ensuring WCAG 2.1 AA 4.5:1 compliance).
+  - **Defensive Storage & Error Boundaries**: Top-level `ErrorBoundary` with graceful UI recovery and defensive `try/catch` around `localStorage`/`sessionStorage`.
   - Scannable skill pill/chip tags across skills snapshots.
   - Full keyboard focus indicators and semantic HTML5 layout containers (`#main-content` skip navigation).
   - Universal zero-indent bullet list alignment (`list-style-position: inside`) and Contact page label alignment (`min-width: 95px`).

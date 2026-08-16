@@ -112,9 +112,29 @@ These three are the single highest-impact fix and are self-contained.
 
 ---
 
+## Priority 5 — Mobile & Responsive Overhaul (Completed & Merged — PR #9)
+
+- [x] **5.1 — Viewport & Full-Bleed Sticky Header Reset**
+  - Reset `#root` container width (`100%`, `min-height: 100dvh`, zero margin/padding) so ModernLayout sticky header spans true edge-to-edge on mobile with no top gaps or double container padding.
+- [x] **5.2 — Collapsible Mobile Table of Contents for Guidebooks**
+  - Implemented collapsible chapter drawer on mobile (`Choose Chapter ▾` / `Hide Chapters ▴`) so mobile users directly read Chapter 1 content without scrolling past 16 chapter buttons.
+- [x] **5.3 — Breakpoint Standardization (< 640px)**
+  - Unified all media queries across BoxContainer, Pages, and the Amazon Suite to `640px` (standardizing hierarchy: `480px`, `640px`, `768px`, `900px`).
+- [x] **5.4 — Accessible Lucide SVG Icon Migration**
+  - Replaced remaining raw emojis with semantic Lucide SVG icons (`BookOpen`, `ShoppingBag`, `TrendingUp`, `Calculator`, `Bookmark`, `Mail`, `Sparkles`, `Activity`) with zero inline styles.
+- [x] **5.5 — Mobile Touch Target Scaling & Non-Destructive iOS Zoom**
+  - Scaled mobile navigation toggles, theme menu triggers, and filter tags to >= 40–44px (`touch-action: manipulation`).
+  - Added 16px font-size rule on mobile inputs with `:not()` exclusion to preserve compact micro-controls.
+- [x] **5.6 — WCAG 2.1 AA Contrast Compliance**
+  - Fixed monitoring telemetry text contrast by mapping spans to `var(--text-muted)` (guaranteeing >= 4.5:1 contrast across all themes).
+
+---
+
 ## Suggested Sequencing
 
 1. **Priority 1** first — self-contained, highest impact, fixes broken content rendering.
 2. **Priority 2** next — improves every visitor's first 10 seconds on the site.
 3. **Priority 3** as ongoing polish — token cleanup (3.2/3.3) unblocks consistent theming for all future work.
 4. **Priority 4** opportunistically.
+5. **Priority 5** complete — mobile-first responsiveness, touch targets, and a11y across all viewports.
+

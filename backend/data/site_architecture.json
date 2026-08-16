@@ -129,5 +129,48 @@
         "desc": "Dedicated /monitoring page featuring live system topology map (React SPA ➔ FastAPI Backend ➔ GitHub API) and an automated 5-step synthetic E2E diagnostic test runner."
       }
     ]
+  },
+  {
+    "category": "AI CHAT ENGINE & REAL-TIME OBSERVABILITY",
+    "items": [
+      {
+        "name": "Retrieval-Grounded Chat Engine (~71K Context Grounding)",
+        "desc": "Visitor-facing Q&A grounded in blog posts, guidebooks, and resume data via a unified OpenAI-compatible SDK interface supporting Gemini, DeepSeek, and OpenAI models."
+      },
+      {
+        "name": "Server-Sent Events (SSE) Streaming & Defensive Rate Limiting",
+        "desc": "Token-by-token streaming over SSE with IP-based per-minute and per-day rate limiting, defensive system prompts, and sliding conversation history bounds."
+      },
+      {
+        "name": "Split-Panel Companion Observability Console",
+        "desc": "Desktop split-panel and mobile tabbed companion console tracking session summaries, live chunk streaming throughput, latency sparklines, and per-message token/cost accounting."
+      },
+      {
+        "name": "Two-Segment TTFT Decomposition & Timing Telemetry",
+        "desc": "Real-time client TTFT breakdown decomposing total latency into Network RTT, Backend Prompt Build / Routing Overhead (server_pre_llm_ms), and LLM Prefill to First Token (server_llm_to_first_token_ms)."
+      }
+    ]
+  },
+  {
+    "category": "AMAZON SELLER INTELLIGENCE & OPPORTUNITY SUITE",
+    "items": [
+      {
+        "name": "Niche Opportunity Finder",
+        "desc": "Interactive discovery tool analyzing 12 high-velocity product niches with customizable demand vs. competition scoring, search volume filters, and category toggles."
+      },
+      {
+        "name": "2026 FBA Unit Economics & Profit Margin Calculator",
+        "desc": "Dynamic financial simulator modeling accurate 2026 Amazon fulfillment fee tiers, category-specific referral rates, TACoS ad spend, landed COGS, and breakeven margins."
+      },
+      {
+        "name": "Competitor Review Sentiment & Gap Analysis",
+        "desc": "Product intelligence dashboard synthesizing sentiment weaknesses across 100+ customer reviews with instant AI prompt generation for product redesign."
+      },
+      {
+        "name": "Keyword Velocity & Trends Explorer",
+        "desc": "Search volume tracking and growth velocity indicator identifying trending product terms before seasonal demand spikes."
+      }
+    ]
   }
 ]
+
