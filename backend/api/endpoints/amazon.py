@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-import json
+import copy
 import logging
 import re
 import time
+from typing import Any
 from urllib.parse import quote_plus
 
 import httpx
@@ -25,7 +26,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/amazon", tags=["Amazon Seller Tools"])
 
 CACHE_TTL_SECONDS = 15 * 60  # 15 minutes cache
-_CACHE: dict[str, tuple[float, any]] = {}
+_CACHE: dict[str, tuple[float, dict[str, Any]]] = {}
 
 BROWSER_HEADERS = {
     "User-Agent": (
@@ -56,17 +57,30 @@ CATEGORY_MAP: dict[str, str] = {
 }
 
 
-def _get_from_cache(key: str):
+def clear_amazon_cache() -> None:
+    """Helper to reset cache between test runs."""
+    _CACHE.clear()
+
+
+def _get_from_cache(key: str) -> dict[str, Any] | None:
     if key in _CACHE:
         timestamp, data = _CACHE[key]
         if time.time() - timestamp < CACHE_TTL_SECONDS:
-            return data
+            return copy.deepcopy(data)
         del _CACHE[key]
     return None
 
 
-def _set_cache(key: str, data: any):
-    _CACHE[key] = (time.time(), data)
+def _set_cache(key: str, data: dict[str, Any]) -> None:
+    # Basic size guard: sweep expired or trim if exceeding 200 keys
+    if len(_CACHE) > 200:
+        now = time.time()
+        expired = [k for k, (ts, _) in _CACHE.items() if now - ts >= CACHE_TTL_SECONDS]
+        for k in expired:
+            del _CACHE[k]
+        if len(_CACHE) > 200:
+            _CACHE.clear()
+    _CACHE[key] = (time.time(), copy.deepcopy(data))
 
 
 def _clean_price(price_str: str) -> float:
@@ -85,31 +99,27 @@ def _clean_rating(rating_str: str) -> float:
 
 
 def _parse_amazon_search_html(html: str, query: str, category: str) -> list[AmazonProductItem]:
-    """Extract product items from Amazon search results HTML without heavy dependencies."""
+    """Extract product items from Amazon search results HTML without greedy closing div truncations."""
     products: list[AmazonProductItem] = []
-    # Match standard search result cards by ASIN
-    item_blocks = re.findall(
-        r'<div[^>]*?data-asin=["\']([A-Z0-9]{10})["\'][^>]*?data-component-type=["\']s-search-result["\'].*?>(.*?)</div>\s*</div>\s*</div>',
-        html,
-        re.DOTALL,
-    )
-
-    if not item_blocks:
-        # Fallback regex for standard cards
-        item_blocks = re.findall(
-            r'<div[^>]*?data-asin=["\']([A-Z0-9]{10})["\'][^>]*?class=["\'][^"\']*?s-result-item[^"\']*?["\'].*?>(.*?)</div>\s*</div>',
-            html,
-            re.DOTALL,
-        )
+    
+    # Split by data-asin card boundaries to avoid regex nested div clipping
+    asin_matches = list(re.finditer(r'<div[^>]*?data-asin=["\']([A-Z0-9]{10})["\']', html))
+    if not asin_matches:
+        return products
 
     seen_asins = set()
-    for asin, block in item_blocks:
+    for i, match in enumerate(asin_matches):
+        asin = match.group(1)
         if not asin or asin in seen_asins or asin.strip() == "":
             continue
 
+        start_pos = match.start()
+        end_pos = asin_matches[i + 1].start() if i + 1 < len(asin_matches) else min(start_pos + 4000, len(html))
+        block = html[start_pos:end_pos]
+
         # Extract Title
         title_match = re.search(
-            r'<h2[^>]*?>\s*<a[^>]*?>\s*<span[^>]*?>(.*?)</span>', block, re.DOTALL
+            r'<h2[^>]*?>.*?<span[^>]*?>(.*?)</span>', block, re.DOTALL
         )
         if not title_match:
             title_match = re.search(r'<span[^>]*?class=["\'][^"\']*?a-text-normal[^"\']*?["\'][^>]*?>(.*?)</span>', block, re.DOTALL)
@@ -119,7 +129,7 @@ def _parse_amazon_search_html(html: str, query: str, category: str) -> list[Amaz
         if not raw_title:
             continue
 
-        # Extract Price
+        # Extract Price (returns 0.0 if not found, never invented defaults)
         price_match = re.search(
             r'<span class=["\']a-price["\'][^>]*?>.*?<span class=["\']a-offscreen["\']>(.*?)</span>',
             block,
@@ -127,11 +137,11 @@ def _parse_amazon_search_html(html: str, query: str, category: str) -> list[Amaz
         )
         price = _clean_price(price_match.group(1)) if price_match else 0.0
 
-        # Extract Rating
+        # Extract Rating (returns 0.0 if not found)
         rating_match = re.search(r'<span class=["\']a-icon-alt["\']>(.*?)</span>', block)
-        rating = _clean_rating(rating_match.group(1)) if rating_match else 4.5
+        rating = _clean_rating(rating_match.group(1)) if rating_match else 0.0
 
-        # Extract Reviews count
+        # Extract Reviews count (returns 0 if not found)
         review_match = re.search(
             r'<span[^>]*?aria-label=["\'](\d[\d,]*)\s*ratings?["\']', block
         )
@@ -146,7 +156,7 @@ def _parse_amazon_search_html(html: str, query: str, category: str) -> list[Amaz
         # Prime badge
         is_prime = "a-icon-prime" in block or "Prime" in block
 
-        # Tier estimation
+        # Tier estimation based on price signal
         fba_tier = "large_standard"
         if price > 0 and price < 15:
             fba_tier = "small_standard"
@@ -155,9 +165,9 @@ def _parse_amazon_search_html(html: str, query: str, category: str) -> list[Amaz
             AmazonProductItem(
                 asin=asin,
                 title=raw_title,
-                price=price if price > 0 else 29.99,
-                rating=rating if rating > 0 else 4.3,
-                reviews_count=reviews_count if reviews_count > 0 else 120,
+                price=price,
+                rating=rating,
+                reviews_count=reviews_count,
                 image_url=image_url,
                 product_url=f"https://www.amazon.com/dp/{asin}",
                 is_prime=is_prime,
@@ -177,10 +187,11 @@ def _parse_amazon_search_html(html: str, query: str, category: str) -> list[Amaz
 @limiter.limit("60/minute")
 async def search_amazon_products(
     request: Request,
-    q: str = Query(..., min_length=1, description="Amazon search keyword"),
-    category: str = Query("all", description="Amazon category filter"),
+    q: str = Query(..., min_length=1, max_length=100, description="Amazon search keyword"),
+    category: str = Query("all", max_length=50, description="Amazon category filter"),
 ):
-    """Live search Amazon products by keyword with parsed prices, ratings, and ASINs."""
+    """Search Amazon products. When live marketplace HTML is successfully parsed, is_live=True;
+    when blocked/captcha, returns benchmark simulation labeled with is_live=False and source=simulated_benchmark."""
     cache_key = f"search:{q.strip().lower()}:{category}"
     cached_data = _get_from_cache(cache_key)
     if cached_data:
@@ -196,69 +207,74 @@ async def search_amazon_products(
             resp = await client.get(search_url)
             html = resp.text
 
-            products = _parse_amazon_search_html(html, q, category)
+            # Check if anti-bot captcha/challenge page was served
+            is_captcha = "api-services-support@amazon.com" in html or "Type the characters you see in this image" in html
+            products = [] if is_captcha else _parse_amazon_search_html(html, q, category)
 
-            # If Amazon blocked or returned anti-bot challenge page, return structured mock-fallback
-            if not products:
-                logger.info("Search returned empty results or captcha, returning smart simulated data for '%s'", q)
-                products = [
-                    AmazonProductItem(
-                        asin="B08N5WRWNW",
-                        title=f"Premium Ergonomic {q.title()} - Pro Series",
-                        price=34.99,
-                        rating=4.6,
-                        reviews_count=480,
-                        image_url="",
-                        product_url=f"https://www.amazon.com/s?k={quote_plus(q)}",
-                        is_prime=True,
-                        category=category if category != "all" else "home_kitchen",
-                        fba_tier="large_standard",
-                    ),
-                    AmazonProductItem(
-                        asin="B09XYZ8888",
-                        title=f"Compact Minimalist {q.title()} with Matte Finish",
-                        price=24.50,
-                        rating=4.4,
-                        reviews_count=210,
-                        image_url="",
-                        product_url=f"https://www.amazon.com/s?k={quote_plus(q)}",
-                        is_prime=True,
-                        category=category if category != "all" else "office_products",
-                        fba_tier="small_standard",
-                    ),
-                    AmazonProductItem(
-                        asin="B0B1234567",
-                        title=f"Eco-Friendly Organic {q.title()} (Gift Box Set)",
-                        price=42.00,
-                        rating=4.8,
-                        reviews_count=890,
-                        image_url="",
-                        product_url=f"https://www.amazon.com/s?k={quote_plus(q)}",
-                        is_prime=True,
-                        category=category if category != "all" else "home_kitchen",
-                        fba_tier="large_standard",
-                    ),
-                ]
+            # If real products were parsed from live HTML:
+            if products:
+                result = {
+                    "query": q,
+                    "category": category,
+                    "total_results": len(products),
+                    "products": [p.model_dump() for p in products],
+                    "is_live": True,
+                    "source": "live_marketplace",
+                    "cached": False,
+                    "note": "",
+                }
+                _set_cache(cache_key, result)
+                return result
+
+            # Otherwise return honest simulated benchmark dataset with is_live: False
+            logger.info("Search returned empty results or captcha, returning labeled benchmark data for '%s'", q)
+            benchmark_products = [
+                AmazonProductItem(
+                    asin="B08N5WRWNW",
+                    title=f"Sample Benchmark: {q.title()} - Pro Series",
+                    price=34.99,
+                    rating=4.6,
+                    reviews_count=480,
+                    image_url="",
+                    product_url=f"https://www.amazon.com/s?k={quote_plus(q)}",
+                    is_prime=True,
+                    category=category if category != "all" else "home_kitchen",
+                    fba_tier="large_standard",
+                ),
+                AmazonProductItem(
+                    asin="B09XYZ8888",
+                    title=f"Sample Benchmark: {q.title()} with Matte Finish",
+                    price=24.50,
+                    rating=4.4,
+                    reviews_count=210,
+                    image_url="",
+                    product_url=f"https://www.amazon.com/s?k={quote_plus(q)}",
+                    is_prime=True,
+                    category=category if category != "all" else "office_products",
+                    fba_tier="small_standard",
+                ),
+            ]
 
             result = {
                 "query": q,
                 "category": category,
-                "total_results": len(products),
-                "products": [p.model_dump() for p in products],
-                "is_live": True,
+                "total_results": len(benchmark_products),
+                "products": [p.model_dump() for p in benchmark_products],
+                "is_live": False,
+                "source": "simulated_benchmark",
                 "cached": False,
+                "note": "Amazon served anti-bot challenge. Displaying simulated market benchmarks.",
             }
             _set_cache(cache_key, result)
             return result
 
     except Exception as exc:
         logger.warning("Failed to fetch live Amazon search: %s", exc)
-        # Graceful fallback response
         fallback_products = [
             AmazonProductItem(
                 asin="B08N5WRWNW",
-                title=f"{q.title()} - Amazon Top Benchmark Result",
-                price=32.99,
+                title=f"Sample Benchmark: {q.title()} - Standard Model",
+                price=29.99,
                 rating=4.5,
                 reviews_count=350,
                 image_url="",
@@ -274,29 +290,37 @@ async def search_amazon_products(
             "total_results": 1,
             "products": [p.model_dump() for p in fallback_products],
             "is_live": False,
+            "source": "simulated_benchmark",
             "cached": False,
+            "note": "Network error reaching marketplace. Displaying estimated benchmark.",
         }
 
 
+@router.get("/asin", response_model=AmazonAsinDetail)
 @router.get("/asin/{asin}", response_model=AmazonAsinDetail)
 @limiter.limit("60/minute")
 async def inspect_amazon_asin(
     request: Request,
-    asin: str,
+    asin: str | None = None,
+    url: str | None = Query(None, description="Full Amazon product URL"),
 ):
-    """Live inspect any real Amazon ASIN or product URL to parse details for unit economics."""
-    # Extract ASIN from URL if a full link was passed
-    asin_clean = asin.strip().upper()
-    url_match = re.search(r"(?:/dp/|/gp/product/|/d/)([A-Z0-9]{10})", asin_clean)
+    """Inspect an Amazon ASIN or product URL. Accepts query params or path segment."""
+    input_str = url or asin or ""
+    input_clean = input_str.strip()
+
+    # Extract 10-character ASIN from URL or raw input
+    url_match = re.search(r"(?:/dp/|/gp/product/|/d/)([A-Z0-9]{10})", input_clean, re.IGNORECASE)
     if url_match:
-        asin_clean = url_match.group(1)
+        asin_clean = url_match.group(1).upper()
     else:
-        asin_match = re.search(r"([A-Z0-9]{10})", asin_clean)
-        if asin_match:
-            asin_clean = asin_match.group(1)
+        asin_match = re.search(r"\b([A-Z0-9]{10})\b", input_clean, re.IGNORECASE)
+        asin_clean = asin_match.group(1).upper() if asin_match else ""
 
     if not asin_clean or len(asin_clean) != 10:
-        raise HTTPException(status_code=400, detail="Invalid 10-character Amazon ASIN or product URL.")
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid Amazon ASIN or product URL. Please provide a valid 10-character ASIN (e.g. B08N5WRWNW).",
+        )
 
     cache_key = f"asin:{asin_clean}"
     cached_data = _get_from_cache(cache_key)
@@ -310,9 +334,12 @@ async def inspect_amazon_asin(
             resp = await client.get(target_url)
             html = resp.text
 
+            # Check if anti-bot captcha/challenge was served
+            is_captcha = "api-services-support@amazon.com" in html or "Type the characters you see in this image" in html
+
             # Parse title
             title_match = re.search(r'<span id=["\']productTitle["\'][^>]*?>(.*?)</span>', html, re.DOTALL)
-            title = title_match.group(1).strip() if title_match else f"Amazon Product ({asin_clean})"
+            title = title_match.group(1).strip() if title_match else ""
             title = re.sub(r"\s+", " ", title)
 
             # Parse price
@@ -320,18 +347,18 @@ async def inspect_amazon_asin(
             if price_match:
                 price = float(f"{price_match.group(1).replace(',', '').strip()}.{price_match.group(2).strip()}")
             else:
-                price_off = re.search(r'<span class=["\']a-offscreen["\']>(.*?)</span>', html)
-                price = _clean_price(price_off.group(1)) if price_off else 29.99
+                price_off = re.search(r'<span class=["\']a-price["\'][^>]*?>.*?<span class=["\']a-offscreen["\']>(.*?)</span>', html, re.DOTALL)
+                price = _clean_price(price_off.group(1)) if price_off else 0.0
 
             # Parse rating
             rating_match = re.search(r'<span class=["\']a-icon-alt["\']>(.*?)</span>', html)
-            rating = _clean_rating(rating_match.group(1)) if rating_match else 4.5
+            rating = _clean_rating(rating_match.group(1)) if rating_match else 0.0
 
             # Parse review count
             reviews_match = re.search(r'<span id=["\']acrCustomerReviewText["\'][^>]*?>([\d,]+)\s*ratings?</span>', html)
-            reviews_count = _clean_reviews(reviews_match.group(1)) if reviews_match else 250
+            reviews_count = _clean_reviews(reviews_match.group(1)) if reviews_match else 0
 
-            # Parse Bullets / Features
+            # Parse Bullets
             bullets_raw = re.findall(r'<span class=["\']a-list-item["\'][^>]*?>(.*?)</span>', html, re.DOTALL)
             bullets = []
             for b in bullets_raw:
@@ -341,43 +368,69 @@ async def inspect_amazon_asin(
                 if len(bullets) >= 5:
                     break
 
-            # Infer Category
-            category_id = "home_kitchen"
-            if "pet" in title.lower() or "dog" in title.lower() or "cat" in title.lower():
-                category_id = "pet_supplies"
-            elif "office" in title.lower() or "desk" in title.lower():
-                category_id = "office_products"
-            elif "beauty" in title.lower() or "skin" in title.lower():
-                category_id = "beauty_personal"
-            elif "sport" in title.lower() or "outdoor" in title.lower() or "gym" in title.lower():
-                category_id = "sports_outdoors"
+            # If successfully parsed real title from live HTML:
+            if title and not is_captcha:
+                category_id = "home_kitchen"
+                t_low = title.lower()
+                if any(w in t_low for w in ["pet", "dog", "cat", "feeder"]):
+                    category_id = "pet_supplies"
+                elif any(w in t_low for w in ["office", "desk", "organizer", "mouse"]):
+                    category_id = "office_products"
+                elif any(w in t_low for w in ["beauty", "skin", "hair", "serum"]):
+                    category_id = "beauty_personal"
+                elif any(w in t_low for w in ["sport", "outdoor", "gym", "bottle"]):
+                    category_id = "sports_outdoors"
 
-            # FBA Tier
-            fba_tier = "large_standard"
-            fba_label = "Large Standard (16 oz - 20 lbs)"
-            if price < 10:
-                fba_tier = "small_standard"
-                fba_label = "Small Standard (< 16 oz)"
+                fba_tier = "large_standard"
+                fba_label = "Large Standard (16 oz - 20 lbs)"
+                if price > 0 and price < 10:
+                    fba_tier = "small_standard"
+                    fba_label = "Small Standard (< 16 oz)"
 
-            # Estimate COGS (~20-25% of retail price)
-            estimated_cogs = round(price * 0.22, 2) if price > 0 else 6.50
+                estimated_cogs = round(price * 0.22, 2) if price > 0 else 0.0
 
+                result = AmazonAsinDetail(
+                    asin=asin_clean,
+                    title=title[:180],
+                    price=price,
+                    rating=rating,
+                    reviews_count=reviews_count,
+                    category=category_id,
+                    category_name=CATEGORY_MAP.get(category_id, "Home & Kitchen"),
+                    fba_tier=fba_tier,
+                    fba_tier_label=fba_label,
+                    image_url="",
+                    product_url=target_url,
+                    bullets=bullets,
+                    weight_lb=1.0,
+                    estimated_cogs=estimated_cogs,
+                    is_live=True,
+                    source="live_marketplace",
+                )
+                _set_cache(cache_key, result.model_dump())
+                return result
+
+            # Captcha / Parse failed fallback:
             result = AmazonAsinDetail(
                 asin=asin_clean,
-                title=title[:180],
-                price=price if price > 0 else 29.99,
-                rating=rating,
-                reviews_count=reviews_count,
-                category=category_id,
-                category_name=CATEGORY_MAP.get(category_id, "Home & Kitchen"),
-                fba_tier=fba_tier,
-                fba_tier_label=fba_label,
+                title=f"Sample Benchmark Product ({asin_clean})",
+                price=34.99,
+                rating=4.5,
+                reviews_count=410,
+                category="home_kitchen",
+                category_name="Home & Kitchen",
+                fba_tier="large_standard",
+                fba_tier_label="Large Standard (16 oz - 20 lbs)",
                 image_url="",
                 product_url=target_url,
-                bullets=bullets,
+                bullets=[
+                    "Material construction with reinforced joints",
+                    "Standard sizing specification",
+                ],
                 weight_lb=1.5,
-                estimated_cogs=estimated_cogs,
-                is_live=True,
+                estimated_cogs=7.50,
+                is_live=False,
+                source="simulated_benchmark",
             )
             _set_cache(cache_key, result.model_dump())
             return result
@@ -386,24 +439,21 @@ async def inspect_amazon_asin(
         logger.warning("Error inspecting ASIN %s: %s", asin_clean, exc)
         return AmazonAsinDetail(
             asin=asin_clean,
-            title=f"Product {asin_clean}",
-            price=34.99,
+            title=f"Sample Benchmark Product ({asin_clean})",
+            price=29.99,
             rating=4.5,
-            reviews_count=410,
+            reviews_count=350,
             category="home_kitchen",
             category_name="Home & Kitchen",
             fba_tier="large_standard",
             fba_tier_label="Large Standard (16 oz - 20 lbs)",
             image_url="",
             product_url=target_url,
-            bullets=[
-                "High-durability precision construction",
-                "Ergonomic user design with non-slip base",
-                "Compatible with all standard sizing",
-            ],
+            bullets=["Standard Amazon FBA specification"],
             weight_lb=1.2,
-            estimated_cogs=7.50,
+            estimated_cogs=6.50,
             is_live=False,
+            source="simulated_benchmark",
         )
 
 
@@ -411,25 +461,27 @@ async def inspect_amazon_asin(
 @limiter.limit("60/minute")
 async def get_amazon_trends(
     request: Request,
-    q: str = Query(..., min_length=1, description="Keyword for trend analysis"),
+    q: str = Query(..., min_length=1, max_length=100, description="Keyword for trend analysis"),
 ):
-    """Fetch live Amazon autocomplete suggestions and demand momentum velocity."""
+    """Fetch Amazon autocomplete suggestions and demand momentum velocity."""
     cache_key = f"trends:{q.strip().lower()}"
     cached_data = _get_from_cache(cache_key)
     if cached_data:
         return cached_data
 
     suggestions: list[str] = []
-    # Query Amazon live search autocomplete endpoint
-    suggest_url = f"https://completion.amazon.com/api/2017/suggestions?prefix={quote_plus(q)}&mid=ATVPDKIKX0DER&alias=aps"
+    suggest_url = f"https://completion.amazon.com/api/2017/suggestions?prefix={quote_plus(q.strip())}&mid=ATVPDKIKX0DER&alias=aps"
 
+    is_live = False
     try:
-        async with httpx.AsyncClient(timeout=6.0) as client:
+        async with httpx.AsyncClient(headers=BROWSER_HEADERS, timeout=6.0) as client:
             resp = await client.get(suggest_url)
             if resp.status_code == 200:
                 data = resp.json()
                 raw_suggestions = data.get("suggestions", [])
                 suggestions = [s.get("value") for s in raw_suggestions if s.get("value")]
+                if suggestions:
+                    is_live = True
     except Exception as exc:
         logger.debug("Amazon suggestion fetch failed: %s", exc)
 
@@ -442,7 +494,6 @@ async def get_amazon_trends(
             f"{q} portable",
         ]
 
-    # Generate 12-week trend trajectory points
     trend_points: list[GoogleTrendPoint] = []
     base_val = 45
     for i in range(12):
@@ -460,7 +511,8 @@ async def get_amazon_trends(
         trend_points=trend_points,
         growth_velocity_pct=growth_velocity,
         suggestions=suggestions[:8],
-        is_live=True,
+        is_live=is_live,
+        source="live_autocomplete" if is_live else "simulated_benchmark",
     )
     _set_cache(cache_key, result.model_dump())
     return result

@@ -38,7 +38,7 @@ export async function fetchProfile(): Promise<BackendResponse<Profile>> {
  */
 export async function fetchProjects(tag?: string): Promise<BackendResponse<Project[]>> {
   try {
-    const url = tag 
+    const url = tag
       ? `${API_BASE_URL}/projects?tag=${encodeURIComponent(tag)}`
       : `${API_BASE_URL}/projects`;
     const res = await fetchWithTimeout(url);

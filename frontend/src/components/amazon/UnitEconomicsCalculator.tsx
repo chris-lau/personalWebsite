@@ -122,9 +122,8 @@ export const UnitEconomicsCalculator: React.FC<UnitEconomicsCalculatorProps> = (
   const handleCopySummary = async () => {
     const summary = `### Amazon Product Sourcing & Economics Summary
 - **Sale Price**: $${economics.salePrice.toFixed(2)}
-- **Fulfillment**: ${fulfillmentType} ${
-      economics.isLowPriceFba ? '(Low-Price FBA Rate Applied)' : ''
-    }
+- **Fulfillment**: ${fulfillmentType} ${economics.isLowPriceFba ? '(Low-Price FBA Rate Applied)' : ''
+      }
 - **COGS**: $${cogs.toFixed(2)} | **Freight**: $${shippingToAmazon.toFixed(2)}
 - **Total Landed Cost**: $${economics.landedCost.toFixed(2)}
 - **Amazon Referral Fee**: $${economics.referralFee.toFixed(2)}
@@ -136,9 +135,9 @@ export const UnitEconomicsCalculator: React.FC<UnitEconomicsCalculatorProps> = (
 - **ROI**: ${economics.roiPct}%
 - **Max Allowable Landed Cost (Breakeven)**: $${economics.breakevenLandedCost.toFixed(2)}
 - **Est. Monthly Profit @ ${monthlyUnits} units/mo**: $${monthlyTotalProfit.toLocaleString(undefined, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}
 `;
 
     try {

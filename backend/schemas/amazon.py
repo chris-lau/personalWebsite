@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typing import Literal
 from pydantic import BaseModel, Field
 
 
@@ -21,8 +22,10 @@ class AmazonSearchResponse(BaseModel):
     category: str
     total_results: int
     products: list[AmazonProductItem]
-    is_live: bool = True
+    is_live: bool = False
+    source: Literal["live_marketplace", "simulated_benchmark"] = "simulated_benchmark"
     cached: bool = False
+    note: str = ""
 
 
 class AmazonAsinDetail(BaseModel):
@@ -40,7 +43,8 @@ class AmazonAsinDetail(BaseModel):
     bullets: list[str] = Field(default_factory=list)
     weight_lb: float = 1.0
     estimated_cogs: float = 0.0
-    is_live: bool = True
+    is_live: bool = False
+    source: Literal["live_marketplace", "simulated_benchmark"] = "simulated_benchmark"
 
 
 class GoogleTrendPoint(BaseModel):
@@ -53,4 +57,5 @@ class AmazonTrendResponse(BaseModel):
     trend_points: list[GoogleTrendPoint]
     growth_velocity_pct: int
     suggestions: list[str]
-    is_live: bool = True
+    is_live: bool = False
+    source: Literal["live_autocomplete", "simulated_benchmark"] = "simulated_benchmark"
