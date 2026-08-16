@@ -46,11 +46,16 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedModalNiche]);
 
+  const [isLiveMarketplace, setIsLiveMarketplace] = useState<boolean>(true);
+  const [liveNote, setLiveNote] = useState<string>('');
+
   // Execute Live Amazon & Trend Search on Keyword Submit
   const handleExecuteLiveSearch = async (queryToSearch: string) => {
     if (!queryToSearch.trim()) {
       setIsLiveSearchActive(false);
       setLiveProducts([]);
+      setIsLiveMarketplace(false);
+      setLiveNote('');
       return;
     }
 
@@ -65,8 +70,12 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
 
       if (searchRes.data && searchRes.data.products.length > 0) {
         setLiveProducts(searchRes.data.products);
+        setIsLiveMarketplace(Boolean(searchRes.data.is_live));
+        setLiveNote(searchRes.data.note || '');
       } else {
         setLiveProducts([]);
+        setIsLiveMarketplace(false);
+        setLiveNote(searchRes.error || 'No products found matching query.');
       }
 
       if (trendRes.data) {
@@ -75,6 +84,7 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
       }
     } catch {
       setLiveProducts([]);
+      setIsLiveMarketplace(false);
     } finally {
       setIsLoadingLive(false);
     }
@@ -87,20 +97,22 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
       if (p.reviews_count > 1000) barrier = 'High';
       else if (p.reviews_count > 300) barrier = 'Medium';
 
+      const resolvedCategory = p.category || (selectedCategory !== 'all' ? selectedCategory : 'home_kitchen');
+
       return {
         id: p.asin,
         name: p.title,
-        category: p.category || selectedCategory !== 'all' ? selectedCategory : 'home_kitchen',
+        category: resolvedCategory,
         searchVolume: Math.max(1200, Math.round(p.reviews_count * 18)),
         searchVolumeGrowthPct: liveGrowthVelocity,
         avgPrice: p.price > 0 ? p.price : 29.99,
-        avgCogs: roundTwoDecimals(p.price * 0.22),
+        avgCogs: roundTwoDecimals(p.price > 0 ? p.price * 0.22 : 6.5),
         avgWeightLb: p.fba_tier === 'small_standard' ? 0.8 : 1.8,
         fbaTier: p.fba_tier,
         avgMonthlySales: Math.max(150, Math.round(p.reviews_count * 0.7)),
         reviewBarrier: barrier,
         avgTop10Reviews: p.reviews_count,
-        topCompetitorRating: p.rating,
+        topCompetitorRating: p.rating > 0 ? p.rating : 4.5,
         seasonality: 'Moderate',
         painPoints: [
           'Material durability issues reported under heavy daily usage',
@@ -108,11 +120,15 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
           'Lack of premium tactile grip or finish compared to photos',
         ],
         differentiationAngle: `Upgraded materials with reinforced joints, ergonomic design, and branded gift packaging.`,
-        tags: ['Live Amazon Listing', p.is_prime ? 'Prime Eligible' : 'Standard', `ASIN: ${p.asin}`],
+        tags: [
+          isLiveMarketplace ? 'Live Amazon Listing' : 'Simulated Market Benchmark',
+          p.is_prime ? 'Prime Eligible' : 'Standard Delivery',
+          `ASIN: ${p.asin}`,
+        ],
         suggestedPrompt: `Target Amazon customers searching for "${p.title.slice(0, 50)}" with superior durability and warranty.`,
       };
     });
-  }, [liveProducts, liveGrowthVelocity, selectedCategory]);
+  }, [liveProducts, liveGrowthVelocity, selectedCategory, isLiveMarketplace]);
 
   const activeDataset = isLiveSearchActive ? liveNiches : SAMPLE_NICHE_TRENDS;
 
@@ -149,10 +165,20 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
               review counts, and calculate instant unit economics.
             </p>
           </div>
-          <span className="live-status-pill">
-            <span className="live-indicator-dot"></span> Real-Time Live Data Proxy
+          <span className={`live-status-pill ${isLiveSearchActive && !isLiveMarketplace ? 'status-simulated' : ''}`}>
+            <span className={`live-indicator-dot ${isLiveSearchActive && !isLiveMarketplace ? 'dot-warning' : ''}`}></span>{' '}
+            {isLiveSearchActive
+              ? isLiveMarketplace
+                ? 'Real-Time Amazon Live Data'
+                : 'Simulated Market Benchmark'
+              : 'Curated Market Benchmarks'}
           </span>
         </div>
+        {liveNote && (
+          <div className="live-note-banner">
+            <span className="live-note-icon">ℹ️</span> {liveNote}
+          </div>
+        )}
       </div>
 
       {/* Filter & Live Search Controls */}

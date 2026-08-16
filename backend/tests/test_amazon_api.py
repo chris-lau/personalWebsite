@@ -81,7 +81,8 @@ def _patch_httpx_amazon(monkeypatch, search_html=SAMPLE_SEARCH_HTML, asin_html=S
     original_init = httpx.AsyncClient.__init__
 
     def patched_init(self, *args, **kwargs):
-        kwargs["transport"] = httpx.MockTransport(mock_handler)
+        if "transport" not in kwargs:
+            kwargs["transport"] = httpx.MockTransport(mock_handler)
         original_init(self, *args, **kwargs)
 
     monkeypatch.setattr(httpx.AsyncClient, "__init__", patched_init)

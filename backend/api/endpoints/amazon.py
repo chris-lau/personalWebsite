@@ -6,7 +6,7 @@ import copy
 import logging
 import re
 import time
-from typing import Any
+from typing import Any, Optional
 from urllib.parse import quote_plus
 
 import httpx
@@ -301,8 +301,8 @@ async def search_amazon_products(
 @limiter.limit("60/minute")
 async def inspect_amazon_asin(
     request: Request,
-    asin: str | None = None,
-    url: str | None = Query(None, description="Full Amazon product URL"),
+    asin: Optional[str] = None,
+    url: Optional[str] = Query(None, description="Full Amazon product URL"),
 ):
     """Inspect an Amazon ASIN or product URL. Accepts query params or path segment."""
     input_str = url or asin or ""
