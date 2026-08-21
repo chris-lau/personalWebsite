@@ -47,8 +47,17 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - **Executive Summaries**: Every article features a prominent **TL;DR** callout box for instant comprehension.
   - **Category Grouping & Discovery**: **22 technical articles** organized under 4 categories (`Backend Architecture & Security`, `React Architecture & Design Systems`, `Developer Workflows & Tooling`, `Testing & Quality Assurance`) with automated **Related Articles** suggestions.
 
+- **Chat-First Home Page ("Ask Chris" hero)**:
+  - **Chat as the Front Door**: The home hero is an embedded `<ChatPanel>` — visitors ask a grounded AI about Chris instead of reading a wall of text; the input is the hero and answers stream inline.
+  - **One-Click Starter Chips**: Curated suggested questions ("What does Chris do?", "Biggest project?", "Tech stack?", "Working on now?") send and stream answers with zero typing.
+  - **Secondary Reading Path**: A quiet `── or, prefer reading? ──` link row (About · Projects · Blog · Experience · Now) demotes traditional pages without removing them; featured projects/skills remain below the fold.
+  - **Single Chat Surface**: The floating widget hides itself on `/` so the hero is the only chat entry point there.
+  - **Router-Aware Markdown Links**: Assistant replies render via a `chat` variant of `<MarkdownRenderer>` — site-relative "Read more:" links navigate client-side (React Router `<Link>`, no hard reload).
+  - **Extended Grounding**: Chat context now includes `projects.json`, `skills.json`, and `now.json`; the system prompt caps answers (~120 words) and restricts links to an allowlist of site routes to prevent hallucinated URLs.
+  - **Plan**: [ask-chris-home-plan.md](ask-chris-home-plan.md) | **Tracker**: [IMPLEMENTATION-ask-chris.md](IMPLEMENTATION-ask-chris.md)
+
 - **AI Chat Widget ("Chat with Chris")**:
-  - **Retrieval-Grounded Q&A**: A visitor-facing chat widget that answers questions using the site's blog posts, guidebooks, and profile as context (~71K tokens) — no hallucination about unrelated topics.
+  - **Retrieval-Grounded Q&A**: A visitor-facing chat widget that answers questions using the site's blog posts, guidebooks, profile, projects, skills, and current focus as context (~71K tokens) — no hallucination about unrelated topics.
   - **Streaming Replies (SSE)**: Replies stream token-by-token over Server-Sent Events for a responsive UX.
   - **Multi-Provider, One SDK**: A single OpenAI-compatible client (`POST /api/chat`) serves Gemini, DeepSeek, and OpenAI behind a UI model switcher — only providers with a configured key appear in the dropdown.
   - **Defensive Boundaries**: Strict system prompt resists prompt injection; per-IP rate limit (`CHAT_RATE_LIMIT_PER_MINUTE`) plus daily caps (`CHAT_DAILY_GLOBAL_LIMIT` / `CHAT_DAILY_PER_IP_LIMIT`) and bounded conversation history control cost/abuse.
@@ -85,9 +94,9 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
 
 - **Testing & Quality Assurance**:
   - Storybook 8 component catalog & accessibility auditing (`@storybook/addon-a11y`).
-  - Vitest + `@testing-library/react` unit & component integration tests (**180 / 180 passing tests** across 24 test files).
+  - Vitest + `@testing-library/react` unit & component integration tests (**192 / 192 passing tests** across 25 test files).
   - Playwright real-browser end-to-end (E2E) testing across all 3 themes (**9 / 9 passing tests** across 3 spec files).
-  - Pytest backend unit & integration tests (**66 / 66 passing tests**).
+  - Pytest backend unit & integration tests (**68 / 68 passing tests**).
 
 ---
 
@@ -191,9 +200,9 @@ Phase 4 transitions the backend from static JSON loading to a persistent relatio
 * **Automated 6-Hour Keep-Alive Probe**:
   - Scheduled GitHub Actions workflow (`.github/workflows/keep-alive.yml`) pinging `/health/ready` every 6 hours (`00:00`, `06:00`, `12:00`, `18:00` UTC).
   - Executes a live `SELECT 1` query to keep cloud PostgreSQL (Aiven) active and prevent inactivity suspension.
-* **Full Test Metrics (249 / 249 Total Tests Passing)**:
-  - **Backend**: **60 / 60 Pytest unit tests passing** (including `tests/test_database.py`, `tests/test_chat.py`).
-  - **Frontend**: **180 / 180 Vitest unit tests passing** across **24 test files**.
+* **Full Test Metrics (269 / 269 Total Tests Passing)**:
+  - **Backend**: **68 / 68 Pytest unit tests passing** (including `tests/test_database.py`, `tests/test_chat.py`).
+  - **Frontend**: **192 / 192 Vitest unit tests passing** across **25 test files**.
   - **E2E**: **9 / 9 Playwright E2E tests passing**.
 
 Detailed summary: [phase-4-summary.md](phase-4-summary.md) | Implementation plan: [phase-4-implementation-plan.md](phase-4-implementation-plan.md)

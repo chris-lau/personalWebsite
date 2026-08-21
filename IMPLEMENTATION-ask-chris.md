@@ -5,6 +5,8 @@ each item lands.
 
 **Legend:** [x] done · [ ] todo · [~] in progress / partially done
 
+**Status: COMPLETE — merged via PR #11 (follow-ups tracked in issue #12).**
+
 ---
 
 ## Phase 1 — Backend grounding (`backend/api/endpoints/chat.py`)
