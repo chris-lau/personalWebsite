@@ -51,8 +51,17 @@ This tracking document logs the development progress, architecture, and feature 
 - [x] Upgrade **Unit Economics Calculator** with live ASIN / product URL inspector form and auto-fill.
 - [x] Authored backend pytest suite (`backend/tests/test_amazon_api.py`) and frontend vitest suite.
 
+### Phase 6: AI Companion Mode & Grounded Copilot
+- [x] Add toggleable, split-canvas **AI Companion Mode** (`AmazonToolsPage.tsx`) side-by-side with tool canvas.
+- [x] Add dynamic tab-aware starter questions (`starters.ts`) for Trends, Unit Economics, and Review Gaps.
+- [x] Add 1-click **"Ask AI Copilot"** trigger buttons in Opportunity Finder cards/modal, Unit Economics Calculator, and Review Gap Scanner.
+- [x] Ground backend chat system prompt on 2026 FBA unit economics, fee schedules, formulas, and `site_architecture.json`.
+- [x] Support `/amazon-tools` in markdown route allowlist and coordinate floating `ChatWidget` visibility.
+- [x] Comprehensive unit testing in `AmazonToolsPage.test.tsx` and `test_chat.py`.
+
 ---
 
 ## 📈 Status Summary
-- **Overall Status**: 🟢 Live Data Integration Complete & Verified (64/64 backend tests, 163/163 frontend tests passing)
-- **Completed Date**: August 15, 2026
+- **Overall Status**: 🟢 AI Companion Mode Integration Complete & Verified (68/68 backend tests, 196/196 frontend tests passing)
+- **Completed Date**: August 21, 2026
+

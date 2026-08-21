@@ -1,16 +1,48 @@
-import React, { useState } from 'react';
-import { ShoppingBag, TrendingUp, Calculator, Search, Bookmark } from 'lucide-react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { ShoppingBag, TrendingUp, Calculator, Search, Bookmark, Bot, X } from 'lucide-react';
 import { OpportunityFinder } from '../components/amazon/OpportunityFinder';
 import { UnitEconomicsCalculator } from '../components/amazon/UnitEconomicsCalculator';
 import { ReviewGapScanner } from '../components/amazon/ReviewGapScanner';
 import { NicheTrend } from '../data/amazonData';
+import { BoxContainer } from '../components/ui/BoxContainer';
+import { ChatPanel } from '../components/chat/ChatPanel';
+import {
+  AMAZON_TRENDS_STARTERS,
+  AMAZON_CALCULATOR_STARTERS,
+  AMAZON_REVIEW_GAP_STARTERS,
+} from '../components/chat/starters';
+import { useChat } from '../hooks/useChat';
 import './AmazonToolsPage.css';
 
 type ActiveTab = 'trends' | 'calculator' | 'review_gap';
 
+const COMPANION_STORAGE_KEY = 'amazon_companion_mode';
+
 export const AmazonToolsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('trends');
   const [selectedNiche, setSelectedNiche] = useState<NicheTrend | null>(null);
+
+  // Companion mode toggle (persisted in localStorage, defaults to true)
+  const [companionMode, setCompanionMode] = useState<boolean>(() => {
+    try {
+      const stored = localStorage.getItem(COMPANION_STORAGE_KEY);
+      return stored !== null ? stored === 'true' : true;
+    } catch {
+      return true;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(COMPANION_STORAGE_KEY, String(companionMode));
+    } catch {
+      // Private browsing — silently ignore
+    }
+  }, [companionMode]);
+
+  const companionInputRef = useRef<HTMLInputElement>(null);
+  const companionAsideRef = useRef<HTMLElement>(null);
+  const chat = useChat();
 
   const handleSelectNicheForEconomics = (niche: NicheTrend) => {
     setSelectedNiche(niche);
@@ -24,18 +56,73 @@ export const AmazonToolsPage: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleAskCompanion = async (prompt: string) => {
+    if (!companionMode) {
+      setCompanionMode(true);
+    }
+    // Scroll companion into view on mobile screens
+    if (window.innerWidth < 1024 && companionAsideRef.current) {
+      setTimeout(() => {
+        companionAsideRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+    await chat.sendMessage(prompt);
+  };
+
+  // Tab-aware context and starters
+  const { tabTitle, currentStarters, currentGreeting } = useMemo(() => {
+    switch (activeTab) {
+      case 'trends':
+        return {
+          tabTitle: 'Trend & Opportunity Finder',
+          currentStarters: AMAZON_TRENDS_STARTERS,
+          currentGreeting:
+            'Ask me anything about product trend momentum, 0-100 Opportunity Scoring, and competitor review barriers.',
+        };
+      case 'calculator':
+        return {
+          tabTitle: 'Unit Economics Simulator',
+          currentStarters: AMAZON_CALCULATOR_STARTERS,
+          currentGreeting:
+            'Ask me anything about 2026 Amazon FBA fees, Low-Price FBA (<$10), TACoS advertising spend, and breakeven landed costs.',
+        };
+      case 'review_gap':
+        return {
+          tabTitle: 'Review Gap Scanner',
+          currentStarters: AMAZON_REVIEW_GAP_STARTERS,
+          currentGreeting:
+            'Ask me anything about turning competitor 1-star complaints into winning product features and crafting high-converting listing prompts.',
+        };
+    }
+  }, [activeTab]);
+
   return (
     <div className="page-container amazon-tools-page">
       <header className="page-header">
-        <h1 className="page-title">
-          <ShoppingBag size={28} aria-hidden="true" className="inline-icon accent" />
-          <span>Amazon Seller Trend & Opportunity Suite</span>
-        </h1>
-        <p className="page-description">
-          An interactive intelligence toolkit for Amazon private label sellers and brand builders.
-          Discover high-velocity product niches, model accurate 2026 FBA unit economics, and exploit
-          competitor review weaknesses.
-        </p>
+        <div className="page-header-row">
+          <div>
+            <h1 className="page-title">
+              <ShoppingBag size={28} aria-hidden="true" className="inline-icon accent" />
+              <span>Amazon Seller Trend &amp; Opportunity Suite</span>
+            </h1>
+            <p className="page-description">
+              An interactive intelligence toolkit for Amazon private label sellers and brand builders.
+              Discover high-velocity product niches, model accurate 2026 FBA unit economics, and exploit
+              competitor review weaknesses.
+            </p>
+          </div>
+          <button
+            type="button"
+            className={`companion-mode-toggle-btn ${companionMode ? 'active' : ''}`}
+            onClick={() => setCompanionMode(!companionMode)}
+            aria-pressed={companionMode}
+            aria-label={companionMode ? 'Disable AI Companion Mode' : 'Enable AI Companion Mode'}
+          >
+            <Bot size={16} aria-hidden="true" />
+            <span>AI Companion Mode</span>
+            <span className="companion-toggle-pill">{companionMode ? 'ON' : 'OFF'}</span>
+          </button>
+        </div>
       </header>
 
       {/* Cross-Tool State Banner if a niche was selected from Opportunity Finder */}
@@ -66,7 +153,7 @@ export const AmazonToolsPage: React.FC = () => {
           onClick={() => setActiveTab('trends')}
         >
           <TrendingUp size={16} aria-hidden="true" />
-          <span>Product Trend & Opportunity Finder</span>
+          <span>Product Trend &amp; Opportunity Finder</span>
         </button>
         <button
           type="button"
@@ -74,7 +161,7 @@ export const AmazonToolsPage: React.FC = () => {
           onClick={() => setActiveTab('calculator')}
         >
           <Calculator size={16} aria-hidden="true" />
-          <span>Unit Economics & Profit Simulator</span>
+          <span>Unit Economics &amp; Profit Simulator</span>
         </button>
         <button
           type="button"
@@ -82,27 +169,76 @@ export const AmazonToolsPage: React.FC = () => {
           onClick={() => setActiveTab('review_gap')}
         >
           <Search size={16} aria-hidden="true" />
-          <span>Review Gap & Listing Prompt Scanner</span>
+          <span>Review Gap &amp; Listing Prompt Scanner</span>
         </button>
       </nav>
 
-      {/* Active Tab Panel Rendering */}
-      <main className="amazon-tool-canvas">
-        {activeTab === 'trends' && (
-          <OpportunityFinder
-            onSelectNicheForEconomics={handleSelectNicheForEconomics}
-            onSelectNicheForPrompt={handleSelectNicheForPrompt}
-          />
-        )}
+      {/* Main Suite Canvas + Companion Side-by-Side Grid */}
+      <div className={`amazon-suite-layout ${companionMode ? 'amazon-suite-layout--split' : ''}`}>
+        <main className="amazon-tool-canvas">
+          {activeTab === 'trends' && (
+            <OpportunityFinder
+              onSelectNicheForEconomics={handleSelectNicheForEconomics}
+              onSelectNicheForPrompt={handleSelectNicheForPrompt}
+              onAskCompanion={handleAskCompanion}
+            />
+          )}
 
-        {activeTab === 'calculator' && (
-          <UnitEconomicsCalculator initialNiche={selectedNiche} />
-        )}
+          {activeTab === 'calculator' && (
+            <UnitEconomicsCalculator
+              initialNiche={selectedNiche}
+              onAskCompanion={handleAskCompanion}
+            />
+          )}
 
-        {activeTab === 'review_gap' && (
-          <ReviewGapScanner initialNiche={selectedNiche} />
+          {activeTab === 'review_gap' && (
+            <ReviewGapScanner
+              initialNiche={selectedNiche}
+              onAskCompanion={handleAskCompanion}
+            />
+          )}
+        </main>
+
+        {companionMode && (
+          <aside
+            ref={companionAsideRef}
+            className="amazon-companion-aside"
+            aria-label="Amazon AI Companion Panel"
+          >
+            <BoxContainer title="AMAZON AI COPILOT">
+              <div className="companion-header-meta">
+                <div className="companion-grounding-status">
+                  <span className="grounding-dot" aria-hidden="true" />
+                  <span>2026 FBA &amp; Private Label Intelligence</span>
+                </div>
+                <div className="companion-context-badge">
+                  <span>Context: {tabTitle}</span>
+                </div>
+              </div>
+
+              <ChatPanel
+                chat={chat}
+                className="chat-panel--embedded chat-panel--amazon-companion"
+                starterQuestions={currentStarters}
+                greeting={currentGreeting}
+                inputRef={companionInputRef}
+                headerActions={
+                  <button
+                    type="button"
+                    className="chat-panel__icon-btn"
+                    onClick={() => setCompanionMode(false)}
+                    aria-label="Hide companion panel"
+                    title="Hide AI Companion"
+                  >
+                    <X size={16} aria-hidden="true" />
+                  </button>
+                }
+              />
+            </BoxContainer>
+          </aside>
         )}
-      </main>
+      </div>
     </div>
   );
 };
+

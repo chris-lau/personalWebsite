@@ -10,10 +10,12 @@ import { lookupLiveAmazonAsin } from '../../api/backend';
 
 interface UnitEconomicsCalculatorProps {
   initialNiche?: NicheTrend | null;
+  onAskCompanion?: (prompt: string) => void;
 }
 
 export const UnitEconomicsCalculator: React.FC<UnitEconomicsCalculatorProps> = ({
   initialNiche,
+  onAskCompanion,
 }) => {
   const [asinInput, setAsinInput] = useState<string>('');
   const [isLoadingAsin, setIsLoadingAsin] = useState<boolean>(false);
@@ -175,14 +177,30 @@ export const UnitEconomicsCalculator: React.FC<UnitEconomicsCalculatorProps> = (
               Low-Price FBA rates), PPC ad spend, and breakeven limits.
             </p>
           </div>
-          <button
-            type="button"
-            className="theme-btn-secondary"
-            onClick={handleCopySummary}
-            title="Copy formatted markdown report for suppliers & sourcing agents"
-          >
-            {copySuccess ? '✓ Copied Summary!' : '📋 Copy Sourcing Summary'}
-          </button>
+          <div className="tool-actions-flex">
+            {onAskCompanion && (
+              <button
+                type="button"
+                className="theme-btn-outline"
+                onClick={() =>
+                  onAskCompanion(
+                    `Can you analyze the unit economics for "${productTitle || 'Product'}"? Sale Price: $${economics.salePrice.toFixed(2)}, Landed Cost: $${economics.landedCost.toFixed(2)} (COGS $${cogs.toFixed(2)} + Freight $${shippingToAmazon.toFixed(2)}), Total Amazon Fees: $${economics.totalAmazonFees.toFixed(2)} (${fulfillmentType} fulfillment $${economics.fbaFulfillmentFee.toFixed(2)} + Referral $${economics.referralFee.toFixed(2)}), TACoS: ${tacosPct}% ($${economics.adSpendPerUnit.toFixed(2)}), Net Margin: ${economics.netMarginPct}% ($${economics.netProfit.toFixed(2)}/unit), Breakeven Landed Cost: $${economics.breakevenLandedCost.toFixed(2)}. Is this viable for private label FBA?`
+                  )
+                }
+                title="Ask AI Copilot to analyze these unit economics"
+              >
+                🤖 Ask AI to Analyze
+              </button>
+            )}
+            <button
+              type="button"
+              className="theme-btn-secondary"
+              onClick={handleCopySummary}
+              title="Copy formatted markdown report for suppliers & sourcing agents"
+            >
+              {copySuccess ? '✓ Copied Summary!' : '📋 Copy Sourcing Summary'}
+            </button>
+          </div>
         </div>
       </div>
 
