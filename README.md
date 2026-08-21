@@ -47,13 +47,13 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - **Executive Summaries**: Every article features a prominent **TL;DR** callout box for instant comprehension.
   - **Category Grouping & Discovery**: **22 technical articles** organized under 4 categories (`Backend Architecture & Security`, `React Architecture & Design Systems`, `Developer Workflows & Tooling`, `Testing & Quality Assurance`) with automated **Related Articles** suggestions.
 
-- **Chat-First Home Page ("Ask Chris" hero)**:
-  - **Chat as the Front Door**: The home hero is an embedded `<ChatPanel>` — visitors ask a grounded AI about Chris instead of reading a wall of text; the input is the hero and answers stream inline.
-  - **One-Click Starter Chips**: Curated suggested questions ("What does Chris do?", "Biggest project?", "Tech stack?", "Working on now?") send and stream answers with zero typing.
-  - **Secondary Reading Path**: A quiet `── or, prefer reading? ──` link row (About · Projects · Blog · Experience · Now) demotes traditional pages without removing them; featured projects/skills remain below the fold.
+- **Chat-First Home Page ("Ask Chris" AI Command Center)**:
+  - **AI Command Center as the Front Door**: The home hero places the interactive AI chat prompt front-and-center directly above the fold, featuring a live grounding status badge (`🟢 Grounded on Chris's live experience, projects & architecture`) and streamlined headline.
+  - **One-Click Intent-Driven Starter Chips**: Curated prompt chips ("What is Chris's biggest project?", "Tell me about his AI leadership & experience", "What is his core tech stack?", "What is he working on now?") stream answers with zero typing.
+  - **Unified Direct Exploration Dock**: An integrated responsive dock (`hero-explore-dock`) consolidating traditional reading routes (`About` · `Projects` · `Experience` · `Blog` · `Now`) and external profiles (`GitHub ↗` · `LinkedIn ↗`); featured projects and skills matrix remain scannable below the fold.
   - **Single Chat Surface**: The floating widget hides itself on `/` so the hero is the only chat entry point there.
   - **Router-Aware Markdown Links**: Assistant replies render via a `chat` variant of `<MarkdownRenderer>` — site-relative "Read more:" links navigate client-side (React Router `<Link>`, no hard reload).
-  - **Extended Grounding**: Chat context now includes `projects.json`, `skills.json`, and `now.json`; the system prompt caps answers (~120 words) and restricts links to an allowlist of site routes to prevent hallucinated URLs.
+  - **Extended Grounding**: Chat context includes `projects.json`, `skills.json`, and `now.json`; the system prompt caps answers (~120 words) and restricts links to an allowlist of site routes to prevent hallucinated URLs.
   - **Plan**: [ask-chris-home-plan.md](ask-chris-home-plan.md) | **Tracker**: [IMPLEMENTATION-ask-chris.md](IMPLEMENTATION-ask-chris.md)
 
 - **AI Chat Widget ("Chat with Chris")**:

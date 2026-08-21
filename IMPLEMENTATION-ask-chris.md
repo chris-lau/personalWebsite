@@ -34,24 +34,27 @@ each item lands.
       `<Link>`; external → new tab)
 - [x] Use it for assistant messages in `ChatPanel` (covers embedded + floating)
 
-## Phase 3 — Chat-first HomePage
+## Phase 3 — Chat-first HomePage & AI Command Center Redesign
 
-- [x] Hero: name/title one-liner + one line of real bio (SEO) + `BoxContainer`-wrapped
-      `ChatPanel` with curated starters ("What do you do?", "Biggest project?",
-      "Tech stack?", "Working on now?")
-- [x] Quiet `── prefer reading? ──` link row below the chat
-- [x] Starter chips as wrapped flex pills; input ≥16px on mobile (iOS zoom)
+- [x] Hero: live grounding badge + streamlined headline (`Name` + `Title`) + `BoxContainer`-wrapped
+      `ChatPanel` with curated intent starters ("What is Chris's biggest project?",
+      "Tell me about his AI leadership & experience", "What is his core tech stack?", "What is he working on now?")
+- [x] Unified `── or explore directly ──` dock below the chat combining internal reading routes and social profiles (`GitHub ↗`, `LinkedIn ↗`)
+- [x] Starter chips as elevated pills with hover lift; input ≥16px on mobile (iOS zoom)
+- [x] Dead CSS sweep: removed orphaned `.hero-links` rules
+- [x] Semantic a11y: refined grounding badge markup without non-standard `aria-label`
 - [x] Keep featured projects / skills sections below the fold
 
 ## Phase 4 — De-dupe chat surfaces
 
 - [x] `ChatWidget` renders null on `/` (`useLocation()` check)
 
-## Phase 5 — Tests
+## Phase 5 — Tests & Verification
 
 - [x] Vitest: `ChatPanel` renders starters, chip click sends, tokens stream
-- [x] Vitest: `ChatWidget` hidden on `/`; update existing widget tests for refactor
+- [x] Vitest: `ChatWidget` hidden on `/`; all 192 tests passing across 25 suites
 - [x] Pytest: projects/skills/now in system prompt (mirrors Phase 1 item)
+- [x] Production build: `tsc && vite build` completes cleanly with 0 errors
 
 ---
 

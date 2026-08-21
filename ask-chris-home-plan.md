@@ -14,30 +14,33 @@ quiet "prefer reading?" link row.
 ## Design
 
 ```
-┌─────────────────────────────────────────────────────┐
-│  Chris Lau                                    [≡]   │
-│                                                     │
-│        Hi, I'm Chris. Ask me anything               │
-│        about what I do.                             │
-│                                                     │
-│   ┌───────────────────────────────────────────┐     │
-│   │  💬 [ Ask a question…            ] [Send]  │     │
-│   └───────────────────────────────────────────┘     │
-│                                                     │
-│   No idea what to ask? Try:                         │
-│   ( What do you do? )  ( Biggest project? )         │
-│   ( Tech stack? )      ( What are you into now? )   │
-│                                                     │
-│   ── or, prefer reading? ──                         │
-│   [About] [Projects] [Blog] [Experience] [Now]      │
-└─────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│  Chris Lau                                            [≡]   │
+│                                                             │
+│         [ 🟢 Grounded on Chris's live experience & work ]   │
+│                                                             │
+│                            Chris Lau                        │
+│            Staff Product Manager, AI & Technical Leader     │
+│                                                             │
+│   ┌───────────────────────────────────────────────────┐     │
+│   │  💬 [ Ask me anything about my work & systems… ]   │     │
+│   └───────────────────────────────────────────────────┘     │
+│                                                             │
+│   Try asking:                                               │
+│   ( 🚀 Biggest project? )    ( 🧠 AI leadership & exp )     │
+│   ( 🛠️ Core tech stack? )    ( 📍 Working on now? )         │
+│                                                             │
+│   ── or explore directly ──                                 │
+│   [About] [Projects] [Experience] [Blog] [Now] [GitHub] [LI]│
+└─────────────────────────────────────────────────────────────┘
 ```
 
 - **Chat replaces hero** — the chat input is the hero; answers stream inline (SSE already works).
-  Keep one line of real bio text in the hero for SEO and non-chat visitors.
+  Hero headline is streamlined and brings the input prompt front and center.
 - **Chips = one-click chat** — clicking a suggested question sends it and streams a short AI
   answer with "read more" links. Zero typing, still conversational.
-- **Reading demoted, not removed** — quiet link row under the chat; existing pages untouched.
+- **Unified Exploration Dock** — an integrated responsive dock under the chat combines
+  reading paths with social profiles; existing pages untouched.
 - **Theme-aware** — the embedded chat uses the existing design tokens, so it re-skins across
   modern / ascii / cli layouts automatically. CLI theme gets a natural terminal-chat look.
 
@@ -98,15 +101,11 @@ quiet "prefer reading?" link row.
 
 ### Phase 3 — Chat-first HomePage (`frontend/src/pages/HomePage.tsx`)
 
-- Replace hero with: name/title one-liner + `BoxContainer`-wrapped `ChatPanel`.
-- Curated home chips: "What do you do?", "What's your biggest project?",
-  "What's your tech stack?", "What are you working on now?".
-- Render assistant content via the new `chat` variant of `MarkdownRenderer` so
-  "read more" links are clickable — applied to both embedded and floating variants.
-- Add quiet `── prefer reading? ──` link row below the chat.
-- Layout details: `.chat-panel__messages` gets `max-height: min(420px, 50vh)` with
-  auto-scroll so streaming doesn't push the page down; input font-size ≥16px on mobile
-  (iOS zoom prevention); starter chips as wrapped flex pills.
+- Replace hero with AI Command Center: live grounding badge + streamlined headline (`Name` + `Title`) + `BoxContainer`-wrapped `ChatPanel`.
+- Curated intent-driven chips: "What is Chris's biggest project?", "Tell me about his AI leadership & experience", "What is his core tech stack?", "What is he working on now?".
+- Render assistant content via the `chat` variant of `MarkdownRenderer` so "read more" links are clickable.
+- Add unified `── or explore directly ──` dock below the chat combining site routes and external social links (`LinkedIn ↗`, `GitHub ↗`).
+- Layout details: `.chat-panel__messages` gets `max-height: min(460px, 55vh)` with auto-scroll; input font-size ≥16px on mobile (iOS zoom prevention); starter chips as elevated pills with hover lift.
 - Keep featured projects / skills sections below the fold for scannability.
 
 ### Phase 4 — Avoid double chat on home

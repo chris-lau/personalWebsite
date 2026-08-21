@@ -15,4 +15,3 @@ export const HOME_STARTERS: string[] = [
   'What is his core tech stack?',
   'What is he working on now?',
 ];
-

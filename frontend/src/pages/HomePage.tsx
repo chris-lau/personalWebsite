@@ -18,7 +18,7 @@ export const HomePage = () => {
       <section className="hero-section">
         <BoxContainer title="ASK CHRIS">
           <div className="hero-content hero-content--chat">
-            <div className="hero-grounding-badge" aria-label="AI System Status">
+            <div className="hero-grounding-badge">
               <span className="grounding-dot" aria-hidden="true" />
               <span>Grounded on Chris&apos;s live experience, projects &amp; architecture</span>
             </div>
