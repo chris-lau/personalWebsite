@@ -76,9 +76,15 @@ export const HomePage = () => {
                     </a>
                   )}
                   {project.liveUrl && (
-                    <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="link-button">
-                      Live Demo
-                    </a>
+                    project.liveUrl.startsWith('/') ? (
+                      <Link to={project.liveUrl} className="link-button">
+                        Live Demo
+                      </Link>
+                    ) : (
+                      <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="link-button">
+                        Live Demo
+                      </a>
+                    )
                   )}
                 </div>
               </div>

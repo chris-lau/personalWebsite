@@ -3,9 +3,10 @@ import { SAMPLE_NICHE_TRENDS, AMAZON_CATEGORY_FEES, NicheTrend } from '../../dat
 
 interface ReviewGapScannerProps {
   initialNiche?: NicheTrend | null;
+  onAskCompanion?: (prompt: string) => void;
 }
 
-export const ReviewGapScanner: React.FC<ReviewGapScannerProps> = ({ initialNiche }) => {
+export const ReviewGapScanner: React.FC<ReviewGapScannerProps> = ({ initialNiche, onAskCompanion }) => {
   const [selectedNicheId, setSelectedNicheId] = useState<string>(
     initialNiche ? initialNiche.id : SAMPLE_NICHE_TRENDS[0].id
   );
@@ -133,13 +134,29 @@ Please generate:
                 or Gemini.
               </p>
             </div>
-            <button
-              type="button"
-              className="theme-btn-primary btn-sm"
-              onClick={handleCopyPrompt}
-            >
-              {copiedPrompt ? '✓ Copied to Clipboard!' : '📋 Copy AI Prompt'}
-            </button>
+            <div className="generator-actions">
+              {onAskCompanion && (
+                <button
+                  type="button"
+                  className="theme-btn-outline btn-sm"
+                  onClick={() =>
+                    onAskCompanion(
+                      `For the product "${activeNiche.name}" in ${categoryName}, how can I refine this differentiation strategy against competitor flaws: ${activeNiche.painPoints.join('; ')}? Current angle: "${activeNiche.differentiationAngle}". What specific questions should I ask manufacturers?`
+                    )
+                  }
+                  title="Ask AI Copilot to refine differentiation strategy"
+                >
+                  🤖 Ask AI Copilot
+                </button>
+              )}
+              <button
+                type="button"
+                className="theme-btn-primary btn-sm"
+                onClick={handleCopyPrompt}
+              >
+                {copiedPrompt ? '✓ Copied to Clipboard!' : '📋 Copy AI Prompt'}
+              </button>
+            </div>
           </div>
 
           <div className="prompt-display-terminal">

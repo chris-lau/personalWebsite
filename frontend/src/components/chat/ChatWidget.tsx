@@ -69,7 +69,7 @@ export const ChatWidget: React.FC = () => {
     return null;
   }
 
-  if (pathname === '/') {
+  if (pathname === '/' || pathname === '/amazon-tools') {
     return null;
   }
 

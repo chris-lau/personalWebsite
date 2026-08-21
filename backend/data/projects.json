@@ -14,5 +14,14 @@
     "techStack": ["React", "TypeScript", "GitHub API", "Vite", "CSS Tokens"],
     "githubUrl": "https://github.com/chris-lau/personalWebsite",
     "featured": true
+  },
+  {
+    "id": "amazon-seller-suite",
+    "title": "Amazon Seller Trend & Opportunity Suite",
+    "description": "An interactive private label intelligence toolkit featuring a 0-100 Opportunity Score algorithm, 2026 FBA & Low-Price FBA unit economics simulator, competitor review gap sentiment scanner, and live Amazon proxy data.",
+    "techStack": ["React", "TypeScript", "FastAPI", "Python", "Amazon FBA Economics", "Sentiment Analysis"],
+    "githubUrl": "https://github.com/chris-lau/personalWebsite",
+    "liveUrl": "/amazon-tools",
+    "featured": true
   }
 ]

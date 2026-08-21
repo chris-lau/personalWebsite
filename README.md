@@ -39,6 +39,7 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - **2026 FBA Unit Economics & Profit Margin Calculator**: Dynamic financial simulator modeling accurate 2026 Amazon fulfillment fee tiers, category-specific referral rates, TACoS ad spend, landed COGS, and breakeven margins.
   - **Competitor Review Sentiment & Gap Analysis**: Product intelligence dashboard synthesizing sentiment weaknesses across 100+ customer reviews with instant AI prompt generation for product redesign.
   - **Keyword Velocity & Trends Explorer**: Search volume tracking and growth velocity indicator identifying trending product terms before seasonal demand spikes.
+  - **AI Companion Mode & Copilot Assistance**: Side-by-side interactive chat assistant with persistent header toggle (`🤖 AI Companion Mode [ON/OFF]`), tab-aware starter questions, and 1-click "Ask AI Copilot" quick actions to clarify complex metrics (Opportunity Score, TACoS, 2026 FBA tiers, Low-Price FBA, breakeven thresholds, and review differentiation). Grounded directly in 2026 FBA economics and site architecture.
 
 - **Full-Featured Technical Blog Engine (`/blog`)**:
   - Modular Markdown storage in `backend/posts/`, auto-discovered at build time via Vite's `import.meta.glob` (no manual import lists to maintain).
@@ -51,13 +52,13 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - **AI Command Center as the Front Door**: The home hero places the interactive AI chat prompt front-and-center directly above the fold, featuring a live grounding status badge (`🟢 Grounded on Chris's live experience, projects & architecture`) and streamlined headline.
   - **One-Click Intent-Driven Starter Chips**: Curated prompt chips ("What is Chris's biggest project?", "Tell me about his AI leadership & experience", "What is his core tech stack?", "What is he working on now?") stream answers with zero typing.
   - **Unified Direct Exploration Dock**: An integrated responsive dock (`hero-explore-dock`) consolidating traditional reading routes (`About` · `Projects` · `Experience` · `Blog` · `Now`) and external profiles (`GitHub ↗` · `LinkedIn ↗`); featured projects and skills matrix remain scannable below the fold.
-  - **Single Chat Surface**: The floating widget hides itself on `/` so the hero is the only chat entry point there.
+  - **Single Chat Surface**: The floating widget hides itself on `/` and `/amazon-tools` where dedicated in-page chat interfaces operate.
   - **Router-Aware Markdown Links**: Assistant replies render via a `chat` variant of `<MarkdownRenderer>` — site-relative "Read more:" links navigate client-side (React Router `<Link>`, no hard reload).
-  - **Extended Grounding**: Chat context includes `projects.json`, `skills.json`, and `now.json`; the system prompt caps answers (~120 words) and restricts links to an allowlist of site routes to prevent hallucinated URLs.
+  - **Extended Grounding**: Chat context includes `projects.json`, `skills.json`, `now.json`, and `site_architecture.json`; the system prompt caps answers (~120 words) and restricts links to an allowlist of site routes (`/about`, `/projects`, `/blog/{slug}`, `/experience`, `/now`, `/guidebook`, `/amazon-tools`) to prevent hallucinated URLs.
   - **Plan**: [ask-chris-home-plan.md](ask-chris-home-plan.md) | **Tracker**: [IMPLEMENTATION-ask-chris.md](IMPLEMENTATION-ask-chris.md)
 
 - **AI Chat Widget ("Chat with Chris")**:
-  - **Retrieval-Grounded Q&A**: A visitor-facing chat widget that answers questions using the site's blog posts, guidebooks, profile, projects, skills, and current focus as context (~71K tokens) — no hallucination about unrelated topics.
+  - **Retrieval-Grounded Q&A**: A visitor-facing chat widget that answers questions using the site's blog posts, guidebooks, profile, projects, skills, site architecture, and current focus as context (~71K tokens) — no hallucination about unrelated topics.
   - **Streaming Replies (SSE)**: Replies stream token-by-token over Server-Sent Events for a responsive UX.
   - **Multi-Provider, One SDK**: A single OpenAI-compatible client (`POST /api/chat`) serves Gemini, DeepSeek, and OpenAI behind a UI model switcher — only providers with a configured key appear in the dropdown.
   - **Defensive Boundaries**: Strict system prompt resists prompt injection; per-IP rate limit (`CHAT_RATE_LIMIT_PER_MINUTE`) plus daily caps (`CHAT_DAILY_GLOBAL_LIMIT` / `CHAT_DAILY_PER_IP_LIMIT`) and bounded conversation history control cost/abuse.
@@ -77,6 +78,7 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - **Niche Opportunity Finder**: Search and filter 12+ product micro-niches with automated 0–100 Opportunity Scores based on search velocity, competition level, and price sweet spots.
   - **2026 FBA Unit Economics Calculator**: Precise profit & margin simulator supporting 2026 Amazon fee schedules, Low-Price FBA fee breaks, referral rate tiers, dimensional weight logic, and Markdown sourcing summary export.
   - **Review Gap & AI Listing Scanner**: Aggregates competitor complaint themes and generates prompt engineering templates for product differentiation.
+  - **AI Companion Mode**: Split-screen AI Copilot assistant with tab-tailored starter prompts and 1-click action triggers on cards/calculators.
   - **Truthful Data Flagging & Degradation UI**: Differentiates live marketplace data from simulated benchmarks (`is_live` flags, `source` discriminators, warning status pills, and informative note banners).
 
 - **Accessibility, Mobile Responsiveness & UX**:
@@ -94,7 +96,7 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
 
 - **Testing & Quality Assurance**:
   - Storybook 8 component catalog & accessibility auditing (`@storybook/addon-a11y`).
-  - Vitest + `@testing-library/react` unit & component integration tests (**192 / 192 passing tests** across 25 test files).
+  - Vitest + `@testing-library/react` unit & component integration tests (**196 / 196 passing tests** across 25 test files).
   - Playwright real-browser end-to-end (E2E) testing across all 3 themes (**9 / 9 passing tests** across 3 spec files).
   - Pytest backend unit & integration tests (**68 / 68 passing tests**).
 
@@ -116,6 +118,7 @@ personalWebsite/
 ├── phase-3.5-summary.md               # Phase 3.5 summary & completion log
 ├── phase-4-implementation-plan.md     # Phase 4 execution plan & checklist
 ├── phase-4-summary.md                 # Phase 4 summary & completion log
+├── amazon-seller-tools-tracker.md     # Amazon Seller Suite roadmap & status log
 ├── ai-chat-implementation-plan.md     # AI chat widget implementation plan
 ├── ai-chat-plan-review.md             # AI chat plan review report
 ├── backend/                           # Python FastAPI Backend Service
@@ -123,10 +126,10 @@ personalWebsite/
 │   ├── core/                          # DB configuration, models, middleware & rate limiting
 │   ├── schemas/                       # Pydantic v2 data models (incl. GitHub proxy)
 │   ├── api/endpoints/                 # REST endpoints, GitHub proxy, chat (SSE), telemetry & health
-│   ├── data/                          # Backend data (blog posts JSON, Guidebook repos)
+│   ├── data/                          # Backend data (blog posts, Guidebook, Amazon knowledge)
 │   ├── migrations/                    # Alembic database migration revisions
 │   ├── seed.py                        # Idempotent database seeding pipeline
-│   ├── tests/                         # Pytest test suite (60 tests)
+│   ├── tests/                         # Pytest test suite (68 tests)
 │   └── Dockerfile                     # Multi-stage container build (non-root) for Render
 └── frontend/                          # React 18 + TypeScript SPA app
     ├── .storybook/                    # Storybook 8 configuration
@@ -200,9 +203,9 @@ Phase 4 transitions the backend from static JSON loading to a persistent relatio
 * **Automated 6-Hour Keep-Alive Probe**:
   - Scheduled GitHub Actions workflow (`.github/workflows/keep-alive.yml`) pinging `/health/ready` every 6 hours (`00:00`, `06:00`, `12:00`, `18:00` UTC).
   - Executes a live `SELECT 1` query to keep cloud PostgreSQL (Aiven) active and prevent inactivity suspension.
-* **Full Test Metrics (269 / 269 Total Tests Passing)**:
-  - **Backend**: **68 / 68 Pytest unit tests passing** (including `tests/test_database.py`, `tests/test_chat.py`).
-  - **Frontend**: **192 / 192 Vitest unit tests passing** across **25 test files**.
+* **Full Test Metrics (273 / 273 Total Tests Passing)**:
+  - **Backend**: **68 / 68 Pytest unit tests passing** (including `tests/test_database.py`, `tests/test_chat.py`, `tests/test_amazon_api.py`).
+  - **Frontend**: **196 / 196 Vitest unit tests passing** across **25 test files**.
   - **E2E**: **9 / 9 Playwright E2E tests passing**.
 
 Detailed summary: [phase-4-summary.md](phase-4-summary.md) | Implementation plan: [phase-4-implementation-plan.md](phase-4-implementation-plan.md)

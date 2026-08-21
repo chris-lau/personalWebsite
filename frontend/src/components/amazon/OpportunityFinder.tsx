@@ -12,11 +12,13 @@ import { AmazonProductItem } from '../../types/amazon';
 interface OpportunityFinderProps {
   onSelectNicheForEconomics: (niche: NicheTrend) => void;
   onSelectNicheForPrompt: (niche: NicheTrend) => void;
+  onAskCompanion?: (prompt: string) => void;
 }
 
 export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
   onSelectNicheForEconomics,
   onSelectNicheForPrompt,
+  onAskCompanion,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [minGrowth, setMinGrowth] = useState<number>(0);
@@ -398,6 +400,20 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
                 >
                   🔍 View Listing Gaps
                 </button>
+                {onAskCompanion && (
+                  <button
+                    type="button"
+                    className="theme-btn-outline btn-sm"
+                    onClick={() =>
+                      onAskCompanion(
+                        `Can you analyze the market opportunity for "${niche.name}"? It has an Opportunity Score of ${opp.score}/100 (${opp.rating}), est. search volume of ${niche.searchVolume.toLocaleString()} (${niche.searchVolumeGrowthPct}% growth), and a ${niche.reviewBarrier} review barrier.`
+                      )
+                    }
+                    title="Ask AI Copilot to analyze this niche"
+                  >
+                    🤖 Ask AI
+                  </button>
+                )}
                 <button
                   type="button"
                   className="theme-btn-outline"
@@ -491,6 +507,20 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
               >
                 Load into Financial Simulator
               </button>
+              {onAskCompanion && (
+                <button
+                  type="button"
+                  className="theme-btn-outline"
+                  onClick={() => {
+                    onAskCompanion(
+                      `Can you explain how to exploit competitor weaknesses for "${selectedModalNiche.name}"? Known customer pain points: ${selectedModalNiche.painPoints.join('; ')}. Proposed differentiation angle: "${selectedModalNiche.differentiationAngle}".`
+                    );
+                    setSelectedModalNiche(null);
+                  }}
+                >
+                  🤖 Ask AI Copilot
+                </button>
+              )}
               <button
                 type="button"
                 className="theme-btn-secondary"
