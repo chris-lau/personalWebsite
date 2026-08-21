@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { ArrowUpRight } from 'lucide-react';
 import { profileData } from '../data/profile';
 import { projectsData } from '../data/projects';
 import { skillsData } from '../data/skills';
@@ -17,38 +18,41 @@ export const HomePage = () => {
       <section className="hero-section">
         <BoxContainer title="ASK CHRIS">
           <div className="hero-content hero-content--chat">
+            <div className="hero-grounding-badge" aria-label="AI System Status">
+              <span className="grounding-dot" aria-hidden="true" />
+              <span>Grounded on Chris&apos;s live experience, projects &amp; architecture</span>
+            </div>
             <h1 className="hero-title">{profileData.name}</h1>
             <p className="hero-subtitle">{profileData.title}</p>
-            <p className="hero-bio hero-bio--short">{profileData.bio}</p>
           </div>
           <ChatPanel
             chat={chat}
             className="chat-panel--embedded"
             starterQuestions={HOME_STARTERS}
-            greeting="Ask me anything about what Chris does — or tap a question below."
+            greeting="Ask me anything about Chris's AI leadership, systems, and background — or tap a question below."
           />
-          <div className="hero-links">
+        </BoxContainer>
+
+        <div className="hero-explore-dock">
+          <span className="explore-dock__label">── or explore directly ──</span>
+          <nav className="explore-dock__links" aria-label="Direct site exploration">
+            <Link to="/about" className="explore-dock__link">About</Link>
+            <Link to="/projects" className="explore-dock__link">Projects</Link>
+            <Link to="/experience" className="explore-dock__link">Experience</Link>
+            <Link to="/blog" className="explore-dock__link">Blog</Link>
+            <Link to="/now" className="explore-dock__link">Now</Link>
             {profileData.socials.map((s) => (
               <a
                 key={s.platform}
                 href={s.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="link-button"
+                className="explore-dock__link explore-dock__link--external"
               >
                 {s.platform}
+                <ArrowUpRight size={12} aria-hidden="true" className="external-icon" />
               </a>
             ))}
-          </div>
-        </BoxContainer>
-        <div className="prefer-reading">
-          <span className="prefer-reading__label">── or, prefer reading? ──</span>
-          <nav className="prefer-reading__links" aria-label="Site sections">
-            <Link to="/about">About</Link>
-            <Link to="/projects">Projects</Link>
-            <Link to="/blog">Blog</Link>
-            <Link to="/experience">Experience</Link>
-            <Link to="/now">Now</Link>
           </nav>
         </div>
       </section>

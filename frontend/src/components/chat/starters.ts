@@ -10,8 +10,9 @@ export const DEFAULT_STARTERS: string[] = [
 
 /** Curated chips for the chat-first home hero. */
 export const HOME_STARTERS: string[] = [
-  'What does Chris do?',
   "What is Chris's biggest project?",
-  'What is his tech stack?',
+  'Tell me about his AI leadership & experience',
+  'What is his core tech stack?',
   'What is he working on now?',
 ];
+
