@@ -118,6 +118,7 @@ personalWebsite/
 ├── phase-3.5-summary.md               # Phase 3.5 summary & completion log
 ├── phase-4-implementation-plan.md     # Phase 4 execution plan & checklist
 ├── phase-4-summary.md                 # Phase 4 summary & completion log
+├── amazon-seller-tools-tracker.md     # Amazon Seller Suite roadmap & status log
 ├── ai-chat-implementation-plan.md     # AI chat widget implementation plan
 ├── ai-chat-plan-review.md             # AI chat plan review report
 ├── backend/                           # Python FastAPI Backend Service
@@ -125,10 +126,10 @@ personalWebsite/
 │   ├── core/                          # DB configuration, models, middleware & rate limiting
 │   ├── schemas/                       # Pydantic v2 data models (incl. GitHub proxy)
 │   ├── api/endpoints/                 # REST endpoints, GitHub proxy, chat (SSE), telemetry & health
-│   ├── data/                          # Backend data (blog posts JSON, Guidebook repos)
+│   ├── data/                          # Backend data (blog posts, Guidebook, Amazon knowledge)
 │   ├── migrations/                    # Alembic database migration revisions
 │   ├── seed.py                        # Idempotent database seeding pipeline
-│   ├── tests/                         # Pytest test suite (60 tests)
+│   ├── tests/                         # Pytest test suite (68 tests)
 │   └── Dockerfile                     # Multi-stage container build (non-root) for Render
 └── frontend/                          # React 18 + TypeScript SPA app
     ├── .storybook/                    # Storybook 8 configuration
@@ -202,9 +203,9 @@ Phase 4 transitions the backend from static JSON loading to a persistent relatio
 * **Automated 6-Hour Keep-Alive Probe**:
   - Scheduled GitHub Actions workflow (`.github/workflows/keep-alive.yml`) pinging `/health/ready` every 6 hours (`00:00`, `06:00`, `12:00`, `18:00` UTC).
   - Executes a live `SELECT 1` query to keep cloud PostgreSQL (Aiven) active and prevent inactivity suspension.
-* **Full Test Metrics (269 / 269 Total Tests Passing)**:
-  - **Backend**: **68 / 68 Pytest unit tests passing** (including `tests/test_database.py`, `tests/test_chat.py`).
-  - **Frontend**: **192 / 192 Vitest unit tests passing** across **25 test files**.
+* **Full Test Metrics (273 / 273 Total Tests Passing)**:
+  - **Backend**: **68 / 68 Pytest unit tests passing** (including `tests/test_database.py`, `tests/test_chat.py`, `tests/test_amazon_api.py`).
+  - **Frontend**: **196 / 196 Vitest unit tests passing** across **25 test files**.
   - **E2E**: **9 / 9 Playwright E2E tests passing**.
 
 Detailed summary: [phase-4-summary.md](phase-4-summary.md) | Implementation plan: [phase-4-implementation-plan.md](phase-4-implementation-plan.md)
