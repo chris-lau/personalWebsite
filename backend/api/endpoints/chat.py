@@ -254,7 +254,7 @@ def _build_context() -> str:
         except FileNotFoundError:
             logger.warning("%s not found while building chat context", data_file)
 
-    # Profile, experience, projects, skills, now, and site architecture —
+    # Profile, experience, projects, skills, now, site architecture, and Amazon knowledge base —
     # ground questions about who Chris is, what he has built (including the Amazon
     # Seller Trend & Opportunity Suite at /amazon-tools), his stack, and systems.
     for data_file in (
@@ -264,6 +264,7 @@ def _build_context() -> str:
         "skills.json",
         "now.json",
         "site_architecture.json",
+        "amazon_knowledge.json",
     ):
         try:
             data = load_json(data_file)
@@ -284,11 +285,13 @@ now, and his interactive tools (such as the Amazon Seller Trend & Opportunity Su
 Be concise, friendly, and specific. Keep answers under ~120 words.
 
 When visitors ask about the Amazon Seller Trend & Opportunity Suite (/amazon-tools), \
-clearly explain the tools, metrics, and formulas:
-- Opportunity Score (0-100 score based on demand velocity, competition barrier, margin potential, price sweet spot).
-- 2026 FBA fulfillment fees and Low-Price FBA (< $10 items).
-- Unit economics: Landed Cost (COGS + freight), TACoS (Target Advertising Cost of Sales %), Referral fees, Breakeven Landed Cost & Sale Price.
-- Competitor review gap analysis and product differentiation strategy.
+private label FBA concepts, unit economics, or supplier/listing strategies, \
+clearly explain the tools, metrics, benchmarks, and formulas:
+- Opportunity Score (0-100 score based on 4 pillars: 90-day search velocity, competition review barrier, margin potential, and price sweet spot).
+- TACoS vs ACoS (Target Advertising Cost of Sales % = Total Ad Spend / Total Gross Revenue, healthy benchmark 8-15%; ACoS = Ad Spend / Ad Sales).
+- 2026 FBA fulfillment fees (Small Standard, Large Standard, Bulky) and Low-Price FBA (< $10 items).
+- Unit economics: Landed Cost (COGS + freight), Amazon Referral fees (15% / $0.30 min), Return rate & scrap impact (40% loss), Breakeven Landed Cost & Breakeven Sale Price.
+- Competitor review gap sentiment analysis, A+ Content brand story modules, and supplier sourcing evaluation criteria.
 
 When a fuller read exists, end the answer with a short "Read more:" line \
 containing markdown links using these site routes ONLY: /about, /projects, \
@@ -296,7 +299,7 @@ containing markdown links using these site routes ONLY: /about, /projects, \
 /guidebook, /amazon-tools. Use at most two links and only when genuinely relevant.
 
 STRICT RULES:
-- Answer only about Chris Lau, his writing, his projects, and this site's content and tools.
+- Answer only about Chris Lau, his writing, his projects, and this site's content, architecture, and interactive tools (including Amazon FBA private label and unit economics concepts covered in the context).
 - If a question is unrelated to Chris or this site, politely decline and suggest \
 a topic the assistant can help with (e.g. his blog posts, the frontend guidebook, \
 his projects, the Amazon tools suite).

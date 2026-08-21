@@ -66,7 +66,22 @@ export const AmazonToolsPage: React.FC = () => {
         companionAsideRef.current?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
     }
+    setTimeout(() => {
+      companionInputRef.current?.focus();
+    }, 150);
     await chat.sendMessage(prompt);
+  };
+
+  const handleToggleCompanion = () => {
+    setCompanionMode((prev) => {
+      const next = !prev;
+      if (next) {
+        setTimeout(() => {
+          companionInputRef.current?.focus();
+        }, 100);
+      }
+      return next;
+    });
   };
 
   // Tab-aware context and starters
@@ -114,7 +129,7 @@ export const AmazonToolsPage: React.FC = () => {
           <button
             type="button"
             className={`companion-mode-toggle-btn ${companionMode ? 'active' : ''}`}
-            onClick={() => setCompanionMode(!companionMode)}
+            onClick={handleToggleCompanion}
             aria-pressed={companionMode}
             aria-label={companionMode ? 'Disable AI Companion Mode' : 'Enable AI Companion Mode'}
           >

@@ -38,10 +38,4 @@ export const AMAZON_REVIEW_GAP_STARTERS: string[] = [
   'What are A+ Content brand story modules?',
 ];
 
-export const AMAZON_GENERAL_STARTERS: string[] = [
-  'How does the Amazon Opportunity Suite work?',
-  'Explain 2026 FBA fulfillment fees & Low-Price FBA',
-  'What is TACoS and how does ad spend affect margin?',
-  'How do I identify high-growth, low-competition niches?',
-];
 

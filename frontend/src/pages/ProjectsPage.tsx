@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { Folder, GitBranch } from 'lucide-react';
 import { projectsData } from '../data/projects';
 import { BoxContainer } from '../components/ui/BoxContainer';
@@ -88,9 +89,15 @@ export const ProjectsPage: React.FC = () => {
                       </a>
                     )}
                     {project.liveUrl && (
-                      <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="link-button">
-                        Live Demo
-                      </a>
+                      project.liveUrl.startsWith('/') ? (
+                        <Link to={project.liveUrl} className="link-button">
+                          Live Demo
+                        </Link>
+                      ) : (
+                        <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="link-button">
+                          Live Demo
+                        </a>
+                      )
                     )}
                   </div>
                 </div>

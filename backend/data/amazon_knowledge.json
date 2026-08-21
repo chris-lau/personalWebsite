@@ -1,0 +1,57 @@
+{
+  "suiteOverview": {
+    "name": "Amazon Seller Trend & Opportunity Suite",
+    "route": "/amazon-tools",
+    "purpose": "An interactive intelligence toolkit for Amazon private label brand builders and sellers to discover high-velocity product niches, model accurate 2026 FBA unit economics, and exploit competitor review weaknesses."
+  },
+  "metricsAndFormulas": {
+    "opportunityScore": {
+      "definition": "A composite 0–100 score rating product niche viability based on 4 pillars: Demand Velocity (up to 30 pts), Competition Review Barrier (up to 30 pts), Margin Potential (up to 25 pts), and Price Sweet Spot (up to 15 pts).",
+      "ratings": {
+        "exceptional": "85–99 pts: High search growth, low review barrier (<300 reviews), net margin >35%, sweet spot pricing.",
+        "strong": "70–84 pts: Healthy growth and viable competition, net margin >25%.",
+        "moderate": "55–69 pts: Moderate competition or lower margin requiring distinct product differentiation.",
+        "challenging": "10–54 pts: Heavy incumbent review barriers (>1,000 top reviews) or thin margins."
+      },
+      "searchGrowthVelocity": "90-day search growth percentage indicating accelerating consumer demand momentum before seasonal spikes or broader market awareness."
+    },
+    "tacosVsAcos": {
+      "tacos": {
+        "term": "Target / Total Advertising Cost of Sales (TACoS)",
+        "formula": "Total Ad Spend / Total Gross Revenue * 100",
+        "benchmark": "Healthy target is 8%–15% for mature private label products, and 15%–25% during initial product launch.",
+        "significance": "TACoS measures overall business health and organic momentum by comparing ad spend against total sales."
+      },
+      "acos": {
+        "term": "Advertising Cost of Sales (ACoS)",
+        "formula": "Ad Spend / Direct Ad-Attributed Sales * 100",
+        "significance": "ACoS measures direct PPC campaign efficiency on ad clicks."
+      }
+    },
+    "unitEconomics": {
+      "landedCost": "Total cost per unit delivered to Amazon warehouse = Manufacturing COGS + Inbound Freight / Shipping per unit.",
+      "referralFee": "Amazon marketplace commission per sale, typically 15% across most categories with a $0.30 minimum fee.",
+      "fbaFulfillmentFee2026": {
+        "smallStandard": "< 16 oz, max 15x12x0.75 in: $3.22 standard / $2.45 low-price rate.",
+        "largeStandard": "16 oz to 20 lbs, max 18x14x8 in: $4.75 standard / $3.15 low-price rate.",
+        "largeBulky": "Up to 50 lbs: $9.73 standard / $7.50 low-price rate.",
+        "extraLarge": "50+ lbs: $26.33 standard fee.",
+        "lowPriceFbaDiscount": "Automatic discounted FBA fulfillment rates for any product priced under $10.00."
+      },
+      "breakevenLandedCost": "Maximum allowable manufacturing + inbound freight cost per unit before net profit drops to $0.00. Formula = Sale Price - Amazon Referral Fee - FBA Fee - PPC Ad Spend - Return Costs.",
+      "breakevenSalePrice": "Minimum retail price required to cover all fixed unit costs and variable percentage fees.",
+      "returnRateImpact": "Customer returns reduce margin through reverse logistics, unsellable inventory scrap, and repackaging fees, modeled at an average 40% loss on returned units."
+    }
+  },
+  "privateLabelStrategy": {
+    "competitorReviewGapAnalysis": "Systematic evaluation of recurring 1-star and 2-star complaints on incumbent competitor listings (e.g. weak hinges, fraying edges, plastic odors) to engineer superior product fixes into your private label manufacturer specifications.",
+    "aPlusContentBrandModules": "Enhanced Brand Content on Amazon product detail pages (brand story carousels, technical comparison charts, rich lifestyle feature cards) that boost conversion rate and answer customer objections.",
+    "supplierQuestions": [
+      "What is the Minimum Order Quantity (MOQ) and unit price breaks for 500 / 1,000 / 3,000 units?",
+      "Can you provide material compliance certifications (e.g., lead-free, food-grade, CE/FCC, RoHS)?",
+      "What is the sample lead time and mass production cycle length?",
+      "Can you implement custom structural reinforcements or anti-fray stitching per our specification?",
+      "Do you support custom polybags / kraft packaging with Amazon FNSKU barcode printing?"
+    ]
+  }
+}
