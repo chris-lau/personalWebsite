@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -12,9 +13,13 @@ import remarkGfm from 'remark-gfm';
  *
  * The `variant` prop maps the rendered elements to the existing CSS class
  * names so current styles continue to apply without changes.
+ *
+ * The `chat` variant is tuned for chat bubbles: tight spacing, inline code,
+ * and site-relative links rendered as React Router <Link> so the model's
+ * "Read more:" suggestions navigate client-side without a hard reload.
  */
 
-type Variant = 'blog' | 'reader';
+type Variant = 'blog' | 'reader' | 'chat';
 
 interface MarkdownRendererProps {
   content: string;
@@ -36,9 +41,22 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
         h3: ({ node: _node, ...props }) => <h3 className={cls('heading-3')} {...props} />,
         h4: ({ node: _node, ...props }) => <h4 className={cls('heading-4')} {...props} />,
         p: ({ node: _node, ...props }) => <p className={cls('paragraph')} {...props} />,
-        a: ({ node: _node, ...props }) => (
-          <a className={cls('link')} target="_blank" rel="noopener noreferrer" {...props} />
-        ),
+        a: ({ node: _node, href = '', children, ...props }) => {
+          // Chat links to site routes navigate client-side (no hard reload,
+          // chat state preserved); everything else opens in a new tab.
+          if (variant === 'chat' && href.startsWith('/')) {
+            return (
+              <Link to={href} className={cls('link')}>
+                {children}
+              </Link>
+            );
+          }
+          return (
+            <a className={cls('link')} href={href} target="_blank" rel="noopener noreferrer" {...props}>
+              {children}
+            </a>
+          );
+        },
         ul: ({ node: _node, ...props }) => <ul className={cls('list')} {...props} />,
         ol: ({ node: _node, ...props }) => <ol className={cls('ordered-list')} {...props} />,
         li: ({ node: _node, ...props }) => <li className={cls('list-item')} {...props} />,

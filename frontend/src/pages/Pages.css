@@ -1337,3 +1337,45 @@
     text-align: center;
   }
 }
+/* ===== Chat-first hero (Ask Chris) ===== */
+
+.hero-content--chat {
+  margin-bottom: 0.75rem;
+}
+
+.hero-bio--short {
+  max-width: 60ch;
+  margin-bottom: 0.25rem;
+}
+
+.prefer-reading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.prefer-reading__label {
+  color: var(--text-muted, inherit);
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.prefer-reading__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem 1rem;
+}
+
+.prefer-reading__links a {
+  color: var(--accent-primary, inherit);
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+
+.prefer-reading__links a:hover {
+  text-decoration: underline;
+}

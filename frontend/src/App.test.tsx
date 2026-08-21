@@ -27,7 +27,7 @@ describe('App Router & Integration Tests', () => {
       </MemoryRouter>
     );
 
-    expect(await screen.findByRole('heading', { name: 'WELCOME', level: 3 }, { timeout: 4000 })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'ASK CHRIS', level: 3 }, { timeout: 4000 })).toBeInTheDocument();
   });
 
   it('renders about page at route "/about"', async () => {
@@ -107,10 +107,11 @@ describe('App Router & Integration Tests', () => {
       </MemoryRouter>
     );
 
-    expect(await screen.findByText('WELCOME')).toBeInTheDocument();
+    expect(await screen.findByText('ASK CHRIS')).toBeInTheDocument();
 
-    // Projects is now a direct top-level link (promoted out of Work & Writing dropdown)
-    const projectsLink = screen.getByRole('link', { name: /^Projects$/i });
+    // Projects is now a direct top-level link (promoted out of Work & Writing dropdown).
+    // The home hero's "prefer reading?" row also links to Projects — click the nav one.
+    const projectsLink = screen.getAllByRole('link', { name: /^Projects$/i })[0];
     fireEvent.click(projectsLink);
 
     expect(await screen.findByText('FEATURED PORTFOLIO PROJECTS')).toBeInTheDocument();
@@ -124,7 +125,7 @@ describe('App Router & Integration Tests', () => {
     );
 
     // Wait for the lazy-loaded page to render the layout.
-    await screen.findByText('WELCOME');
+    await screen.findByText('ASK CHRIS');
 
     // Open the compact theme switcher and select ASCII.
     const themeTrigger = screen.getByRole('button', { name: /Theme:.+select theme/i });
@@ -135,7 +136,7 @@ describe('App Router & Integration Tests', () => {
     // The ThemeProvider applies the active theme to <html data-theme="...">.
     // Assert via that side effect (the meaningful, render-affecting outcome),
     // which is robust against act()/batching quirks in the deeper lazy-loaded tree.
-    await screen.findByText('WELCOME');
+    await screen.findByText('ASK CHRIS');
     expect(document.documentElement.getAttribute('data-theme')).toBe('ascii');
   });
 
@@ -146,7 +147,7 @@ describe('App Router & Integration Tests', () => {
       </MemoryRouter>
     );
 
-    await screen.findByText('WELCOME');
+    await screen.findByText('ASK CHRIS');
     expect(screen.queryByText('Something went wrong')).toBeNull();
 
     // Switch to ASCII

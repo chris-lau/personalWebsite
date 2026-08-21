@@ -321,6 +321,104 @@
   cursor: not-allowed;
 }
 
+/* ===== Embedded (home hero) variant ===== */
+/* Overrides the floating widget's fixed-position tuning so the panel flows
+   inline inside the hero BoxContainer. */
+.chat-panel__root {
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-panel--embedded .chat-panel__messages {
+  max-height: min(420px, 50vh); /* widget uses 400px; hero bounds by viewport */
+}
+
+.chat-panel--embedded .chat-panel__starters {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chat-panel--embedded .chat-panel__starter {
+  border-radius: 999px;
+  padding: 0.5rem 0.75rem;
+}
+
+/* Skeleton shown while models/fallback resolve (embedded only — the widget
+   renders null during that window). */
+.chat-panel__skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  justify-content: center;
+  height: 100%;
+}
+
+.chat-panel__skeleton-line {
+  height: 0.75rem;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--bg-secondary) 25%,
+    var(--border-muted, var(--border-color)) 50%,
+    var(--bg-secondary) 75%
+  );
+  background-size: 200% 100%;
+  animation: chat-skeleton-shimmer 1.4s ease infinite;
+}
+
+.chat-panel__skeleton-line--short {
+  width: 55%;
+}
+
+@keyframes chat-skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ===== Assistant markdown (chat variant of MarkdownRenderer) ===== */
+/* Parent .chat-msg__content is pre-wrap for plain text; markdown output
+   manages its own spacing. */
+.chat-msg__markdown {
+  white-space: normal;
+  display: block;
+}
+
+.chat-msg__markdown .chat-paragraph {
+  margin: 0 0 0.4em;
+}
+
+.chat-msg__markdown .chat-paragraph:last-child {
+  margin-bottom: 0;
+}
+
+.chat-msg__markdown .chat-list,
+.chat-msg__markdown .chat-ordered-list {
+  margin: 0.2em 0 0.4em 1.1em;
+  padding: 0;
+}
+
+.chat-msg__markdown .chat-list-item {
+  margin: 0.1em 0;
+}
+
+.chat-link {
+  color: var(--accent-primary);
+  text-decoration: underline;
+}
+
+.chat-link:hover {
+  opacity: 0.8;
+}
+
+.chat-msg__markdown .chat-inline-code {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-muted, var(--border-color));
+  border-radius: 3px;
+  padding: 0 0.25em;
+  font-size: 0.85em;
+}
+
 /* ===== Utility ===== */
 
 /* ===== Companion Mode: Split Layout ===== */
@@ -337,6 +435,12 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+/* ChatPanel fills the widget's chat column (messages area scrolls inside). */
+.chat-panel__chat-col > .chat-panel__root {
+  flex: 1;
+  min-height: 0;
 }
 
 .chat-panel__obs-col {
@@ -456,5 +560,10 @@
   .chat-launcher {
     right: 1rem;
     bottom: 1rem;
+  }
+
+  /* ≥16px prevents iOS Safari from auto-zooming on input focus. */
+  .chat-panel__input {
+    font-size: 1rem;
   }
 }

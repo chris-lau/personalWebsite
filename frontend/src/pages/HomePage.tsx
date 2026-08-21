@@ -3,40 +3,54 @@ import { profileData } from '../data/profile';
 import { projectsData } from '../data/projects';
 import { skillsData } from '../data/skills';
 import { BoxContainer } from '../components/ui/BoxContainer';
+import { ChatPanel } from '../components/chat/ChatPanel';
+import { HOME_STARTERS } from '../components/chat/starters';
+import { useChat } from '../hooks/useChat';
 import './Pages.css';
 
 export const HomePage = () => {
   const featuredProjects = projectsData.filter((p) => p.featured);
+  const chat = useChat();
 
   return (
     <div className="page-container page-home">
       <section className="hero-section">
-        <BoxContainer title="WELCOME">
-          <div className="hero-content">
+        <BoxContainer title="ASK CHRIS">
+          <div className="hero-content hero-content--chat">
             <h1 className="hero-title">{profileData.name}</h1>
             <p className="hero-subtitle">{profileData.title}</p>
-            {profileData.credentials && (
-              <p className="hero-credentials">{profileData.credentials} &bull; {profileData.location}</p>
-            )}
-            <p className="hero-bio">{profileData.bio}</p>
-            <div className="hero-links">
-              <Link to="/projects" className="link-button primary">
-                View my work &rarr;
-              </Link>
-              {profileData.socials.map((s) => (
-                <a
-                  key={s.platform}
-                  href={s.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="link-button"
-                >
-                  {s.platform}
-                </a>
-              ))}
-            </div>
+            <p className="hero-bio hero-bio--short">{profileData.bio}</p>
+          </div>
+          <ChatPanel
+            chat={chat}
+            className="chat-panel--embedded"
+            starterQuestions={HOME_STARTERS}
+            greeting="Ask me anything about what Chris does — or tap a question below."
+          />
+          <div className="hero-links">
+            {profileData.socials.map((s) => (
+              <a
+                key={s.platform}
+                href={s.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="link-button"
+              >
+                {s.platform}
+              </a>
+            ))}
           </div>
         </BoxContainer>
+        <div className="prefer-reading">
+          <span className="prefer-reading__label">── or, prefer reading? ──</span>
+          <nav className="prefer-reading__links" aria-label="Site sections">
+            <Link to="/about">About</Link>
+            <Link to="/projects">Projects</Link>
+            <Link to="/blog">Blog</Link>
+            <Link to="/experience">Experience</Link>
+            <Link to="/now">Now</Link>
+          </nav>
+        </div>
       </section>
 
       <section className="featured-section">
@@ -93,7 +107,6 @@ export const HomePage = () => {
                       </span>
                     );
                   })}
-
                 </div>
               </div>
             ))}

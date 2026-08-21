@@ -534,6 +534,37 @@ def test_provider_for_model_defaults_to_gemini_on_unrecognized(client, monkeypat
 
 def test_provider_for_model_falls_back_to_default_provider(client, monkeypatch):
     """Recognized default model is used as fallback for unknown model ids."""
-    monkeypatch.setattr(chat.settings, "CHAT_DEFAULT_MODEL", "gemini-2.0-flash")
+    monkeypatch.setattr(chat.settings, "CHAT_DEFAULT_MODEL", "gemini-2.5-flash")
     # Unknown model falls back to gemini's provider
     assert chat._provider_for_model("totally-unknown-model") == "gemini"
+
+
+# ---------------------------------------------------------------------------
+# Grounding context tests
+# ---------------------------------------------------------------------------
+
+
+def test_system_prompt_includes_projects_skills_and_now():
+    """The grounding context must cover projects/skills/now so starter-chip
+    questions ("what has he built", "tech stack", "working on now") answer well."""
+    chat._build_context.cache_clear()
+    prompt = chat._build_system_prompt()
+
+    # The JSON data files are embedded in the context.
+    assert "projects.json (JSON)" in prompt
+    assert "skills.json (JSON)" in prompt
+    assert "now.json (JSON)" in prompt
+
+    # Spot-check real content from each source.
+    assert "Multi-Agent System Platform" in prompt  # projects.json title
+    assert "Product & Leadership" in prompt  # skills.json category
+    assert "AI Surveillance" in prompt  # now.json currentFocus
+
+
+def test_system_prompt_link_allowlist_guidance():
+    """The system prompt must restrict links to the allowed site routes."""
+    prompt = chat._build_system_prompt()
+    for route in ("/about", "/projects", "/now", "/experience", "/guidebook", "/blog/{slug}"):
+        assert route in prompt
+    # Guardrail against hallucinated URLs must be present.
+    assert "Do NOT link to routes other than" in prompt

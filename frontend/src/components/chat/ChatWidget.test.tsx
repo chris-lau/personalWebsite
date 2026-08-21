@@ -61,7 +61,8 @@ function baseHookState(overrides: Record<string, unknown> = {}) {
 function renderWidget(state = baseHookState()) {
   mockUseChat.mockReturnValue(state);
   return render(
-    <MemoryRouter>
+    // Non-home route — the widget hides itself on '/' (chat is in the hero).
+    <MemoryRouter initialEntries={['/projects']}>
       <ChatWidget />
     </MemoryRouter>,
   );
@@ -84,6 +85,26 @@ describe('ChatWidget', () => {
   it('renders nothing when no models loaded, no fallback, and no messages', () => {
     renderWidget(baseHookState({ models: [], isFallback: false, messages: [] }));
     expect(screen.queryByRole('button', { name: 'Open chat' })).toBeNull();
+  });
+
+  it('renders nothing on the home route (chat is embedded in the hero)', () => {
+    mockUseChat.mockReturnValue(baseHookState());
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <ChatWidget />
+      </MemoryRouter>,
+    );
+    expect(screen.queryByRole('button', { name: 'Open chat' })).toBeNull();
+  });
+
+  it('renders the launcher on non-home routes', () => {
+    mockUseChat.mockReturnValue(baseHookState());
+    render(
+      <MemoryRouter initialEntries={['/projects']}>
+        <ChatWidget />
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('button', { name: 'Open chat' })).toBeDefined();
   });
 
   it('renders the launcher once models are loaded', () => {

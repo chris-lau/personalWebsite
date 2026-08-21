@@ -1,8 +1,25 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from '../context/ThemeContext';
 import { HomePage } from './HomePage';
+
+// HomePage embeds the hero chat — mock the hook to avoid backend calls.
+vi.mock('../hooks/useChat', () => ({
+  useChat: () => ({
+    messages: [],
+    loading: false,
+    error: null,
+    isFallback: false,
+    models: [{ id: 'gemini-2.5-flash', label: 'gemini-2.5-flash', provider: 'gemini' }],
+    selectedModel: 'gemini-2.5-flash',
+    setSelectedModel: vi.fn(),
+    sendMessage: vi.fn(),
+    clearChat: vi.fn(),
+    metricsMap: new Map(),
+    streamProgress: null,
+  }),
+}));
 import { ProjectsPage } from './ProjectsPage';
 import { AboutPage } from './AboutPage';
 import { ExperiencePage } from './ExperiencePage';
@@ -86,7 +103,7 @@ describe('Page Components Unit Tests', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('WELCOME')).toBeInTheDocument();
+    expect(screen.getByText('ASK CHRIS')).toBeInTheDocument();
     expect(screen.getByText('FEATURED PROJECTS')).toBeInTheDocument();
     expect(screen.getByText('SKILLS SNAPSHOT')).toBeInTheDocument();
   });
