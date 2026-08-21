@@ -1,0 +1,26 @@
+name: Keep-Alive Database & Backend Probe
+
+on:
+  schedule:
+    # Runs every 6 hours (00:00, 06:00, 12:00, 18:00 UTC) to keep the database active
+    - cron: '0 */6 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+
+jobs:
+  health-check:
+    name: Ping /health/ready
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Readiness Probe (Queries PostgreSQL)
+        run: |
+          echo "Sending health & database readiness probe to Render backend..."
+          RESPONSE=$(curl -s -S --max-time 60 -w "\nHTTP_STATUS:%{http_code}\nTIME_TOTAL:%{time_total}s\n" "https://personalwebsite-w1mp.onrender.com/health/ready")
+          echo "$RESPONSE"
+          
+          # Check HTTP Status code
+          HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS" | cut -d':' -f2)
+          if [ "$HTTP_STATUS" -ne 200 ]; then
+            echo "::warning ::Probe returned status $HTTP_STATUS"
+          else
+            echo "Backend and PostgreSQL are healthy and awake."
+          fi
