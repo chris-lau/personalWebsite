@@ -188,12 +188,15 @@ Phase 4 transitions the backend from static JSON loading to a persistent relatio
 * **Data Seeding & Resilience Pipeline**:
   - Idempotent seed script (`seed.py`) converting legacy JSON data into database rows.
   - Automatic fallback handler in `/api/projects` and `/api/now` returning static local JSON if the database is unreachable or unseeded, guaranteeing 100% website uptime.
+* **Automated 6-Hour Keep-Alive Probe**:
+  - Scheduled GitHub Actions workflow (`.github/workflows/keep-alive.yml`) pinging `/health/ready` every 6 hours (`00:00`, `06:00`, `12:00`, `18:00` UTC).
+  - Executes a live `SELECT 1` query to keep cloud PostgreSQL (Aiven) active and prevent inactivity suspension.
 * **Full Test Metrics (249 / 249 Total Tests Passing)**:
   - **Backend**: **60 / 60 Pytest unit tests passing** (including `tests/test_database.py`, `tests/test_chat.py`).
   - **Frontend**: **180 / 180 Vitest unit tests passing** across **24 test files**.
   - **E2E**: **9 / 9 Playwright E2E tests passing**.
 
-Detailed summary: [phase-4-summary.md](file:///Users/chrislau/Documents/personalWebsite/phase-4-summary.md) | Implementation plan: [phase-4-implementation-plan.md](file:///Users/chrislau/Documents/personalWebsite/phase-4-implementation-plan.md)
+Detailed summary: [phase-4-summary.md](phase-4-summary.md) | Implementation plan: [phase-4-implementation-plan.md](phase-4-implementation-plan.md)
 
 ---
 
@@ -353,6 +356,7 @@ Cloudflare Pages deploys the React SPA and Storybook component library staticall
   - Liveness Probes: `/health/live` & `/api/health/live`
   - Readiness & DB Probes: `/health/ready` & `/api/health/ready`
   - Telemetry Metrics: `/api/telemetry`
+  - Automated Keep-Alive: 6-hour cron (`.github/workflows/keep-alive.yml`) pinging `/health/ready` to prevent database inactivity shutdown.
 - **Auto-Generated Swagger UI**: Served automatically at `/docs` ([https://personalwebsite-w1mp.onrender.com/docs](https://personalwebsite-w1mp.onrender.com/docs)) and `/redoc`.
 
 ---

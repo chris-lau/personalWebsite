@@ -575,6 +575,7 @@ Write operations should not be publicly available before authentication is added
 - [x] CRUD services, database models, and telemetry probes have tests (40 unit tests green)
 - [x] The database URL is stored securely in environment variables (`DATABASE_URL`)
 - [x] Database models are separate from API response schemas
+- [x] Automated 6-hour keep-alive probe workflow (`.github/workflows/keep-alive.yml`) preventing cloud database hibernation
 
 ---
 

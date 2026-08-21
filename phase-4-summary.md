@@ -25,6 +25,7 @@ Phase 4 successfully transitioned the Personal OS FastAPI backend from static JS
    - Updated `/api/projects`, `/api/projects/{slug}`, `/api/now`, `/api/health/ready`, and `/api/telemetry` to query from database models and monitor process health.
    - Added automatic fallback to local JSON data files if the database connection fails or is unseeded.
    - Verified live Render production deployment at [`https://personalwebsite-w1mp.onrender.com`](https://personalwebsite-w1mp.onrender.com).
+   - Created automated 6-hour keep-alive probe workflow (`.github/workflows/keep-alive.yml`) to ping `/health/ready` and keep cloud PostgreSQL active.
 
 5. **Testing & Quality Assurance:**
    - Added `backend/tests/test_database.py` and `backend/tests/test_telemetry.py`.
