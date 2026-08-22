@@ -6,7 +6,7 @@
 - [x] Implement launcher pill (ChatWidget.tsx + ChatWidget.css)
 - [x] Implement pulse etiquette with localStorage and prefers-reduced-motion
 - [x] Implement a11y features (Escape closes, focus returns to launcher)
-- [ ] Implement `chat:open` event listener in ChatWidget.tsx
+- [x] Implement `chat:open` event listener in ChatWidget.tsx
 - [ ] Add mobile footer clearance in 3 layout CSS files
 - [ ] Update ChatWidget.test.tsx with new accessible names and test cases
 - [ ] Create E2E test `e2e/chat-launcher.spec.ts` (if port 3000 free)
@@ -39,4 +39,11 @@
 - Added Escape key handler to close panel and return focus to launcher
 - Added useEffect to return focus to launcher when panel closes (any path) with 50ms delay
 - Added ref to launcher button element
+
+### 2026-08-22 - Phase 5: chat:open event listener
+- Imported CHAT_OPEN_EVENT, isChatOpenEvent, and OpenChatOptions from chatControl
+- Added useEffect with window.addEventListener for chat:open events (placed before early return null guards)
+- Handler: if pathname === '/' scrolls to #ask-this-site; otherwise opens panel and sends starter message if provided
+- Added guard against double-send with messageIsStreaming check and 100ms delay
+- Cleanup on unmount with removeEventListener
 
