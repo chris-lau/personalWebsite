@@ -1,12 +1,24 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Activity, Sparkles, Terminal, BookOpen, FileCode, Info } from 'lucide-react';
+import { Activity, ShoppingBag, MessageSquare, Sparkles, Terminal, BookOpen, FileCode, Info } from 'lucide-react';
 import { siteArchitectureData } from '../data/siteArchitecture';
 import { BoxContainer } from '../components/ui/BoxContainer';
 import { BACKEND_ROOT_URL } from '../api/config';
 import './Pages.css';
 
 export const HowThisSiteWorksPage: React.FC = () => {
+  const handleOpenChatObservability = () => {
+    try {
+      localStorage.setItem('chat_companion_mode', 'true');
+    } catch {
+      // ignore
+    }
+    const launcher = document.querySelector<HTMLButtonElement>('.chat-launcher');
+    if (launcher) {
+      launcher.click();
+    }
+  };
+
   return (
     <div className="page-container page-how-it-works">
       <section>
@@ -29,6 +41,18 @@ export const HowThisSiteWorksPage: React.FC = () => {
                 <Activity size={15} aria-hidden="true" />
                 <span>Live Monitoring Console (/monitoring)</span>
               </NavLink>
+              <NavLink to="/amazon-tools" className="explorer-badge-btn amazon">
+                <ShoppingBag size={15} aria-hidden="true" />
+                <span>Amazon Seller Suite (/amazon-tools)</span>
+              </NavLink>
+              <button
+                type="button"
+                className="explorer-badge-btn chat-obs"
+                onClick={handleOpenChatObservability}
+              >
+                <MessageSquare size={15} aria-hidden="true" />
+                <span>Chat Observability &amp; Telemetry</span>
+              </button>
               <a
                 href="https://chris-lau-storybook.pages.dev"
                 target="_blank"

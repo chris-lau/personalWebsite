@@ -41,10 +41,11 @@ describe('AmazonToolsPage', () => {
   afterEach(() => {
     vi.unstubAllGlobals();
   });
-  it('renders the header and tabs correctly', () => {
+  it('renders the header and tabs correctly with showcase framing', () => {
     renderWithProviders();
 
     expect(screen.getByRole('heading', { name: /Amazon Seller Trend & Opportunity Suite/i })).toBeInTheDocument();
+    expect(screen.getByText(/Live product demo:/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Product Trend & Opportunity Finder/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Unit Economics & Profit Simulator/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Review Gap & Listing Prompt Scanner/i })).toBeInTheDocument();
@@ -151,4 +152,3 @@ describe('AmazonToolsPage', () => {
     expect(mockSendMessage).toHaveBeenCalledWith(expect.stringContaining('Can you analyze the unit economics'));
   });
 });
-
