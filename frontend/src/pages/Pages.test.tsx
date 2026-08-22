@@ -96,7 +96,7 @@ describe('Page Components Unit Tests', () => {
     expect(screen.getByText('BLOG POST NOT FOUND')).toBeInTheDocument();
   });
 
-  it('renders HomePage with human-first hero, role band, and relocated chat exhibit', () => {
+  it('renders HomePage with hero, status badge, and bento tiles', () => {
     render(
       <MemoryRouter>
         <HomePage />
@@ -123,17 +123,19 @@ describe('Page Components Unit Tests', () => {
         .filter((el) => el.className.includes('hero-cta-social')),
     ).toHaveLength(1);
 
-    // Current-role band links to the experience page.
+    // Current-role status badge links to the experience page.
     expect(screen.getByText('Staff Product Manager, Artificial Intelligence @ Global Relay')).toBeInTheDocument();
 
-    // Chat relocated into its own exhibit section below the hero.
+    // Chat lives in its own bento tile below the hero.
     expect(screen.getByText('ASK THIS SITE')).toBeInTheDocument();
     expect(screen.getByText(/This chat runs on a RAG backend I built/i)).toBeInTheDocument();
 
-    expect(screen.getByText('FEATURED PROJECTS')).toBeInTheDocument();
+    expect(screen.getByText('FEATURED WORK')).toBeInTheDocument();
+    expect(screen.getByText('TOOLCHAIN')).toBeInTheDocument();
+    expect(screen.getByText('NOW')).toBeInTheDocument();
   });
 
-  it('renders HomePage without the explore dock and skills snapshot (removed in cleanup)', () => {
+  it('renders HomePage without the explore dock; skills surfaced via the toolchain tile', () => {
     render(
       <MemoryRouter>
         <HomePage />

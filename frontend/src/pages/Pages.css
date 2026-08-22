@@ -1267,144 +1267,8 @@
 }
 /* ===== Human-first hero ===== */
 
-.hero-valueprop {
-  font-size: 0.95rem;
-  color: var(--text-primary);
-  margin: 0;
-  max-width: 72ch;
-  line-height: 1.5;
-}
-
-@media (max-width: 768px) {
-  .hero-valueprop {
-    font-size: 0.9rem;
-    line-height: 1.45;
-  }
-}
-
-.hero-cta-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.6rem;
-  margin-top: 0.5rem;
-}
-
-@media (max-width: 768px) {
-  .hero-cta-row {
-    margin-top: 0.35rem;
-    gap: 0.5rem;
-  }
-}
-
 .hero-cta-social .external-icon {
   opacity: 0.7;
-}
-
-.hero-role-band {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.2rem;
-  margin-top: 1rem;
-  padding: 0.75rem 1rem;
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-muted);
-  border-left: 3px solid var(--accent-primary);
-  border-radius: 0 6px 6px 0;
-  text-decoration: none;
-  transition: border-color 0.2s ease, background-color 0.2s ease;
-}
-
-@media (max-width: 768px) {
-  .hero-role-band {
-    margin-top: 0.65rem;
-    padding: 0.6rem 0.85rem;
-  }
-}
-
-.hero-role-band:hover,
-.hero-role-band:focus-visible {
-  border-color: var(--accent-primary);
-  background-color: var(--bg-secondary);
-}
-
-.hero-role-band__label {
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--accent-primary);
-}
-
-.hero-role-band__role {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.hero-role-band__highlight {
-  font-size: 0.85rem;
-  line-height: 1.45;
-  color: var(--text-muted);
-}
-
-/* ===== Chat exhibit (relocated hero chat) ===== */
-
-.chat-exhibit-intro {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-@media (max-width: 768px) {
-  .chat-exhibit-intro {
-    gap: 0.4rem;
-    margin-bottom: 0.75rem;
-  }
-}
-
-.chat-exhibit-caption {
-  margin: 0;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  color: var(--text-muted);
-}
-
-.hero-grounding-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.25rem 0.75rem;
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-muted);
-  border-radius: 20px;
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  font-weight: 500;
-  margin-bottom: 0.35rem;
-}
-
-@media (max-width: 768px) {
-  .hero-grounding-badge {
-    margin-bottom: 0.25rem;
-    padding: 0.2rem 0.65rem;
-  }
-}
-
-/* Mobile fold: lift the ASK THIS SITE exhibit into the first viewport (390×844).
-   These carry the [data-theme] prefix to out-specify the modern overrides above,
-   which plain mobile selectors cannot beat. */
-@media (max-width: 768px) {
-  [data-theme="modern"] .page-container {
-    gap: 1.25rem;
-  }
-
-  [data-theme="modern"] .hero-content {
-    gap: 0.65rem;
-  }
 }
 
 .grounding-dot {
@@ -1455,80 +1319,340 @@
   font-weight: 600;
 }
 
-/* Theme overrides for hero, role band & chat exhibit */
-[data-theme="modern"] .hero-grounding-badge {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
+/* ==========================================================================
+   HOME v2 — hero + modular bento grid (zinc + indigo reskin)
+   ========================================================================== */
+
+/* ===== Hero ===== */
+
+.home-hero {
+  padding: 3rem 0 2rem;
 }
 
-[data-theme="modern"] .hero-valueprop {
-  font-size: 1.1rem;
-  line-height: 1.6;
+.home-hero__content {
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.home-hero__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
   color: var(--text-muted);
+  background: var(--bg-card);
+  border: 1px solid var(--border-muted);
+  border-radius: var(--radius-full);
+  padding: 0.35rem 0.85rem;
+  text-decoration: none;
+  transition: border-color var(--transition-fast), color var(--transition-fast);
 }
 
-[data-theme="modern"] .hero-credentials {
-  font-size: 0.95rem;
-}
-
-[data-theme="modern"] .hero-cta-row {
-  gap: 0.75rem;
-  margin-top: 0.75rem;
-  margin-bottom: 0.5rem;
-}
-
-[data-theme="modern"] .hero-role-band {
-  gap: 0.3rem;
-  margin-top: 1.25rem;
-  padding: 1rem 1.25rem;
-  border: 1px solid var(--border-color);
-  border-left: 4px solid var(--accent-primary);
-  border-radius: 10px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
-}
-
-[data-theme="modern"] .hero-role-band:hover,
-[data-theme="modern"] .hero-role-band:focus-visible {
-  border-color: var(--accent-primary);
-  box-shadow: 0 8px 30px rgba(244, 171, 106, 0.12);
-  transform: translateY(-2px);
-}
-
-[data-theme="modern"] .hero-role-band__role {
-  font-family: var(--font-serif);
-  font-size: 1.2rem;
-  font-weight: 400;
+.home-hero__status:hover,
+.home-hero__status:focus-visible {
+  border-color: rgba(99, 102, 241, 0.45);
   color: var(--text-primary);
 }
 
-[data-theme="modern"] .hero-role-band__highlight {
-  font-size: 0.95rem;
+.home-hero__status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #22c55e;
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+  flex-shrink: 0;
+  animation: home-status-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes home-status-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+.home-hero__status-label {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.home-hero__status-role {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.home-hero__title {
+  font-size: clamp(2.3rem, 5.5vw, var(--text-2xl));
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin: 0;
+}
+
+.home-hero__subtitle {
+  font-size: var(--text-lg);
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.home-hero__valueprop {
+  font-size: 1.02rem;
+  line-height: 1.65;
+  color: var(--text-muted);
+  max-width: 58ch;
+  margin: 0;
+}
+
+.home-hero__meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.home-hero__cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+/* ===== Bento grid ===== */
+
+.home-bento {
+  margin-top: 1rem;
+}
+
+.bento-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+.bento-tile {
+  position: relative;
+  border: 1px solid var(--border-muted);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  padding: 1.1rem 1.25rem 1.25rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition-base), border-color var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+.bento-tile:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-color);
+  box-shadow: var(--shadow-card);
+}
+
+/* Cursor-responsive border glow — --mx/--my set from HomePage pointer handler */
+.bento-tile::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    240px circle at var(--mx, 50%) var(--my, 50%),
+    var(--accent-glow),
+    transparent 70%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity var(--transition-base);
+  pointer-events: none;
+}
+
+.bento-tile:hover::before {
+  opacity: 1;
+}
+
+.bento-tile .box-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== Work tile ===== */
+
+.work-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.work-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.work-card + .work-card {
+  border-top: 1px dashed var(--border-muted);
+  padding-top: 1.25rem;
+}
+
+.work-card__title {
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+.work-card__desc {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.work-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+
+/* ===== Chat tile ===== */
+
+.home-chat__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+}
+
+.home-chat__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-muted);
+  border-radius: var(--radius-full);
+  padding: 0.25rem 0.75rem;
+}
+
+.home-chat__caption {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
   color: var(--text-muted);
 }
 
-[data-theme="modern"] .chat-exhibit-caption {
-  font-size: 1rem;
+/* ===== Toolchain tile ===== */
+
+.stack-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.stack-tag {
+  border-radius: var(--radius-full);
+}
+
+/* ===== Now tile ===== */
+
+.now-tile__focus {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--text-primary);
+  margin: 0 0 0.65rem;
+}
+
+.now-tile__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
   color: var(--text-muted);
 }
 
-[data-theme="ascii"] .hero-grounding-badge {
-  border-radius: 2px;
-  border-color: var(--border-muted);
+.now-tile__list li::before {
+  content: '› ';
+  font-family: var(--font-mono);
+  color: var(--accent-primary);
 }
 
-[data-theme="ascii"] .hero-role-band {
-  border-radius: 0;
+.now-tile__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border-top: 1px solid var(--border-muted);
+  margin-top: auto;
+  padding-top: 0.9rem;
 }
 
-[data-theme="cli"] .hero-grounding-badge {
-  border-radius: 2px;
-  font-family: var(--font-family);
+.now-tile__updated {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
 }
 
-[data-theme="cli"] .hero-role-band {
-  border-radius: 0 2px 2px 0;
+/* ===== Responsive ===== */
+
+/* Mobile fold: keep the ASK THIS SITE tile in the first viewport by
+   ordering it ahead of the (tall) work tile on narrow screens. */
+@media (max-width: 767px) {
+  .home-hero {
+    padding: 2.25rem 0 1.5rem;
+  }
+
+  .bento-tile--chat {
+    order: -1;
+  }
 }
 
+@media (min-width: 1024px) {
+  .bento-grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-areas:
+      "work work chat"
+      "work work chat"
+      "stack stack now";
+  }
+
+  .bento-tile--work { grid-area: work; }
+  .bento-tile--chat { grid-area: chat; }
+  .bento-tile--stack { grid-area: stack; }
+  .bento-tile--now { grid-area: now; }
+
+  .home-hero {
+    padding: 4rem 0 2.5rem;
+  }
+}
+
+/* ===== Reduced motion ===== */
+
+@media (prefers-reduced-motion: reduce) {
+  .home-hero__status-dot {
+    animation: none;
+  }
+
+  .bento-tile {
+    transition: none;
+  }
+
+  .bento-tile:hover {
+    transform: none;
+  }
+
+  .bento-tile::before {
+    display: none;
+  }
+}

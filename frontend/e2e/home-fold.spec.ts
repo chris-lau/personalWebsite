@@ -3,8 +3,9 @@ import { test, expect } from '@playwright/test';
 /**
  * E2E test for Track B: Homepage Mobile Fold
  *
- * Verifies that the .hero-grounding-badge is fully visible above the fold
- * at mobile viewport (390×844) when the homepage loads with scrollY 0.
+ * Verifies that the ASK THIS SITE tile's grounding badge (.home-chat__badge)
+ * is fully visible above the fold at mobile viewport (390x844) with scrollY 0.
+ * The reskinned home orders the chat tile first in the mobile bento.
  *
  * NOTE: This test should only be run when port 3000 is free.
  * Per plan rules: if port 3000 is busy, mark [!] and let coordinator run post-merge.
@@ -22,8 +23,8 @@ test.describe('Track B: Homepage Mobile Fold', () => {
     const scrollY = await page.evaluate(() => window.scrollY);
     expect(scrollY).toBe(0);
 
-    // Get the grounding badge element
-    const badge = page.locator('.hero-grounding-badge');
+    // Get the grounding badge element inside the ASK THIS SITE bento tile
+    const badge = page.locator('#ask-this-site .home-chat__badge');
     await expect(badge).toBeVisible();
 
     // Get bounding box and viewport dimensions
