@@ -80,10 +80,11 @@ export const ChatWidget: React.FC = () => {
         type="button"
         className={`chat-launcher ${open ? 'chat-launcher--hidden' : ''}`}
         onClick={() => setOpen(true)}
-        aria-label="Open chat"
         aria-expanded={open}
       >
         <MessageCircle size={22} aria-hidden="true" />
+        <span className="chat-launcher__label chat-launcher__label--full">Ask this site</span>
+        <span className="chat-launcher__label chat-launcher__label--short">Ask</span>
         <span className="chat-launcher__pulse" aria-hidden="true" />
       </button>
 

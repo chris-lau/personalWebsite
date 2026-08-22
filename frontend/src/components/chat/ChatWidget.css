@@ -6,15 +6,16 @@
   bottom: 1.5rem;
   right: 1.5rem;
   z-index: 1000;
-  width: 3.25rem;
-  height: 3.25rem;
-  border-radius: 50%;
+  height: 3rem;
+  padding: 0 1rem;
+  border-radius: 999px;
   border: 1px solid var(--border-color);
   background-color: var(--accent-primary);
   color: var(--bg-primary);
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 0.5rem;
   cursor: pointer;
   transition: opacity 0.2s ease, transform 0.2s ease;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
@@ -28,6 +29,26 @@
   opacity: 0;
   pointer-events: none;
   transform: scale(0.8);
+}
+
+.chat-launcher__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.chat-launcher__label--short {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  .chat-launcher__label--full {
+    display: none;
+  }
+
+  .chat-launcher__label--short {
+    display: inline;
+  }
 }
 
 /* Pulsing ring to draw attention (subtle). */
