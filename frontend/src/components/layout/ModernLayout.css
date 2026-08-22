@@ -5,7 +5,7 @@
   min-height: 100vh;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  font-family: var(--font-sans);
+  font-family: var(--font-family);
 }
 
 /* Accessibility skip link */

@@ -45,7 +45,9 @@ export const CliLayout = ({ children }: CliLayoutProps) => {
         {/* Command / Tab Navigation Bar */}
         <nav className="cli-nav-bar" aria-label="Terminal Navigation" ref={navRef as RefObject<HTMLElement>}>
           <div className="cli-nav-header">
-            <span className="cli-prompt-label">EXEC:</span>
+            <NavLink to="/" className="cli-prompt-link" onClick={closeMobileMenu}>
+              <span className="cli-prompt-symbol" aria-hidden="true">$</span> home.sh
+            </NavLink>
             <button
               className="cli-mobile-menu-toggle"
               onClick={toggleMobileMenu}

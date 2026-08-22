@@ -88,10 +88,26 @@
   gap: 0.75rem;
 }
 
-.cli-prompt-label {
-  color: var(--accent-primary);
+.cli-prompt-symbol {
+  color: var(--accent-secondary);
   font-weight: bold;
+}
+
+.cli-prompt-link {
+  color: var(--text-primary);
+  text-decoration: none;
   font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  transition: background-color 0.2s ease;
+}
+
+.cli-prompt-link:hover {
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 .cli-nav-tabs {
