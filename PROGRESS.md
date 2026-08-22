@@ -8,7 +8,7 @@
 - [x] Implement a11y features (Escape closes, focus returns to launcher)
 - [x] Implement `chat:open` event listener in ChatWidget.tsx
 - [x] Add mobile footer clearance in 3 layout CSS files
-- [ ] Update ChatWidget.test.tsx with new accessible names and test cases
+- [x] Update ChatWidget.test.tsx with new accessible names and test cases
 - [ ] Create E2E test `e2e/chat-launcher.spec.ts` (if port 3000 free)
 - [ ] Push and create PR to main
 
@@ -52,4 +52,12 @@
 - Added padding-bottom: 5rem to .cli-footer in CliLayout.css at ≤640px
 - Added padding-bottom: 5rem to .ascii-footer in AsciiLayout.css at ≤640px
 - All three layout CSS files now have mobile footer clearance to prevent launcher pill from covering footer links
+
+### 2026-08-22 - Phase 7: Update ChatWidget.test.tsx
+- Updated all 16 occurrences of accessible name from "Open chat" to "Ask this site"
+- Added messageIsStreaming: false to baseHookState mock
+- Added null check for metricsMap in sessionSummary useMemo
+- Added 6 new test cases: pill label text renders; pulse absent after chat_opened_once set; Escape closes panel; focus returns to launcher on close; chat:open event opens panel and sends starter; on /, chat:open calls scrollIntoView and does not open panel
+- All ChatWidget tests passing (22 tests)
+- Some App.test.tsx tests failing (unrelated to Track A changes - text content changed in other tracks)
 
