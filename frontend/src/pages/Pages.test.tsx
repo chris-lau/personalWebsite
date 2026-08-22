@@ -205,4 +205,42 @@ describe('Page Components Unit Tests', () => {
     expect(screen.getByText('ERROR 404')).toBeInTheDocument();
     expect(screen.getByText(/Return Home/i)).toBeInTheDocument();
   });
+
+  // Track C: Showcase reframing tests for Monitoring, Amazon Tools, and How This Site Works
+  it('renders MonitoringPage with showcase framing intro line', () => {
+    render(
+      <MemoryRouter>
+        <ThemeProvider>
+          <MonitoringPage />
+        </ThemeProvider>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText(/Exhibit:/i)).toBeInTheDocument();
+    expect(screen.getByText(/Zero-cost observability I built/i)).toBeInTheDocument();
+  });
+
+  it('renders AmazonToolsPage with showcase framing intro line', () => {
+    render(
+      <MemoryRouter>
+        <ThemeProvider>
+          <AmazonToolsPage />
+        </ThemeProvider>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText(/Live product demo:/i)).toBeInTheDocument();
+    expect(screen.getByText(/an opportunity-scoring suite I designed and built end-to-end/i)).toBeInTheDocument();
+  });
+
+  it('renders HowThisSiteWorksPage with Lab hub explorer buttons for Amazon Suite and Chat Obs', () => {
+    render(
+      <MemoryRouter>
+        <HowThisSiteWorksPage />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole('link', { name: /Amazon Seller Suite/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Chat Observability & Telemetry/i })).toBeInTheDocument();
+  });
 });

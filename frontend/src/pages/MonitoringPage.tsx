@@ -42,6 +42,9 @@ export const MonitoringPage: React.FC = () => {
       <section>
         <BoxContainer title="FULL-STACK OPERATIONAL MONITORING & TELEMETRY">
           <p className="intro-text">
+            <strong>Exhibit:</strong> Zero-cost observability I built &mdash; browser RUM, FastAPI middleware, synthetic E2E probes.
+          </p>
+          <p className="intro-text">
             Welcome to the live operational telemetry and health monitoring console. This system
             provides zero-cost, zero-cookie observability across the entire personal OS application
             stack — connecting browser Real User Monitoring (RUM), FastAPI process metrics, and
