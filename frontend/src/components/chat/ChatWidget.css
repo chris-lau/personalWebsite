@@ -56,7 +56,7 @@
   .chat-launcher__pulse {
     position: absolute;
     inset: 0;
-    border-radius: 50%;
+    border-radius: 999px;
     border: 2px solid var(--accent-primary);
     animation: chat-pulse 2.5s ease-out infinite;
     pointer-events: none;

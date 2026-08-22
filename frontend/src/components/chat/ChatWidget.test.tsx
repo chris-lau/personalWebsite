@@ -59,11 +59,11 @@ function baseHookState(overrides: Record<string, unknown> = {}) {
   };
 }
 
-function renderWidget(state = baseHookState()) {
+function renderWidget(state = baseHookState(), route = '/projects') {
   mockUseChat.mockReturnValue(state);
   return render(
-    // Non-home route — the widget hides itself on '/' (chat is in the hero).
-    <MemoryRouter initialEntries={['/projects']}>
+    // Non-home route by default — the widget hides itself on '/' (chat is in the hero).
+    <MemoryRouter initialEntries={[route]}>
       <ChatWidget />
     </MemoryRouter>,
   );
@@ -358,13 +358,11 @@ describe('ChatWidget', () => {
 
   it('chat:open event opens panel and sends starter message', async () => {
     const sendMessage = vi.fn();
-    mockUseChat.mockReturnValue({
+    renderWidget({
       ...baseHookState(),
       sendMessage,
       messageIsStreaming: false,
     });
-
-    renderWidget();
 
     // Dispatch chat:open event with starter
     const event = new CustomEvent('chat:open', {
@@ -382,6 +380,7 @@ describe('ChatWidget', () => {
 
   it('on homepage, chat:open scrolls to ask-this-site and does not open panel', () => {
     const scrollIntoViewMock = vi.fn();
+    const originalScrollIntoView = Element.prototype.scrollIntoView;
     Element.prototype.scrollIntoView = scrollIntoViewMock;
 
     // Create a mock element for the target
@@ -389,7 +388,7 @@ describe('ChatWidget', () => {
     mockElement.id = 'ask-this-site';
     document.body.appendChild(mockElement);
 
-    renderWidget('/', '/'); // Render on homepage
+    renderWidget(baseHookState(), '/'); // Render on homepage
 
     // Dispatch chat:open event
     const event = new CustomEvent('chat:open', {
@@ -400,12 +399,11 @@ describe('ChatWidget', () => {
     // Should scroll to the element
     expect(scrollIntoViewMock).toHaveBeenCalledWith({ behavior: 'smooth' });
 
-    // Should NOT open the panel
-    const panel = document.querySelector('.chat-panel');
-    expect(panel?.className).not.toContain('chat-panel--open');
+    // Should NOT render the panel at all on the homepage
+    expect(document.querySelector('.chat-panel')).toBeNull();
 
     // Cleanup
     document.body.removeChild(mockElement);
-    delete Element.prototype.scrollIntoView;
+    Element.prototype.scrollIntoView = originalScrollIntoView;
   });
 });

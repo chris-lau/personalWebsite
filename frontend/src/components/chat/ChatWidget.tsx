@@ -6,7 +6,7 @@ import { useChat } from '../../hooks/useChat';
 import { ChatPanel } from './ChatPanel';
 import { ChatObservabilityPanel } from './ChatObservabilityPanel';
 import { DEFAULT_STARTERS } from './starters';
-import { CHAT_OPEN_EVENT, isChatOpenEvent, type OpenChatOptions } from './chatControl';
+import { CHAT_OPEN_EVENT, isChatOpenEvent } from './chatControl';
 import type { ChatSessionSummary } from '../../types/chat';
 import './ChatWidget.css';
 
@@ -38,10 +38,10 @@ export const ChatWidget: React.FC = () => {
         setOpen(true);
 
         // Send starter message after panel opens (with delay for focus to be set)
-        if (starter && !chat.loading && !chat.messageIsStreaming) {
+        if (starter && !chat.loading) {
           // Small delay to ensure the panel is open and input is focused
           setTimeout(() => {
-            if (!chat.loading && !chat.messageIsStreaming) {
+            if (!chat.loading) {
               chat.sendMessage(starter);
             }
           }, 100);
@@ -129,17 +129,6 @@ export const ChatWidget: React.FC = () => {
     }
   }, [open]);
 
-  // Return focus to launcher when panel closes (any path)
-  useEffect(() => {
-    if (!open) {
-      // Small delay to ensure the launcher button is visible
-      const timeoutId = setTimeout(() => {
-        launcherRef.current?.focus();
-      }, 50);
-      return () => clearTimeout(timeoutId);
-    }
-  }, [open]);
-
   // Don't render the launcher if the backend reports no models AND isn't in
   // fallback mode yet (initial load). Once isFallback becomes true we show
   // the widget so the user gets the degraded message.
@@ -163,7 +152,7 @@ export const ChatWidget: React.FC = () => {
       >
         <MessageCircle size={22} aria-hidden="true" />
         <span className="chat-launcher__label chat-launcher__label--full">Ask this site</span>
-        <span className="chat-launcher__label chat-launcher__label--short">Ask</span>
+        <span className="chat-launcher__label chat-launcher__label--short" aria-hidden="true">Ask</span>
         {showPulse && <span className="chat-launcher__pulse" aria-hidden="true" />}
       </button>
 
@@ -171,7 +160,10 @@ export const ChatWidget: React.FC = () => {
       {open && (
         <div
           className="chat-backdrop"
-          onClick={() => setOpen(false)}
+          onClick={() => {
+            setOpen(false);
+            launcherRef.current?.focus();
+          }}
           aria-hidden="true"
         />
       )}
@@ -239,7 +231,10 @@ export const ChatWidget: React.FC = () => {
                     <button
                       type="button"
                       className="chat-panel__icon-btn"
-                      onClick={() => setOpen(false)}
+                      onClick={() => {
+                        setOpen(false);
+                        launcherRef.current?.focus();
+                      }}
                       aria-label="Close chat"
                     >
                       <X size={16} aria-hidden="true" />
