@@ -11,12 +11,12 @@ import {
   AMAZON_CALCULATOR_STARTERS,
   AMAZON_REVIEW_GAP_STARTERS,
 } from '../components/chat/starters';
-import type { NicheTrend } from '../types/amazon';
+import { NicheTrend } from '../data/amazonData';
 import './AmazonToolsPage.css';
 
 type ActiveTab = 'trends' | 'calculator' | 'review_gap';
 
-const COMPANION_STORAGE_KEY = 'amazon_tools_companion_mode';
+const COMPANION_STORAGE_KEY = 'amazon_companion_mode';
 
 export const AmazonToolsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('trends');
