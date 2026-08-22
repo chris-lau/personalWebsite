@@ -449,6 +449,10 @@
 }
 
 @media (max-width: 480px) {
+  .modern-footer {
+    padding-bottom: 5rem;
+  }
+
   .modern-footer-nav {
     grid-template-columns: 1fr;
     gap: 1rem;

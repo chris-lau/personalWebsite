@@ -392,4 +392,8 @@
     align-items: flex-start;
     gap: 0.4rem;
   }
+
+  .cli-footer {
+    padding-bottom: 5rem;
+  }
 }
