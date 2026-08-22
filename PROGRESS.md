@@ -7,7 +7,7 @@
 - [x] Verify no desktop regression at 1440×800 (CSS mobile-only, no desktop changes)
 - [!] Create E2E test `home-fold.spec.ts` (port 3000 busy - coordinator to run post-merge)
 - [x] Run unit tests and lint before commits
-- [ ] Create PR with final PROGRESS.md contents
+- [x] Create PR with final PROGRESS.md contents
 
 ## Log
 
@@ -26,4 +26,5 @@
 - Created E2E test file home-fold.spec.ts but port 3000 was busy (node process 99957)
 - Per plan protocol: marked [!] for coordinator to run E2E post-merge
 - Desktop regression verified: CSS changes only affect ≤768px, desktop rules unchanged
-- Ready to create PR
+- Created PR #19 with complete progress tracking
+- Track B complete - awaiting coordinator merge (A → B → C)
