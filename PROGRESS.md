@@ -9,7 +9,7 @@
 - [x] Implement `chat:open` event listener in ChatWidget.tsx
 - [x] Add mobile footer clearance in 3 layout CSS files
 - [x] Update ChatWidget.test.tsx with new accessible names and test cases
-- [ ] Create E2E test `e2e/chat-launcher.spec.ts` (if port 3000 free)
+- [!] Create E2E test `e2e/chat-launcher.spec.ts` (port 3000 is busy - skipped as per plan)
 - [ ] Push and create PR to main
 
 ## Log
@@ -60,4 +60,9 @@
 - Added 6 new test cases: pill label text renders; pulse absent after chat_opened_once set; Escape closes panel; focus returns to launcher on close; chat:open event opens panel and sends starter; on /, chat:open calls scrollIntoView and does not open panel
 - All ChatWidget tests passing (22 tests)
 - Some App.test.tsx tests failing (unrelated to Track A changes - text content changed in other tracks)
+
+### 2026-08-22 - Phase 8: E2E test (skipped)
+- Port 3000 is busy (node process 99957), cannot run E2E test as per plan rules
+- E2E test would verify: launcher visible in first viewport on /experience desktop, click opens dialog, Escape closes it
+- Coordinator will run E2E tests post-merge when port is available
 
