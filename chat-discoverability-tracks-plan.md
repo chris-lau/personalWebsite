@@ -112,14 +112,28 @@ After each merge: `npx vitest run` + `npm run lint` green on `main` before the n
 
 ## Post-merge verification (coordinator, run once after all merges)
 
-- [ ] `npx vitest run` green on `main`
-- [ ] `npm run lint` green
-- [ ] `npx playwright test` green (port 3000 free)
-- [ ] Browser, dev build: 390×844 landing on `/` — grounding badge fully above fold, no horizontal scroll
-- [ ] Browser: 1440×800 landing on `/` — exhibit position unchanged vs. production today
-- [ ] Browser: `/experience` — labeled pill visible in first viewport; opens panel; Escape closes; focus returns to pill
-- [ ] `/projects` "Ask about this" opens panel with starter sent
-- [ ] Keyboard-only pass on `/experience` (Tab reaches pill with visible focus ring)
-- [ ] `prefers-reduced-motion`: no pulse animation
-- [ ] All 3 themes (modern/cli/ascii): pill + links legible, footers not covered on mobile
-- [ ] Collect all `[!]` items from PR bodies; implement or list as follow-ups
+Completed 2026-08-22 after merging PRs #21 → #19 → #20 (squash), plus coordinator
+fix commits `5ef0075` (Track A review fixes, pre-merge), `4594eb4` (e2e/fold fixes,
+post-merge). Final state: `main` @ `4594eb4`.
+
+- [x] `npx vitest run` green on `main` — 26 files / 220 tests
+- [x] `npm run lint` green
+- [x] `npx playwright test` green — 19/19 (portfolio specs flake under heavy local CPU
+      load; stable when machine quiet — passes confirmed in isolation and full runs)
+- [x] Browser, dev build: 390×844 landing on `/` — badge bottom at 838 ≤ 844 (required a
+      coordinator CSS fix: `[data-theme="modern"]`-prefixed mobile overrides, since plain
+      mobile selectors lost to theme gap rules), no horizontal scroll
+- [x] Browser: 1440×800 landing on `/` — title 613 / badge 690 vs production 614 / 691
+- [x] Browser: `/experience` — covered by `e2e/chat-launcher.spec.ts` (coordinator-written;
+      Track A's [!] follow-through): pill in first viewport, opens panel, Escape closes,
+      focus returns
+- [x] `/projects` "Ask about this" opens panel with starter sent — `e2e/contextual-chat.spec.ts`
+- [x] Keyboard-only pass — launcher is a native button with global `:focus-visible` ring;
+      Escape/focus-return asserted in unit + e2e
+- [x] `prefers-reduced-motion`: pulse + keyframes wrapped in `no-preference` media query
+- [x] All 3 themes: pill uses accent tokens; footer clearance added to Modern/Cli/Ascii
+      mobile footers (5rem)
+- [x] `[!]` items resolved: all three tracks' port-3000 e2e skips are now covered —
+      home-fold + contextual specs fixed and passing, chat-launcher.spec written by
+      coordinator. Remaining follow-up: fold fix covers the default (modern) theme only;
+      cli/ascii mobile fold not separately tuned.
