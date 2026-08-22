@@ -17,7 +17,7 @@ Phase 3.5 introduces:
 3. **Backend Stack Trace Logging**: Global 500 exception handler capturing full unhandled exception stack traces to `stderr` with request correlation IDs.
 4. **Sub-System Health & Telemetry Endpoints**: Process liveness (`/health/live`), sub-system readiness (`/health/ready`), and live process metrics (`GET /api/v1/telemetry`).
 5. **Frontend Real User Monitoring (RUM)**: Browser Performance API metrics (TTFB, LCP, INP, CLS), JS Heap Memory, and `sessionStorage` cache auditing.
-6. **Live Full-Stack Topology Map & Synthetic Diagnostics**: Interactive UI dashboard hosted on dedicated `/monitoring` page displaying full-stack topology (`React SPA` ➔ `FastAPI Backend` ➔ `GitHub API`) and an automated 5-step synthetic diagnostic suite.
+6. **Live Full-Stack Topology Map & Synthetic Diagnostics**: Interactive UI dashboard hosted on dedicated `/monitoring` page displaying full-stack topology (`React SPA` ➔ `FastAPI Backend` ➔ `PostgreSQL Database` ➔ `GitHub API`) and an automated 5-step synthetic diagnostic suite.
 7. **Standalone Monitoring Navigation Item**: Integrated top header nav link across all themes (**`Ops`** in Modern, **`OPS`** in ASCII, **`top.sh`** in CLI).
 8. **Technical Observability Blog Post**: *"Demystifying Full-Stack Operational Monitoring & Telemetry: Zero-Cost Observability from Browser RUM to FastAPI Middleware"*.
 9. **Software Engineering Guidebook (Volume 2, Chapter 8)**: Chapter documentation covering full-stack telemetry and operational monitoring.
@@ -35,10 +35,10 @@ Phase 3.5 introduces:
 * Updated `global_exception_handler` to write unhandled exception stack traces (`traceback.format_exc()`) to `sys.stderr` with `request_id` context before returning sanitized HTTP 500 JSON error responses.
 
 ### 3. Backend Telemetry Schemas & Endpoints (`backend/schemas/telemetry.py` & `backend/api/endpoints/telemetry.py`)
-* Built Pydantic v2 telemetry models (`ProcessTelemetry`, `CacheTelemetry`, `RateLimitTelemetry`, `TelemetryResponse`, `ReadinessCheckResponse`).
+* Built Pydantic v2 telemetry models (`ProcessTelemetry`, `CacheTelemetry`, `RateLimitTelemetry`, `DatabaseTelemetry`, `TelemetryResponse`, `ReadinessCheckResponse`).
 * Implemented `GET /health/live`: Fast process liveness probe returning `200 OK`.
-* Implemented `GET /health/ready`: Deep sub-system readiness probe checking RAM RSS memory (MB), uptime, environment, and CORS configuration.
-* Implemented `GET /api/telemetry` & `GET /api/v1/telemetry`: Operational telemetry endpoint exposing real-time process uptime, RSS memory, cache hit/miss status, and `slowapi` rate-limit budgets.
+* Implemented `GET /health/ready`: Deep sub-system readiness probe checking RAM RSS memory (MB), uptime, environment, CORS configuration, and database connection (`SELECT 1`).
+* Implemented `GET /api/telemetry` & `GET /api/v1/telemetry`: Operational telemetry endpoint exposing real-time process uptime, RSS memory, cache hit/miss status, `slowapi` rate-limit budgets, and database health/latency telemetry.
 * Attached top-level `/health/live` and `/health/ready` routes in `backend/main.py` and included `telemetry.router` in `backend/api/router.py`.
 
 ### 4. Dedicated Monitoring Page, Nav Link & Blog Post
@@ -54,7 +54,7 @@ Phase 3.5 introduces:
 
 ### 6. Full-Stack Monitoring UI & Synthetic Diagnostic Suite (`frontend/src/components/monitoring/`)
 * Built interactive `<FullStackMonitoringDashboard />` React UI component and CSS (`FullStackMonitoringDashboard.css`) styled across ASCII, CLI, and Modern themes.
-* Rendered live full-stack system topology map: `[Cloudflare Pages React SPA] ──(RTT ms)──► [FastAPI Render Backend] ──(Proxy Cache)──► [GitHub REST API]`.
+* Rendered live full-stack system topology map: `[Cloudflare Pages React SPA] ──(RTT ms)──► [FastAPI Render Backend] ──(Query ms)──► [PostgreSQL Database] ──(Proxy Cache)──► [GitHub REST API]`.
 * Implemented automated 5-step synthetic diagnostic test runner executing storage integrity, RTT network benchmark, backend readiness, GitHub proxy cache status, and `slowapi` rate-limiter budget validation.
 * Added interactive maintainer action controls: `[Ping Health]`, `[Run Full E2E Diagnostic Test]`, `[Flush Cache]`, `[Simulate Offline Mode]`, and `[Export Diagnostic Log (.json)]`.
 * Added Vitest component unit test suite `FullStackMonitoringDashboard.test.tsx`.

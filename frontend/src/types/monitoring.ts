@@ -17,12 +17,19 @@ export interface RateLimitTelemetry {
   active_window: string;
 }
 
+export interface DatabaseTelemetry {
+  status: string;
+  latency_ms?: number | null;
+  engine: string;
+}
+
 export interface BackendTelemetry {
   status: string;
   timestamp: string;
   process: ProcessTelemetry;
   cache: CacheTelemetry;
   rate_limit: RateLimitTelemetry;
+  database?: DatabaseTelemetry;
 }
 
 export interface SubsystemCheck {
@@ -66,7 +73,10 @@ export interface DiagnosticCheckItem {
 export interface FullStackTopologyState {
   frontend_status: 'healthy' | 'degraded';
   backend_status: 'healthy' | 'offline' | 'fallback';
+  database_status: 'healthy' | 'degraded' | 'offline' | 'fallback';
   github_proxy_status: 'healthy' | 'degraded' | 'cached';
   network_rtt_ms: number | null;
+  database_latency_ms?: number | null;
+  database_engine?: string;
   last_check_timestamp: string | null;
 }

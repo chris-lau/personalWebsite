@@ -13,6 +13,7 @@ from core.rate_limit import limiter
 from schemas.telemetry import (
     START_TIME,
     CacheTelemetry,
+    DatabaseTelemetry,
     ProcessTelemetry,
     RateLimitTelemetry,
     ReadinessCheckResponse,
@@ -121,10 +122,19 @@ async def get_telemetry(request: Request):
         active_window=f"{settings.RATE_LIMIT_PER_MINUTE}/minute",
     )
 
+    db_check = _check_database()
+    engine_type = "postgresql" if "postgres" in settings.DATABASE_URL.lower() else "sqlite"
+    database_data = DatabaseTelemetry(
+        status=db_check.get("status", "unknown"),
+        latency_ms=db_check.get("latency_ms"),
+        engine=engine_type,
+    )
+
     return TelemetryResponse(
         status="ok",
         timestamp=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         process=process_data,
         cache=cache_data,
         rate_limit=rate_limit_data,
+        database=database_data,
     )

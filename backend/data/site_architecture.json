@@ -126,7 +126,7 @@
       },
       {
         "name": "Live Full-Stack Monitoring Console & Automated 5-Step Synthetic Diagnostic Runner",
-        "desc": "Dedicated /monitoring page featuring live system topology map (React SPA ➔ FastAPI Backend ➔ GitHub API) and an automated 5-step synthetic E2E diagnostic test runner."
+        "desc": "Dedicated /monitoring page featuring live 4-node system topology map (React SPA ➔ FastAPI Backend ➔ PostgreSQL Database ➔ GitHub API) and an automated 5-step synthetic E2E diagnostic test runner."
       }
     ]
   },

@@ -1,6 +1,6 @@
 import sys
 import time
-from typing import Any
+from typing import Any, Optional
 
 from pydantic import BaseModel, Field
 
@@ -26,12 +26,19 @@ class RateLimitTelemetry(BaseModel):
     active_window: str = Field(default="60/minute", description="Active window specification")
 
 
+class DatabaseTelemetry(BaseModel):
+    status: str = Field(default="ok", description="Database health status: ok or unhealthy")
+    latency_ms: Optional[float] = Field(default=None, description="Database ping latency in milliseconds")
+    engine: str = Field(default="postgresql", description="Database engine type (e.g. postgresql, sqlite)")
+
+
 class TelemetryResponse(BaseModel):
     status: str = "ok"
     timestamp: str = Field(..., description="ISO 8601 server timestamp")
     process: ProcessTelemetry
     cache: CacheTelemetry
     rate_limit: RateLimitTelemetry
+    database: Optional[DatabaseTelemetry] = None
 
 
 class ReadinessCheckResponse(BaseModel):

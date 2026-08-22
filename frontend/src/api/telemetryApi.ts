@@ -70,8 +70,8 @@ export async function runE2EDiagnosticSuite(): Promise<DiagnosticCheckItem[]> {
     },
     {
       id: 'check-3-backend',
-      name: 'FastAPI Backend Readiness',
-      description: 'Queries /health/ready to inspect process memory and uptime.',
+      name: 'FastAPI & Database Readiness',
+      description: 'Queries /health/ready to inspect process memory, uptime, and database connection probe.',
       status: 'pending',
     },
     {
@@ -126,16 +126,32 @@ export async function runE2EDiagnosticSuite(): Promise<DiagnosticCheckItem[]> {
       : `Failed to reach backend endpoint (${API_BASE_URL} is offline / local fallback active).`,
   };
 
-  // 3. Backend Readiness check
+  // 3. Backend & Database Readiness check
   results[2].status = 'running';
   const ready = await fetchBackendReadiness();
-  results[2] = {
-    ...results[2],
-    status: ready.data && ready.data.status === 'healthy' ? 'pass' : 'fail',
-    details: ready.data
-      ? `Backend readiness healthy. RAM RSS: ${ready.data.checks?.process_memory?.rss_mb || 'N/A'}MB.`
-      : 'Backend readiness probe unreachable.',
-  };
+  if (ready.data) {
+    const isHealthy = ready.data.status === 'healthy';
+    const rssMb = ready.data.checks?.process_memory?.rss_mb ?? 'N/A';
+    const dbCheck = ready.data.checks?.database as
+      | { status?: string; latency_ms?: number; error?: string }
+      | undefined;
+    const dbStatusText =
+      dbCheck?.status === 'ok'
+        ? `PostgreSQL / DB: ok (${dbCheck?.latency_ms ?? 0}ms)`
+        : `PostgreSQL / DB: ${dbCheck?.status ?? 'unhealthy'}`;
+
+    results[2] = {
+      ...results[2],
+      status: isHealthy ? 'pass' : 'fail',
+      details: `Backend readiness ${ready.data.status}. RAM RSS: ${rssMb}MB | ${dbStatusText}.`,
+    };
+  } else {
+    results[2] = {
+      ...results[2],
+      status: 'fail',
+      details: 'Backend readiness probe unreachable.',
+    };
+  }
 
   // 4. GitHub Proxy check
   results[3].status = 'running';

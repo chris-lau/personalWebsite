@@ -29,6 +29,11 @@ describe('FullStackMonitoringDashboard Component Unit Tests', () => {
         },
         cache: { github_cache_hits: 1, github_cache_misses: 0, ttl_seconds: 900, is_cached: true },
         rate_limit: { limit_per_minute: 60, active_window: '1/60' },
+        database: {
+          status: 'ok',
+          latency_ms: 1.5,
+          engine: 'postgresql',
+        },
       },
       isFallback: false,
     });
@@ -53,7 +58,7 @@ describe('FullStackMonitoringDashboard Component Unit Tests', () => {
     expect(screen.queryByText(/SYSTEM STATUS/i)).not.toBeInTheDocument();
   });
 
-  it('renders monitoring header and section titles once probes resolve', async () => {
+  it('renders monitoring header, topology nodes including PostgreSQL DB, and section titles once probes resolve', async () => {
     mockHealthyProbes();
     renderComponent();
 
@@ -64,6 +69,9 @@ describe('FullStackMonitoringDashboard Component Unit Tests', () => {
       expect(screen.getByText(/1\. LIVE FULL-STACK ARCHITECTURE TOPOLOGY/i)).toBeInTheDocument();
       expect(screen.getByText(/2\. FRONTEND BROWSER RUM & CACHE/i)).toBeInTheDocument();
       expect(screen.getByText(/3\. BACKEND PROCESS TELEMETRY/i)).toBeInTheDocument();
+      expect(screen.getByText(/PostgreSQL DB/i)).toBeInTheDocument();
+      expect(screen.getByText(/Render Postgres/i)).toBeInTheDocument();
+      expect(screen.getByText(/HEALTHY \(1.5ms\)/i)).toBeInTheDocument();
     });
   });
 

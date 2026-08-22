@@ -455,13 +455,13 @@ Detailed Implementation Plan: [phase-3.5-implementation-plan.md](file:///Users/c
 
 - **Backend Telemetry & Structured Logging**: FastAPI middleware, `X-Request-ID` correlation tracer, structured JSON logging, `/health/live`, `/health/ready`, and `GET /api/v1/telemetry`.
 - **Frontend Real User Monitoring (RUM)**: Browser Performance API (TTFB, LCP, INP, CLS), JS Heap Memory inspection, `sessionStorage` cache auditing.
-- **End-to-End Synthetic Diagnostics**: Automated 5-step E2E health probe runner and full-stack topology map (`[Cloudflare Pages React SPA] ──► [FastAPI Render Backend] ──► [GitHub REST API]`).
+- **End-to-End Synthetic Diagnostics**: Automated 5-step E2E health probe runner and full-stack topology map (`[Cloudflare Pages React SPA] ──► [FastAPI Render Backend] ──► [PostgreSQL Database] ──► [GitHub REST API]`).
 - **Guidebook Chapter 8**: Volume 2, Chapter 8 documenting full-stack telemetry and operational monitoring.
 
 ## Features
 
-- Real-time full-stack system topology map with network round-trip latency (ms)
-- Backend process telemetry (uptime seconds, RAM RSS in MB, slowapi rate-limit status, GitHub cache hit/miss ratio)
+- Real-time full-stack system topology map with network round-trip latency (ms) and database query probe latency (ms)
+- Backend process & database telemetry (uptime seconds, RAM RSS in MB, slowapi rate-limit status, PostgreSQL health/latency, GitHub cache hit/miss ratio)
 - Frontend browser telemetry (Core Web Vitals, DOM node count, theme interaction stats)
 - Automated synthetic diagnostic suite (`[Run Full E2E Diagnostic Test]`)
 - Interactive service controls (`[Ping Health]`, `[Flush Session Cache]`, `[Simulate Offline Mode]`, `[Export Diagnostic Log]`)

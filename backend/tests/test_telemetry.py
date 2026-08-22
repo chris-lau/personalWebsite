@@ -65,6 +65,9 @@ def test_api_telemetry(client):
     assert "process" in data
     assert "cache" in data
     assert "rate_limit" in data
+    assert "database" in data
     assert data["process"]["uptime_seconds"] >= 0
     assert data["process"]["memory_rss_mb"] > 0
     assert data["rate_limit"]["limit_per_minute"] == 60
+    assert data["database"]["status"] == "ok"
+    assert data["database"]["engine"] in ("postgresql", "sqlite")

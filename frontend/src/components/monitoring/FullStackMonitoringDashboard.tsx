@@ -26,8 +26,11 @@ export const FullStackMonitoringDashboard: React.FC = () => {
   const [topology, setTopology] = useState<FullStackTopologyState>({
     frontend_status: 'healthy',
     backend_status: 'healthy',
+    database_status: 'healthy',
     github_proxy_status: 'healthy',
     network_rtt_ms: null,
+    database_latency_ms: null,
+    database_engine: 'PostgreSQL',
     last_check_timestamp: null,
   });
 
@@ -51,8 +54,11 @@ export const FullStackMonitoringDashboard: React.FC = () => {
       setTopology({
         frontend_status: 'healthy',
         backend_status: 'fallback',
+        database_status: 'fallback',
         github_proxy_status: 'cached',
         network_rtt_ms: null,
+        database_latency_ms: null,
+        database_engine: 'PostgreSQL',
         last_check_timestamp: new Date().toLocaleTimeString(),
       });
       setBackendTelemetry(null);
@@ -63,11 +69,23 @@ export const FullStackMonitoringDashboard: React.FC = () => {
     const rtt = await benchmarkNetworkRTT();
     const telemetry = await fetchBackendTelemetry();
 
+    const dbTelemetry = telemetry.data?.database;
+    const dbStatus: 'healthy' | 'degraded' | 'offline' = !rtt.isOnline
+      ? 'offline'
+      : dbTelemetry?.status === 'ok'
+      ? 'healthy'
+      : dbTelemetry?.status === 'unhealthy'
+      ? 'degraded'
+      : 'healthy';
+
     setTopology({
       frontend_status: 'healthy',
       backend_status: rtt.isOnline ? 'healthy' : 'offline',
+      database_status: dbStatus,
       github_proxy_status: telemetry.data ? 'healthy' : 'cached',
       network_rtt_ms: rtt.latency_ms,
+      database_latency_ms: dbTelemetry?.latency_ms ?? null,
+      database_engine: dbTelemetry?.engine === 'sqlite' ? 'SQLite' : 'PostgreSQL',
       last_check_timestamp: new Date().toLocaleTimeString(),
     });
 
@@ -256,6 +274,27 @@ export const FullStackMonitoringDashboard: React.FC = () => {
 
             <div className="topology-connector">
               <span className="line" />
+              <span className="connector-label">
+                {topology.database_latency_ms !== null && topology.database_latency_ms !== undefined
+                  ? `${topology.database_latency_ms}ms Query`
+                  : 'SQLAlchemy'}
+              </span>
+              <span className="arrow">►</span>
+            </div>
+
+            <div className={`topology-node database-node ${topology.database_status}`}>
+              <span className="node-icon">🐘</span>
+              <span className="node-title">{topology.database_engine || 'PostgreSQL'} DB</span>
+              <span className="node-subtitle">
+                {topology.database_engine === 'SQLite' ? 'Local DB' : 'Render Postgres'}
+              </span>
+              <span className={`node-status ${topology.database_status}`}>
+                {topology.database_status.toUpperCase()}
+              </span>
+            </div>
+
+            <div className="topology-connector">
+              <span className="line" />
               <span className="connector-label">15-Min TTL Proxy</span>
               <span className="arrow">►</span>
             </div>
@@ -337,6 +376,26 @@ export const FullStackMonitoringDashboard: React.FC = () => {
                   <span className="metric-label">Rate Limiter (slowapi):</span>
                   <span className="metric-value">{backendTelemetry.rate_limit.active_window}</span>
                 </div>
+                {backendTelemetry.database && (
+                  <>
+                    <div className="metric-row">
+                      <span className="metric-label">Database Status:</span>
+                      <span className="metric-value">
+                        {backendTelemetry.database.status === 'ok'
+                          ? `HEALTHY (${backendTelemetry.database.latency_ms ?? 0}ms)`
+                          : backendTelemetry.database.status.toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="metric-row">
+                      <span className="metric-label">Database Engine:</span>
+                      <span className="metric-value">
+                        {backendTelemetry.database.engine === 'postgresql'
+                          ? 'PostgreSQL (psycopg3)'
+                          : 'SQLite (personal_os.db)'}
+                      </span>
+                    </div>
+                  </>
+                )}
                 <div className="metric-row">
                   <span className="metric-label">Environment:</span>
                   <span className="metric-value">{backendTelemetry.process.environment}</span>
