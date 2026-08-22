@@ -5,7 +5,7 @@
 - [x] Create `chatControl.ts` with frozen source
 - [x] Implement launcher pill (ChatWidget.tsx + ChatWidget.css)
 - [x] Implement pulse etiquette with localStorage and prefers-reduced-motion
-- [ ] Implement a11y features (Escape closes, focus returns to launcher)
+- [x] Implement a11y features (Escape closes, focus returns to launcher)
 - [ ] Implement `chat:open` event listener in ChatWidget.tsx
 - [ ] Add mobile footer clearance in 3 layout CSS files
 - [ ] Update ChatWidget.test.tsx with new accessible names and test cases
@@ -33,4 +33,10 @@
 - Sets 'chat_opened_once' flag on first panel open (any path)
 - Wrapped .chat-launcher__pulse and @keyframes chat-pulse in @media (prefers-reduced-motion: no-preference)
 - Tests failing as expected (accessible name changed from "Open chat" to "Ask this site" - will be fixed in Phase 7)
+
+### 2026-08-22 - Phase 4: A11y features
+- Added launcherRef to track launcher button element
+- Added Escape key handler to close panel and return focus to launcher
+- Added useEffect to return focus to launcher when panel closes (any path) with 50ms delay
+- Added ref to launcher button element
 
