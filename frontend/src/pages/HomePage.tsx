@@ -82,7 +82,7 @@ export const HomePage = () => {
         </div>
       </section>
 
-      <section className="chat-exhibit-section" aria-label="Ask this site chat exhibit">
+      <section id="ask-this-site" className="chat-exhibit-section" aria-label="Ask this site chat exhibit">
         <BoxContainer title="ASK THIS SITE">
           <div className="chat-exhibit-intro">
             <div className="hero-grounding-badge">
