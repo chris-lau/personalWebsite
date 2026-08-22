@@ -31,12 +31,11 @@ test.describe('Track B: Homepage Mobile Fold', () => {
     const viewportHeight = 844; // Our set viewport height
 
     // Assert badge is fully within viewport
-    // badgeBox.top should be >= 0 (not scrolled above viewport)
-    // badgeBox.top + badgeBox.height should be <= viewportHeight (not below fold)
+    // Playwright boundingBox() returns { x, y, width, height } — y is the top edge.
     expect(badgeBox).not.toBeNull();
     if (badgeBox) {
-      expect(badgeBox.top).toBeGreaterThanOrEqual(0);
-      expect(badgeBox.top + badgeBox.height).toBeLessThanOrEqual(viewportHeight);
+      expect(badgeBox.y).toBeGreaterThanOrEqual(0);
+      expect(badgeBox.y + badgeBox.height).toBeLessThanOrEqual(viewportHeight);
     }
   });
 

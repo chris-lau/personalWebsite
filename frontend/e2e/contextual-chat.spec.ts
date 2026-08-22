@@ -29,9 +29,9 @@ test.describe('Contextual Chat Links', () => {
     const chatDialog = page.getByRole('dialog', { name: 'Chat with Chris' });
     await expect(chatDialog).toBeVisible({ timeout: 5000 });
 
-    // Verify that a message was sent (look for user message with the starter text)
+    // Verify that a message was sent (user messages render as .chat-msg--user)
     // The starter should be something like "Tell me about the [project name] project."
-    const userMessages = chatDialog.getByTestId('user-message');
+    const userMessages = chatDialog.locator('.chat-msg--user');
     await expect(userMessages.first()).toBeVisible();
 
     // Verify the message contains project-related content
@@ -62,7 +62,7 @@ test.describe('Contextual Chat Links', () => {
     await expect(chatDialog).toBeVisible({ timeout: 5000 });
 
     // Verify that a message was sent about the role
-    const userMessages = chatDialog.getByTestId('user-message');
+    const userMessages = chatDialog.locator('.chat-msg--user');
     const firstMessage = userMessages.first();
     await expect(firstMessage).toBeVisible();
 

@@ -340,7 +340,7 @@ describe('ChatWidget', () => {
     expect(panel?.className).not.toContain('chat-panel--open');
   });
 
-  it('focus returns to launcher when panel closes', () => {
+  it('focus returns to launcher when panel closes', async () => {
     renderWidget();
     const launcher = screen.getByRole('button', { name: 'Ask this site' });
     fireEvent.click(launcher);
@@ -350,10 +350,10 @@ describe('ChatWidget', () => {
 
     fireEvent.keyDown(window, { key: 'Escape' });
 
-    // After a short delay for the focus return effect
-    setTimeout(() => {
+    // Focus is returned asynchronously via effect
+    await waitFor(() => {
       expect(document.activeElement).toBe(launcher);
-    }, 100);
+    });
   });
 
   it('chat:open event opens panel and sends starter message', async () => {
