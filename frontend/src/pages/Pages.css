@@ -59,6 +59,13 @@
   gap: 0.75rem;
 }
 
+/* Mobile spacing adjustments for Track B - reduce hero height to bring chat exhibit above fold */
+@media (max-width: 768px) {
+  .hero-content {
+    gap: 0.5rem;
+  }
+}
+
 .hero-title {
   font-size: 1.75rem;
   font-weight: bold;
@@ -133,6 +140,12 @@
   color: var(--text-muted);
   font-weight: 500;
   margin: 0;
+}
+
+@media (max-width: 768px) {
+  .hero-credentials {
+    font-size: 0.8rem;
+  }
 }
 
 /* About-page Skill Matrix star badge (shared rule kept for AboutPage) */
@@ -1262,12 +1275,26 @@
   line-height: 1.5;
 }
 
+@media (max-width: 768px) {
+  .hero-valueprop {
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+}
+
 .hero-cta-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.6rem;
   margin-top: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .hero-cta-row {
+    margin-top: 0.35rem;
+    gap: 0.5rem;
+  }
 }
 
 .hero-cta-social .external-icon {
@@ -1287,6 +1314,13 @@
   border-radius: 0 6px 6px 0;
   text-decoration: none;
   transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+@media (max-width: 768px) {
+  .hero-role-band {
+    margin-top: 0.65rem;
+    padding: 0.6rem 0.85rem;
+  }
 }
 
 .hero-role-band:hover,
@@ -1325,6 +1359,13 @@
   margin-bottom: 1rem;
 }
 
+@media (max-width: 768px) {
+  .chat-exhibit-intro {
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
+  }
+}
+
 .chat-exhibit-caption {
   margin: 0;
   font-size: 0.9rem;
@@ -1344,6 +1385,13 @@
   color: var(--text-muted);
   font-weight: 500;
   margin-bottom: 0.35rem;
+}
+
+@media (max-width: 768px) {
+  .hero-grounding-badge {
+    margin-bottom: 0.25rem;
+    padding: 0.2rem 0.65rem;
+  }
 }
 
 .grounding-dot {
