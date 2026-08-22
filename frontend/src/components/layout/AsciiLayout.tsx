@@ -2,6 +2,7 @@ import { ReactNode, RefObject } from 'react';
 import { NavLink } from 'react-router-dom';
 import { ThemeToggle } from './ThemeToggle';
 import { NAV_GROUPS } from '../../config/navConfig';
+import { BACKEND_ROOT_URL } from '../../api/config';
 import { useNavDropdown } from './useNavDropdown';
 import './AsciiLayout.css';
 
@@ -144,6 +145,35 @@ export const AsciiLayout = ({ children }: AsciiLayoutProps) => {
         <div className="ascii-footer-line" aria-hidden="true">
           +-------------------------------------------------------+
         </div>
+        <nav className="ascii-footer-nav" aria-label="Footer Navigation">
+          <div className="ascii-footer-section">
+            <span className="ascii-footer-heading">[CORE]</span>
+            <NavLink to="/experience" className="ascii-footer-link">[Experience]</NavLink>
+            <NavLink to="/projects" className="ascii-footer-link">[Projects]</NavLink>
+            <NavLink to="/contact" className="ascii-footer-link">[Contact]</NavLink>
+          </div>
+          <div className="ascii-footer-section">
+            <span className="ascii-footer-heading">[ABOUT]</span>
+            <NavLink to="/about" className="ascii-footer-link">[Bio]</NavLink>
+            <NavLink to="/now" className="ascii-footer-link">[Now]</NavLink>
+            <NavLink to="/blog" className="ascii-footer-link">[Blog]</NavLink>
+            <NavLink to="/guidebook" className="ascii-footer-link">[Guidebook]</NavLink>
+          </div>
+          <div className="ascii-footer-section">
+            <span className="ascii-footer-heading">[LAB]</span>
+            <NavLink to="/how-this-site-works" className="ascii-footer-link">[How This Site Works]</NavLink>
+            <NavLink to="/monitoring" className="ascii-footer-link">[Ops Dashboard]</NavLink>
+            <NavLink to="/amazon-tools" className="ascii-footer-link">[Amazon Suite]</NavLink>
+          </div>
+          <div className="ascii-footer-section">
+            <span className="ascii-footer-heading">[EXT]</span>
+            <a href="https://chris-lau-storybook.pages.dev" target="_blank" rel="noopener noreferrer" className="ascii-footer-link">[Storybook]</a>
+            <a href={`${BACKEND_ROOT_URL}/docs`} target="_blank" rel="noopener noreferrer" className="ascii-footer-link">[API Docs]</a>
+          </div>
+        </nav>
+        <div className="ascii-footer-line" aria-hidden="true">
+          +-------------------------------------------------------+
+        </div>
         <p className="ascii-footer-text">
           &copy; {new Date().getFullYear()} Chris Lau. Built with React &amp; TypeScript.
         </p>
@@ -151,4 +181,3 @@ export const AsciiLayout = ({ children }: AsciiLayoutProps) => {
     </div>
   );
 };
-
