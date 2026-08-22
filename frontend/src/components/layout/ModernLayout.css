@@ -1,56 +1,67 @@
+/* Layout container */
 .modern-layout-container {
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  font-family: var(--font-family);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
+  font-family: var(--font-sans);
 }
 
-/* Header & Nav */
+/* Accessibility skip link */
+.skip-to-content {
+  position: absolute;
+  top: -100px;
+  left: 1rem;
+  background: var(--accent-primary);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  z-index: 1000;
+  border-radius: 4px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 0.2s ease-in-out;
+}
+
+.skip-to-content:focus {
+  top: 1rem;
+}
+
+/* Header */
 .modern-header {
   position: sticky;
   top: 0;
-  z-index: 50;
+  z-index: 100;
+  background: rgba(10, 10, 10, 0.75);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  background-color: rgba(18, 19, 22, 0.85);
   border-bottom: 1px solid var(--border-muted);
 }
 
 .modern-nav-wrapper {
   max-width: var(--container-max-width);
   margin: 0 auto;
-  padding: 0.85rem 1.5rem;
+  padding: 1rem 1.5rem;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  align-items: center;
+  position: relative;
 }
 
-.modern-nav {
-  margin-left: auto;
-}
-
-
+/* Brand */
 .modern-brand-logo {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.5rem;
   text-decoration: none;
-  color: var(--text-primary);
-  font-weight: 600;
   font-size: 1.1rem;
-  letter-spacing: -0.02em;
-  white-space: nowrap;
-  flex-shrink: 0;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 .brand-initials {
   font-family: var(--font-serif);
-  font-size: 1.4rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--accent-primary);
 }
@@ -61,106 +72,97 @@
 }
 
 .brand-title {
-  font-size: 0.95rem;
-  color: var(--text-primary);
-  white-space: nowrap;
+  letter-spacing: -0.01em;
 }
 
+/* Navigation Links */
 .modern-nav-list {
   display: flex;
   align-items: center;
+  gap: 0.5rem;
   list-style: none;
   margin: 0;
   padding: 0;
-  gap: 0.75rem;
 }
 
 .modern-nav-item {
   position: relative;
 }
 
-.modern-nav-link,
-.modern-nav-dropdown-toggle {
+.modern-nav-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 0.85rem;
   color: var(--text-muted);
   text-decoration: none;
   font-size: 0.9rem;
   font-weight: 500;
-  transition: color 0.2s ease, background-color 0.2s ease;
-  padding: 0.45rem 0.8rem;
-  border-radius: 6px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  display: flex;
+  border-radius: 8px;
+  transition: all 0.15s ease-in-out;
+}
+
+.modern-nav-link:hover {
+  color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.modern-nav-link.active {
+  color: var(--accent-primary);
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Dropdown Toggle Button */
+.modern-nav-dropdown-toggle {
+  display: inline-flex;
   align-items: center;
   gap: 0.35rem;
+  padding: 0.5rem 0.85rem;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
   font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
 }
 
-.modern-nav-link:hover,
 .modern-nav-dropdown-toggle:hover {
   color: var(--text-primary);
-  background-color: var(--border-muted);
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
-.modern-nav-link.active,
 .modern-nav-dropdown-toggle.active {
-  color: var(--text-primary);
+  color: var(--accent-primary);
   background-color: rgba(255, 255, 255, 0.08);
-  font-weight: 600;
-}
-
-.modern-nav-actions,
-.modern-nav-controls {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.modern-mobile-menu-toggle {
-  display: none;
-  background: transparent;
-  border: 1px solid var(--border-muted);
-  color: var(--text-primary);
-  font-size: 1.25rem;
-  min-width: 40px;
-  min-height: 40px;
-  padding: 0.4rem 0.65rem;
-  border-radius: 6px;
-  cursor: pointer;
-  line-height: 1;
-  align-items: center;
-  justify-content: center;
-}
-
-.modern-mobile-menu-toggle:hover {
-  background-color: var(--border-muted);
 }
 
 .dropdown-caret {
   font-size: 0.75rem;
-  opacity: 0.7;
+  transition: transform 0.2s ease;
+  line-height: 1;
 }
 
-/* Dropdown Submenu Floating Card */
+/* Dropdown Menu Container */
 .modern-dropdown-menu {
   position: absolute;
   top: calc(100% + 0.5rem);
   left: 0;
-  min-width: 190px;
-  background-color: rgba(22, 24, 29, 0.95);
+  min-width: 200px;
+  background: rgba(18, 18, 20, 0.95);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border-muted);
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 0.5rem;
   list-style: none;
   margin: 0;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
   display: none;
   flex-direction: column;
   gap: 0.25rem;
-  z-index: 100;
+  z-index: 1000;
 }
 
 .modern-dropdown-menu.show {
@@ -179,47 +181,60 @@
   }
 }
 
+/* Dropdown Item */
 .modern-dropdown-item {
   display: block;
   padding: 0.5rem 0.75rem;
   color: var(--text-muted);
   text-decoration: none;
-  font-size: 0.875rem;
-  font-weight: 400;
-  border-radius: 5px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-radius: 6px;
   transition: all 0.15s ease;
 }
 
 .modern-dropdown-item:hover {
   color: var(--text-primary);
-  background-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .modern-dropdown-item.active {
   color: var(--accent-primary);
+  background: rgba(255, 255, 255, 0.1);
   font-weight: 600;
-  background-color: rgba(255, 255, 255, 0.06);
 }
 
-/* Main Content Area */
+/* Controls */
+.modern-nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.modern-mobile-menu-toggle {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--border-muted);
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  min-width: 36px;
+}
+
+/* Main Content */
 .modern-main {
   flex: 1;
-  width: 100%;
 }
 
 .modern-content-wrapper {
   max-width: var(--container-max-width);
   margin: 0 auto;
-  padding: 3rem 1.5rem 5rem;
-}
-
-/* Headings in Modern Theme */
-[data-theme="modern"] h1,
-[data-theme="modern"] h2,
-[data-theme="modern"] .serif-heading {
-  font-family: var(--font-serif);
-  font-weight: 400;
-  letter-spacing: -0.01em;
+  padding: 2.5rem 1.5rem 4rem;
 }
 
 /* Footer */
@@ -231,16 +246,24 @@
 .modern-footer-card {
   max-width: var(--container-max-width);
   margin: 0 auto;
-  padding: 1.25rem 2rem;
+  padding: 1.5rem 2rem;
   border-radius: 16px;
   border: 1px solid var(--border-muted);
   background: var(--bg-secondary);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
   display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.modern-footer-top {
+  display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
+  border-bottom: 1px solid var(--border-muted);
+  padding-bottom: 1rem;
 }
 
 .modern-footer-brand {
@@ -277,6 +300,46 @@
   font-size: 0.85rem;
   color: var(--text-muted);
   margin: 0;
+}
+
+.modern-footer-nav {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+.modern-footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.modern-footer-heading {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent-primary);
+}
+
+.modern-footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.modern-footer-link {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.modern-footer-link:hover {
+  color: var(--accent-primary);
 }
 
 @media (max-width: 768px) {
@@ -365,13 +428,29 @@
   }
 
   .modern-footer-card {
+    gap: 1.25rem;
+    padding: 1.25rem;
+  }
+
+  .modern-footer-top {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.75rem;
-    padding: 1rem 1.25rem;
   }
 
   .modern-footer-brand {
     flex-wrap: wrap;
+  }
+
+  .modern-footer-nav {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .modern-footer-nav {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 }

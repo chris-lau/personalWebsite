@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import { ModernLayout } from './ModernLayout';
@@ -18,12 +18,14 @@ describe('Submenu Navigation Component Tests', () => {
       </ThemeProvider>
     );
 
-    // Verify top-level triggers and direct links
-    const experienceLink = screen.getByRole('link', { name: /^Experience$/i });
-    const projectsLink = screen.getByRole('link', { name: /^Projects$/i });
-    const aboutTrigger = screen.getByRole('button', { name: /^About$/i });
-    const labTrigger = screen.getByRole('button', { name: /^Lab$/i });
-    const contactLink = screen.getByRole('link', { name: /^Contact$/i });
+    const headerNav = screen.getByRole('navigation', { name: /main navigation/i });
+
+    // Verify top-level triggers and direct links in header nav
+    const experienceLink = within(headerNav).getByRole('link', { name: /^Experience$/i });
+    const projectsLink = within(headerNav).getByRole('link', { name: /^Projects$/i });
+    const aboutTrigger = within(headerNav).getByRole('button', { name: /^About$/i });
+    const labTrigger = within(headerNav).getByRole('button', { name: /^Lab$/i });
+    const contactLink = within(headerNav).getByRole('link', { name: /^Contact$/i });
 
     expect(experienceLink).toBeDefined();
     expect(projectsLink).toBeDefined();
@@ -32,8 +34,8 @@ describe('Submenu Navigation Component Tests', () => {
     expect(contactLink).toBeDefined();
 
     // Old groups should no longer exist
-    expect(screen.queryByRole('button', { name: /Work & Writing/i })).toBeNull();
-    expect(screen.queryByRole('button', { name: /System & Ops/i })).toBeNull();
+    expect(within(headerNav).queryByRole('button', { name: /Work & Writing/i })).toBeNull();
+    expect(within(headerNav).queryByRole('button', { name: /System & Ops/i })).toBeNull();
 
     // Dropdown should be initially closed (aria-expanded = false)
     expect(aboutTrigger.getAttribute('aria-expanded')).toBe('false');
@@ -43,13 +45,13 @@ describe('Submenu Navigation Component Tests', () => {
     expect(aboutTrigger.getAttribute('aria-expanded')).toBe('true');
 
     // Submenu links for About should now be visible: Bio & Skills, What I'm Doing Now, Blog, Engineering Guidebook
-    expect(screen.getByRole('menuitem', { name: /Bio & Skills/i })).toBeDefined();
-    expect(screen.getByRole('menuitem', { name: /What I'm Doing Now/i })).toBeDefined();
-    expect(screen.getByRole('menuitem', { name: /^Blog$/i })).toBeDefined();
-    expect(screen.getByRole('menuitem', { name: /Engineering Guidebook/i })).toBeDefined();
+    expect(within(headerNav).getByRole('menuitem', { name: /Bio & Skills/i })).toBeDefined();
+    expect(within(headerNav).getByRole('menuitem', { name: /What I'm Doing Now/i })).toBeDefined();
+    expect(within(headerNav).getByRole('menuitem', { name: /^Blog$/i })).toBeDefined();
+    expect(within(headerNav).getByRole('menuitem', { name: /Engineering Guidebook/i })).toBeDefined();
 
     // Experience must NOT appear in About submenu anymore (it is top-level)
-    expect(screen.queryAllByRole('menuitem', { name: /Experience/i })).toHaveLength(0);
+    expect(within(headerNav).queryAllByRole('menuitem', { name: /Experience/i })).toHaveLength(0);
 
     // Pressing Escape should close dropdown
     fireEvent.keyDown(document, { key: 'Escape' });
@@ -57,9 +59,9 @@ describe('Submenu Navigation Component Tests', () => {
 
     // Lab dropdown should contain How This Site Works, Live Ops Dashboard, Amazon Seller Suite
     fireEvent.click(labTrigger);
-    expect(screen.getByRole('menuitem', { name: /How This Site Works/i })).toBeDefined();
-    expect(screen.getByRole('menuitem', { name: /Live Ops Dashboard/i })).toBeDefined();
-    expect(screen.getByRole('menuitem', { name: /Amazon Seller Suite/i })).toBeDefined();
+    expect(within(headerNav).getByRole('menuitem', { name: /How This Site Works/i })).toBeDefined();
+    expect(within(headerNav).getByRole('menuitem', { name: /Live Ops Dashboard/i })).toBeDefined();
+    expect(within(headerNav).getByRole('menuitem', { name: /Amazon Seller Suite/i })).toBeDefined();
   });
 
   it('renders CLI layout grouped navigation submenus', () => {
@@ -73,11 +75,13 @@ describe('Submenu Navigation Component Tests', () => {
       </ThemeProvider>
     );
 
-    const expLink = screen.getByRole('link', { name: /experience\//i });
-    const projLink = screen.getByRole('link', { name: /projects\//i });
-    const aboutTrigger = screen.getByRole('button', { name: /about\//i });
-    const labTrigger = screen.getByRole('button', { name: /lab\//i });
-    const contactLink = screen.getByRole('link', { name: /contact.sh/i });
+    const headerNav = screen.getByRole('navigation', { name: /terminal navigation/i });
+
+    const expLink = within(headerNav).getByRole('link', { name: /experience\//i });
+    const projLink = within(headerNav).getByRole('link', { name: /projects\//i });
+    const aboutTrigger = within(headerNav).getByRole('button', { name: /about\//i });
+    const labTrigger = within(headerNav).getByRole('button', { name: /lab\//i });
+    const contactLink = within(headerNav).getByRole('link', { name: /contact.sh/i });
 
     expect(expLink).toBeDefined();
     expect(projLink).toBeDefined();
@@ -86,15 +90,15 @@ describe('Submenu Navigation Component Tests', () => {
     expect(contactLink).toBeDefined();
 
     fireEvent.click(aboutTrigger);
-    expect(screen.getByRole('menuitem', { name: /about.txt/i })).toBeDefined();
-    expect(screen.getByRole('menuitem', { name: /now.md/i })).toBeDefined();
-    expect(screen.getByRole('menuitem', { name: /blog\//i })).toBeDefined();
-    expect(screen.getByRole('menuitem', { name: /book.md/i })).toBeDefined();
+    expect(within(headerNav).getByRole('menuitem', { name: /about.txt/i })).toBeDefined();
+    expect(within(headerNav).getByRole('menuitem', { name: /now.md/i })).toBeDefined();
+    expect(within(headerNav).getByRole('menuitem', { name: /blog\//i })).toBeDefined();
+    expect(within(headerNav).getByRole('menuitem', { name: /book.md/i })).toBeDefined();
 
     fireEvent.click(labTrigger);
-    expect(screen.getByRole('menuitem', { name: /stack.md/i })).toBeDefined();
-    expect(screen.getByRole('menuitem', { name: /top.sh/i })).toBeDefined();
-    expect(screen.getByRole('menuitem', { name: /amazon-tools.sh/i })).toBeDefined();
+    expect(within(headerNav).getByRole('menuitem', { name: /stack.md/i })).toBeDefined();
+    expect(within(headerNav).getByRole('menuitem', { name: /top.sh/i })).toBeDefined();
+    expect(within(headerNav).getByRole('menuitem', { name: /amazon-tools.sh/i })).toBeDefined();
   });
 
   it('renders ASCII layout grouped navigation submenus', () => {
@@ -108,11 +112,13 @@ describe('Submenu Navigation Component Tests', () => {
       </ThemeProvider>
     );
 
-    const expLink = screen.getByRole('link', { name: /\[EXP\]/i });
-    const projLink = screen.getByRole('link', { name: /\[PROJECTS\]/i });
-    const aboutTrigger = screen.getByRole('button', { name: /\[ABOUT\]/i });
-    const labTrigger = screen.getByRole('button', { name: /\[LAB\]/i });
-    const contactLink = screen.getByRole('link', { name: /\[CONTACT\]/i });
+    const headerNav = screen.getByRole('navigation', { name: /main navigation/i });
+
+    const expLink = within(headerNav).getByRole('link', { name: /^\[EXP\]$/i });
+    const projLink = within(headerNav).getByRole('link', { name: /^\[PROJECTS\]$/i });
+    const aboutTrigger = within(headerNav).getByRole('button', { name: /\[ABOUT\]/i });
+    const labTrigger = within(headerNav).getByRole('button', { name: /\[LAB\]/i });
+    const contactLink = within(headerNav).getByRole('link', { name: /^\[CONTACT\]$/i });
 
     expect(expLink).toBeDefined();
     expect(projLink).toBeDefined();
@@ -121,14 +127,14 @@ describe('Submenu Navigation Component Tests', () => {
     expect(contactLink).toBeDefined();
 
     fireEvent.click(aboutTrigger);
-    expect(screen.getByRole('menuitem', { name: /ABOUT/i })).toBeDefined();
-    expect(screen.getByRole('menuitem', { name: /NOW/i })).toBeDefined();
-    expect(screen.getByRole('menuitem', { name: /BLOG/i })).toBeDefined();
-    expect(screen.getByRole('menuitem', { name: /BOOK/i })).toBeDefined();
+    expect(within(headerNav).getByRole('menuitem', { name: /ABOUT/i })).toBeDefined();
+    expect(within(headerNav).getByRole('menuitem', { name: /NOW/i })).toBeDefined();
+    expect(within(headerNav).getByRole('menuitem', { name: /BLOG/i })).toBeDefined();
+    expect(within(headerNav).getByRole('menuitem', { name: /BOOK/i })).toBeDefined();
 
     fireEvent.click(labTrigger);
-    expect(screen.getByRole('menuitem', { name: /STACK/i })).toBeDefined();
-    expect(screen.getByRole('menuitem', { name: /OPS/i })).toBeDefined();
-    expect(screen.getByRole('menuitem', { name: /AMZ-TOOLS/i })).toBeDefined();
+    expect(within(headerNav).getByRole('menuitem', { name: /STACK/i })).toBeDefined();
+    expect(within(headerNav).getByRole('menuitem', { name: /OPS/i })).toBeDefined();
+    expect(within(headerNav).getByRole('menuitem', { name: /AMZ-TOOLS/i })).toBeDefined();
   });
 });
