@@ -6,10 +6,12 @@ import { useChat } from '../../hooks/useChat';
 import { ChatPanel } from './ChatPanel';
 import { ChatObservabilityPanel } from './ChatObservabilityPanel';
 import { DEFAULT_STARTERS } from './starters';
+import { CHAT_OPEN_EVENT, isChatOpenEvent } from './chatControl';
 import type { ChatSessionSummary } from '../../types/chat';
 import './ChatWidget.css';
 
 const COMPANION_STORAGE_KEY = 'chat_companion_mode';
+const CHAT_OPENED_ONCE_KEY = 'chat_opened_once';
 
 export const ChatWidget: React.FC = () => {
   // The home page embeds the chat as the hero — don't show two chat surfaces.
@@ -17,8 +19,40 @@ export const ChatWidget: React.FC = () => {
 
   const [open, setOpen] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const launcherRef = useRef<HTMLButtonElement>(null);
 
   const chat = useChat();
+
+  // Listen for chat:open events (must be before early returns so it fires on /)
+  useEffect(() => {
+    const handleChatOpen = (event: Event) => {
+      if (!isChatOpenEvent(event)) return;
+
+      const { starter } = event.detail;
+
+      if (pathname === '/') {
+        // On homepage, scroll to the chat exhibit instead of opening panel
+        document.getElementById('ask-this-site')?.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        // On other pages, open panel and send starter if provided
+        setOpen(true);
+
+        // Send starter message after panel opens (with delay for focus to be set)
+        if (starter && !chat.loading) {
+          // Small delay to ensure the panel is open and input is focused
+          setTimeout(() => {
+            if (!chat.loading) {
+              chat.sendMessage(starter);
+            }
+          }, 100);
+        }
+      }
+    };
+
+    window.addEventListener(CHAT_OPEN_EVENT, handleChatOpen);
+    return () => window.removeEventListener(CHAT_OPEN_EVENT, handleChatOpen);
+  }, [pathname, chat]);
+
   const { messages, loading, isFallback, models, metricsMap, streamProgress } = chat;
 
   // Companion mode toggle — persisted in localStorage
@@ -37,12 +71,21 @@ export const ChatWidget: React.FC = () => {
     }
   }, [companionMode]);
 
+  // Pulse etiquette — only show pulse if chat has never been opened
+  const [showPulse, setShowPulse] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(CHAT_OPENED_ONCE_KEY) === null;
+    } catch {
+      return true;
+    }
+  });
+
   // Mobile tab state (only relevant when companionMode is true)
   const [mobileTab, setMobileTab] = useState<'chat' | 'obs'>('chat');
 
   // Session summary — derived from metricsMap, lives at component level
   const sessionSummary = useMemo<ChatSessionSummary | null>(() => {
-    if (metricsMap.size === 0) return null;
+    if (!metricsMap || metricsMap.size === 0) return null;
     const entries = Array.from(metricsMap.values());
     return {
       message_count: entries.length,
@@ -59,6 +102,30 @@ export const ChatWidget: React.FC = () => {
   useEffect(() => {
     if (open) {
       inputRef.current?.focus();
+      // Set the flag that chat has been opened at least once
+      if (showPulse) {
+        try {
+          localStorage.setItem(CHAT_OPENED_ONCE_KEY, 'true');
+          setShowPulse(false);
+        } catch {
+          // Private browsing / SSR — silently ignore
+        }
+      }
+    }
+  }, [open, showPulse]);
+
+  // Handle Escape key to close panel and return focus to launcher
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && open) {
+        setOpen(false);
+        launcherRef.current?.focus();
+      }
+    };
+
+    if (open) {
+      window.addEventListener('keydown', handleEscape);
+      return () => window.removeEventListener('keydown', handleEscape);
     }
   }, [open]);
 
@@ -77,21 +144,26 @@ export const ChatWidget: React.FC = () => {
     <>
       {/* Launcher button */}
       <button
+        ref={launcherRef}
         type="button"
         className={`chat-launcher ${open ? 'chat-launcher--hidden' : ''}`}
         onClick={() => setOpen(true)}
-        aria-label="Open chat"
         aria-expanded={open}
       >
         <MessageCircle size={22} aria-hidden="true" />
-        <span className="chat-launcher__pulse" aria-hidden="true" />
+        <span className="chat-launcher__label chat-launcher__label--full">Ask this site</span>
+        <span className="chat-launcher__label chat-launcher__label--short" aria-hidden="true">Ask</span>
+        {showPulse && <span className="chat-launcher__pulse" aria-hidden="true" />}
       </button>
 
       {/* Mobile Backdrop Overlay */}
       {open && (
         <div
           className="chat-backdrop"
-          onClick={() => setOpen(false)}
+          onClick={() => {
+            setOpen(false);
+            launcherRef.current?.focus();
+          }}
           aria-hidden="true"
         />
       )}
@@ -159,7 +231,10 @@ export const ChatWidget: React.FC = () => {
                     <button
                       type="button"
                       className="chat-panel__icon-btn"
-                      onClick={() => setOpen(false)}
+                      onClick={() => {
+                        setOpen(false);
+                        launcherRef.current?.focus();
+                      }}
                       aria-label="Close chat"
                     >
                       <X size={16} aria-hidden="true" />
