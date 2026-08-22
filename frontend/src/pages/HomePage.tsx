@@ -1,37 +1,65 @@
 import { Link } from 'react-router-dom';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, Github, Linkedin } from 'lucide-react';
 import { profileData } from '../data/profile';
 import { projectsData } from '../data/projects';
 import { skillsData } from '../data/skills';
+import { experienceData } from '../data/experience';
 import { BoxContainer } from '../components/ui/BoxContainer';
 import { ChatPanel } from '../components/chat/ChatPanel';
 import { HOME_STARTERS } from '../components/chat/starters';
 import { useChat } from '../hooks/useChat';
 import './Pages.css';
 
+const SOCIAL_ICONS: Record<string, typeof Linkedin> = {
+  LinkedIn: Linkedin,
+  GitHub: Github,
+};
+
 export const HomePage = () => {
   const featuredProjects = projectsData.filter((p) => p.featured);
   const chat = useChat();
+  const currentRole = experienceData[0];
 
   return (
     <div className="page-container page-home">
       <section className="hero-section">
-        <BoxContainer title="ASK CHRIS">
-          <div className="hero-content hero-content--chat">
-            <div className="hero-grounding-badge">
-              <span className="grounding-dot" aria-hidden="true" />
-              <span>Grounded on Chris&apos;s live experience, projects &amp; architecture</span>
-            </div>
-            <h1 className="hero-title">{profileData.name}</h1>
-            <p className="hero-subtitle">{profileData.title}</p>
+        <div className="hero-content">
+          <h1 className="hero-title">{profileData.name}</h1>
+          <p className="hero-subtitle">{profileData.title}</p>
+          <p className="hero-valueprop">
+            Technical product leader in AI who actually builds the systems he ships — AI surveillance, agentic automation, and enterprise data acquisition.
+          </p>
+          <p className="hero-credentials">
+            {profileData.location} &middot; {profileData.credentials}
+          </p>
+
+          <div className="hero-cta-row">
+            <Link to="/experience" className="link-button primary">View Experience</Link>
+            <a href={`mailto:${profileData.email}`} className="link-button">Get in Touch</a>
+            {profileData.socials.map((social) => {
+              const SocialIcon = SOCIAL_ICONS[social.platform];
+              return (
+                <a
+                  key={social.platform}
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-button hero-cta-social"
+                >
+                  {SocialIcon && <SocialIcon size={14} aria-hidden="true" />}
+                  {social.platform}
+                  <ArrowUpRight size={12} aria-hidden="true" className="external-icon" />
+                </a>
+              );
+            })}
           </div>
-          <ChatPanel
-            chat={chat}
-            className="chat-panel--embedded"
-            starterQuestions={HOME_STARTERS}
-            greeting="Ask me anything about Chris's AI leadership, systems, and background — or tap a question below."
-          />
-        </BoxContainer>
+
+          <Link to="/experience" className="hero-role-band">
+            <span className="hero-role-band__label">Currently</span>
+            <span className="hero-role-band__role">{currentRole.role} @ {currentRole.company}</span>
+            <span className="hero-role-band__highlight">{currentRole.highlights[0]}</span>
+          </Link>
+        </div>
 
         <div className="hero-explore-dock">
           <span className="explore-dock__label">── or explore directly ──</span>
@@ -55,6 +83,26 @@ export const HomePage = () => {
             ))}
           </nav>
         </div>
+      </section>
+
+      <section className="chat-exhibit-section" aria-label="Ask this site chat exhibit">
+        <BoxContainer title="ASK THIS SITE">
+          <div className="chat-exhibit-intro">
+            <div className="hero-grounding-badge">
+              <span className="grounding-dot" aria-hidden="true" />
+              <span>Grounded on Chris&apos;s live experience, projects &amp; architecture</span>
+            </div>
+            <p className="chat-exhibit-caption">
+              This chat runs on a RAG backend I built over my own content — try it.
+            </p>
+          </div>
+          <ChatPanel
+            chat={chat}
+            className="chat-panel--embedded"
+            starterQuestions={HOME_STARTERS}
+            greeting="Ask me anything about Chris's AI leadership, systems, and background — or tap a question below."
+          />
+        </BoxContainer>
       </section>
 
       <section className="featured-section">

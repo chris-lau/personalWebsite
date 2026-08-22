@@ -96,14 +96,40 @@ describe('Page Components Unit Tests', () => {
     expect(screen.getByText('BLOG POST NOT FOUND')).toBeInTheDocument();
   });
 
-  it('renders HomePage with profile bio and featured section', () => {
+  it('renders HomePage with human-first hero, role band, and relocated chat exhibit', () => {
     render(
       <MemoryRouter>
         <HomePage />
       </MemoryRouter>
     );
 
-    expect(screen.getByText('ASK CHRIS')).toBeInTheDocument();
+    // Human-first hero: name dominant, CTAs in priority order, socials moved in.
+    expect(screen.getByRole('heading', { name: 'Chris Lau', level: 1 })).toBeInTheDocument();
+    expect(screen.getByText('Staff Product Manager, AI at Global Relay')).toBeInTheDocument();
+    expect(screen.getByText(/Greater Vancouver Metropolitan Area/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'View Experience' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Get in Touch' })).toHaveAttribute(
+      'href',
+      'mailto:contact@chrislau.dev',
+    );
+    expect(
+      screen
+        .getAllByRole('link', { name: /LinkedIn/i })
+        .filter((el) => el.className.includes('hero-cta-social')),
+    ).toHaveLength(1);
+    expect(
+      screen
+        .getAllByRole('link', { name: /GitHub/i })
+        .filter((el) => el.className.includes('hero-cta-social')),
+    ).toHaveLength(1);
+
+    // Current-role band links to the experience page.
+    expect(screen.getByText('Staff Product Manager, Artificial Intelligence @ Global Relay')).toBeInTheDocument();
+
+    // Chat relocated into its own exhibit section below the hero.
+    expect(screen.getByText('ASK THIS SITE')).toBeInTheDocument();
+    expect(screen.getByText(/This chat runs on a RAG backend I built/i)).toBeInTheDocument();
+
     expect(screen.getByText('FEATURED PROJECTS')).toBeInTheDocument();
     expect(screen.getByText('SKILLS SNAPSHOT')).toBeInTheDocument();
   });
