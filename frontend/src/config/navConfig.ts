@@ -10,36 +10,17 @@ export interface NavGroupItem {
   modernLabel: string;
   cliLabel: string;
   asciiLabel: string;
-  path?: string; // If direct link (e.g. Contact)
+  path?: string; // If direct link (e.g. Contact, Projects, Experience)
   children?: NavChildItem[];
 }
 
 export const NAV_GROUPS: NavGroupItem[] = [
   {
-    id: 'about',
-    modernLabel: 'About',
-    cliLabel: 'about/',
-    asciiLabel: 'ABOUT',
-    children: [
-      {
-        path: '/about',
-        modernLabel: 'Bio & Profile',
-        cliLabel: 'about.txt',
-        asciiLabel: 'ABOUT',
-      },
-      {
-        path: '/experience',
-        modernLabel: 'Experience & Career',
-        cliLabel: 'history.log',
-        asciiLabel: 'EXP',
-      },
-      {
-        path: '/now',
-        modernLabel: 'What I\'m Doing Now',
-        cliLabel: 'now.md',
-        asciiLabel: 'NOW',
-      },
-    ],
+    id: 'experience',
+    modernLabel: 'Experience',
+    cliLabel: 'experience/',
+    asciiLabel: 'EXP',
+    path: '/experience',
   },
   {
     id: 'projects',
@@ -49,11 +30,23 @@ export const NAV_GROUPS: NavGroupItem[] = [
     path: '/projects',
   },
   {
-    id: 'work',
-    modernLabel: 'Work & Writing',
-    cliLabel: 'work/',
-    asciiLabel: 'WORK',
+    id: 'about',
+    modernLabel: 'About',
+    cliLabel: 'about/',
+    asciiLabel: 'ABOUT',
     children: [
+      {
+        path: '/about',
+        modernLabel: 'Bio & Skills',
+        cliLabel: 'about.txt',
+        asciiLabel: 'ABOUT',
+      },
+      {
+        path: '/now',
+        modernLabel: "What I'm Doing Now",
+        cliLabel: 'now.md',
+        asciiLabel: 'NOW',
+      },
       {
         path: '/blog',
         modernLabel: 'Blog',
@@ -61,36 +54,36 @@ export const NAV_GROUPS: NavGroupItem[] = [
         asciiLabel: 'BLOG',
       },
       {
-        path: '/amazon-tools',
-        modernLabel: 'Amazon Seller Tools',
-        cliLabel: 'amazon-tools.sh',
-        asciiLabel: 'AMZ-TOOLS',
-      },
-      {
         path: '/guidebook',
-        modernLabel: 'Book',
+        modernLabel: 'Engineering Guidebook',
         cliLabel: 'book.md',
         asciiLabel: 'BOOK',
       },
     ],
   },
   {
-    id: 'system',
-    modernLabel: 'System & Ops',
-    cliLabel: 'sys/',
-    asciiLabel: 'SYS',
+    id: 'lab',
+    modernLabel: 'Lab',
+    cliLabel: 'lab/',
+    asciiLabel: 'LAB',
     children: [
       {
         path: '/how-this-site-works',
-        modernLabel: 'Site Architecture',
+        modernLabel: 'How This Site Works',
         cliLabel: 'stack.md',
         asciiLabel: 'STACK',
       },
       {
         path: '/monitoring',
-        modernLabel: 'Ops Dashboard',
+        modernLabel: 'Live Ops Dashboard',
         cliLabel: 'top.sh',
         asciiLabel: 'OPS',
+      },
+      {
+        path: '/amazon-tools',
+        modernLabel: 'Amazon Seller Suite',
+        cliLabel: 'amazon-tools.sh',
+        asciiLabel: 'AMZ-TOOLS',
       },
     ],
   },

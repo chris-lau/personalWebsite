@@ -1,7 +1,10 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import { LayoutRenderer } from './LayoutRenderer';
+import { ModernLayout } from './ModernLayout';
+import { CliLayout } from './CliLayout';
+import { AsciiLayout } from './AsciiLayout';
 import { ThemeProvider } from '../../context/ThemeContext';
 
 describe('LayoutRenderer Component', () => {
@@ -17,6 +20,73 @@ describe('LayoutRenderer Component', () => {
     );
 
     expect(screen.getByText('Test Child Content')).toBeDefined();
-    expect(screen.getByRole('navigation')).toBeDefined();
+    expect(screen.getByRole('navigation', { name: /main navigation/i })).toBeDefined();
+  });
+
+  it('renders footer safety net links in ModernLayout', () => {
+    render(
+      <ThemeProvider>
+        <MemoryRouter>
+          <ModernLayout>
+            <div>Content</div>
+          </ModernLayout>
+        </MemoryRouter>
+      </ThemeProvider>
+    );
+
+    const footerNav = screen.getByRole('navigation', { name: /footer navigation/i });
+    expect(footerNav).toBeDefined();
+
+    // Verify all hand-written footer links exist
+    expect(within(footerNav).getByRole('link', { name: 'Bio' })).toBeDefined();
+    expect(within(footerNav).getByRole('link', { name: 'Now' })).toBeDefined();
+    expect(within(footerNav).getByRole('link', { name: 'Blog' })).toBeDefined();
+    expect(within(footerNav).getByRole('link', { name: 'Guidebook' })).toBeDefined();
+    expect(within(footerNav).getByRole('link', { name: 'How This Site Works' })).toBeDefined();
+    expect(within(footerNav).getByRole('link', { name: 'Ops Dashboard' })).toBeDefined();
+    expect(within(footerNav).getByRole('link', { name: 'Amazon Suite' })).toBeDefined();
+    expect(within(footerNav).getByRole('link', { name: 'Experience' })).toBeDefined();
+    expect(within(footerNav).getByRole('link', { name: 'Projects' })).toBeDefined();
+    expect(within(footerNav).getByRole('link', { name: 'Contact' })).toBeDefined();
+    expect(within(footerNav).getByRole('link', { name: 'Storybook' })).toBeDefined();
+    expect(within(footerNav).getByRole('link', { name: 'API Docs' })).toBeDefined();
+  });
+
+  it('renders footer safety net links in CliLayout', () => {
+    render(
+      <ThemeProvider>
+        <MemoryRouter>
+          <CliLayout>
+            <div>Content</div>
+          </CliLayout>
+        </MemoryRouter>
+      </ThemeProvider>
+    );
+
+    const footerNav = screen.getByRole('navigation', { name: /footer navigation/i });
+    expect(footerNav).toBeDefined();
+    expect(within(footerNav).getByRole('link', { name: 'Bio' })).toBeDefined();
+    expect(within(footerNav).getByRole('link', { name: 'Ops Dashboard' })).toBeDefined();
+    expect(within(footerNav).getByRole('link', { name: 'Storybook' })).toBeDefined();
+    expect(within(footerNav).getByRole('link', { name: 'API Docs' })).toBeDefined();
+  });
+
+  it('renders footer safety net links in AsciiLayout', () => {
+    render(
+      <ThemeProvider>
+        <MemoryRouter>
+          <AsciiLayout>
+            <div>Content</div>
+          </AsciiLayout>
+        </MemoryRouter>
+      </ThemeProvider>
+    );
+
+    const footerNav = screen.getByRole('navigation', { name: /footer navigation/i });
+    expect(footerNav).toBeDefined();
+    expect(within(footerNav).getByRole('link', { name: '[Bio]' })).toBeDefined();
+    expect(within(footerNav).getByRole('link', { name: '[Ops Dashboard]' })).toBeDefined();
+    expect(within(footerNav).getByRole('link', { name: '[Storybook]' })).toBeDefined();
+    expect(within(footerNav).getByRole('link', { name: '[API Docs]' })).toBeDefined();
   });
 });
