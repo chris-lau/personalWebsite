@@ -1,6 +1,7 @@
 import React from 'react';
 import { experienceData } from '../data/experience';
 import { BoxContainer } from '../components/ui/BoxContainer';
+import { openChat } from '../components/chat/chatControl';
 import './Pages.css';
 
 export const ExperiencePage: React.FC = () => {
@@ -23,6 +24,14 @@ export const ExperiencePage: React.FC = () => {
                     <li key={i}>{h}</li>
                   ))}
                 </ul>
+                <button
+                  type="button"
+                  className="link-button"
+                  aria-label={`Ask about this role: ${item.role} @ ${item.company}`}
+                  onClick={() => openChat({ starter: `Tell me about Chris's ${item.role} role at ${item.company}.` })}
+                >
+                  Ask about this →
+                </button>
               </div>
             ))}
           </div>

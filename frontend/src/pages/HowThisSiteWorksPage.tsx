@@ -4,6 +4,7 @@ import { Activity, ShoppingBag, MessageSquare, Sparkles, Terminal, BookOpen, Fil
 import { siteArchitectureData } from '../data/siteArchitecture';
 import { BoxContainer } from '../components/ui/BoxContainer';
 import { BACKEND_ROOT_URL } from '../api/config';
+import { openChat } from '../components/chat/chatControl';
 import './Pages.css';
 
 export const HowThisSiteWorksPage: React.FC = () => {
@@ -13,10 +14,7 @@ export const HowThisSiteWorksPage: React.FC = () => {
     } catch {
       // ignore
     }
-    const launcher = document.querySelector<HTMLButtonElement>('.chat-launcher');
-    if (launcher) {
-      launcher.click();
-    }
+    openChat();
   };
 
   return (

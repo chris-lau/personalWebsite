@@ -4,6 +4,7 @@ import { Folder, GitBranch } from 'lucide-react';
 import { projectsData } from '../data/projects';
 import { BoxContainer } from '../components/ui/BoxContainer';
 import { GitHubDashboard } from '../components/github/GitHubDashboard';
+import { openChat } from '../components/chat/chatControl';
 import './Pages.css';
 
 export const ProjectsPage: React.FC = () => {
@@ -99,6 +100,14 @@ export const ProjectsPage: React.FC = () => {
                         </a>
                       )
                     )}
+                    <button
+                      type="button"
+                      className="link-button"
+                      aria-label={`Ask about this project: ${project.title}`}
+                      onClick={() => openChat({ starter: `Tell me about the ${project.title} project.` })}
+                    >
+                      Ask about this →
+                    </button>
                   </div>
                 </div>
               ))}
