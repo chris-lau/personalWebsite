@@ -10,6 +10,7 @@ import type { ChatSessionSummary } from '../../types/chat';
 import './ChatWidget.css';
 
 const COMPANION_STORAGE_KEY = 'chat_companion_mode';
+const CHAT_OPENED_ONCE_KEY = 'chat_opened_once';
 
 export const ChatWidget: React.FC = () => {
   // The home page embeds the chat as the hero — don't show two chat surfaces.
@@ -37,6 +38,15 @@ export const ChatWidget: React.FC = () => {
     }
   }, [companionMode]);
 
+  // Pulse etiquette — only show pulse if chat has never been opened
+  const [showPulse, setShowPulse] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem(CHAT_OPENED_ONCE_KEY) === null;
+    } catch {
+      return true;
+    }
+  });
+
   // Mobile tab state (only relevant when companionMode is true)
   const [mobileTab, setMobileTab] = useState<'chat' | 'obs'>('chat');
 
@@ -59,8 +69,17 @@ export const ChatWidget: React.FC = () => {
   useEffect(() => {
     if (open) {
       inputRef.current?.focus();
+      // Set the flag that chat has been opened at least once
+      if (showPulse) {
+        try {
+          localStorage.setItem(CHAT_OPENED_ONCE_KEY, 'true');
+          setShowPulse(false);
+        } catch {
+          // Private browsing / SSR — silently ignore
+        }
+      }
     }
-  }, [open]);
+  }, [open, showPulse]);
 
   // Don't render the launcher if the backend reports no models AND isn't in
   // fallback mode yet (initial load). Once isFallback becomes true we show
@@ -85,7 +104,7 @@ export const ChatWidget: React.FC = () => {
         <MessageCircle size={22} aria-hidden="true" />
         <span className="chat-launcher__label chat-launcher__label--full">Ask this site</span>
         <span className="chat-launcher__label chat-launcher__label--short">Ask</span>
-        <span className="chat-launcher__pulse" aria-hidden="true" />
+        {showPulse && <span className="chat-launcher__pulse" aria-hidden="true" />}
       </button>
 
       {/* Mobile Backdrop Overlay */}
