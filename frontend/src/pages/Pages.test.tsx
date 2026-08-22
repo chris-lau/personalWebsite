@@ -131,7 +131,43 @@ describe('Page Components Unit Tests', () => {
     expect(screen.getByText(/This chat runs on a RAG backend I built/i)).toBeInTheDocument();
 
     expect(screen.getByText('FEATURED PROJECTS')).toBeInTheDocument();
-    expect(screen.getByText('SKILLS SNAPSHOT')).toBeInTheDocument();
+  });
+
+  it('renders HomePage without the explore dock and skills snapshot (removed in cleanup)', () => {
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    );
+
+    expect(screen.queryByText('── or explore directly ──')).toBeNull();
+    expect(screen.queryByRole('navigation', { name: 'Direct site exploration' })).toBeNull();
+    expect(screen.queryByText('SKILLS SNAPSHOT')).toBeNull();
+  });
+
+  it('renders featured projects in priority order with outcome lines and live demo links', () => {
+    render(
+      <MemoryRouter>
+        <HomePage />
+      </MemoryRouter>
+    );
+
+    const headings = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
+    expect(headings.indexOf('Multi-Agent System Platform'))
+      .toBeLessThan(headings.indexOf('Amazon Seller Trend & Opportunity Suite'));
+    expect(headings.indexOf('Amazon Seller Trend & Opportunity Suite'))
+      .toBeLessThan(headings.indexOf('Personal Portfolio Website'));
+
+    // One-line outcomes condensed from each project's description.
+    expect(screen.getByText(/specialized AI agents orchestrated/i)).toBeInTheDocument();
+    expect(screen.getByText(/Opportunity Score with FBA unit-economics/i)).toBeInTheDocument();
+    expect(screen.getByText(/three themes, a live GitHub Activity Dashboard/i)).toBeInTheDocument();
+
+    // Live Demo routing: Amazon Suite -> /amazon-tools, Portfolio -> /how-this-site-works.
+    const liveDemoHrefs = screen
+      .getAllByRole('link', { name: 'Live Demo' })
+      .map((link) => link.getAttribute('href'));
+    expect(liveDemoHrefs).toEqual(['/amazon-tools', '/how-this-site-works']);
   });
 
   it('renders AboutPage with skill matrix', () => {

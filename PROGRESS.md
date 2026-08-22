@@ -30,18 +30,25 @@ code in the file changed; zero conflict risk with Tracks A/C.
 
 ## B.2 — Homepage section cleanup
 
-- [ ] Remove the "── or explore directly ──" explore dock (`hero-explore-dock`) —
+- [x] Remove the "── or explore directly ──" explore dock (`hero-explore-dock`) —
   redundant with header nav + new footer; socials already moved to hero (B.1)
-- [ ] Remove the Skills Snapshot section (full `skills-summary-section` chip wall) —
+- [x] Remove the Skills Snapshot section (full `skills-summary-section` chip wall) —
   duplicates About's Skill Matrix; About keeps that job
-- [ ] Re-order Featured Projects cards:
+- [x] Re-order Featured Projects cards:
   1. Multi-Agent System Platform
   2. Amazon Seller Trend & Opportunity Suite (its "Live Demo" already routes to `/amazon-tools`)
   3. Personal Portfolio Website ("Live Demo" → `/how-this-site-works`)
-- [ ] Add a one-line outcome/so-what to each project card (from existing
+- [x] Add a one-line outcome/so-what to each project card (from existing
   `backend/data/projects.json` descriptions — condense, don't write new claims)
-- [ ] Update `frontend/src/pages/Pages.test.tsx` homepage assertions
+- [x] Update `frontend/src/pages/Pages.test.tsx` homepage assertions
   (dock gone, skills section gone, hero CTA labels present, chat section present)
+
+**Note on Live Demo routing:** `backend/data/projects.json` is outside Track B's file
+boundaries, so the Personal Portfolio Website's "Live Demo" → `/how-this-site-works`
+destination is applied via a small homepage-level lookup (`LIVE_DEMO_PATHS` in
+`HomePage.tsx`) instead of a `liveUrl` field in the data. Coordinator may fold this
+into `projects.json` post-merge if preferred. Project re-ordering is likewise
+render-level (`FEATURED_PROJECT_ORDER`), not a data-file change.
 
 ## B.3 — Résumé link (optional; skip if no PDF available — do not block on it)
 
@@ -52,3 +59,4 @@ code in the file changed; zero conflict risk with Tracks A/C.
 
 - 2026-08-22 — Track B started. Worktree created at `../personalWebsite-home` from main @ 89f4819. PROGRESS.md committed.
 - 2026-08-22 — B.1 done: hero rebuilt human-first (name dominant, title + value-prop line, location · credentials, CTA row with View Experience / Get in Touch / LinkedIn / GitHub with lucide icons, current-role band from experienceData[0] linking to /experience). ChatPanel + grounding badge relocated to new "ASK THIS SITE" exhibit section directly below hero. CSS added for valueprop/CTA row/role band/chat exhibit with Modern + ASCII + CLI overrides. Tests: Pages.test.tsx homepage assertions rewritten; App.test.tsx sentinel updated (boundary exception, documented above). npm test green (25 files / 198 tests).
+- 2026-08-22 — B.2 done: explore dock removed (markup + CSS + theme overrides); Skills Snapshot chip wall removed (markup + CSS; shared `.skill-badge-star` rule kept for AboutPage); featured projects re-ordered Multi-Agent → Amazon Suite → Portfolio via `FEATURED_PROJECT_ORDER`; one-line outcome added to each card (condensed from existing projects.json descriptions); Portfolio "Live Demo" routed to `/how-this-site-works` via homepage-level `LIVE_DEMO_PATHS` (projects.json is out of bounds). Tests split into 3 homepage cases incl. order + Live Demo href assertions. npm test green (25 files / 200 tests), `tsc --noEmit` clean.

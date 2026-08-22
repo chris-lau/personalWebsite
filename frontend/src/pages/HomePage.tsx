@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom';
 import { ArrowUpRight, Github, Linkedin } from 'lucide-react';
 import { profileData } from '../data/profile';
 import { projectsData } from '../data/projects';
-import { skillsData } from '../data/skills';
 import { experienceData } from '../data/experience';
+import { Project } from '../types/portfolio';
 import { BoxContainer } from '../components/ui/BoxContainer';
 import { ChatPanel } from '../components/chat/ChatPanel';
 import { HOME_STARTERS } from '../components/chat/starters';
@@ -15,8 +15,28 @@ const SOCIAL_ICONS: Record<string, typeof Linkedin> = {
   GitHub: Github,
 };
 
+/** Homepage display order for the featured project cards. */
+const FEATURED_PROJECT_ORDER = ['multi-agent-system', 'amazon-seller-suite', 'personal-os'];
+
+/** Homepage-only Live Demo destinations for projects without a liveUrl in projects.json. */
+const LIVE_DEMO_PATHS: Record<string, string> = {
+  'personal-os': '/how-this-site-works',
+};
+
+/** One-line outcomes, condensed from each project's backend description (no new claims). */
+const PROJECT_OUTCOMES: Record<string, string> = {
+  'multi-agent-system':
+    'Multiple specialized AI agents orchestrated to address complex, cross-domain tasks.',
+  'amazon-seller-suite':
+    'A 0-100 Opportunity Score with FBA unit-economics simulation and competitor review-gap scanning.',
+  'personal-os':
+    "The site you're on: three themes, a live GitHub Activity Dashboard, and REST API integration.",
+};
+
 export const HomePage = () => {
-  const featuredProjects = projectsData.filter((p) => p.featured);
+  const featuredProjects = FEATURED_PROJECT_ORDER
+    .map((id) => projectsData.find((project) => project.id === id && project.featured))
+    .filter((project): project is Project => Boolean(project));
   const chat = useChat();
   const currentRole = experienceData[0];
 
@@ -60,29 +80,6 @@ export const HomePage = () => {
             <span className="hero-role-band__highlight">{currentRole.highlights[0]}</span>
           </Link>
         </div>
-
-        <div className="hero-explore-dock">
-          <span className="explore-dock__label">── or explore directly ──</span>
-          <nav className="explore-dock__links" aria-label="Direct site exploration">
-            <Link to="/about" className="explore-dock__link">About</Link>
-            <Link to="/projects" className="explore-dock__link">Projects</Link>
-            <Link to="/experience" className="explore-dock__link">Experience</Link>
-            <Link to="/blog" className="explore-dock__link">Blog</Link>
-            <Link to="/now" className="explore-dock__link">Now</Link>
-            {profileData.socials.map((s) => (
-              <a
-                key={s.platform}
-                href={s.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="explore-dock__link explore-dock__link--external"
-              >
-                {s.platform}
-                <ArrowUpRight size={12} aria-hidden="true" className="external-icon" />
-              </a>
-            ))}
-          </nav>
-        </div>
       </section>
 
       <section className="chat-exhibit-section" aria-label="Ask this site chat exhibit">
@@ -108,66 +105,47 @@ export const HomePage = () => {
       <section className="featured-section">
         <BoxContainer title="FEATURED PROJECTS">
           <div className="project-grid">
-            {featuredProjects.map((project) => (
-              <div key={project.id} className="project-card">
-                <h3 className="project-title">{project.title}</h3>
-                <p className="project-desc">{project.description}</p>
-                <div className="tech-tags">
-                  {project.techStack.map((tech) => (
-                    <span key={tech} className="tech-tag">#{tech}</span>
-                  ))}
-                </div>
-                <div className="project-actions">
-                  {project.githubUrl && (
-                    <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="link-button">
-                      GitHub
-                    </a>
+            {featuredProjects.map((project) => {
+              const liveUrl = project.liveUrl ?? LIVE_DEMO_PATHS[project.id];
+              return (
+                <div key={project.id} className="project-card">
+                  <h3 className="project-title">{project.title}</h3>
+                  <p className="project-desc">{project.description}</p>
+                  {PROJECT_OUTCOMES[project.id] && (
+                    <p className="project-outcome">
+                      <span className="project-outcome__arrow" aria-hidden="true">&rarr;</span>
+                      {PROJECT_OUTCOMES[project.id]}
+                    </p>
                   )}
-                  {project.liveUrl && (
-                    project.liveUrl.startsWith('/') ? (
-                      <Link to={project.liveUrl} className="link-button">
-                        Live Demo
-                      </Link>
-                    ) : (
-                      <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="link-button">
-                        Live Demo
+                  <div className="tech-tags">
+                    {project.techStack.map((tech) => (
+                      <span key={tech} className="tech-tag">#{tech}</span>
+                    ))}
+                  </div>
+                  <div className="project-actions">
+                    {project.githubUrl && (
+                      <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="link-button">
+                        GitHub
                       </a>
-                    )
-                  )}
+                    )}
+                    {liveUrl && (
+                      liveUrl.startsWith('/') ? (
+                        <Link to={liveUrl} className="link-button">
+                          Live Demo
+                        </Link>
+                      ) : (
+                        <a href={liveUrl} target="_blank" rel="noopener noreferrer" className="link-button">
+                          Live Demo
+                        </a>
+                      )
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
           <div className="section-footer">
             <Link to="/projects" className="link-button primary">View All Projects &rarr;</Link>
-          </div>
-        </BoxContainer>
-      </section>
-
-      <section className="skills-summary-section">
-        <BoxContainer title="SKILLS SNAPSHOT">
-          <div className="skills-snapshot">
-            {skillsData.map((cat) => (
-              <div key={cat.category} className="skill-group">
-                <span className="skill-cat-label">{cat.category}:</span>
-                <div className="skill-chips">
-                  {(cat.detailedSkills || cat.skills.map(s => ({ name: s, level: 'core' as const }))).map((skillItem) => {
-                    const name = typeof skillItem === 'string' ? skillItem : skillItem.name;
-                    const level = typeof skillItem === 'string' ? 'core' : (skillItem.level || 'core');
-                    return (
-                      <span
-                        key={name}
-                        className={`skill-chip ${level === 'core' ? 'skill-chip-core' : 'skill-chip-proficient'}`}
-                        title={level === 'core' ? 'Core Expertise' : 'Proficient'}
-                      >
-                        {level === 'core' && <span className="skill-badge-dot" aria-hidden="true">★ </span>}
-                        {name}
-                      </span>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
           </div>
         </BoxContainer>
       </section>
