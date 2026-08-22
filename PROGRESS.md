@@ -105,3 +105,19 @@ from the hero CTA row and Contact page.
 - 2026-08-22 — B.1 done: hero rebuilt human-first (name dominant, title + value-prop line, location · credentials, CTA row with View Experience / Get in Touch / LinkedIn / GitHub with lucide icons, current-role band from experienceData[0] linking to /experience). ChatPanel + grounding badge relocated to new "ASK THIS SITE" exhibit section directly below hero. CSS added for valueprop/CTA row/role band/chat exhibit with Modern + ASCII + CLI overrides. Tests: Pages.test.tsx homepage assertions rewritten; App.test.tsx sentinel updated (boundary exception, documented above). npm test green (25 files / 198 tests).
 - 2026-08-22 — B.2 done: explore dock removed (markup + CSS + theme overrides); Skills Snapshot chip wall removed (markup + CSS; shared `.skill-badge-star` rule kept for AboutPage); featured projects re-ordered Multi-Agent → Amazon Suite → Portfolio via `FEATURED_PROJECT_ORDER`; one-line outcome added to each card (condensed from existing projects.json descriptions); Portfolio "Live Demo" routed to `/how-this-site-works` via homepage-level `LIVE_DEMO_PATHS` (projects.json is out of bounds). Tests split into 3 homepage cases incl. order + Live Demo href assertions. npm test green (25 files / 200 tests), `tsc --noEmit` clean.
 - 2026-08-22 — B.3 skipped: no résumé PDF/URL exists in the repo or profile data (verified via tree-wide search); plan marks this phase optional and non-blocking. Track B complete; pushing branch and opening PR.
+
+---
+
+# (merged from Track C PR #17)
+
+# Track C Progress — Reframing (Showcase intro lines + Lab hub)
+
+- [x] C.1 — Showcase reframing (small intro lines only)
+  - [x] `/monitoring` (`MonitoringPage.tsx`): add one framing line before the existing intro, e.g. "Exhibit: zero-cost observability I built — browser RUM, FastAPI middleware, synthetic E2E probes." Keep the cold-start note as-is
+  - [x] `/amazon-tools` (`AmazonToolsPage.tsx`): add one framing line, e.g. "Live product demo: an opportunity-scoring suite I designed and built end-to-end." Existing tabs, calculator logic, and companion chat untouched
+  - [x] `/how-this-site-works` (`HowThisSiteWorksPage.tsx`): make it the Lab hub — add explorer buttons for Amazon Seller Suite (`/amazon-tools`) and the chat observability panel alongside the existing Monitoring / Storybook / Swagger buttons
+  - [x] Append tests for the new intro lines/buttons (your pages' suites; append-only in `Pages.test.tsx` and `AmazonToolsPage.test.tsx`)
+
+## Log
+- 2026-08-22: Initialized Track C branch and progress tracker.
+- 2026-08-22: Completed C.1 - Added showcase framing to MonitoringPage and AmazonToolsPage; turned HowThisSiteWorksPage into the Lab hub with Amazon Seller Suite and Chat Observability explorer buttons; appended unit tests to Pages.test.tsx and AmazonToolsPage.test.tsx (all 25 test suites / 201 tests passing).

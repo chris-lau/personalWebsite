@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { ShoppingBag, TrendingUp, Calculator, Search, Bookmark, Bot, X } from 'lucide-react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { ShoppingBag, TrendingUp, Calculator, Search, Bot, Bookmark, X } from 'lucide-react';
 import { OpportunityFinder } from '../components/amazon/OpportunityFinder';
 import { UnitEconomicsCalculator } from '../components/amazon/UnitEconomicsCalculator';
 import { ReviewGapScanner } from '../components/amazon/ReviewGapScanner';
-import { NicheTrend } from '../data/amazonData';
-import { BoxContainer } from '../components/ui/BoxContainer';
 import { ChatPanel } from '../components/chat/ChatPanel';
+import { BoxContainer } from '../components/ui/BoxContainer';
+import { useChat } from '../hooks/useChat';
 import {
   AMAZON_TRENDS_STARTERS,
   AMAZON_CALCULATOR_STARTERS,
   AMAZON_REVIEW_GAP_STARTERS,
 } from '../components/chat/starters';
-import { useChat } from '../hooks/useChat';
+import { NicheTrend } from '../data/amazonData';
 import './AmazonToolsPage.css';
 
 type ActiveTab = 'trends' | 'calculator' | 'review_gap';
@@ -22,7 +22,7 @@ export const AmazonToolsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<ActiveTab>('trends');
   const [selectedNiche, setSelectedNiche] = useState<NicheTrend | null>(null);
 
-  // Companion mode toggle (persisted in localStorage, defaults to true)
+  // Companion mode state with persistent local storage
   const [companionMode, setCompanionMode] = useState<boolean>(() => {
     try {
       const stored = localStorage.getItem(COMPANION_STORAGE_KEY);
@@ -121,6 +121,7 @@ export const AmazonToolsPage: React.FC = () => {
               <span>Amazon Seller Trend &amp; Opportunity Suite</span>
             </h1>
             <p className="page-description">
+              <strong>Live product demo:</strong> an opportunity-scoring suite I designed and built end-to-end.
               An interactive intelligence toolkit for Amazon private label sellers and brand builders.
               Discover high-velocity product niches, model accurate 2026 FBA unit economics, and exploit
               competitor review weaknesses.
@@ -256,4 +257,3 @@ export const AmazonToolsPage: React.FC = () => {
     </div>
   );
 };
-
