@@ -18,6 +18,7 @@ export const ChatWidget: React.FC = () => {
 
   const [open, setOpen] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const launcherRef = useRef<HTMLButtonElement>(null);
 
   const chat = useChat();
   const { messages, loading, isFallback, models, metricsMap, streamProgress } = chat;
@@ -81,6 +82,32 @@ export const ChatWidget: React.FC = () => {
     }
   }, [open, showPulse]);
 
+  // Handle Escape key to close panel and return focus to launcher
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && open) {
+        setOpen(false);
+        launcherRef.current?.focus();
+      }
+    };
+
+    if (open) {
+      window.addEventListener('keydown', handleEscape);
+      return () => window.removeEventListener('keydown', handleEscape);
+    }
+  }, [open]);
+
+  // Return focus to launcher when panel closes (any path)
+  useEffect(() => {
+    if (!open) {
+      // Small delay to ensure the launcher button is visible
+      const timeoutId = setTimeout(() => {
+        launcherRef.current?.focus();
+      }, 50);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [open]);
+
   // Don't render the launcher if the backend reports no models AND isn't in
   // fallback mode yet (initial load). Once isFallback becomes true we show
   // the widget so the user gets the degraded message.
@@ -96,6 +123,7 @@ export const ChatWidget: React.FC = () => {
     <>
       {/* Launcher button */}
       <button
+        ref={launcherRef}
         type="button"
         className={`chat-launcher ${open ? 'chat-launcher--hidden' : ''}`}
         onClick={() => setOpen(true)}
