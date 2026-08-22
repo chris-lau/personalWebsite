@@ -6,6 +6,7 @@ import { useChat } from '../../hooks/useChat';
 import { ChatPanel } from './ChatPanel';
 import { ChatObservabilityPanel } from './ChatObservabilityPanel';
 import { DEFAULT_STARTERS } from './starters';
+import { CHAT_OPEN_EVENT, isChatOpenEvent, type OpenChatOptions } from './chatControl';
 import type { ChatSessionSummary } from '../../types/chat';
 import './ChatWidget.css';
 
@@ -19,6 +20,36 @@ export const ChatWidget: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const launcherRef = useRef<HTMLButtonElement>(null);
+
+  // Listen for chat:open events (must be before early returns so it fires on /)
+  useEffect(() => {
+    const handleChatOpen = (event: Event) => {
+      if (!isChatOpenEvent(event)) return;
+
+      const { starter } = event.detail;
+
+      if (pathname === '/') {
+        // On homepage, scroll to the chat exhibit instead of opening panel
+        document.getElementById('ask-this-site')?.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        // On other pages, open panel and send starter if provided
+        setOpen(true);
+
+        // Send starter message after panel opens (with delay for focus to be set)
+        if (starter && !chat.loading && !chat.messageIsStreaming) {
+          // Small delay to ensure the panel is open and input is focused
+          setTimeout(() => {
+            if (!chat.loading && !chat.messageIsStreaming) {
+              chat.sendMessage(starter);
+            }
+          }, 100);
+        }
+      }
+    };
+
+    window.addEventListener(CHAT_OPEN_EVENT, handleChatOpen);
+    return () => window.removeEventListener(CHAT_OPEN_EVENT, handleChatOpen);
+  }, [pathname, chat]);
 
   const chat = useChat();
   const { messages, loading, isFallback, models, metricsMap, streamProgress } = chat;
