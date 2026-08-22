@@ -1394,6 +1394,19 @@
   }
 }
 
+/* Mobile fold: lift the ASK THIS SITE exhibit into the first viewport (390×844).
+   These carry the [data-theme] prefix to out-specify the modern overrides above,
+   which plain mobile selectors cannot beat. */
+@media (max-width: 768px) {
+  [data-theme="modern"] .page-container {
+    gap: 1.25rem;
+  }
+
+  [data-theme="modern"] .hero-content {
+    gap: 0.65rem;
+  }
+}
+
 .grounding-dot {
   width: 7px;
   height: 7px;
