@@ -5,10 +5,11 @@ import time
 from fastapi import APIRouter, Request
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
+from starlette.concurrency import run_in_threadpool
 
 from api.endpoints.github import get_cache_stats
 from config import settings
-from core.db import SessionLocal
+from core.db import SessionLocal, engine
 from core.rate_limit import limiter
 from schemas.telemetry import (
     START_TIME,
@@ -75,7 +76,7 @@ async def health_ready(request: Request):
     memory_mb = _get_memory_rss_mb()
     uptime = round(time.time() - START_TIME, 2)
 
-    db_check = _check_database()
+    db_check = await run_in_threadpool(_check_database)
 
     checks = {
         "process_memory": {"status": "ok", "rss_mb": memory_mb},
@@ -122,8 +123,8 @@ async def get_telemetry(request: Request):
         active_window=f"{settings.RATE_LIMIT_PER_MINUTE}/minute",
     )
 
-    db_check = _check_database()
-    engine_type = "postgresql" if "postgres" in settings.DATABASE_URL.lower() else "sqlite"
+    db_check = await run_in_threadpool(_check_database)
+    engine_type = engine.dialect.name
     database_data = DatabaseTelemetry(
         status=db_check.get("status", "unknown"),
         latency_ms=db_check.get("latency_ms"),

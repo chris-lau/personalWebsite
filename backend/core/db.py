@@ -10,10 +10,13 @@ if db_url.startswith("postgres://"):
 elif db_url.startswith("postgresql://") and not db_url.startswith("postgresql+"):
     db_url = db_url.replace("postgresql://", "postgresql+psycopg://", 1)
 
-# SQLite-specific connection arguments for multi-threading in FastAPI
+# Connection arguments for multi-threading and timeout bounds
 connect_args = {}
 if db_url.startswith("sqlite"):
     connect_args["check_same_thread"] = False
+    connect_args["timeout"] = 5
+elif "postgresql" in db_url or "postgres" in db_url:
+    connect_args["connect_timeout"] = 5
 
 engine = create_engine(db_url, connect_args=connect_args)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

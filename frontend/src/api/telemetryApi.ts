@@ -135,9 +135,10 @@ export async function runE2EDiagnosticSuite(): Promise<DiagnosticCheckItem[]> {
     const dbCheck = ready.data.checks?.database as
       | { status?: string; latency_ms?: number; error?: string }
       | undefined;
+    const dbLatencyStr = dbCheck?.latency_ms != null ? `${dbCheck.latency_ms}ms` : 'N/A';
     const dbStatusText =
       dbCheck?.status === 'ok'
-        ? `PostgreSQL / DB: ok (${dbCheck?.latency_ms ?? 0}ms)`
+        ? `PostgreSQL / DB: ok (${dbLatencyStr})`
         : `PostgreSQL / DB: ${dbCheck?.status ?? 'unhealthy'}`;
 
     results[2] = {

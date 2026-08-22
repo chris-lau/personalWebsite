@@ -70,13 +70,13 @@ export const FullStackMonitoringDashboard: React.FC = () => {
     const telemetry = await fetchBackendTelemetry();
 
     const dbTelemetry = telemetry.data?.database;
-    const dbStatus: 'healthy' | 'degraded' | 'offline' = !rtt.isOnline
+    const dbStatus: 'healthy' | 'degraded' | 'offline' | 'fallback' = !rtt.isOnline
       ? 'offline'
       : dbTelemetry?.status === 'ok'
       ? 'healthy'
       : dbTelemetry?.status === 'unhealthy'
       ? 'degraded'
-      : 'healthy';
+      : 'fallback';
 
     setTopology({
       frontend_status: 'healthy',
@@ -248,14 +248,16 @@ export const FullStackMonitoringDashboard: React.FC = () => {
         <section className="monitoring-section topology-section">
           <h3 className="section-title">&gt; 1. LIVE FULL-STACK ARCHITECTURE TOPOLOGY</h3>
           <div className="topology-map">
-            <div className="topology-node frontend-node">
-              <span className="node-icon">🌐</span>
-              <span className="node-title">React 18 SPA</span>
-              <span className="node-subtitle">Cloudflare Pages</span>
-              <span className="node-status healthy">HEALTHY</span>
+            <div className="topology-tier client-tier">
+              <div className="topology-node frontend-node">
+                <span className="node-icon">🌐</span>
+                <span className="node-title">React 18 SPA</span>
+                <span className="node-subtitle">Cloudflare Pages</span>
+                <span className="node-status healthy">HEALTHY</span>
+              </div>
             </div>
 
-            <div className="topology-connector">
+            <div className="topology-connector primary-connector">
               <span className="line" />
               <span className="connector-label">
                 {topology.network_rtt_ms !== null ? `${topology.network_rtt_ms}ms RTT` : 'CORS / REST'}
@@ -263,49 +265,57 @@ export const FullStackMonitoringDashboard: React.FC = () => {
               <span className="arrow">►</span>
             </div>
 
-            <div className={`topology-node backend-node ${topology.backend_status}`}>
-              <span className="node-icon">🐍</span>
-              <span className="node-title">FastAPI Backend</span>
-              <span className="node-subtitle">Render (Docker)</span>
-              <span className={`node-status ${topology.backend_status}`}>
-                {topology.backend_status.toUpperCase()}
-              </span>
+            <div className="topology-tier service-tier">
+              <div className={`topology-node backend-node ${topology.backend_status}`}>
+                <span className="node-icon">🐍</span>
+                <span className="node-title">FastAPI Backend</span>
+                <span className="node-subtitle">Render (Docker)</span>
+                <span className={`node-status ${topology.backend_status}`}>
+                  {topology.backend_status.toUpperCase()}
+                </span>
+              </div>
             </div>
 
-            <div className="topology-connector">
-              <span className="line" />
-              <span className="connector-label">
-                {topology.database_latency_ms !== null && topology.database_latency_ms !== undefined
-                  ? `${topology.database_latency_ms}ms Query`
-                  : 'SQLAlchemy'}
-              </span>
-              <span className="arrow">►</span>
-            </div>
+            <div className="topology-downstream-group">
+              {/* Branch: PostgreSQL Database Persistence */}
+              <div className="topology-branch">
+                <div className="topology-connector branch-connector">
+                  <span className="line" />
+                  <span className="connector-label">
+                    {topology.database_latency_ms !== null && topology.database_latency_ms !== undefined
+                      ? `${topology.database_latency_ms}ms Query`
+                      : 'SQLAlchemy'}
+                  </span>
+                  <span className="arrow">►</span>
+                </div>
+                <div className={`topology-node database-node ${topology.database_status}`}>
+                  <span className="node-icon">🐘</span>
+                  <span className="node-title">{topology.database_engine || 'PostgreSQL'} DB</span>
+                  <span className="node-subtitle">
+                    {topology.database_engine === 'SQLite' ? 'Local SQLite' : 'Render Postgres'}
+                  </span>
+                  <span className={`node-status ${topology.database_status}`}>
+                    {topology.database_status.toUpperCase()}
+                  </span>
+                </div>
+              </div>
 
-            <div className={`topology-node database-node ${topology.database_status}`}>
-              <span className="node-icon">🐘</span>
-              <span className="node-title">{topology.database_engine || 'PostgreSQL'} DB</span>
-              <span className="node-subtitle">
-                {topology.database_engine === 'SQLite' ? 'Local DB' : 'Render Postgres'}
-              </span>
-              <span className={`node-status ${topology.database_status}`}>
-                {topology.database_status.toUpperCase()}
-              </span>
-            </div>
-
-            <div className="topology-connector">
-              <span className="line" />
-              <span className="connector-label">15-Min TTL Proxy</span>
-              <span className="arrow">►</span>
-            </div>
-
-            <div className={`topology-node github-node ${topology.github_proxy_status}`}>
-              <span className="node-icon">🐙</span>
-              <span className="node-title">GitHub REST API</span>
-              <span className="node-subtitle">api.github.com</span>
-              <span className={`node-status ${topology.github_proxy_status}`}>
-                {topology.github_proxy_status.toUpperCase()}
-              </span>
+              {/* Branch: GitHub REST API Proxy Cache */}
+              <div className="topology-branch">
+                <div className="topology-connector branch-connector">
+                  <span className="line" />
+                  <span className="connector-label">15-Min TTL Proxy</span>
+                  <span className="arrow">►</span>
+                </div>
+                <div className={`topology-node github-node ${topology.github_proxy_status}`}>
+                  <span className="node-icon">🐙</span>
+                  <span className="node-title">GitHub REST API</span>
+                  <span className="node-subtitle">api.github.com</span>
+                  <span className={`node-status ${topology.github_proxy_status}`}>
+                    {topology.github_proxy_status.toUpperCase()}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -382,16 +392,20 @@ export const FullStackMonitoringDashboard: React.FC = () => {
                       <span className="metric-label">Database Status:</span>
                       <span className="metric-value">
                         {backendTelemetry.database.status === 'ok'
-                          ? `HEALTHY (${backendTelemetry.database.latency_ms ?? 0}ms)`
+                          ? `HEALTHY (${backendTelemetry.database.latency_ms != null ? `${backendTelemetry.database.latency_ms}ms` : 'N/A'})`
                           : backendTelemetry.database.status.toUpperCase()}
                       </span>
                     </div>
                     <div className="metric-row">
                       <span className="metric-label">Database Engine:</span>
                       <span className="metric-value">
-                        {backendTelemetry.database.engine === 'postgresql'
-                          ? 'PostgreSQL (psycopg3)'
-                          : 'SQLite (personal_os.db)'}
+                        {backendTelemetry.database.engine
+                          ? backendTelemetry.database.engine === 'postgresql'
+                            ? 'PostgreSQL (psycopg3)'
+                            : backendTelemetry.database.engine === 'sqlite'
+                            ? 'SQLite'
+                            : backendTelemetry.database.engine.toUpperCase()
+                          : 'UNKNOWN'}
                       </span>
                     </div>
                   </>

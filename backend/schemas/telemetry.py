@@ -27,7 +27,7 @@ class RateLimitTelemetry(BaseModel):
 
 
 class DatabaseTelemetry(BaseModel):
-    status: str = Field(default="ok", description="Database health status: ok or unhealthy")
+    status: str = Field(..., description="Database health status: ok or unhealthy")
     latency_ms: Optional[float] = Field(default=None, description="Database ping latency in milliseconds")
     engine: str = Field(default="postgresql", description="Database engine type (e.g. postgresql, sqlite)")
 
