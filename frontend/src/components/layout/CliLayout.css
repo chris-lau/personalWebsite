@@ -1,43 +1,62 @@
 .cli-layout-container {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 1.5rem;
+  background-color: var(--bg-primary);
   font-family: var(--font-family);
   color: var(--text-primary);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+}
+
+.skip-to-content {
+  position: absolute;
+  top: -100px;
+  left: 1rem;
+  background: var(--accent-secondary);
+  color: #000;
+  padding: 0.5rem 1rem;
+  z-index: 1000;
+  border-radius: 4px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 0.2s ease-in-out;
+}
+
+.skip-to-content:focus {
+  top: 1rem;
 }
 
 .cli-window {
-  border: 1px solid var(--border-color);
+  width: 100%;
+  max-width: 1100px;
   background-color: var(--bg-secondary);
-  border-radius: 6px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-  overflow: hidden;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
   display: flex;
   flex-direction: column;
-  min-height: 80vh;
+  min-height: 85vh;
+  overflow: hidden;
 }
 
 .cli-header-bar {
   background-color: var(--bg-primary);
   border-bottom: 1px solid var(--border-color);
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1rem;
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
 }
 
-.cli-window-buttons {
+.cli-controls {
   display: flex;
   gap: 0.4rem;
 }
 
 .cli-btn {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   display: inline-block;
 }
@@ -61,14 +80,12 @@
 }
 
 .cli-nav-bar {
-  background-color: var(--bg-primary);
+  background-color: rgba(0, 0, 0, 0.2);
   border-bottom: 1px solid var(--border-color);
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 1rem;
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  /* No overflow-x scrolling here: a scroll container would clip the
-     absolutely-positioned dropdown menus that hang below the tab bar. */
 }
 
 .cli-prompt-symbol {
@@ -79,7 +96,7 @@
 .cli-prompt-link {
   color: var(--text-primary);
   text-decoration: none;
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
@@ -95,10 +112,9 @@
 
 .cli-nav-tabs {
   display: flex;
-  flex-wrap: wrap; /* tabs wrap instead of overflowing on medium widths */
   list-style: none;
-  padding: 0;
   margin: 0;
+  padding: 0;
   gap: 0.5rem;
 }
 
@@ -109,53 +125,51 @@
 .cli-tab {
   color: var(--text-muted);
   text-decoration: none;
-  font-size: 0.875rem;
-  padding: 0.2rem 0.6rem;
-  border-radius: 3px;
-  transition: all 0.2s ease;
-  background: transparent;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
   border: 1px solid transparent;
-  font-family: inherit;
+  transition: all 0.15s ease;
+  background: transparent;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  white-space: nowrap; /* keep terminal-style labels on one line */
+  gap: 0.3rem;
+  font-family: inherit;
 }
 
 .cli-tab:hover {
   color: var(--text-primary);
   background-color: rgba(255, 255, 255, 0.05);
+  border-color: var(--border-color);
 }
 
 .cli-tab.active {
   color: var(--accent-secondary);
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-color);
+  background-color: rgba(0, 0, 0, 0.4);
+  border-color: var(--accent-secondary);
   font-weight: bold;
 }
 
 .cli-caret {
-  font-size: 0.7rem;
-  opacity: 0.8;
+  font-size: 0.65rem;
 }
 
 .cli-dropdown-menu {
   position: absolute;
-  top: calc(100% + 0.3rem);
+  top: calc(100% + 0.35rem);
   left: 0;
-  min-width: 160px;
-  background-color: var(--bg-primary);
+  min-width: 170px;
+  background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);
   border-radius: 4px;
-  padding: 0.35rem;
+  padding: 0.35rem 0;
   list-style: none;
   margin: 0;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
   display: none;
   flex-direction: column;
-  gap: 0.2rem;
-  z-index: 100;
+  z-index: 1000;
 }
 
 .cli-dropdown-menu.show {
@@ -166,17 +180,16 @@
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.3rem 0.5rem;
+  padding: 0.35rem 0.75rem;
   color: var(--text-muted);
   text-decoration: none;
-  font-size: 0.82rem;
-  border-radius: 3px;
+  font-size: 0.8rem;
   transition: all 0.15s ease;
 }
 
 .cli-dropdown-item:hover {
-  color: var(--accent-secondary);
-  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
 .cli-dropdown-item.active {
@@ -199,12 +212,54 @@
 .cli-footer {
   background-color: var(--bg-primary);
   border-top: 1px solid var(--border-color);
-  padding: 0.4rem 1rem;
+  padding: 0.6rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.cli-footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.25rem;
+}
+
+.cli-footer-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.cli-footer-heading {
+  color: var(--accent-secondary);
+  font-weight: bold;
+}
+
+.cli-footer-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.cli-footer-link:hover {
+  color: var(--accent-primary);
+  text-decoration: underline;
+}
+
+.cli-footer-dot {
+  color: var(--border-color);
+}
+
+.cli-footer-meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.75rem;
-  color: var(--text-muted);
+  border-top: 1px dashed var(--border-color);
+  padding-top: 0.4rem;
 }
 
 .cli-status-badge {
@@ -330,5 +385,11 @@
     padding: 0.45rem 0.65rem;
     display: flex;
     align-items: center;
+  }
+
+  .cli-footer-nav {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
   }
 }
