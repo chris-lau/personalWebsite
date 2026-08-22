@@ -65,6 +65,41 @@ def test_api_telemetry(client):
     assert "process" in data
     assert "cache" in data
     assert "rate_limit" in data
+    assert "database" in data
     assert data["process"]["uptime_seconds"] >= 0
     assert data["process"]["memory_rss_mb"] > 0
     assert data["rate_limit"]["limit_per_minute"] == 60
+    assert data["database"]["status"] == "ok"
+    assert data["database"]["engine"] in ("postgresql", "sqlite")
+
+
+def test_api_telemetry_reports_unhealthy_when_db_unreachable(client, monkeypatch):
+    """When the DB probe fails, /api/telemetry still returns 200 with database status 'unhealthy'."""
+    from sqlalchemy.exc import OperationalError
+
+    from api.endpoints import telemetry
+
+    class _BrokenSession:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+        def execute(self, *args, **kwargs):
+            raise OperationalError("SELECT 1", {}, Exception("simulated outage"))
+
+        def close(self):
+            pass
+
+    def _broken_session_local():
+        return _BrokenSession()
+
+    monkeypatch.setattr(telemetry, "SessionLocal", _broken_session_local)
+
+    response = client.get("/api/telemetry")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "ok"
+    assert data["database"]["status"] == "unhealthy"
+    assert data["database"]["engine"] in ("postgresql", "sqlite")

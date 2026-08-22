@@ -170,14 +170,14 @@ Phase 3.5 introduces an integrated, zero-cost, zero-cookie **Full-Stack Operatio
 * **Stack Trace Error Logging**: Global 500 exception handler outputting unhandled exception stack traces to `stderr` with request correlation IDs.
 * **Sub-System Health & Telemetry Endpoints**:
   - `GET /health/live` — Fast process liveness probe.
-  - `GET /health/ready` — Deep sub-system readiness probe checking RAM RSS memory (MB), uptime, environment, and CORS origins.
-  - `GET /api/telemetry` & `GET /api/v1/telemetry` — Live process uptime, RSS memory, cache hit/miss status, and `slowapi` rate-limit budget telemetry.
+  - `GET /health/ready` — Deep sub-system readiness probe checking RAM RSS memory (MB), uptime, environment, CORS origins, and live PostgreSQL database connectivity (`SELECT 1`).
+  - `GET /api/telemetry` & `GET /api/v1/telemetry` — Live process uptime, RSS memory, cache hit/miss status, `slowapi` rate-limit budget, and PostgreSQL database status/latency telemetry.
   - > ⚠️ **Note on Container Cold Starts**: Free-tier backend hosting (Render) automatically spins down instances during inactivity. Initial health probes or API requests after periods of inactivity may experience a delay of **50 seconds or longer** while the container wakes up. Subsequent requests execute in sub-50ms.
 * **Frontend Real User Monitoring (RUM) & Interactive Dashboard**:
   - Navigation timing, TTFB, DOM node count, and JS heap memory (`getBrowserPerformanceMetrics`).
   - Storage byte size, active key count, and GitHub proxy cache age (`auditSessionStorage`).
   - Diagnostic JSON report exporter (`exportDiagnosticReport`).
-  - `<FullStackMonitoringDashboard />` React UI component featuring live system topology map and automated 5-step synthetic diagnostic test runner.
+  - `<FullStackMonitoringDashboard />` React UI component featuring 4-node live system topology map (`[Cloudflare Pages React SPA] ──► [FastAPI Render Backend] ──► [PostgreSQL Database] ──► [GitHub REST API]`), database health metrics, and automated 5-step synthetic diagnostic test runner.
   - Storybook component cataloging (`FullStackMonitoringDashboard.stories.tsx`).
 * **Technical Observability Blog Post**:
   - *"Demystifying Full-Stack Operational Monitoring & Telemetry: Zero-Cost Observability from Browser RUM to FastAPI Middleware"*.
