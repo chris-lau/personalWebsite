@@ -121,3 +121,28 @@ from the hero CTA row and Contact page.
 ## Log
 - 2026-08-22: Initialized Track C branch and progress tracker.
 - 2026-08-22: Completed C.1 - Added showcase framing to MonitoringPage and AmazonToolsPage; turned HowThisSiteWorksPage into the Lab hub with Amazon Seller Suite and Chat Observability explorer buttons; appended unit tests to Pages.test.tsx and AmazonToolsPage.test.tsx (all 25 test suites / 201 tests passing).
+
+---
+
+# Track C Progress — Contextual Entry Points
+
+> Branch: `feat/contextual-chat-links` (from main)
+> Status legend: `[ ]` not started · `[~]` in progress · `[x]` done · `[!]` skipped (with reason)
+
+## Checklist
+
+- [ ] Create `components/chat/chatControl.ts` byte-identical to frozen contract
+- [ ] `pages/ProjectsPage.tsx`: Add "Ask about this →" buttons per project card
+- [ ] `pages/ExperiencePage.tsx`: Add "Ask about this →" buttons per role item
+- [ ] `pages/HowThisSiteWorksPage.tsx`: Replace DOM-click hack with `openChat()`
+- [ ] `pages/ContextualChatLinks.test.tsx`: Add tests for contextual chat links
+- [ ] `e2e/contextual-chat.spec.ts`: Write E2E spec (DO NOT RUN - pending Track A merge)
+- [ ] Final verification: `npx vitest run` green + `npm run lint` green
+- [ ] Push and open PR (DO NOT MERGE)
+
+## Log
+
+### 2025-08-22 - Session 1
+- Initial setup: verified worktree and branch
+- Created PROGRESS.md section for Track C progress tracking
+- Ready to begin implementation phases
