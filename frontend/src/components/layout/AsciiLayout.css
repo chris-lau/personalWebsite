@@ -339,4 +339,8 @@
     align-items: center;
     gap: 0.5rem;
   }
+
+  .ascii-footer {
+    padding-bottom: 5rem;
+  }
 }
