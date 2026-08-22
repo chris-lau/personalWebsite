@@ -54,6 +54,7 @@ function baseHookState(overrides: Record<string, unknown> = {}) {
     clearChat: vi.fn(),
     metricsMap: new Map(),
     streamProgress: null,
+    messageIsStreaming: false,
     ...overrides,
   };
 }
@@ -84,7 +85,7 @@ describe('ChatWidget', () => {
 
   it('renders nothing when no models loaded, no fallback, and no messages', () => {
     renderWidget(baseHookState({ models: [], isFallback: false, messages: [] }));
-    expect(screen.queryByRole('button', { name: 'Open chat' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Ask this site' })).toBeNull();
   });
 
   it('renders nothing on the home route (chat is embedded in the hero)', () => {
@@ -94,7 +95,7 @@ describe('ChatWidget', () => {
         <ChatWidget />
       </MemoryRouter>,
     );
-    expect(screen.queryByRole('button', { name: 'Open chat' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Ask this site' })).toBeNull();
   });
 
   it('renders the launcher on non-home routes', () => {
@@ -104,17 +105,17 @@ describe('ChatWidget', () => {
         <ChatWidget />
       </MemoryRouter>,
     );
-    expect(screen.getByRole('button', { name: 'Open chat' })).toBeDefined();
+    expect(screen.getByRole('button', { name: 'Ask this site' })).toBeDefined();
   });
 
   it('renders the launcher once models are loaded', () => {
     renderWidget();
-    expect(screen.getByRole('button', { name: 'Open chat' })).toBeDefined();
+    expect(screen.getByRole('button', { name: 'Ask this site' })).toBeDefined();
   });
 
   it('opens the panel and shows starter questions when launcher clicked', () => {
     renderWidget();
-    fireEvent.click(screen.getByRole('button', { name: 'Open chat' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Ask this site' }));
 
     expect(screen.getByRole('dialog', { name: 'Chat with Chris' })).toBeDefined();
     expect(screen.getByText('What does Chris do?')).toBeDefined();
@@ -124,7 +125,7 @@ describe('ChatWidget', () => {
     const sendMessage = vi.fn().mockResolvedValue(undefined);
     renderWidget(baseHookState({ sendMessage }));
 
-    fireEvent.click(screen.getByRole('button', { name: 'Open chat' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Ask this site' }));
     const input = screen.getByRole('textbox', { name: 'Message' });
     fireEvent.change(input, { target: { value: 'Tell me about the blog' } });
     fireEvent.click(screen.getByRole('button', { name: 'Send message' }));
@@ -138,7 +139,7 @@ describe('ChatWidget', () => {
     const sendMessage = vi.fn().mockResolvedValue(undefined);
     renderWidget(baseHookState({ sendMessage }));
 
-    fireEvent.click(screen.getByRole('button', { name: 'Open chat' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Ask this site' }));
     fireEvent.click(screen.getByText('What does Chris do?'));
 
     await waitFor(() => {
@@ -148,7 +149,7 @@ describe('ChatWidget', () => {
 
   it('shows the degraded banner when isFallback is true', () => {
     renderWidget(baseHookState({ isFallback: true, error: 'HTTP 503' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Open chat' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Ask this site' }));
 
     expect(screen.getByText(/Chat unavailable: HTTP 503/)).toBeDefined();
   });
@@ -162,7 +163,7 @@ describe('ChatWidget', () => {
         ],
       }),
     );
-    fireEvent.click(screen.getByRole('button', { name: 'Open chat' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Ask this site' }));
 
     expect(screen.getByText('hi')).toBeDefined();
     expect(screen.getByText('hello!')).toBeDefined();
@@ -177,7 +178,7 @@ describe('ChatWidget', () => {
       }),
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Open chat' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Ask this site' }));
     fireEvent.click(screen.getByRole('button', { name: 'Clear conversation' }));
 
     expect(clearChat).toHaveBeenCalled();
@@ -189,7 +190,7 @@ describe('ChatWidget', () => {
 
   it('renders Activity toggle button in header actions', () => {
     renderWidget();
-    fireEvent.click(screen.getByRole('button', { name: 'Open chat' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Ask this site' }));
 
     // The Activity toggle is present with aria-pressed=false (companion off by default)
     const toggleBtn = screen.getByRole('button', { name: 'Enter companion mode' });
@@ -199,7 +200,7 @@ describe('ChatWidget', () => {
 
   it('toggles companion mode on button click', () => {
     renderWidget();
-    fireEvent.click(screen.getByRole('button', { name: 'Open chat' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Ask this site' }));
 
     // Toggle on
     fireEvent.click(screen.getByRole('button', { name: 'Enter companion mode' }));
@@ -218,7 +219,7 @@ describe('ChatWidget', () => {
 
   it('applies chat-panel--companion class to section when companion mode is on', () => {
     renderWidget();
-    fireEvent.click(screen.getByRole('button', { name: 'Open chat' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Ask this site' }));
 
     const section = screen.getByRole('dialog', { name: 'Chat with Chris' });
     expect(section.className).not.toContain('chat-panel--companion');
@@ -232,7 +233,7 @@ describe('ChatWidget', () => {
 
   it('persists companion mode in localStorage', async () => {
     renderWidget();
-    fireEvent.click(screen.getByRole('button', { name: 'Open chat' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Ask this site' }));
 
     fireEvent.click(screen.getByRole('button', { name: 'Enter companion mode' }));
     await waitFor(() => {
@@ -247,7 +248,7 @@ describe('ChatWidget', () => {
 
   it('renders ChatObservabilityPanel when companion mode is active', () => {
     renderWidget();
-    fireEvent.click(screen.getByRole('button', { name: 'Open chat' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Ask this site' }));
 
     // Panel should not exist yet
     expect(screen.queryByText('Send a message to see observability data here')).toBeNull();
@@ -259,7 +260,7 @@ describe('ChatWidget', () => {
 
   it('renders mobile tablist when companion mode is active', () => {
     renderWidget();
-    fireEvent.click(screen.getByRole('button', { name: 'Open chat' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Ask this site' }));
 
     // No tablist initially
     expect(screen.queryByRole('tablist')).toBeNull();
@@ -271,7 +272,7 @@ describe('ChatWidget', () => {
 
   it('switches mobile tabs and applies --active class on columns', () => {
     renderWidget();
-    fireEvent.click(screen.getByRole('button', { name: 'Open chat' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Ask this site' }));
     fireEvent.click(screen.getByRole('button', { name: 'Enter companion mode' }));
 
     const chatTab = screen.getByRole('tab', { name: 'Chat' });
@@ -298,7 +299,7 @@ describe('ChatWidget', () => {
 
   it('desktop layout shows both columns regardless of mobileTab state', () => {
     renderWidget();
-    fireEvent.click(screen.getByRole('button', { name: 'Open chat' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Ask this site' }));
     fireEvent.click(screen.getByRole('button', { name: 'Enter companion mode' }));
 
     // The split body class should be present when companion is on
@@ -311,5 +312,100 @@ describe('ChatWidget', () => {
 
     // The obs column should contain the observability panel
     expect(screen.getByText('Send a message to see observability data here')).toBeDefined();
+  });
+
+  it('launcher pill shows "Ask this site" label', () => {
+    renderWidget();
+    const launcher = screen.getByRole('button', { name: 'Ask this site' });
+    expect(launcher).toBeDefined();
+    expect(launcher.textContent).toContain('Ask this site');
+  });
+
+  it('pulse is absent after chat_opened_once is set', () => {
+    localStorageMock.setItem('chat_opened_once', 'true');
+    renderWidget();
+    const launcher = screen.getByRole('button', { name: 'Ask this site' });
+    expect(launcher.querySelector('.chat-launcher__pulse')).toBeNull();
+  });
+
+  it('Escape key closes the open panel', () => {
+    renderWidget();
+    const launcher = screen.getByRole('button', { name: 'Ask this site' });
+    fireEvent.click(launcher);
+
+    const panel = document.querySelector('.chat-panel');
+    expect(panel?.className).toContain('chat-panel--open');
+
+    fireEvent.keyDown(window, { key: 'Escape' });
+    expect(panel?.className).not.toContain('chat-panel--open');
+  });
+
+  it('focus returns to launcher when panel closes', () => {
+    renderWidget();
+    const launcher = screen.getByRole('button', { name: 'Ask this site' });
+    fireEvent.click(launcher);
+
+    const panel = document.querySelector('.chat-panel');
+    expect(panel?.className).toContain('chat-panel--open');
+
+    fireEvent.keyDown(window, { key: 'Escape' });
+
+    // After a short delay for the focus return effect
+    setTimeout(() => {
+      expect(document.activeElement).toBe(launcher);
+    }, 100);
+  });
+
+  it('chat:open event opens panel and sends starter message', async () => {
+    const sendMessage = vi.fn();
+    mockUseChat.mockReturnValue({
+      ...baseHookState(),
+      sendMessage,
+      messageIsStreaming: false,
+    });
+
+    renderWidget();
+
+    // Dispatch chat:open event with starter
+    const event = new CustomEvent('chat:open', {
+      detail: { starter: 'Tell me about Chris' },
+    });
+    window.dispatchEvent(event);
+
+    await waitFor(() => {
+      expect(sendMessage).toHaveBeenCalledWith('Tell me about Chris');
+    });
+
+    const panel = document.querySelector('.chat-panel');
+    expect(panel?.className).toContain('chat-panel--open');
+  });
+
+  it('on homepage, chat:open scrolls to ask-this-site and does not open panel', () => {
+    const scrollIntoViewMock = vi.fn();
+    Element.prototype.scrollIntoView = scrollIntoViewMock;
+
+    // Create a mock element for the target
+    const mockElement = document.createElement('div');
+    mockElement.id = 'ask-this-site';
+    document.body.appendChild(mockElement);
+
+    renderWidget('/', '/'); // Render on homepage
+
+    // Dispatch chat:open event
+    const event = new CustomEvent('chat:open', {
+      detail: { starter: 'Tell me about Chris' },
+    });
+    window.dispatchEvent(event);
+
+    // Should scroll to the element
+    expect(scrollIntoViewMock).toHaveBeenCalledWith({ behavior: 'smooth' });
+
+    // Should NOT open the panel
+    const panel = document.querySelector('.chat-panel');
+    expect(panel?.className).not.toContain('chat-panel--open');
+
+    // Cleanup
+    document.body.removeChild(mockElement);
+    delete Element.prototype.scrollIntoView;
   });
 });

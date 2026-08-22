@@ -21,6 +21,8 @@ export const ChatWidget: React.FC = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const launcherRef = useRef<HTMLButtonElement>(null);
 
+  const chat = useChat();
+
   // Listen for chat:open events (must be before early returns so it fires on /)
   useEffect(() => {
     const handleChatOpen = (event: Event) => {
@@ -51,7 +53,6 @@ export const ChatWidget: React.FC = () => {
     return () => window.removeEventListener(CHAT_OPEN_EVENT, handleChatOpen);
   }, [pathname, chat]);
 
-  const chat = useChat();
   const { messages, loading, isFallback, models, metricsMap, streamProgress } = chat;
 
   // Companion mode toggle — persisted in localStorage
@@ -84,7 +85,7 @@ export const ChatWidget: React.FC = () => {
 
   // Session summary — derived from metricsMap, lives at component level
   const sessionSummary = useMemo<ChatSessionSummary | null>(() => {
-    if (metricsMap.size === 0) return null;
+    if (!metricsMap || metricsMap.size === 0) return null;
     const entries = Array.from(metricsMap.values());
     return {
       message_count: entries.length,
