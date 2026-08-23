@@ -57,7 +57,7 @@ const TOOLCHAIN_SKILL_NAMES = [
 const NOW_TILE_ITEM_COUNT = 3;
 
 /** Mono section label with index + hairline (Light Crisp section head). */
-const SectionHead = ({ index, label }: { index: string; label: string }) => (
+const SectionHead = ({ index, label }: { index?: string; label: string }) => (
   <div className="home-section-head">
     <h2 className="home-section-head__title">{label}</h2>
     <span className="home-section-head__index">{index}</span>
@@ -77,6 +77,7 @@ export const HomePage = () => {
   return (
     <div className="page-container page-home">
       <section className="home-hero">
+        <div className="home-hero__content">
         <div className="home-hero__status">
           <span className="home-hero__status-dot" aria-hidden="true" />
           <span>Currently — <strong>{currentRole.role} @ {currentRole.company}</strong></span>
@@ -116,29 +117,30 @@ export const HomePage = () => {
             );
           })}
         </div>
-      </section>
-
-      <section id="ask-this-site" className="home-section home-section--chat" aria-label="Ask this site">
-        <SectionHead index="01" label="ASK THIS SITE" />
-        <div className="home-chat__intro">
-          <div className="home-chat__badge">
-            <span className="grounding-dot" aria-hidden="true" />
-            <span>Grounded on Chris&apos;s live experience, projects &amp; architecture</span>
-          </div>
-          <p className="home-chat__caption">
-            This chat runs on a RAG backend I built over my own content — try it.
-          </p>
         </div>
-        <ChatPanel
-          chat={chat}
-          className="chat-panel--embedded"
-          starterQuestions={HOME_STARTERS}
-          greeting="Ask me anything about Chris's AI leadership, systems, and background — or tap a question below."
-        />
+
+        <div id="ask-this-site" className="home-hero__chat" aria-label="Ask this site">
+          <SectionHead label="ASK THIS SITE" />
+          <div className="home-chat__intro">
+            <div className="home-chat__badge">
+              <span className="grounding-dot" aria-hidden="true" />
+              <span>Grounded on Chris&apos;s live experience, projects &amp; architecture</span>
+            </div>
+            <p className="home-chat__caption">
+              This chat runs on a RAG backend I built over my own content — try it.
+            </p>
+          </div>
+          <ChatPanel
+            chat={chat}
+            className="chat-panel--embedded"
+            starterQuestions={HOME_STARTERS}
+            greeting="Ask me anything about Chris's AI leadership, systems, and background — or tap a question below."
+          />
+        </div>
       </section>
 
       <section className="home-section" aria-label="Featured work">
-        <SectionHead index="02" label="FEATURED WORK" />
+        <SectionHead index="01" label="FEATURED WORK" />
         <div className="work-list">
           {featuredProjects.map((project) => {
             const liveUrl = project.liveUrl ?? LIVE_DEMO_PATHS[project.id];
@@ -201,7 +203,7 @@ export const HomePage = () => {
 
       <section className="home-section home-panels" aria-label="Now and toolchain">
         <div className="home-panel">
-          <SectionHead index="03" label="NOW" />
+          <SectionHead index="02" label="NOW" />
           <ul className="now-tile__list">
             {nowData.workingOn.slice(0, NOW_TILE_ITEM_COUNT).map((item) => (
               <li key={item}>{item}</li>
@@ -215,7 +217,7 @@ export const HomePage = () => {
           </div>
         </div>
         <div className="home-panel">
-          <SectionHead index="04" label="TOOLCHAIN" />
+          <SectionHead index="03" label="TOOLCHAIN" />
           <div className="stack-tags">
             {toolchainSkills.map((skill) => (
               <span key={skill} className="tech-tag stack-tag">{skill}</span>
