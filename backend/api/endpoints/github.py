@@ -8,6 +8,7 @@ authenticated 5000 req/hr budget is used. Results are cached in-memory for
 
 from __future__ import annotations
 
+import logging
 import time
 from datetime import datetime, timezone, timedelta
 
@@ -25,6 +26,8 @@ from schemas.github import (
 )
 
 router = APIRouter()
+
+logger = logging.getLogger(__name__)
 
 GITHUB_API_BASE = "https://api.github.com"
 CACHE_TTL_SECONDS = 15 * 60  # 15 minutes
@@ -161,7 +164,17 @@ async def _fetch_github_summary(username: str) -> GitHubSummaryResponse:
             params={"per_page": 100, "sort": "pushed"},
             headers=headers,
         )
-        raw_repos: list[dict] = repos_resp.json() if repos_resp.status_code == 200 else []
+        if repos_resp.status_code == 403:
+            raise HTTPException(
+                status_code=403,
+                detail="GitHub API rate limit exceeded. Please try again in a few minutes.",
+            )
+        if repos_resp.status_code != 200:
+            raise HTTPException(
+                status_code=502,
+                detail=f"GitHub repos request failed (HTTP {repos_resp.status_code}).",
+            )
+        raw_repos: list[dict] = repos_resp.json()
 
     user_model = GitHubUserSummary(
         username=raw_user["login"],
@@ -199,12 +212,37 @@ async def get_github_summary(
         _cache["hits"] += 1
         result = cached["data"]
         result.cached = True
+        result.stale = False
         return result
 
     _cache["misses"] += 1
-    result = await _fetch_github_summary(clean)
+    try:
+        result = await _fetch_github_summary(clean)
+    except (HTTPException, httpx.HTTPError) as exc:
+        # Stale-while-error: when the GitHub upstream is unavailable (rate
+        # limit / 5xx / network error) serve the expired cache entry rather
+        # than hard-failing clients. A 404 means the user genuinely does not
+        # exist, so it is never masked by stale data.
+        status_code = exc.status_code if isinstance(exc, HTTPException) else 502
+        if cached and status_code != 404:
+            logger.warning(
+                "GitHub upstream failed (HTTP %s) — serving stale cache for %s",
+                status_code,
+                clean,
+            )
+            result = cached["data"]
+            result.cached = True
+            result.stale = True
+            return result
+        if not isinstance(exc, HTTPException):
+            raise HTTPException(
+                status_code=502, detail="GitHub upstream request failed."
+            ) from exc
+        raise
+
     entries[clean] = {"data": result, "expires": time.time() + CACHE_TTL_SECONDS}
     result.cached = False
+    result.stale = False
     return result
 
 

@@ -7,6 +7,10 @@ import httpx
 
 from api.endpoints.github import clear_github_cache
 
+# Pristine constructor captured before any patching, so patches stacked within
+# a single test don't chain and overwrite each other's MockTransport.
+_REAL_ASYNC_CLIENT_INIT = httpx.AsyncClient.__init__
+
 
 def _mock_github_responses():
     """Return a dict of URL -> JSON response body for the mock transport."""
@@ -73,11 +77,9 @@ def _patch_httpx_success(monkeypatch):
             return httpx.Response(200, json=user_body)
         return httpx.Response(404, json={"message": "Not Found"})
 
-    original_init = httpx.AsyncClient.__init__
-
     def patched_init(self, *args, **kwargs):
         kwargs["transport"] = httpx.MockTransport(mock_handler)
-        original_init(self, *args, **kwargs)
+        _REAL_ASYNC_CLIENT_INIT(self, *args, **kwargs)
 
     monkeypatch.setattr(httpx.AsyncClient, "__init__", patched_init)
     return user_body, repos_body
@@ -161,6 +163,83 @@ def test_github_summary_rate_limited(client, monkeypatch):
     response = client.get("/api/github-summary", params={"username": "test-user"})
     assert response.status_code == 403
     assert "rate limit" in response.json()["detail"].lower()
+
+
+def _patch_httpx_handler(monkeypatch, mock_handler):
+    """Point httpx.AsyncClient at a MockTransport using mock_handler."""
+    def patched_init(self, *args, **kwargs):
+        kwargs["transport"] = httpx.MockTransport(mock_handler)
+        _REAL_ASYNC_CLIENT_INIT(self, *args, **kwargs)
+
+    monkeypatch.setattr(httpx.AsyncClient, "__init__", patched_init)
+
+
+def test_github_summary_serves_stale_cache_when_rate_limited(client, monkeypatch):
+    """Expired cache entry is served (cached=True, stale=True) on upstream 403."""
+    clear_github_cache()
+    _patch_httpx_success(monkeypatch)
+
+    first = client.get("/api/github-summary", params={"username": "test-user"})
+    assert first.status_code == 200
+
+    # Expire the cached entry, then make GitHub start rejecting with 403.
+    from api.endpoints.github import _cache
+
+    _cache["entries"]["test-user"]["expires"] = 0.0
+
+    _patch_httpx_handler(
+        monkeypatch,
+        lambda request: httpx.Response(403, json={"message": "Rate limit exceeded"}),
+    )
+
+    second = client.get("/api/github-summary", params={"username": "test-user"})
+    assert second.status_code == 200
+    body = second.json()
+    assert body["cached"] is True
+    assert body["stale"] is True
+    assert body["user"]["username"] == "test-user"
+    assert len(body["repos"]) == 1
+
+
+def test_github_summary_404_not_masked_by_stale_cache(client, monkeypatch):
+    """A 404 (user genuinely missing) must never be masked by stale data."""
+    clear_github_cache()
+    _patch_httpx_success(monkeypatch)
+
+    first = client.get("/api/github-summary", params={"username": "test-user"})
+    assert first.status_code == 200
+
+    from api.endpoints.github import _cache
+
+    _cache["entries"]["test-user"]["expires"] = 0.0
+
+    _patch_httpx_handler(
+        monkeypatch,
+        lambda request: httpx.Response(404, json={"message": "Not Found"}),
+    )
+
+    second = client.get("/api/github-summary", params={"username": "test-user"})
+    assert second.status_code == 404
+
+
+def test_github_summary_repos_failure_returns_502(client, monkeypatch):
+    """A repos-listing failure must raise instead of caching an empty repo list."""
+    clear_github_cache()
+    user_body, _ = _mock_github_responses()
+
+    def mock_handler(request: httpx.Request) -> httpx.Response:
+        url = str(request.url)
+        if "/users/test-user/repos" in url:
+            return httpx.Response(500, json={"message": "Server error"})
+        if url.endswith("/users/test-user"):
+            return httpx.Response(200, json=user_body)
+        return httpx.Response(404, json={"message": "Not Found"})
+
+    _patch_httpx_handler(monkeypatch, mock_handler)
+
+    response = client.get("/api/github-summary", params={"username": "test-user"})
+    assert response.status_code == 502
+    assert "repos request failed" in response.json()["detail"].lower()
 
 
 def test_github_summary_rejects_invalid_username(client):

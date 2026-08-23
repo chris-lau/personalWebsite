@@ -54,3 +54,7 @@ class GitHubSummaryResponse(BaseModel):
     user: GitHubUserSummary
     repos: list[GitHubRepoSummary]
     cached: bool = Field(default=False, description="Whether this response was served from cache")
+    stale: bool = Field(
+        default=False,
+        description="Served from cache past its TTL because the GitHub upstream failed (rate limit / 5xx / network error)",
+    )
