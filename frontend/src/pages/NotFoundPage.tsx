@@ -9,7 +9,7 @@ export const NotFoundPage: React.FC = () => {
       <section className="not-found-section">
         <Section title="ERROR 404">
           <div className="not-found-content">
-            <pre className="ascii-404">
+            <pre className="error-404">
 {`
   ___  ___  _  _   ___ 
  | _ ||   || || | | _ |
