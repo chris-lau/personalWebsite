@@ -42,7 +42,8 @@ describe('Page Components Unit Tests', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('FULL-STACK OPERATIONAL MONITORING & TELEMETRY')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Full-Stack Operational Monitoring & Telemetry/i, level: 1 })).toBeInTheDocument();
+    expect(screen.getByText('LIVE TELEMETRY CONSOLE')).toBeInTheDocument();
   });
 
   it('renders BlogListPage and filters by search input and tag buttons', () => {
@@ -284,6 +285,7 @@ describe('Page Components Unit Tests', () => {
     );
 
     expect(screen.getByText(/Exhibit:/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'LIVE TELEMETRY CONSOLE' })).toBeInTheDocument();
     expect(screen.getByText(/Zero-cost observability I built/i)).toBeInTheDocument();
   });
 

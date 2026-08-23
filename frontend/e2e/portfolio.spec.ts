@@ -36,7 +36,7 @@ test.describe('Portfolio E2E Tests', () => {
 
     // 9. Ops / Monitoring page
     await page.goto('/monitoring');
-    await expect(page.getByRole('heading', { name: 'FULL-STACK OPERATIONAL MONITORING & TELEMETRY', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Full-Stack Operational Monitoring & Telemetry/i, level: 1 })).toBeVisible();
 
     // 10. Contact page (top-level nav link)
     const headerNav = page.getByRole('navigation', { name: 'Main Navigation' });
