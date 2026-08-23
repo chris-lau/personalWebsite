@@ -121,17 +121,6 @@ export const GuidebookPage: React.FC = () => {
                       <span className="chapter-num">Ch {ch.number}.</span>
                       <span className="chapter-title-text">{ch.title}</span>
                     </button>
-
-                    {/* Subsections list for active chapter */}
-                    {activeChapter.id === ch.id && (
-                      <ul className="subsection-list">
-                        {ch.subsections.map((sub, i) => (
-                          <li key={i} className="subsection-item">
-                            {sub}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
                   </li>
                 ))}
               </ul>

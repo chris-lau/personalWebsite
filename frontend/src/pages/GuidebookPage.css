@@ -117,23 +117,6 @@
   line-height: 1.3;
 }
 
-.subsection-list {
-  margin: 0.35rem 0 0.5rem 1.25rem;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  border-left: 2px solid var(--border-muted);
-  padding-left: 0.75rem;
-}
-
-.subsection-item {
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  line-height: 1.3;
-}
-
 /* Reader Main Content */
 .reader-header {
   margin-bottom: 1.5rem;
