@@ -1,1 +1,12 @@
-/*    /index.html   200
+# Missing build assets must 404.
+#
+# The SPA fallback below rewrites everything to index.html with a 200 —
+# including requests for /assets/* files that don't (yet) exist. Combined
+# with the immutable /assets/* cache rule in _headers, a transient deploy
+# propagation gap can get the HTML fallback cached at the edge for a year,
+# which crashes every lazy-loaded route (observed in the wild). Static
+# assets still win over redirects, so real files under /assets/ are
+# unaffected; only genuinely missing ones get the 404.
+/assets/*    /index.html   404
+
+/*           /index.html   200

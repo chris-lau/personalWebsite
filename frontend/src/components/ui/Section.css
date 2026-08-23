@@ -3,6 +3,8 @@
 
 .page-section {
   padding: 2.75rem 0;
+  /* Anchor jumps land below the sticky header instead of under it. */
+  scroll-margin-top: 5rem;
 }
 
 .page-section:first-child {
