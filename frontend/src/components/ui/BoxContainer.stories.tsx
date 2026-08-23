@@ -9,17 +9,15 @@ const meta: Meta<typeof BoxContainer> = {
 export default meta;
 type Story = StoryObj<typeof BoxContainer>;
 
-export const SingleBorder: Story = {
+export const TitledPanel: Story = {
   args: {
-    title: 'WELCOME',
-    children: 'This is inside a single-border box container.',
+    title: 'ASK THIS SITE',
+    children: 'A flat widget panel for app-like surfaces you operate, not read.',
   },
 };
 
-export const DoubleBorder: Story = {
+export const UntitledPanel: Story = {
   args: {
-    title: 'SYSTEM LOGS',
-    variant: 'double',
-    children: 'This box uses double border lines for extra visual distinction.',
+    children: 'Title-less panel used when surrounding context names the surface.',
   },
 };

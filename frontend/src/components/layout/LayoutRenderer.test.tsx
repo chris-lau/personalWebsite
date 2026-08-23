@@ -3,12 +3,10 @@ import { describe, it, expect } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import { LayoutRenderer } from './LayoutRenderer';
 import { ModernLayout } from './ModernLayout';
-import { CliLayout } from './CliLayout';
-import { AsciiLayout } from './AsciiLayout';
 import { ThemeProvider } from '../../context/ThemeContext';
 
 describe('LayoutRenderer Component', () => {
-  it('renders children content within current theme layout', () => {
+  it('renders children content within the site layout', () => {
     render(
       <ThemeProvider>
         <MemoryRouter>
@@ -37,7 +35,6 @@ describe('LayoutRenderer Component', () => {
     const footerNav = screen.getByRole('navigation', { name: /footer navigation/i });
     expect(footerNav).toBeDefined();
 
-    // Verify all hand-written footer links exist
     expect(within(footerNav).getByRole('link', { name: 'Bio' })).toBeDefined();
     expect(within(footerNav).getByRole('link', { name: 'Now' })).toBeDefined();
     expect(within(footerNav).getByRole('link', { name: 'Blog' })).toBeDefined();
@@ -50,43 +47,5 @@ describe('LayoutRenderer Component', () => {
     expect(within(footerNav).getByRole('link', { name: 'Contact' })).toBeDefined();
     expect(within(footerNav).getByRole('link', { name: 'Storybook' })).toBeDefined();
     expect(within(footerNav).getByRole('link', { name: 'API Docs' })).toBeDefined();
-  });
-
-  it('renders footer safety net links in CliLayout', () => {
-    render(
-      <ThemeProvider>
-        <MemoryRouter>
-          <CliLayout>
-            <div>Content</div>
-          </CliLayout>
-        </MemoryRouter>
-      </ThemeProvider>
-    );
-
-    const footerNav = screen.getByRole('navigation', { name: /footer navigation/i });
-    expect(footerNav).toBeDefined();
-    expect(within(footerNav).getByRole('link', { name: 'Bio' })).toBeDefined();
-    expect(within(footerNav).getByRole('link', { name: 'Ops Dashboard' })).toBeDefined();
-    expect(within(footerNav).getByRole('link', { name: 'Storybook' })).toBeDefined();
-    expect(within(footerNav).getByRole('link', { name: 'API Docs' })).toBeDefined();
-  });
-
-  it('renders footer safety net links in AsciiLayout', () => {
-    render(
-      <ThemeProvider>
-        <MemoryRouter>
-          <AsciiLayout>
-            <div>Content</div>
-          </AsciiLayout>
-        </MemoryRouter>
-      </ThemeProvider>
-    );
-
-    const footerNav = screen.getByRole('navigation', { name: /footer navigation/i });
-    expect(footerNav).toBeDefined();
-    expect(within(footerNav).getByRole('link', { name: '[Bio]' })).toBeDefined();
-    expect(within(footerNav).getByRole('link', { name: '[Ops Dashboard]' })).toBeDefined();
-    expect(within(footerNav).getByRole('link', { name: '[Storybook]' })).toBeDefined();
-    expect(within(footerNav).getByRole('link', { name: '[API Docs]' })).toBeDefined();
   });
 });

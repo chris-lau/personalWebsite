@@ -1,13 +1,26 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Activity, ShoppingBag, MessageSquare, Sparkles, Terminal, BookOpen, FileCode, Info } from 'lucide-react';
+import { Activity, ShoppingBag, MessageSquare, Sparkles, Terminal, BookOpen, FileCode, Info, Boxes, Palette, FlaskConical, Server, Database, Cloud, Gauge, MessagesSquare } from 'lucide-react';
 import { siteArchitectureData } from '../data/siteArchitecture';
-import { BoxContainer } from '../components/ui/BoxContainer';
+import { Section } from '../components/ui/Section';
 import { BACKEND_ROOT_URL } from '../api/config';
 import { openChat } from '../components/chat/chatControl';
 import './Pages.css';
 
 export const HowThisSiteWorksPage: React.FC = () => {
+/** Domain icon per architecture category. */
+const CATEGORY_ICONS: Record<string, typeof Boxes> = {
+  'CORE ARCHITECTURE & FRAMEWORK': Boxes,
+  'DESIGN SYSTEM & DYNAMIC THEMING': Palette,
+  'TESTING & QUALITY ASSURANCE': FlaskConical,
+  'FASTAPI BACKEND & SWAGGER API EXPLORER': Server,
+  'DATABASE LAYER & PERSISTENT STORAGE (PHASE 4)': Database,
+  'PRODUCTION DEPLOYMENTS & CLOUD INFRASTRUCTURE': Cloud,
+  'OPERATIONAL MONITORING, TELEMETRY & SYNTHETIC DIAGNOSTICS': Gauge,
+  'AI CHAT ENGINE & REAL-TIME OBSERVABILITY': MessagesSquare,
+  'AMAZON SELLER INTELLIGENCE & OPPORTUNITY SUITE': ShoppingBag,
+};
+
   const handleOpenChatObservability = () => {
     try {
       localStorage.setItem('chat_companion_mode', 'true');
@@ -20,7 +33,7 @@ export const HowThisSiteWorksPage: React.FC = () => {
   return (
     <div className="page-container page-how-it-works">
       <section>
-        <BoxContainer title="HOW THIS SITE WORKS">
+        <Section title="HOW THIS SITE WORKS" index="01">
           <p className="intro-text">
             This portfolio is built as a lightweight, stateful, full-stack application showcasing modern frontend architectural principles, strict typing, dynamic theming, multi-tier testing strategies, real-time telemetry, and a Python FastAPI backend.
           </p>
@@ -91,21 +104,31 @@ export const HowThisSiteWorksPage: React.FC = () => {
           </div>
 
           <div className="stack-sections">
-            {siteArchitectureData.map((sec) => (
-              <div key={sec.category} className="stack-group">
-                <h3 className="stack-group-title">&gt; {sec.category}</h3>
-                <div className="stack-list">
-                  {sec.items.map((item) => (
-                    <div key={item.name} className="stack-item">
-                      <h4 className="stack-item-name">* {item.name}</h4>
-                      <p className="stack-item-desc">{item.desc}</p>
-                    </div>
-                  ))}
+            {siteArchitectureData.map((sec) => {
+              const GroupIcon = CATEGORY_ICONS[sec.category] ?? Boxes;
+              return (
+                <div key={sec.category} className="stack-group">
+                  <h3 className="stack-group-title">&gt; {sec.category}</h3>
+                  <div className="work-list">
+                    {sec.items.map((item) => (
+                      <article key={item.name} className="work-row">
+                        <div className="work-row__icon" aria-hidden="true">
+                          <GroupIcon size={18} strokeWidth={1.75} />
+                        </div>
+                        <div className="work-row__body">
+                          <div className="work-row__titlerow">
+                            <h4 className="work-row__title work-row__title--sm">{item.name}</h4>
+                          </div>
+                          <p className="work-row__desc">{item.desc}</p>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
-        </BoxContainer>
+        </Section>
       </section>
     </div>
   );

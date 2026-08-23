@@ -4,7 +4,7 @@ test.describe('Operational Monitoring Dashboard E2E Tests', () => {
   test('navigates to /monitoring and renders Full-Stack Monitoring Dashboard', async ({ page }) => {
     // 1. Navigate to /monitoring
     await page.goto('/monitoring');
-    await expect(page.getByRole('heading', { name: 'FULL-STACK OPERATIONAL MONITORING & TELEMETRY', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Full-Stack Operational Monitoring & Telemetry/i, level: 1 })).toBeVisible();
 
     // 2. Verify Monitoring Dashboard Container
     await expect(

@@ -2,8 +2,6 @@ import { render, screen, fireEvent, within } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import { ModernLayout } from './ModernLayout';
-import { CliLayout } from './CliLayout';
-import { AsciiLayout } from './AsciiLayout';
 import { ThemeProvider } from '../../context/ThemeContext';
 
 describe('Submenu Navigation Component Tests', () => {
@@ -64,77 +62,4 @@ describe('Submenu Navigation Component Tests', () => {
     expect(within(headerNav).getByRole('menuitem', { name: /Amazon Seller Suite/i })).toBeDefined();
   });
 
-  it('renders CLI layout grouped navigation submenus', () => {
-    render(
-      <ThemeProvider>
-        <MemoryRouter>
-          <CliLayout>
-            <div>Content</div>
-          </CliLayout>
-        </MemoryRouter>
-      </ThemeProvider>
-    );
-
-    const headerNav = screen.getByRole('navigation', { name: /terminal navigation/i });
-
-    const expLink = within(headerNav).getByRole('link', { name: /experience\//i });
-    const projLink = within(headerNav).getByRole('link', { name: /projects\//i });
-    const aboutTrigger = within(headerNav).getByRole('button', { name: /about\//i });
-    const labTrigger = within(headerNav).getByRole('button', { name: /lab\//i });
-    const contactLink = within(headerNav).getByRole('link', { name: /contact.sh/i });
-
-    expect(expLink).toBeDefined();
-    expect(projLink).toBeDefined();
-    expect(aboutTrigger).toBeDefined();
-    expect(labTrigger).toBeDefined();
-    expect(contactLink).toBeDefined();
-
-    fireEvent.click(aboutTrigger);
-    expect(within(headerNav).getByRole('menuitem', { name: /about.txt/i })).toBeDefined();
-    expect(within(headerNav).getByRole('menuitem', { name: /now.md/i })).toBeDefined();
-    expect(within(headerNav).getByRole('menuitem', { name: /blog\//i })).toBeDefined();
-    expect(within(headerNav).getByRole('menuitem', { name: /book.md/i })).toBeDefined();
-
-    fireEvent.click(labTrigger);
-    expect(within(headerNav).getByRole('menuitem', { name: /stack.md/i })).toBeDefined();
-    expect(within(headerNav).getByRole('menuitem', { name: /top.sh/i })).toBeDefined();
-    expect(within(headerNav).getByRole('menuitem', { name: /amazon-tools.sh/i })).toBeDefined();
-  });
-
-  it('renders ASCII layout grouped navigation submenus', () => {
-    render(
-      <ThemeProvider>
-        <MemoryRouter>
-          <AsciiLayout>
-            <div>Content</div>
-          </AsciiLayout>
-        </MemoryRouter>
-      </ThemeProvider>
-    );
-
-    const headerNav = screen.getByRole('navigation', { name: /main navigation/i });
-
-    const expLink = within(headerNav).getByRole('link', { name: /^\[EXP\]$/i });
-    const projLink = within(headerNav).getByRole('link', { name: /^\[PROJECTS\]$/i });
-    const aboutTrigger = within(headerNav).getByRole('button', { name: /\[ABOUT\]/i });
-    const labTrigger = within(headerNav).getByRole('button', { name: /\[LAB\]/i });
-    const contactLink = within(headerNav).getByRole('link', { name: /^\[CONTACT\]$/i });
-
-    expect(expLink).toBeDefined();
-    expect(projLink).toBeDefined();
-    expect(aboutTrigger).toBeDefined();
-    expect(labTrigger).toBeDefined();
-    expect(contactLink).toBeDefined();
-
-    fireEvent.click(aboutTrigger);
-    expect(within(headerNav).getByRole('menuitem', { name: /ABOUT/i })).toBeDefined();
-    expect(within(headerNav).getByRole('menuitem', { name: /NOW/i })).toBeDefined();
-    expect(within(headerNav).getByRole('menuitem', { name: /BLOG/i })).toBeDefined();
-    expect(within(headerNav).getByRole('menuitem', { name: /BOOK/i })).toBeDefined();
-
-    fireEvent.click(labTrigger);
-    expect(within(headerNav).getByRole('menuitem', { name: /STACK/i })).toBeDefined();
-    expect(within(headerNav).getByRole('menuitem', { name: /OPS/i })).toBeDefined();
-    expect(within(headerNav).getByRole('menuitem', { name: /AMZ-TOOLS/i })).toBeDefined();
-  });
 });

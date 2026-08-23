@@ -1,6 +1,6 @@
-# A Backend TPM's Journey to Modern Frontend: Building a Multi-Theme React & TypeScript Portfolio
+# A Backend TPM's Journey to Modern Frontend: Building a Production React & TypeScript Portfolio
 
-> **TL;DR**: After years of leading backend technical products, collaborating closely with frontend engineering teams inspired me to deepen my technical domain knowledge. By building a production-ready, multi-theme React portfolio from scratch, I mastered modern frontend paradigms—from component-driven architecture and semantic CSS design tokens to hot-module bundling (Vite) and 4-tier automated testing (Vitest, RTL, Storybook, Playwright). Here are the key takeaways from a Technical Product Manager's perspective.
+> **TL;DR**: After years of leading backend technical products, collaborating closely with frontend engineering teams inspired me to deepen my technical domain knowledge. By building a production-ready React portfolio from scratch, I mastered modern frontend paradigms—from component-driven architecture and semantic CSS design tokens to hot-module bundling (Vite) and 4-tier automated testing (Vitest, RTL, Storybook, Playwright). Here are the key takeaways from a Technical Product Manager's perspective.
 
 ---
 
@@ -22,7 +22,7 @@ For many years, my primary role has been as a **Technical Product Manager (TPM)*
 
 Recently, while partnering closely with frontend engineering teams on major cross-functional initiatives, I recognized how useful deep technical familiarity with modern frontend development is for effective technical product management. Frontend engineering has evolved far beyond simple HTML/CSS styling into a sophisticated ecosystem of state management engines, component lifecycles, module bundling pipelines, accessibility compliance, and automated test pyramids.
 
-To bridge technical domain boundaries and understand my frontend engineering partners' workflows, technical trade-offs, and velocity bottlenecks firsthand, I decided to build a real-world, production-ready application: a personal portfolio website and technical blog engine featuring **three distinct visual themes** (Warm Earthy ASCII, Retro Terminal CLI, and Modern Editorial).
+To bridge technical domain boundaries and understand my frontend engineering partners' workflows, technical trade-offs, and velocity bottlenecks firsthand, I decided to build a real-world, production-ready application: a personal portfolio website and technical blog engine. The first iteration deliberately shipped **three novelty themes** (Warm Earthy ASCII, Retro Terminal CLI, and Modern Editorial) to force myself to learn token-driven CSS; it has since been consolidated into a single Light Crisp design system with light and dark modes.
 
 
 
@@ -96,7 +96,7 @@ To keep the application scalable, I implemented a **4-Tier Architecture**:
                              │
 ┌────────────────────────────▼────────────────────────────┐
 │ 4. Layout & Theme Wrapper Layer                         │
-│    AsciiLayout -> CliLayout -> ModernLayout -> App.tsx  │
+│    LayoutRenderer -> ModernLayout -> App.tsx            │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -111,20 +111,20 @@ In early web development, CSS felt like a scattered collection of arbitrary colo
 Modern frontend engineering uses **Design Tokens** via CSS Custom Properties (`variables.css`). Instead of hardcoding colors, components consume semantic variable tokens:
 
 ```css
-/* Scoped theme tokens in variables.css */
-[data-theme="modern"] {
-  --bg-primary: #121316;
-  --text-primary: #f4f4f6;
-  --accent-primary: #f4ab6a;
-  --border-muted: rgba(255, 255, 255, 0.1);
-  --font-family: 'Inter', sans-serif;
+/* Design tokens in variables.css — one block per mode */
+:root {
+  --bg-primary: #ffffff;
+  --text-primary: #0a0a0a;
+  --accent-primary: #175cd3;
+  --border-muted: #e4e7ec;
+  --font-family: 'Inter', -apple-system, sans-serif;
 }
 
-[data-theme="ascii"] {
-  --bg-primary: #1c1815;
-  --text-primary: #f0e6d2;
-  --accent-primary: #c85a32;
-  --font-family: 'JetBrains Mono', monospace;
+[data-theme="dark"] {
+  --bg-primary: #101013;
+  --text-primary: #f4f5f7;
+  --accent-primary: #7cb0ff;
+  --border-muted: rgba(255, 255, 255, 0.09);
 }
 ```
 

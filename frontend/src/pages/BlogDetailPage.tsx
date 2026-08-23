@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { getBlogPostBySlug, getRelatedBlogPosts } from '../data/blogPosts';
 import { BlogCard } from '../components/blog/BlogCard';
 import { MarkdownRenderer } from '../components/markdown/MarkdownRenderer';
+import './Pages.css';
 
 export const BlogDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();

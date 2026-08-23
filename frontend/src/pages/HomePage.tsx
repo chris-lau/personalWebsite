@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, Github, Linkedin } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Bot, Github, Globe, Linkedin, ShoppingCart } from 'lucide-react';
 import { profileData } from '../data/profile';
 import { projectsData } from '../data/projects';
 import { experienceData } from '../data/experience';
+import { skillsData } from '../data/skills';
+import { nowData } from '../data/now';
 import { Project } from '../types/portfolio';
-import { BoxContainer } from '../components/ui/BoxContainer';
 import { ChatPanel } from '../components/chat/ChatPanel';
 import { HOME_STARTERS } from '../components/chat/starters';
 import { useChat } from '../hooks/useChat';
@@ -15,7 +16,7 @@ const SOCIAL_ICONS: Record<string, typeof Linkedin> = {
   GitHub: Github,
 };
 
-/** Homepage display order for the featured project cards. */
+/** Homepage display order for the featured work rows. */
 const FEATURED_PROJECT_ORDER = ['multi-agent-system', 'amazon-seller-suite', 'personal-os'];
 
 /** Homepage-only Live Demo destinations for projects without a liveUrl in projects.json. */
@@ -28,68 +29,104 @@ const PROJECT_OUTCOMES: Record<string, string> = {
   'multi-agent-system':
     'Multiple specialized AI agents orchestrated to address complex, cross-domain tasks.',
   'amazon-seller-suite':
-    'A 0-100 Opportunity Score with FBA unit-economics simulation and competitor review-gap scanning.',
+    'A 0–100 Opportunity Score with FBA unit-economics simulation and competitor review-gap scanning.',
   'personal-os':
     "The site you're on: three themes, a live GitHub Activity Dashboard, and REST API integration.",
 };
 
+/** Domain icon shown in each work row's icon square. */
+const PROJECT_ICONS: Record<string, typeof Bot> = {
+  'multi-agent-system': Bot,
+  'amazon-seller-suite': ShoppingCart,
+  'personal-os': Globe,
+};
+
+/** Toolchain tile: hands-on engineering + AI skills, curated from skills.json (no new claims). */
+const CORE_SKILL_NAMES = [
+  'React',
+  'TypeScript',
+  'REST APIs & Architecture',
+  'GraphDB & Database Modeling',
+  'SaaS & Cloud Platforms',
+  'AI Surveillance & Governance',
+  'Agentic Automation',
+  'Technology Roadmapping',
+];
+
+/** Now tile: top working-on items shown on the homepage. */
+const NOW_TILE_ITEM_COUNT = 3;
+
+/** Mono section label with index + hairline (Light Crisp section head). */
+const SectionHead = ({ index, label }: { index?: string; label: string }) => (
+  <div className="home-section-head">
+    {index && <span className="home-section-head__index">{index}</span>}
+    <h2 className="home-section-head__title">{label}</h2>
+    <span className="home-section-head__rule" aria-hidden="true" />
+  </div>
+);
+
 export const HomePage = () => {
+  const chat = useChat();
+  const currentRole = experienceData[0];
   const featuredProjects = FEATURED_PROJECT_ORDER
     .map((id) => projectsData.find((project) => project.id === id && project.featured))
     .filter((project): project is Project => Boolean(project));
-  const chat = useChat();
-  const currentRole = experienceData[0];
+  const allSkills = skillsData.flatMap((category) => category.skills);
+  const coreSkills = CORE_SKILL_NAMES.filter((name) => allSkills.includes(name));
 
   return (
     <div className="page-container page-home">
-      <section className="hero-section">
-        <div className="hero-content">
-          <h1 className="hero-title">{profileData.name}</h1>
-          <p className="hero-subtitle">{profileData.title}</p>
-          <p className="hero-valueprop">
-            Technical product leader in AI who actually builds the systems he ships — AI surveillance, agentic automation, and enterprise data acquisition.
-          </p>
-          <p className="hero-credentials">
-            {profileData.location} &middot; {profileData.credentials}
-          </p>
-
-          <div className="hero-cta-row">
-            <Link to="/experience" className="link-button primary">View Experience</Link>
-            <a href={`mailto:${profileData.email}`} className="link-button">Get in Touch</a>
-            {profileData.socials.map((social) => {
-              const SocialIcon = SOCIAL_ICONS[social.platform];
-              return (
-                <a
-                  key={social.platform}
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="link-button hero-cta-social"
-                >
-                  {SocialIcon && <SocialIcon size={14} aria-hidden="true" />}
-                  {social.platform}
-                  <ArrowUpRight size={12} aria-hidden="true" className="external-icon" />
-                </a>
-              );
-            })}
-          </div>
-
-          <Link to="/experience" className="hero-role-band">
-            <span className="hero-role-band__label">Currently</span>
-            <span className="hero-role-band__role">{currentRole.role} @ {currentRole.company}</span>
-            <span className="hero-role-band__highlight">{currentRole.highlights[0]}</span>
-          </Link>
+      <section className="home-hero">
+        <div className="home-hero__content">
+        <div className="home-hero__status">
+          <span className="home-hero__status-dot" aria-hidden="true" />
+          <span>Currently — <strong>{currentRole.role} @ {currentRole.company}</strong></span>
         </div>
-      </section>
 
-      <section id="ask-this-site" className="chat-exhibit-section" aria-label="Ask this site chat exhibit">
-        <BoxContainer title="ASK THIS SITE">
-          <div className="chat-exhibit-intro">
-            <div className="hero-grounding-badge">
+        <h1 className="home-hero__title">
+          Technical product leader delivering enterprise AI at scale.
+        </h1>
+        <p className="home-hero__lede">
+          <strong>{profileData.name}</strong> — Staff Product Manager, AI. Leading product
+          strategy across AI surveillance, agentic automation, and enterprise data
+          acquisition — bridging cutting-edge ML with real-world business impact.
+        </p>
+        <p className="home-hero__meta">
+          {profileData.location} · {profileData.credentials}
+        </p>
+
+        <div className="home-hero__cta-row">
+          <Link to="/experience" className="link-button primary">
+            View Experience <ArrowRight size={13} aria-hidden="true" />
+          </Link>
+          <a href={`mailto:${profileData.email}`} className="link-button">Get in Touch</a>
+          {profileData.socials.map((social) => {
+            const SocialIcon = SOCIAL_ICONS[social.platform];
+            return (
+              <a
+                key={social.platform}
+                href={social.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="link-button link-button--ghost hero-cta-social"
+              >
+                {SocialIcon && <SocialIcon size={14} aria-hidden="true" />}
+                {social.platform}
+                <ArrowUpRight size={12} aria-hidden="true" className="external-icon" />
+              </a>
+            );
+          })}
+        </div>
+        </div>
+
+        <div id="ask-this-site" className="home-hero__chat" aria-label="Ask this site">
+          <SectionHead label="ASK THIS SITE" />
+          <div className="home-chat__intro">
+            <div className="home-chat__badge">
               <span className="grounding-dot" aria-hidden="true" />
               <span>Grounded on Chris&apos;s live experience, projects &amp; architecture</span>
             </div>
-            <p className="chat-exhibit-caption">
+            <p className="home-chat__caption">
               This chat runs on a RAG backend I built over my own content — try it.
             </p>
           </div>
@@ -99,55 +136,94 @@ export const HomePage = () => {
             starterQuestions={HOME_STARTERS}
             greeting="Ask me anything about Chris's AI leadership, systems, and background — or tap a question below."
           />
-        </BoxContainer>
+        </div>
       </section>
 
-      <section className="featured-section">
-        <BoxContainer title="FEATURED PROJECTS">
-          <div className="project-grid">
-            {featuredProjects.map((project) => {
-              const liveUrl = project.liveUrl ?? LIVE_DEMO_PATHS[project.id];
-              return (
-                <div key={project.id} className="project-card">
-                  <h3 className="project-title">{project.title}</h3>
-                  <p className="project-desc">{project.description}</p>
+      <section className="home-section" aria-label="Featured work">
+        <SectionHead index="01" label="FEATURED WORK" />
+        <div className="work-list">
+          {featuredProjects.map((project) => {
+            const liveUrl = project.liveUrl ?? LIVE_DEMO_PATHS[project.id];
+            return (
+              <article key={project.id} className="work-row">
+                <div className="work-row__icon" aria-hidden="true">
+                  {(() => {
+                    const ProjectIcon = PROJECT_ICONS[project.id] ?? Globe;
+                    return <ProjectIcon size={18} strokeWidth={1.75} />;
+                  })()}
+                </div>
+                <div className="work-row__body">
+                  <div className="work-row__titlerow">
+                    <h3 className="work-row__title">{project.title}</h3>
+                    {project.id === 'personal-os' && (
+                      <span className="work-row__badge">YOU ARE HERE</span>
+                    )}
+                    {project.id === 'amazon-seller-suite' && (
+                      <span className="work-row__badge">LIVE DEMO</span>
+                    )}
+                  </div>
+                  <p className="work-row__desc">{project.description}</p>
                   {PROJECT_OUTCOMES[project.id] && (
                     <p className="project-outcome">
-                      <span className="project-outcome__arrow" aria-hidden="true">&rarr;</span>
+                      <span className="project-outcome__arrow" aria-hidden="true">→</span>
                       {PROJECT_OUTCOMES[project.id]}
                     </p>
                   )}
+                </div>
+                <div className="work-row__side">
                   <div className="tech-tags">
                     {project.techStack.map((tech) => (
                       <span key={tech} className="tech-tag">#{tech}</span>
                     ))}
                   </div>
-                  <div className="project-actions">
+                  <div className="work-row__actions">
                     {project.githubUrl && (
                       <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="link-button">
-                        GitHub
+                        GitHub <ArrowUpRight size={13} aria-hidden="true" />
                       </a>
                     )}
                     {liveUrl && (
                       liveUrl.startsWith('/') ? (
                         <Link to={liveUrl} className="link-button">
-                          Live Demo
+                          Live Demo <ArrowRight size={13} aria-hidden="true" />
                         </Link>
                       ) : (
                         <a href={liveUrl} target="_blank" rel="noopener noreferrer" className="link-button">
-                          Live Demo
+                          Live Demo <ArrowRight size={13} aria-hidden="true" />
                         </a>
                       )
                     )}
                   </div>
                 </div>
-              );
-            })}
+              </article>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="home-section home-panels" aria-label="Now and core skills">
+        <div className="home-panel">
+          <SectionHead index="02" label="NOW" />
+          <ul className="now-tile__list">
+            {nowData.workingOn.slice(0, NOW_TILE_ITEM_COUNT).map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <div className="now-tile__footer">
+            <span className="now-tile__updated">UPDATED {nowData.lastUpdated.toUpperCase()}</span>
+            <Link to="/now" className="link-button">
+              More <ArrowRight size={13} aria-hidden="true" />
+            </Link>
           </div>
-          <div className="section-footer">
-            <Link to="/projects" className="link-button primary">View All Projects &rarr;</Link>
+        </div>
+        <div className="home-panel">
+          <SectionHead index="03" label="CORE SKILLS" />
+          <div className="stack-tags">
+            {coreSkills.map((skill) => (
+              <span key={skill} className="tech-tag stack-tag">{skill}</span>
+            ))}
           </div>
-        </BoxContainer>
+        </div>
       </section>
     </div>
   );

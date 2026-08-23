@@ -24,8 +24,8 @@ export const Default: Story = {
   args: {
     children: (
       <div>
-        <h2>Dynamic Theme Layout Demo</h2>
-        <p>Click the mode toggle button in the header above to watch the entire layout instantly switch between ASCII and CLI themes!</p>
+        <h2>Layout Renderer Demo</h2>
+        <p>Click the mode toggle button in the header above to switch the entire layout between light and dark modes.</p>
       </div>
     ),
   },

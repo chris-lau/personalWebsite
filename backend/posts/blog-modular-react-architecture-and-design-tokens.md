@@ -1,8 +1,8 @@
 # Building a Scalable React Architecture: Design Tokens, Global State, and Type Contracts
 
-*A step-by-step developer's guide to building modular, multi-theme web applications with React, TypeScript, and CSS Custom Properties.*
+*A step-by-step developer's guide to building modular, themable web applications with React, TypeScript, and CSS Custom Properties.*
 
-> **TL;DR**: Build scalable multi-theme React apps by decoupling design tokens into CSS variables (`[data-theme]`), managing theme persistence in React `ThemeContext`, enforcing TypeScript data contracts for data layers, and wrapping pages in layout components (`AsciiLayout`, `CliLayout`, `ModernLayout`).
+> **TL;DR**: Build scalable themable React apps by decoupling design tokens into CSS variables (`:root` for light, `[data-theme="dark"]` for dark), managing mode persistence in React `ThemeContext`, enforcing TypeScript data contracts for data layers, and wrapping page content in presentation components (`Section`, `BoxContainer`).
 
 ---
 
@@ -14,7 +14,7 @@
 4. [State Architecture: Local State vs. React Global Context](#state-architecture-local-state-vs-react-global-context)
 5. [TypeScript Data Contracts & Interfaces](#typescript-data-contracts--interfaces)
 6. [Component Wrappers: Decoupling Page Content from Presentation](#component-wrappers-decoupling-page-content-from-presentation)
-7. [How to Add a New Theme in 3 Easy Steps](#how-to-add-a-new-theme-in-3-easy-steps)
+7. [How to Restyle the Site or Add a New Mode](#how-to-restyle-the-site-or-add-a-new-mode)
 8. [Conclusion](#conclusion)
 
 ---
@@ -23,7 +23,7 @@
 
 When building a modern web application, beginner developers often fall into a common architectural trap: **coupling visual styling tightly with core data and page logic**.
 
-What happens when you decide to change your site's aesthetic from a **Warm Earthy ASCII Art** look to a **Retro Terminal CLI** interface or a **Modern Glassmorphism** design? If your colors, borders, and fonts are hardcoded inside components, you end up having to rewrite dozens of files across your entire project.
+What happens when you decide to change your site's aesthetic from a warm earthy look to a glassmorphism design—or flip every surface between light and dark mode? If your colors, borders, and fonts are hardcoded inside components, you end up having to rewrite dozens of files across your entire project.
 
 In this tutorial, we will explore how to architect a production-ready personal portfolio in **React 18** and **TypeScript** that makes theme-swapping painless. 
 
@@ -66,26 +66,26 @@ A **design token** is a named variable that stores a single visual decision—su
 In our project, design tokens are stored as **CSS Custom Properties** inside [`src/styles/variables.css`](file:///Users/chrislau/Documents/personalWebsite/frontend/src/styles/variables.css):
 
 ```css
-/* Theme 1: Warm Earthy ASCII Retro Terminal */
-[data-theme="ascii"] {
-  --bg-primary: #181616;          /* Matte espresso background */
-  --bg-secondary: #222020;        /* Card container fill */
-  --text-primary: #e8d8b8;        /* Warm parchment text */
-  --accent-primary: #c86446;      /* Terracotta highlight */
-  --accent-secondary: #7a9a60;    /* Sage green border */
-  --font-family: 'JetBrains Mono', monospace;
-  --container-max-width: 820px;
+/* Mode 1: Light Crisp (light) — the default at :root */
+:root {
+  --bg-primary: #ffffff;          /* White ground */
+  --bg-secondary: #fafafa;        /* Sunken surface */
+  --text-primary: #0a0a0a;        /* Near-black ink */
+  --text-muted: #475467;          /* WCAG AA muted gray */
+  --accent-primary: #175cd3;      /* Single restrained blue */
+  --border-color: #d0d5dd;        /* Gray hairlines */
+  --radius-md: 8px;               /* Button corner radius */
+  --container-max-width: 1040px;
 }
 
-/* Theme 2: Retro Terminal CLI */
-[data-theme="cli"] {
-  --bg-primary: #0c0d10;          /* Deep terminal black background */
-  --bg-secondary: #14161c;
-  --text-primary: #ffb86c;        /* Warm amber phosphor text */
-  --accent-primary: #f1fa8c;      /* Soft yellow prompt */
-  --accent-secondary: #8be9fd;    /* Soft cyan command */
-  --font-family: 'JetBrains Mono', monospace;
-  --container-max-width: 900px;
+/* Mode 2: Light Crisp Dark — one block flips the whole site */
+[data-theme="dark"] {
+  --bg-primary: #101013;
+  --bg-secondary: #16181c;
+  --text-primary: #f4f5f7;
+  --text-muted: #9aa1ad;
+  --accent-primary: #7cb0ff;
+  --border-color: rgba(255, 255, 255, 0.16);
 }
 ```
 
@@ -103,7 +103,7 @@ body {
 }
 ```
 
-When a user switches themes, changing the top-level HTML attribute `<html data-theme="cli">` instantly updates the color palette of every single component across the entire website!
+When a user switches modes, changing the top-level HTML attribute `<html data-theme="dark">` instantly updates the color palette of every single component across the entire website!
 
 ---
 
@@ -113,11 +113,11 @@ In React, **State** represents data that changes over time and triggers re-rende
 
 ### Local State vs. Global State:
 - **Local State** (`useState` inside a single component): Belongs exclusively to one component. *Example*: A dropdown knowing whether it is currently open or closed.
-- **Global State**: Accessible by **any component on any page**. *Example*: The currently active theme (`'ascii'` vs `'cli'`).
+- **Global State**: Accessible by **any component on any page**. *Example*: The currently active mode (`'light'` vs `'dark'`).
 
 ### Implementing Global Theme Context (`ThemeContext.tsx`)
 
-Without a global state manager, if a user clicks `[ Switch Theme ]` in the navigation header, the rest of the page won't know the theme changed. 
+Without a global state manager, if a user clicks the light/dark toggle button in the navigation header, the rest of the page won't know the mode changed. 
 
 We implement [`ThemeContext.tsx`](file:///Users/chrislau/Documents/personalWebsite/frontend/src/context/ThemeContext.tsx) using React Context to manage and persist theme state globally:
 
@@ -133,23 +133,37 @@ interface ThemeContextType {
 }
 
 const STORAGE_KEY = 'portfolio_theme';
-const VALID_THEMES: ThemeMode[] = ['modern', 'ascii', 'cli'];
+const VALID_THEMES: ThemeMode[] = ['light', 'dark'];
+/** Legacy layout-theme values from before the Light Crisp consolidation. */
+const LEGACY_THEMES = ['modern', 'ascii', 'cli'];
+
+const readInitialTheme = (): ThemeMode => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved && VALID_THEMES.includes(saved as ThemeMode)) return saved as ThemeMode;
+    if (saved && LEGACY_THEMES.includes(saved)) return 'light';
+  } catch {
+    // Ignore storage errors in restricted contexts
+  }
+  return 'light';
+};
+
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  // Read saved theme preference from localStorage on startup with validation
-  const [theme, setThemeState] = useState<ThemeMode>(() => {
-    const savedTheme = localStorage.getItem(STORAGE_KEY) as ThemeMode;
-    return VALID_THEMES.includes(savedTheme) ? savedTheme : 'modern';
-  });
+  const [theme, setThemeState] = useState<ThemeMode>(readInitialTheme);
 
   const setTheme = (newTheme: ThemeMode) => {
     setThemeState(newTheme);
-    localStorage.setItem(STORAGE_KEY, newTheme);
+    try {
+      localStorage.setItem(STORAGE_KEY, newTheme);
+    } catch {
+      // Ignore storage errors in restricted contexts
+    }
   };
 
   const toggleTheme = () => {
-    setTheme(theme === 'ascii' ? 'cli' : 'ascii');
+    setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
   // Sync DOM data-theme attribute whenever theme state changes
@@ -201,63 +215,73 @@ export interface Project {
 
 ## Component Wrappers: Decoupling Page Content from Presentation
 
-To support both **Centered ASCII Box** and **Retro CLI Terminal** layouts, we use presentation wrappers.
+To keep page content independent of presentation structure, we use presentation wrappers.
 
-Instead of writing ASCII border logic directly inside page components, we create a reusable `<AsciiBox>` container:
+Instead of writing section-heading markup (index chips, hairline rules) directly inside page components, we create a reusable `<Section>` container:
 
 ```tsx
-// src/components/ui/AsciiBox.tsx
-import React from 'react';
+// src/components/ui/Section.tsx
+import { ReactNode } from 'react';
+import './Section.css';
 
-interface AsciiBoxProps {
-  title?: string;
-  children: React.ReactNode;
+interface SectionProps {
+  title: string;
+  /** Optional mono index chip (e.g. '01') shown before the title. */
+  index?: string;
+  /** Renders the section as a full-width tinted band (homepage rhythm). */
+  tint?: boolean;
+  children: ReactNode;
 }
 
-export const AsciiBox: React.FC<AsciiBoxProps> = ({ title, children }) => {
-  return (
-    <div className="ascii-box">
-      {title && <div className="ascii-box-title">+---[ {title} ]---+</div>}
-      <div className="ascii-box-content">{children}</div>
+export const Section = ({ title, index, tint = false, children }: SectionProps) => (
+  <section className={`page-section ${tint ? 'page-section--tint' : ''}`}>
+    <div className="page-section__head">
+      {index && <span className="page-section__index" aria-hidden="true">{index}</span>}
+      <h2 className="page-section__title">{title}</h2>
+      <span className="page-section__rule" aria-hidden="true" />
     </div>
-  );
-};
+    <div className="page-section__body">{children}</div>
+  </section>
+);
 ```
 
-Then, a central `<LayoutRenderer>` component listens to `ThemeContext` and wraps page routes with the active layout:
+Then, a central `<LayoutRenderer>` component wraps page routes with the site chrome (header, navigation, footer):
 
 ```tsx
 // src/components/layout/LayoutRenderer.tsx
-import React from 'react';
-import { useTheme } from '../../context/ThemeContext';
-import { AsciiLayout } from './AsciiLayout';
-import { CliLayout } from './CliLayout';
+import { ReactNode } from 'react';
+import { ModernLayout } from './ModernLayout';
 
-export const LayoutRenderer: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { theme } = useTheme();
-
-  return theme === 'cli' ? (
-    <CliLayout>{children}</CliLayout>
-  ) : (
-    <AsciiLayout>{children}</AsciiLayout>
-  );
-};
+/** Single-layout site since the Light Crisp consolidation; kept as a seam
+ *  so pages never render outside the site chrome. */
+export const LayoutRenderer = ({ children }: LayoutRendererProps) => (
+  <ModernLayout>{children}</ModernLayout>
+);
 ```
+
+An earlier iteration of this site shipped three full layout themes (`AsciiLayout`, `CliLayout`, `ModernLayout`) selected by `ThemeContext`. The lesson learned: three layouts tripled the QA surface and drifted apart visually. The consolidation kept the wrapper seam but collapsed it to one layout — pages never noticed the change.
 
 ---
 
-## How to Add a New Theme in 3 Easy Steps
+## How to Restyle the Site or Add a New Mode
 
-Because of this decoupled architecture, if you want to add a 3rd layout in the future (e.g. `'glassmorphism'`), you only touch **3 files**:
+Because of this decoupled architecture, restyling is a **one-file change**, and adding a new color mode (e.g. `'contrast'`) touches **2 files + 1 list**:
 
-1. **`src/types/theme.ts`**: Add `'glassmorphism'` to the TypeScript union type:
-   ```typescript
-   export type ThemeMode = 'ascii' | 'cli' | 'glassmorphism';
+1. **`src/styles/variables.css`**: To *restyle*, edit token values in `:root` — every component updates automatically. To *add a mode*, duplicate the token block under a new selector:
+   ```css
+   [data-theme="contrast"] {
+     --bg-primary: #000000;
+     --text-primary: #ffffff;
+     /* ... */
+   }
    ```
-2. **`src/styles/variables.css`**: Define design tokens under `[data-theme="glassmorphism"]`.
-3. **`src/components/layout/LayoutRenderer.tsx`**: Add a new case statement to render `<GlassLayout>{children}</GlassLayout>`.
+2. **`src/types/theme.ts`**: Extend the TypeScript union type:
+   ```typescript
+   export type ThemeMode = 'light' | 'dark' | 'contrast';
+   ```
+3. **`src/context/ThemeContext.tsx`**: Add `'contrast'` to `VALID_THEMES` so persistence accepts it, and wire it into the toggle.
 
-**Zero data files, page routes, or core component code need to be changed!**
+**Zero data files, page routes, or page component code need to be changed!**
 
 ---
 

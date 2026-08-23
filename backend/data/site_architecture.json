@@ -24,12 +24,12 @@
     "category": "DESIGN SYSTEM & DYNAMIC THEMING",
     "items": [
       {
-        "name": "Multi-Theme Architecture (Modern Editorial, ASCII Box & CLI Terminal)",
-        "desc": "Stateful 3-way theme switching using React Context (ThemeContext) with localStorage persistence and CSS variable design tokens (data-theme=\"modern\", \"ascii\", and \"cli\")."
+        "name": "Token-Driven Design System (Light Crisp) with Light & Dark Modes",
+        "desc": "One consolidated visual design driven entirely by CSS custom-property design tokens in variables.css. The :root block defines the light palette; a single [data-theme=\"dark\"] block flips every token site-wide. ThemeContext persists the mode to localStorage and migrates legacy layout-theme values from the retired three-theme era."
       },
       {
-        "name": "Pure Vanilla CSS & Monospace Typography",
-        "desc": "Custom CSS resets, responsive grid/flexbox layouts, Google JetBrains Mono font loading, and retro terminal styling without heavy UI library dependencies."
+        "name": "One-Point Shape & Button Grammar (Pure Vanilla CSS)",
+        "desc": "Custom CSS resets, responsive grid/flexbox layouts, and Inter typography without heavy UI library dependencies. Component shape is controlled by radius tokens (--radius-chip, --radius-md); buttons resolve to five normalized species (primary, default, ghost, chip, tab) and content follows a shared numbered-section / work-row editorial grammar."
       }
     ]
   },

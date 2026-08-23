@@ -11,7 +11,7 @@ test.describe('Chat launcher', () => {
   test('labeled pill is visible in the first viewport and opens the chat panel', async ({ page }) => {
     await page.goto('/experience');
 
-    const launcher = page.getByRole('button', { name: 'Ask this site' });
+    const launcher = page.getByRole('button', { name: 'Ask this site', exact: true });
     await expect(launcher).toBeVisible();
 
     // Visible without scrolling: fully inside the current viewport
@@ -32,7 +32,7 @@ test.describe('Chat launcher', () => {
   test('Escape closes the panel and returns focus to the launcher', async ({ page }) => {
     await page.goto('/experience');
 
-    const launcher = page.getByRole('button', { name: 'Ask this site' });
+    const launcher = page.getByRole('button', { name: 'Ask this site', exact: true });
     await expect(launcher).toBeVisible();
     await launcher.click();
 

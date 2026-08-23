@@ -215,7 +215,9 @@ def _build_context() -> str:
 
     Reads blog post markdown, both guidebooks, profile, and experience —
     everything the model should be able to answer questions about. Cached for
-    the process lifetime; a redeploy picks up new content.
+    the process lifetime; a redeploy picks up new content. The cached string
+    also doubles as the stable prefix that providers prompt-cache (see the
+    note in ``_generate_stream``).
     """
     parts: list[str] = []
 
@@ -277,7 +279,7 @@ def _build_context() -> str:
 
 _SYSTEM_PROMPT_TEMPLATE = """\
 You are "Chat with Chris", an assistant on Chris Lau's personal website \
-(chrislau.dev). Chris is an AI & Product leader based in San Francisco.
+(chrislau.dev). Chris is an AI & Product leader based in Metro Vancouver, Canada.
 
 Answer visitors' questions using ONLY the context below — Chris's blog posts, \
 guidebooks, profile, experience, projects, skills, site architecture, what he's working on \
@@ -336,6 +338,12 @@ async def _generate_stream(
     Kept as a standalone coroutine so tests can monkeypatch it to avoid network
     calls. Returns dicts (not raw strings) so the caller serializes via ``_sse()``.
     """
+    # Caching contract: the system prompt (grounding context) must stay
+    # byte-identical across requests — always the first message, never
+    # interpolated with per-request values. OpenAI and DeepSeek auto-cache
+    # stable prefixes, so the ~66K-token context is billed at the steep
+    # cached-input discount after the first request. A timestamp or user
+    # detail here would silently re-bill the full context every message.
     messages = [{"role": "system", "content": system_prompt}]
     # Bound history to the most recent turns to control input token cost.
     for msg in history[-MAX_HISTORY_TURNS:]:

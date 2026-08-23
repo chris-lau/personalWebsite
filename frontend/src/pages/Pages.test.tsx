@@ -42,7 +42,8 @@ describe('Page Components Unit Tests', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('FULL-STACK OPERATIONAL MONITORING & TELEMETRY')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Full-Stack Operational Monitoring & Telemetry/i, level: 1 })).toBeInTheDocument();
+    expect(screen.getByText('LIVE TELEMETRY CONSOLE')).toBeInTheDocument();
   });
 
   it('renders BlogListPage and filters by search input and tag buttons', () => {
@@ -96,18 +97,21 @@ describe('Page Components Unit Tests', () => {
     expect(screen.getByText('BLOG POST NOT FOUND')).toBeInTheDocument();
   });
 
-  it('renders HomePage with human-first hero, role band, and relocated chat exhibit', () => {
+  it('renders HomePage with hero, status badge, and bento tiles', () => {
     render(
       <MemoryRouter>
         <HomePage />
       </MemoryRouter>
     );
 
-    // Human-first hero: name dominant, CTAs in priority order, socials moved in.
-    expect(screen.getByRole('heading', { name: 'Chris Lau', level: 1 })).toBeInTheDocument();
-    expect(screen.getByText('Staff Product Manager, AI at Global Relay')).toBeInTheDocument();
+    // Statement hero: positioning headline, name carried in the lede.
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+      'Technical product leader delivering enterprise AI at scale.',
+    );
+    expect(screen.getByText('Chris Lau')).toBeInTheDocument();
+    expect(screen.getByText(/Staff Product Manager, AI\. Leading product strategy/)).toBeInTheDocument();
     expect(screen.getByText(/Greater Vancouver Metropolitan Area/)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'View Experience' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /View Experience/ })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Get in Touch' })).toHaveAttribute(
       'href',
       'mailto:contact@chrislau.dev',
@@ -123,17 +127,19 @@ describe('Page Components Unit Tests', () => {
         .filter((el) => el.className.includes('hero-cta-social')),
     ).toHaveLength(1);
 
-    // Current-role band links to the experience page.
+    // Current-role status badge links to the experience page.
     expect(screen.getByText('Staff Product Manager, Artificial Intelligence @ Global Relay')).toBeInTheDocument();
 
-    // Chat relocated into its own exhibit section below the hero.
+    // Chat lives in its own bento tile below the hero.
     expect(screen.getByText('ASK THIS SITE')).toBeInTheDocument();
     expect(screen.getByText(/This chat runs on a RAG backend I built/i)).toBeInTheDocument();
 
-    expect(screen.getByText('FEATURED PROJECTS')).toBeInTheDocument();
+    expect(screen.getByText('FEATURED WORK')).toBeInTheDocument();
+    expect(screen.getByText('CORE SKILLS')).toBeInTheDocument();
+    expect(screen.getByText('NOW')).toBeInTheDocument();
   });
 
-  it('renders HomePage without the explore dock and skills snapshot (removed in cleanup)', () => {
+  it('renders HomePage without the explore dock; skills surfaced via the toolchain tile', () => {
     render(
       <MemoryRouter>
         <HomePage />
@@ -165,7 +171,7 @@ describe('Page Components Unit Tests', () => {
 
     // Live Demo routing: Amazon Suite -> /amazon-tools, Portfolio -> /how-this-site-works.
     const liveDemoHrefs = screen
-      .getAllByRole('link', { name: 'Live Demo' })
+      .getAllByRole('link', { name: /Live Demo/ })
       .map((link) => link.getAttribute('href'));
     expect(liveDemoHrefs).toEqual(['/amazon-tools', '/how-this-site-works']);
   });
@@ -279,6 +285,7 @@ describe('Page Components Unit Tests', () => {
     );
 
     expect(screen.getByText(/Exhibit:/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'LIVE TELEMETRY CONSOLE' })).toBeInTheDocument();
     expect(screen.getByText(/Zero-cost observability I built/i)).toBeInTheDocument();
   });
 

@@ -32,7 +32,7 @@ Instead, I adopted an interactive **Pair Programming Workflow with AI**. By taki
 
 ## The Micro-Iteration Workflow: Step-by-Step Learning
 
-The key to learning with AI is **keeping iteration loops small**. Rather than asking AI to *"build a blog engine with multi-theme support,"* we broke the goal into bite-sized architectural steps:
+The key to learning with AI is **keeping iteration loops small**. Rather than asking AI to *"build a blog engine with theme support,"* we broke the goal into bite-sized architectural steps:
 
 ```text
 ┌─────────────────────────────────────────────────────────┐
@@ -61,9 +61,9 @@ The key to learning with AI is **keeping iteration loops small**. Rather than as
 Before writing code, we created an explicit **Implementation Plan** (`phase-1-implementation-plan.md`). Each step had a single, focused responsibility:
 
 - **Step 1**: Scaffold Vite + React 18 + TypeScript project structure.
-- **Step 2**: Create CSS variables & design tokens for ASCII, CLI, and Modern themes.
+- **Step 2**: Create CSS variables & design tokens (later consolidated into a single Light Crisp token set with light and dark modes).
 - **Step 3**: Define TypeScript interfaces (`Profile`, `Project`, `BlogPost`).
-- **Step 4**: Build layout wrapper components (`AsciiLayout`, `CliLayout`, `ModernLayout`).
+- **Step 4**: Build layout wrapper components (the original build cycled three novelty layouts — ASCII, CLI, and Modern Editorial — before consolidating into one).
 - **Step 5**: Setup React Router & page components.
 - **Step 6**: Add modular markdown blog engine & query helpers.
 
@@ -128,10 +128,10 @@ By pairing these explanations with small code changes, I formed **mental models*
 
 Here is how the interactive learning loop unfolded when building theme toggling:
 
-1. **The Goal**: Allow users to click a toggle button to cycle between `ascii`, `cli`, and `modern` visual themes.
+1. **The Goal**: Allow users to click a toggle button to switch between `light` and `dark` modes.
 2. **AI Action**: Created `ThemeContext.tsx` with `localStorage` persistence and applied `document.documentElement.setAttribute('data-theme', theme)`.
 3. **My Question**: *"What does `setAttribute('data-theme')` actually trigger in the DOM?"*
-4. **AI Explanation & Code Inspection**: Showed how CSS rules like `[data-theme="cli"] { --bg-primary: #0a0c10; }` automatically apply new color variables to every element instantly.
+4. **AI Explanation & Code Inspection**: Showed how CSS rules like `[data-theme="dark"] { --bg-primary: #101013; }` automatically apply new color variables to every element instantly.
 5. **My Insight**: Instead of React re-rendering every element's inline styles, CSS variable cascades handle visual updates at the browser rendering engine level!
 
 ---

@@ -1,0 +1,67 @@
+/* Open content sections — shared page rhythm matching the homepage:
+   numbered chip + hairline rule, unboxed content, optional tinted band. */
+
+.page-section {
+  padding: 2.75rem 0;
+}
+
+.page-section:first-child {
+  padding-top: 1.25rem;
+}
+
+.page-section--tint {
+  background: var(--bg-secondary);
+  border-block: 1px solid var(--border-muted);
+  margin-inline: calc(50% - 50vw);
+  padding-inline: calc(50vw - 50%);
+}
+
+.page-section__head {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 1.35rem;
+}
+
+.page-section__index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 27px;
+  height: 27px;
+  flex-shrink: 0;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--surface-raised);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.page-section__title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  margin: 0;
+}
+
+.page-section__rule {
+  flex: 1;
+  height: 1px;
+  background: var(--border-muted);
+}
+
+.page-section__body {
+  color: var(--text-primary);
+}
+
+@media (max-width: 767px) {
+  .page-section {
+    padding: 1.75rem 0;
+  }
+
+  .page-section--tint {
+    margin-inline: -1rem;
+    padding-inline: 1rem;
+  }
+}

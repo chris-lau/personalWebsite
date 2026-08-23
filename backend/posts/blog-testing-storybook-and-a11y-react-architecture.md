@@ -1,17 +1,17 @@
 # Modern Frontend Development: Component Architecture, Storybook, Accessibility, and Testing
 
-*A beginner-to-intermediate guide to building a modular, multi-theme React application with TypeScript, Storybook, Vitest, Playwright, and WCAG accessibility standards.*
+*A beginner-to-intermediate guide to building a modular React application with TypeScript, Storybook, Vitest, Playwright, and WCAG accessibility standards.*
 
 ---
 
 ## Table of Contents
 1. [Introduction](#1-introduction)
 2. [What is React-Specific Code?](#2-what-is-react-specific-code)
-3. [Building Presentation Wrappers & Theme Layouts](#3-building-presentation-wrappers--theme-layouts)
+3. [Building Presentation Wrappers](#3-building-presentation-wrappers)
 4. [Component Workshop: What is Storybook & How Does it Work?](#4-component-workshop-what-is-storybook--how-does-it-work)
 5. [Automated Testing: Vitest vs. Playwright](#5-automated-testing-vitest-vs-playwright)
 6. [Why Colocation (Colocating Stories & Tests) Matters](#6-why-colocation-colocating-stories--tests-matters)
-7. [Accessibility (a11y): Making Retro UI Inclusive](#7-accessibility-a11y-making-retro-ui-inclusive)
+7. [Accessibility (a11y): Making Decorative UI Inclusive](#7-accessibility-a11y-making-decorative-ui-inclusive)
 8. [Conclusion & Takeaways](#8-conclusion--takeaways)
 
 ---
@@ -20,7 +20,7 @@
 
 When building a modern web application, one of the biggest challenges for developers is structuring code so it remains clean, testable, and maintainable. 
 
-In this article, we’ll explore how we built a multi-theme website supporting **Modern Editorial Design**, **Warm Earthy ASCII Art Design**, and **Retro Terminal CLI Design**. We'll cover fundamental React concepts, how to isolate component previews with **Storybook**, how to write fast unit tests with **Vitest**, how to perform end-to-end browser testing with **Playwright**, and how to ensure custom interfaces remain **100% accessible (a11y)** to screen reader users.
+In this article, we’ll explore how we built a token-driven website with a single Light Crisp design system rendered in **light and dark modes**. We'll cover fundamental React concepts, how to isolate component previews with **Storybook**, how to write fast unit tests with **Vitest**, how to perform end-to-end browser testing with **Playwright**, and how to ensure custom interfaces remain **100% accessible (a11y)** to screen reader users.
 
 ---
 
@@ -31,23 +31,23 @@ A common question from developers transitioning to React is: *“Which parts of 
 Let's look at a concrete component from our portfolio project:
 
 ```tsx
-import React from 'react';
+import { Moon, Sun } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
+import './ThemeToggle.css';
 
-export const ThemeToggle: React.FC = () => {
+export const ThemeToggle = () => {
   const { theme, toggleTheme } = useTheme();
-  const nextTheme = theme === 'ascii' ? 'cli' : 'ascii';
+  const isDark = theme === 'dark';
 
   return (
     <button
-      onClick={toggleTheme}
-      className="theme-toggle-btn"
-      aria-label={`Switch to ${nextTheme.toUpperCase()} theme`}
-      aria-pressed={theme === 'cli'}
       type="button"
+      className={`theme-toggle ${isDark ? 'theme-toggle--dark' : ''}`}
+      onClick={toggleTheme}
+      aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+      title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
     >
-      <span aria-hidden="true">[ MODE: {theme.toUpperCase()} ]</span>
-      <span className="sr-only">Current theme is {theme}. Click to switch to {nextTheme}.</span>
+      {isDark ? <Sun size={16} aria-hidden="true" /> : <Moon size={16} aria-hidden="true" />}
     </button>
   );
 };
@@ -63,59 +63,42 @@ export const ThemeToggle: React.FC = () => {
 | `useTheme()` | **React-Specific** | React Hook. Functions starting with `use` allow components to subscribe to state or context. |
 | `<button className="...">` | **React-Specific (JSX)** | HTML-like markup in JS (`.tsx`). `className` is used instead of standard HTML `class`. |
 | `onClick={toggleTheme}` | **React-Specific** | React synthetic event handler syntax for listening to click events. |
-| `theme === 'ascii' ? ...` | **Plain JavaScript/TypeScript** | Standard ternary operator for conditional logic. |
+| `theme === 'dark' ? ...` | **Plain JavaScript/TypeScript** | Standard ternary operator for conditional logic. |
 
 ---
 
-## 3. Building Presentation Wrappers & Theme Layouts
+## 3. Building Presentation Wrappers
 
-To support switching between an **ASCII Box** layout and a **Retro Terminal CLI** layout without rewriting our page content, we decoupled our UI into presentation wrapper components:
+To keep page content independent of presentation structure — and to restyle the whole site without touching page components — we decoupled our UI into presentation wrapper components:
 
-### The ASCII Box Wrapper (`AsciiBox.tsx`)
+### The Open Section Wrapper (`Section.tsx`)
 
 ```tsx
-import React from 'react';
-import './AsciiBox.css';
+import { ReactNode } from 'react';
+import './Section.css';
 
-export interface AsciiBoxProps {
-  title?: string;
-  children: React.ReactNode;
-  variant?: 'single' | 'double';
+interface SectionProps {
+  title: string;
+  /** Optional mono index chip (e.g. '01') shown before the title. */
+  index?: string;
+  /** Renders the section as a full-width tinted band (homepage rhythm). */
+  tint?: boolean;
+  children: ReactNode;
 }
 
-export const AsciiBox: React.FC<AsciiBoxProps> = ({ title, children, variant = 'single' }) => {
-  const borderChar = variant === 'double' ? '=' : '-';
-
-  return (
-    <div className={`ascii-box ascii-box-${variant}`}>
-      <div className="ascii-box-header-row" aria-hidden="true">
-        <span className="corner">+</span>
-        {title ? (
-          <>
-            <span className="border-line">--</span>
-            <span className="box-title">[ {title} ]</span>
-            <span className="border-line flex-fill">{borderChar}</span>
-          </>
-        ) : (
-          <span className="border-line flex-fill">{borderChar}</span>
-        )}
-        <span className="corner">+</span>
-      </div>
-
-      {/* Screen reader fallback heading */}
-      {title && <h3 className="sr-only">{title}</h3>}
-
-      <div className="ascii-box-content">{children}</div>
-
-      <div className="ascii-box-footer-row" aria-hidden="true">
-        <span className="corner">+</span>
-        <span className="border-line flex-fill">{borderChar}</span>
-        <span className="corner">+</span>
-      </div>
+export const Section = ({ title, index, tint = false, children }: SectionProps) => (
+  <section className={`page-section ${tint ? 'page-section--tint' : ''}`}>
+    <div className="page-section__head">
+      {index && <span className="page-section__index" aria-hidden="true">{index}</span>}
+      <h2 className="page-section__title">{title}</h2>
+      <span className="page-section__rule" aria-hidden="true" />
     </div>
-  );
-};
+    <div className="page-section__body">{children}</div>
+  </section>
+);
 ```
+
+Operational surfaces (the chat widget, the monitoring dashboard) use a sibling wrapper, `BoxContainer` — a flat panel for things you *operate*, while `Section` frames things you *read*.
 
 ---
 
@@ -135,19 +118,15 @@ Port `6006` is defined in `package.json` under npm scripts:
 }
 ```
 
-### Writing Stories (`AsciiBox.stories.tsx` & `BlogCard.stories.tsx`)
+### Writing Stories (`BoxContainer.stories.tsx` & `BlogCard.stories.tsx`)
 ```tsx
-// frontend/src/components/ui/AsciiBox.stories.tsx
+// frontend/src/components/ui/BoxContainer.stories.tsx
 import type { Meta, StoryObj } from '@storybook/react';
-import { AsciiBox } from './AsciiBox';
+import { BoxContainer } from './BoxContainer';
 
-const meta: Meta<typeof AsciiBox> = {
-  title: 'UI/AsciiBox',
-  component: AsciiBox,
-  args: {
-    title: 'Featured Projects',
-    children: 'This box includes a title embedded in the top ASCII border line.',
-  },
+const meta: Meta<typeof BoxContainer> = {
+  title: 'UI/BoxContainer',
+  component: BoxContainer,
 };
 ```
 
@@ -192,12 +171,11 @@ describe('ThemeToggle Component', () => {
       </ThemeProvider>
     );
 
-    const button = screen.getByRole('button');
-    expect(button.textContent).toContain('[ MODE: ASCII ]');
+    const button = screen.getByRole('button', { name: 'Switch to dark mode' });
 
     // Click to toggle state
     fireEvent.click(button);
-    expect(button.textContent).toContain('[ MODE: CLI ]');
+    expect(button).toHaveAttribute('aria-label', 'Switch to light mode');
   });
 });
 ```
@@ -213,10 +191,10 @@ Notice how our file structure organizes files:
 
 ```text
 src/components/ui/
-├── AsciiBox.tsx          <-- Component logic
-├── AsciiBox.css          <-- Styles
-├── AsciiBox.stories.tsx  <-- Visual Storybook preview
-└── AsciiBox.test.tsx     <-- Automated unit test
+├── BoxContainer.tsx          <-- Component logic
+├── BoxContainer.css          <-- Styles
+├── BoxContainer.stories.tsx  <-- Visual Storybook preview
+└── BoxContainer.test.tsx     <-- Automated unit test
 ```
 
 ### Benefits of Colocation:
@@ -225,12 +203,12 @@ src/components/ui/
 
 ---
 
-## 7. Accessibility (a11y): Making Retro UI Inclusive
+## 7. Accessibility (a11y): Making Decorative UI Inclusive
 
-Retro interfaces (ASCII borders like `+-----+`, terminal prompts like `$`, cursor blinks) look great visually, but can cause major problems for screen readers if not handled properly.
+Decorative interface elements (section index chips like `01`, hairline rules, icon-only buttons) look great visually, but can cause major problems for screen readers if not handled properly.
 
 ### 1. Screen Reader Utility Class (`.sr-only`)
-We hide visual ASCII decorations from screen readers using `aria-hidden="true"`, while providing hidden descriptive text for screen readers:
+We hide purely visual decorations from screen readers using `aria-hidden="true"`, while providing real accessible names and hidden descriptive text for screen readers:
 
 ```css
 /* Screen Reader Only Utility */
@@ -247,15 +225,17 @@ We hide visual ASCII decorations from screen readers using `aria-hidden="true"`,
 }
 ```
 
-### 2. Hiding Visual ASCII Decoration
+### 2. Hiding Decorative Chrome
 ```tsx
-{/* Hides pure decorative ASCII characters from screen readers */}
-<div className="ascii-box-header-row" aria-hidden="true">
-  +-----------------------+
-</div>
+{/* The index chip and hairline rule are decoration — hidden from screen readers */}
+<span className="page-section__index" aria-hidden="true">01</span>
+<h2 className="page-section__title">FEATURED WORK</h2>
+<span className="page-section__rule" aria-hidden="true" />
 
-{/* Provides clean screen-reader accessible heading */}
-<h3 className="sr-only">Featured Projects</h3>
+{/* Icon-only buttons carry an aria-label instead of visible text */}
+<button aria-label="Switch to dark mode" onClick={toggleTheme}>
+  <Moon size={16} aria-hidden="true" />
+</button>
 ```
 
 ### 3. Keyboard Focus Indicators
@@ -277,6 +257,6 @@ By following these architecture principles:
 2. **Use Storybook** for isolated component development.
 3. **Write resilient component tests** using Vitest + React Testing Library.
 4. **Colocate component files, stories, and tests** in the same directory.
-5. **Enforce accessibility (a11y)** using `aria-hidden` and `.sr-only` text.
+5. **Enforce accessibility (a11y)** using `aria-hidden`, accessible names, and `.sr-only` text.
 
 You create a codebase that is scalable, easy to test, and enjoyable to build upon!

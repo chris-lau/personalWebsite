@@ -1,15 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BoxContainer } from '../components/ui/BoxContainer';
+import { Section } from '../components/ui/Section';
 import './Pages.css';
 
 export const NotFoundPage: React.FC = () => {
   return (
     <div className="page-container page-404">
       <section className="not-found-section">
-        <BoxContainer title="ERROR 404">
+        <Section title="ERROR 404">
           <div className="not-found-content">
-            <pre className="ascii-404">
+            <pre className="error-404">
 {`
   ___  ___  _  _   ___ 
  | _ ||   || || | | _ |
@@ -25,7 +25,7 @@ export const NotFoundPage: React.FC = () => {
               <Link to="/experience" className="link-button">Experience</Link>
             </div>
           </div>
-        </BoxContainer>
+        </Section>
       </section>
     </div>
   );

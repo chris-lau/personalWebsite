@@ -2,7 +2,7 @@
 
 *A comprehensive, developer-friendly guide on how we designed, implemented, and tested a production-ready blog system in our React & TypeScript portfolio website.*
 
-> **TL;DR**: Build a modular 4-tier blog system by separating TypeScript data contracts (`BlogPost`), a pure data query layer (`blogPosts.ts` + Vite `import.meta.glob` auto-discovery), a shared `react-markdown` renderer (`MarkdownRenderer`), and multi-theme layout routing (`LayoutRenderer` + `App.tsx`).
+> **TL;DR**: Build a modular 4-tier blog system by separating TypeScript data contracts (`BlogPost`), a pure data query layer (`blogPosts.ts` + Vite `import.meta.glob` auto-discovery), a shared `react-markdown` renderer (`MarkdownRenderer`), and single-seam layout routing (`LayoutRenderer` + `App.tsx`).
 
 ---
 
@@ -26,7 +26,7 @@
 
 When expanding a modern web application, adding a new domain feature like a **Blog Engine** can quickly become messy if code is not cleanly structured. A common anti-pattern is jamming API calls, state management, search logic, markdown formatting, and styling all inside a single page component.
 
-In this guide, we break down how we built the blog feature for our open-source multi-theme portfolio site. We will walk step-by-step through our clean architecture pattern, using real code snippets from the codebase (`personalWebsite/frontend`).
+In this guide, we break down how we built the blog feature for our open-source portfolio site. We will walk step-by-step through our clean architecture pattern, using real code snippets from the codebase (`personalWebsite/frontend`).
 
 ---
 
@@ -54,8 +54,7 @@ To keep the application modular, maintainable, and easy to test, we split the bl
                              │
 ┌────────────────────────────▼────────────────────────────┐
 │ 4. Layout & Routing Layer                               │
-│    frontend/src/components/layout/AsciiLayout.tsx       │
-│    frontend/src/components/layout/CliLayout.tsx         │
+│    frontend/src/components/layout/LayoutRenderer.tsx    │
 │    frontend/src/App.tsx                                 │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -429,7 +428,7 @@ By following a decoupled 4-tier design pattern:
 
 1. **Type Safety First**: Defining `BlogPost` interfaces guarantees consistent data across layouts.
 2. **Pure Data Utilities**: Separating search and filtering logic into plain TypeScript files makes unit testing simple and lightning fast.
-3. **Dynamic Theme Inheritance**: Wrapping routes inside layout renderers allows new pages to instantly adapt to multi-theme design systems.
+3. **Consistent Site Chrome**: Wrapping routes inside a layout renderer means new pages inherit the site chrome (and light/dark theming) automatically.
 4. **Multi-Tiered Testing**: Combining Vitest unit tests with Playwright browser E2E tests provides 100% confidence before deploying to production.
 
 Happy building! 🚀

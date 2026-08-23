@@ -6,19 +6,25 @@
   bottom: 1.5rem;
   right: 1.5rem;
   z-index: 1000;
-  height: 3rem;
-  padding: 0 1rem;
-  border-radius: 999px;
-  border: 1px solid var(--border-color);
-  background-color: var(--accent-primary);
-  color: var(--bg-primary);
+  height: 40px;
+  padding: 0 1.1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  background-color: var(--text-primary);
+  color: var(--text-inverse);
+  font-weight: 600;
+  font-size: 0.85rem;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   cursor: pointer;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  transition: opacity 0.2s ease, transform 0.2s ease, background-color var(--transition-fast);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+
+.chat-launcher:hover {
+  background-color: var(--header-color);
 }
 
 .chat-launcher:hover {
@@ -56,7 +62,7 @@
   .chat-launcher__pulse {
     position: absolute;
     inset: 0;
-    border-radius: 999px;
+    border-radius: var(--radius-chip);
     border: 2px solid var(--accent-primary);
     animation: chat-pulse 2.5s ease-out infinite;
     pointer-events: none;
@@ -235,7 +241,7 @@
   border: 1px solid var(--border-muted, var(--border-color));
   color: var(--text-primary);
   padding: 0.45rem 0.6rem;
-  border-radius: 4px;
+  border-radius: var(--radius-chip);
   font-family: var(--font-family);
   font-size: 0.8rem;
   cursor: pointer;
@@ -323,11 +329,12 @@
 }
 
 .chat-panel__send {
-  background-color: var(--accent-primary);
-  color: var(--bg-primary);
+  font-size: 0.85rem;
+  background-color: var(--text-primary);
+  color: var(--text-inverse);
   border: none;
-  border-radius: 4px;
-  padding: 0 0.7rem;
+  border-radius: var(--radius-md);
+  padding: 0 0.9rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -375,7 +382,7 @@
 }
 
 .chat-panel--embedded .chat-panel__starter {
-  border-radius: 999px;
+  border-radius: var(--radius-chip);
   padding: 0.55rem 0.95rem;
   font-size: 0.85rem;
   font-weight: 500;
@@ -412,6 +419,7 @@
 }
 
 .chat-panel--embedded .chat-panel__send {
+  font-size: 0.85rem;
   padding: 0 1.1rem;
   border-radius: 8px;
   font-weight: 600;
@@ -423,18 +431,7 @@
 }
 
 /* Theme overrides for embedded starter chips */
-[data-theme="ascii"] .chat-panel--embedded .chat-panel__starter,
-[data-theme="ascii"] .chat-panel--embedded .chat-panel__input,
-[data-theme="ascii"] .chat-panel--embedded .chat-panel__send {
-  border-radius: 2px;
-}
 
-[data-theme="cli"] .chat-panel--embedded .chat-panel__starter,
-[data-theme="cli"] .chat-panel--embedded .chat-panel__input,
-[data-theme="cli"] .chat-panel--embedded .chat-panel__send {
-  border-radius: 2px;
-  font-family: var(--font-family);
-}
 
 /* Skeleton shown while models/fallback resolve (embedded only — the widget
    renders null during that window). */

@@ -2,9 +2,9 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Portfolio E2E Tests', () => {
   test('navigates through all core page routes', async ({ page }) => {
-    // 1. Home page — human-first hero leads with the name as the dominant heading
+    // 1. Home page — statement hero leads; name carried in the lede
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: 'Chris Lau', level: 1 })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Technical product leader delivering enterprise AI at scale/i })).toBeVisible();
 
     // 2. About page
     await page.goto('/about');
@@ -36,7 +36,7 @@ test.describe('Portfolio E2E Tests', () => {
 
     // 9. Ops / Monitoring page
     await page.goto('/monitoring');
-    await expect(page.getByRole('heading', { name: 'FULL-STACK OPERATIONAL MONITORING & TELEMETRY', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Full-Stack Operational Monitoring & Telemetry/i, level: 1 })).toBeVisible();
 
     // 10. Contact page (top-level nav link)
     const headerNav = page.getByRole('navigation', { name: 'Main Navigation' });
@@ -69,10 +69,11 @@ test.describe('Portfolio E2E Tests', () => {
   test('recruiter path: hero delivers the story and core nav is dropdown-free', async ({ page }) => {
     await page.goto('/');
 
-    // First 10 seconds: name, role headline, value prop, current role band, both CTAs.
-    await expect(page.getByRole('heading', { name: 'Chris Lau', level: 1 })).toBeVisible();
-    await expect(page.getByText('Staff Product Manager, AI at Global Relay')).toBeVisible();
-    await expect(page.getByText(/Technical product leader in AI who actually builds/i)).toBeVisible();
+    // First 10 seconds: statement headline, name, role, value prop, status, both CTAs.
+    await expect(page.getByRole('heading', { name: /Technical product leader delivering enterprise AI at scale/i })).toBeVisible();
+    await expect(page.locator('.home-hero__lede').getByText('Chris Lau')).toBeVisible();
+    await expect(page.locator('.home-hero__lede').getByText(/Staff Product Manager, AI\./)).toBeVisible();
+    await expect(page.getByText(/bridging cutting-edge ML with real-world business impact/i)).toBeVisible();
     await expect(page.getByText('Staff Product Manager, Artificial Intelligence @ Global Relay')).toBeVisible();
     await expect(page.getByRole('link', { name: 'View Experience' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Get in Touch' })).toBeVisible();
@@ -122,35 +123,22 @@ test.describe('Portfolio E2E Tests', () => {
     await expect(page.getByText(/Live product demo:/i)).toBeVisible();
   });
 
-  test('toggles theme between Modern, ASCII, and CLI modes', async ({ page }) => {
+  test('toggles between light and dark modes', async ({ page }) => {
     await page.goto('/');
 
-    // First visit defaults to Modern.
+    // First visit defaults to light.
     const htmlElement = page.locator('html');
-    await expect(htmlElement).toHaveAttribute('data-theme', 'modern');
+    await expect(htmlElement).toHaveAttribute('data-theme', 'light');
     await expect(page.locator('.modern-layout-container')).toBeVisible();
 
-    // Open the compact theme switcher and pick ASCII.
-    const trigger = page.getByRole('button', { name: /Theme: .+ — select theme/ });
-    await trigger.click();
-    await page.getByRole('menuitemradio', { name: 'ASCII' }).click();
-    await expect(htmlElement).toHaveAttribute('data-theme', 'ascii');
-    await expect(page.locator('.ascii-layout-container')).toBeVisible();
+    // Toggle to dark — same layout, dark token set.
+    await page.getByRole('button', { name: 'Switch to dark mode' }).click();
+    await expect(htmlElement).toHaveAttribute('data-theme', 'dark');
+    await expect(page.locator('.modern-layout-container')).toBeVisible();
 
-    // Switch to CLI.
-    await trigger.click();
-    await page.getByRole('menuitemradio', { name: 'CLI' }).click();
-    await expect(htmlElement).toHaveAttribute('data-theme', 'cli');
-    await expect(page.locator('.cli-layout-container')).toBeVisible();
-
-    // The CLI theme keeps a prompt-style home link back to /.
-    await page.locator('.cli-prompt-link').click();
-    await expect(page).toHaveURL('/');
-
-    // Switch back to Modern.
-    await trigger.click();
-    await page.getByRole('menuitemradio', { name: 'Modern' }).click();
-    await expect(htmlElement).toHaveAttribute('data-theme', 'modern');
+    // And back to light.
+    await page.getByRole('button', { name: 'Switch to light mode' }).click();
+    await expect(htmlElement).toHaveAttribute('data-theme', 'light');
   });
 
   test('filters projects by technology tag and switches to Live GitHub Activity tab', async ({ page }) => {
@@ -177,6 +165,6 @@ test.describe('Portfolio E2E Tests', () => {
     // Click return home link
     await page.click('text=Return Home');
     await expect(page).toHaveURL('/');
-    await expect(page.getByRole('heading', { name: 'Chris Lau', level: 1 })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Technical product leader delivering enterprise AI at scale/i })).toBeVisible();
   });
 });

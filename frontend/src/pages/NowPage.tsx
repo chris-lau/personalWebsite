@@ -1,55 +1,81 @@
 import React from 'react';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, Crosshair, GraduationCap, Wrench } from 'lucide-react';
 import { nowData } from '../data/now';
-import { BoxContainer } from '../components/ui/BoxContainer';
+import { Section } from '../components/ui/Section';
 import './Pages.css';
 
 export const NowPage: React.FC = () => {
   return (
     <div className="page-container page-now">
       <section>
-        <BoxContainer title="WHAT I'M DOING NOW">
+        <Section title="WHAT I'M DOING NOW" index="01">
           <p className="last-updated">Last Updated: {nowData.lastUpdated}</p>
 
-          <div className="now-block">
-            <h3>&gt; CURRENT FOCUS</h3>
-            <p>{nowData.currentFocus}</p>
-          </div>
+          <div className="work-list">
+            <article className="work-row">
+              <div className="work-row__icon" aria-hidden="true">
+                <Crosshair size={18} strokeWidth={1.75} />
+              </div>
+              <div className="work-row__body">
+                <div className="work-row__titlerow">
+                  <h3 className="work-row__title">Current Focus</h3>
+                </div>
+                <p className="work-row__desc">{nowData.currentFocus}</p>
+              </div>
+            </article>
 
-          <div className="now-block">
-            <h3>&gt; WORKING ON</h3>
-            <ul>
-              {nowData.workingOn.map((item, i) => (
-                <li key={i}>* {item}</li>
-              ))}
-            </ul>
-          </div>
+            <article className="work-row">
+              <div className="work-row__icon" aria-hidden="true">
+                <Wrench size={18} strokeWidth={1.75} />
+              </div>
+              <div className="work-row__body">
+                <div className="work-row__titlerow">
+                  <h3 className="work-row__title">Working On</h3>
+                </div>
+                <ul className="work-row__highlights">
+                  {nowData.workingOn.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            </article>
 
-          {nowData.reading.length > 0 && (
-            <div className="now-block">
-              <h3>&gt; CURRENTLY READING</h3>
-              <ul>
-                {nowData.reading.map((book, i) => (
-                  <li key={i} className="inline-icon-label">
-                    <BookOpen size={14} aria-hidden="true" className="inline-icon accent" />
-                    <span>{book}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+            {nowData.reading.length > 0 && (
+              <article className="work-row">
+                <div className="work-row__icon" aria-hidden="true">
+                  <BookOpen size={18} strokeWidth={1.75} />
+                </div>
+                <div className="work-row__body">
+                  <div className="work-row__titlerow">
+                    <h3 className="work-row__title">Currently Reading</h3>
+                  </div>
+                  <ul className="work-row__highlights">
+                    {nowData.reading.map((book, i) => (
+                      <li key={i}>{book}</li>
+                    ))}
+                  </ul>
+                </div>
+              </article>
+            )}
 
-          <div className="now-block">
-            <h3>&gt; LEARNING</h3>
-            <ul>
-              {nowData.learning.map((topic, i) => (
-                <li key={i}>* {topic}</li>
-              ))}
-            </ul>
+            <article className="work-row">
+              <div className="work-row__icon" aria-hidden="true">
+                <GraduationCap size={18} strokeWidth={1.75} />
+              </div>
+              <div className="work-row__body">
+                <div className="work-row__titlerow">
+                  <h3 className="work-row__title">Learning</h3>
+                </div>
+                <ul className="work-row__highlights">
+                  {nowData.learning.map((topic, i) => (
+                    <li key={i}>{topic}</li>
+                  ))}
+                </ul>
+              </div>
+            </article>
           </div>
-        </BoxContainer>
+        </Section>
       </section>
     </div>
   );
 };
-

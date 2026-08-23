@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { BookOpen, Server } from 'lucide-react';
 import { guidebookChapters, backendGuidebookChapters } from '../data/guidebookData';
-import { BoxContainer } from '../components/ui/BoxContainer';
+import { Section } from '../components/ui/Section';
 import { MarkdownRenderer } from '../components/markdown/MarkdownRenderer';
 import './Pages.css';
 import './GuidebookPage.css';
@@ -47,9 +47,9 @@ export const GuidebookPage: React.FC = () => {
   return (
     <div className="page-container page-guidebook">
       <section className="guidebook-hero">
-        <BoxContainer title="SOFTWARE ENGINEERING GUIDEBOOK SERIES">
+        <Section title="SOFTWARE ENGINEERING GUIDEBOOK SERIES" index="01">
           <div className="hero-content">
-            <h1 className="hero-title serif-heading">
+            <h1 className="hero-title">
               {activeVolume === 'frontend'
                 ? 'Volume 1: Building Modern Web Applications'
                 : 'Volume 2: FastAPI & Python Backend Architecture'}
@@ -87,7 +87,7 @@ export const GuidebookPage: React.FC = () => {
               </button>
             </div>
           </div>
-        </BoxContainer>
+        </Section>
       </section>
 
       {/* Guidebook Main Layout: Sidebar Navigation + Reader Area */}
@@ -121,17 +121,6 @@ export const GuidebookPage: React.FC = () => {
                       <span className="chapter-num">Ch {ch.number}.</span>
                       <span className="chapter-title-text">{ch.title}</span>
                     </button>
-
-                    {/* Subsections list for active chapter */}
-                    {activeChapter.id === ch.id && (
-                      <ul className="subsection-list">
-                        {ch.subsections.map((sub, i) => (
-                          <li key={i} className="subsection-item">
-                            {sub}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
                   </li>
                 ))}
               </ul>
@@ -141,14 +130,14 @@ export const GuidebookPage: React.FC = () => {
 
         {/* Chapter Reader Area */}
         <main ref={readerRef} className="guidebook-reader">
-          <BoxContainer title={`CHAPTER ${activeChapter.number} of ${currentChapters.length}`}>
+          <Section title={`CHAPTER ${activeChapter.number} of ${currentChapters.length}`} index="02">
             <div className="reader-header">
               <div className="chapter-meta">
                 <span className="chapter-badge">
                   {activeVolume === 'frontend' ? 'Volume 1' : 'Volume 2'} — Chapter {activeChapter.number}
                 </span>
               </div>
-              <h2 className="reader-chapter-title serif-heading">{activeChapter.title}</h2>
+              <h2 className="reader-chapter-title">{activeChapter.title}</h2>
             </div>
 
             <div className="reader-content">
@@ -179,7 +168,7 @@ export const GuidebookPage: React.FC = () => {
                 </button>
               )}
             </nav>
-          </BoxContainer>
+          </Section>
         </main>
       </div>
     </div>

@@ -10,9 +10,7 @@ const meta: Meta<typeof ModernLayout> = {
     (Story) => (
       <ThemeProvider>
         <MemoryRouter>
-          <div data-theme="modern">
-            <Story />
-          </div>
+          <Story />
         </MemoryRouter>
       </ThemeProvider>
     ),
@@ -26,11 +24,11 @@ export const Default: Story = {
   args: {
     children: (
       <div>
-        <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: '2.5rem', marginBottom: '1rem' }}>
-          Engineering Intelligent Systems &amp; Human-AI Interfaces
+        <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
+          Technical product leader delivering enterprise AI at scale.
         </h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>
-          Welcome to the Modern Editorial layout, inspired by Anthropic and OpenAI designs.
+          The Light Crisp layout — one design system, light and dark modes.
         </p>
       </div>
     ),

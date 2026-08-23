@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { LayoutRenderer } from './components/layout/LayoutRenderer';
+import { ScrollToTop } from './components/layout/ScrollToTop';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { ChatWidget } from './components/chat/ChatWidget';
 
@@ -49,6 +50,7 @@ const PageLoader: React.FC = () => (
 export const App: React.FC = () => {
   return (
     <ThemeProvider>
+      <ScrollToTop />
       <LayoutRenderer>
         <ErrorBoundary>
           <Suspense fallback={<PageLoader />}>

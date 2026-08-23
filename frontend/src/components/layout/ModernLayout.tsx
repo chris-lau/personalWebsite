@@ -1,14 +1,58 @@
-import { RefObject } from 'react';
+import { RefObject, useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { Check, Clock, Copy } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { NAV_GROUPS } from '../../config/navConfig';
 import { BACKEND_ROOT_URL } from '../../api/config';
+import { profileData } from '../../data/profile';
 import { useNavDropdown } from './useNavDropdown';
 import './ModernLayout.css';
 
 interface ModernLayoutProps {
   children: React.ReactNode;
 }
+
+const VANCOUVER_TIME = new Intl.DateTimeFormat('en-CA', {
+  hour: 'numeric',
+  minute: '2-digit',
+  timeZone: 'America/Vancouver',
+});
+
+const useLocalClock = () => {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(new Date()), 30_000);
+    return () => window.clearInterval(id);
+  }, []);
+  return VANCOUVER_TIME.format(now);
+};
+
+const EmailCopyButton = ({ email }: { email: string }) => {
+  const [copied, setCopied] = useState(false);
+
+  const copyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(email);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard unavailable (permissions/insecure context) — fall back to the mail client.
+      window.location.href = `mailto:${email}`;
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      className="modern-footer-copy-email"
+      onClick={copyEmail}
+      aria-label={copied ? 'Email address copied to clipboard' : `Copy email address ${email}`}
+    >
+      {copied ? <Check size={13} aria-hidden="true" /> : <Copy size={13} aria-hidden="true" />}
+      <span aria-live="polite">{copied ? 'Copied to Clipboard' : email}</span>
+    </button>
+  );
+};
 
 export const ModernLayout = ({ children }: ModernLayoutProps) => {
   const {
@@ -20,6 +64,7 @@ export const ModernLayout = ({ children }: ModernLayoutProps) => {
     toggleDropdown,
     isGroupActive,
   } = useNavDropdown();
+  const localTime = useLocalClock();
 
   return (
     <div className="modern-layout-container">
@@ -51,7 +96,7 @@ export const ModernLayout = ({ children }: ModernLayoutProps) => {
                         }
                         onClick={closeMobileMenu}
                       >
-                        {group.modernLabel}
+                        {group.label}
                       </NavLink>
                     </li>
                   );
@@ -72,7 +117,7 @@ export const ModernLayout = ({ children }: ModernLayoutProps) => {
                       aria-haspopup="true"
                       aria-controls={`submenu-${group.id}`}
                     >
-                      <span>{group.modernLabel}</span>
+                      <span>{group.label}</span>
                       <span className="dropdown-caret" aria-hidden="true">
                         {isOpen ? '▴' : '▾'}
                       </span>
@@ -93,7 +138,7 @@ export const ModernLayout = ({ children }: ModernLayoutProps) => {
                             role="menuitem"
                             onClick={closeMobileMenu}
                           >
-                            {child.modernLabel}
+                            {child.label}
                           </NavLink>
                         </li>
                       ))}
@@ -128,14 +173,12 @@ export const ModernLayout = ({ children }: ModernLayoutProps) => {
         <div className="modern-footer-card">
           <div className="modern-footer-top">
             <div className="modern-footer-brand">
+              <code className="modern-footer-whoami" aria-hidden="true">$ whoami</code>
               <span className="brand-initials">CL</span>
               <span className="brand-divider">/</span>
               <span className="brand-name">Chris Lau</span>
               <span className="brand-role">&mdash; Staff Product Manager, AI</span>
             </div>
-            <p className="modern-footer-copy">
-              &copy; {new Date().getFullYear()} Chris Lau. All rights reserved.
-            </p>
           </div>
 
           <nav className="modern-footer-nav" aria-label="Footer Navigation">
@@ -193,6 +236,17 @@ export const ModernLayout = ({ children }: ModernLayoutProps) => {
               </ul>
             </div>
           </nav>
+
+          <div className="modern-footer-status">
+            <p className="modern-footer-copy">
+              &copy; {new Date().getFullYear()} Chris Lau
+            </p>
+            <EmailCopyButton email={profileData.email} />
+            <span className="modern-footer-clock">
+              <Clock size={13} aria-hidden="true" />
+              {localTime} · Vancouver
+            </span>
+          </div>
         </div>
       </footer>
     </div>
