@@ -23,6 +23,14 @@ def seed_database():
             with open(projects_file, "r") as f:
                 projects_data = json.load(f)
 
+            # Remove projects no longer present in projects.json (stale data on re-seeding)
+            json_ids = {proj["id"] for proj in projects_data}
+            stale_projects = db.query(Project).filter(~Project.id.in_(json_ids)).all()
+            for stale in stale_projects:
+                print(f"Removing stale project: {stale.id}")
+                db.delete(stale)
+            db.flush()
+
             for proj in projects_data:
                 # Find or create project
                 project = db.query(Project).filter_by(id=proj["id"]).first()

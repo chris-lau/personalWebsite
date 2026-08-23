@@ -159,21 +159,25 @@ describe('Page Components Unit Tests', () => {
     );
 
     const headings = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
-    expect(headings.indexOf('Multi-Agent System Platform'))
+    expect(headings.indexOf('tinyclaw — Governable Multi-Agent Platform'))
       .toBeLessThan(headings.indexOf('Amazon Seller Trend & Opportunity Suite'));
     expect(headings.indexOf('Amazon Seller Trend & Opportunity Suite'))
       .toBeLessThan(headings.indexOf('Personal Portfolio Website'));
 
     // One-line outcomes condensed from each project's description.
-    expect(screen.getByText(/specialized AI agents orchestrated/i)).toBeInTheDocument();
+    expect(screen.getByText(/policy-as-code guardrails/i)).toBeInTheDocument();
     expect(screen.getByText(/Opportunity Score with FBA unit-economics/i)).toBeInTheDocument();
     expect(screen.getByText(/three themes, a live GitHub Activity Dashboard/i)).toBeInTheDocument();
 
-    // Live Demo routing: Amazon Suite -> /amazon-tools, Portfolio -> /how-this-site-works.
+    // Live Demo routing: tinyclaw (external) -> pages.dev, Amazon Suite -> /amazon-tools, Portfolio -> /how-this-site-works.
     const liveDemoHrefs = screen
       .getAllByRole('link', { name: /Live Demo/ })
       .map((link) => link.getAttribute('href'));
-    expect(liveDemoHrefs).toEqual(['/amazon-tools', '/how-this-site-works']);
+    expect(liveDemoHrefs).toEqual([
+      'https://tinyclaw-614.pages.dev/',
+      '/amazon-tools',
+      '/how-this-site-works',
+    ]);
   });
 
   it('renders AboutPage with skill matrix', () => {

@@ -13,7 +13,7 @@ def test_list_projects(client):
     data = response.json()
     assert isinstance(data, list)
     assert len(data) > 0
-    assert data[0]["id"] == "multi-agent-system"
+    assert data[0]["id"] == "personal-os"
 
 
 def test_get_project_by_slug_valid(client):

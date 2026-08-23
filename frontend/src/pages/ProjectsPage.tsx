@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Bot, ChevronDown, Folder, GitBranch, Globe, ShoppingCart } from 'lucide-react';
+import { Bot, ChevronDown, Folder, GitBranch, Globe, ShieldCheck, ShoppingCart } from 'lucide-react';
 import { projectsData } from '../data/projects';
 import { Section } from '../components/ui/Section';
 import { GitHubDashboard } from '../components/github/GitHubDashboard';
@@ -10,7 +10,7 @@ import './Pages.css';
 
 /** Domain icon shown in each case-study row. */
 const PROJECT_ICONS: Record<string, typeof Bot> = {
-  'multi-agent-system': Bot,
+  tinyclaw: ShieldCheck,
   'amazon-seller-suite': ShoppingCart,
   'personal-os': Globe,
 };

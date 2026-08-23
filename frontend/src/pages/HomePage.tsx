@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, ArrowUpRight, Bot, Github, Globe, Linkedin, ShoppingCart } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Bot, Github, Globe, Linkedin, ShieldCheck, ShoppingCart } from 'lucide-react';
 import { profileData } from '../data/profile';
 import { projectsData } from '../data/projects';
 import { experienceData } from '../data/experience';
@@ -17,7 +17,7 @@ const SOCIAL_ICONS: Record<string, typeof Linkedin> = {
 };
 
 /** Homepage display order for the featured work rows. */
-const FEATURED_PROJECT_ORDER = ['multi-agent-system', 'amazon-seller-suite', 'personal-os'];
+const FEATURED_PROJECT_ORDER = ['tinyclaw', 'amazon-seller-suite', 'personal-os'];
 
 /** Homepage-only Live Demo destinations for projects without a liveUrl in projects.json. */
 const LIVE_DEMO_PATHS: Record<string, string> = {
@@ -26,8 +26,8 @@ const LIVE_DEMO_PATHS: Record<string, string> = {
 
 /** One-line outcomes, condensed from each project's backend description (no new claims). */
 const PROJECT_OUTCOMES: Record<string, string> = {
-  'multi-agent-system':
-    'Multiple specialized AI agents orchestrated to address complex, cross-domain tasks.',
+  tinyclaw:
+    'A2A-native agents under policy-as-code guardrails — HITL approvals, signed permits, tamper-evident audit.',
   'amazon-seller-suite':
     'A 0–100 Opportunity Score with FBA unit-economics simulation and competitor review-gap scanning.',
   'personal-os':
@@ -36,7 +36,7 @@ const PROJECT_OUTCOMES: Record<string, string> = {
 
 /** Domain icon shown in each work row's icon square. */
 const PROJECT_ICONS: Record<string, typeof Bot> = {
-  'multi-agent-system': Bot,
+  tinyclaw: ShieldCheck,
   'amazon-seller-suite': ShoppingCart,
   'personal-os': Globe,
 };

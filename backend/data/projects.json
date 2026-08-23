@@ -1,13 +1,5 @@
 [
   {
-    "id": "multi-agent-system",
-    "title": "Multi-Agent System Platform",
-    "description": "An AI-powered platform using multiple specialized agents to address complex tasks across different domains.",
-    "techStack": ["Python", "LLM Agents", "Task Orchestration"],
-    "githubUrl": "https://github.com/chris-lau/multi-agent-system",
-    "featured": true
-  },
-  {
     "id": "personal-os",
     "title": "Personal Portfolio Website",
     "description": "Full-stack personal website (React + TypeScript frontend, Python FastAPI backend) with light/dark design-token theming, a live GitHub Activity Dashboard, a probe-based Live Ops monitoring console, an Amazon Seller Suite, and an AI chat copilot — deployed on Cloudflare Pages & Render.",
@@ -22,6 +14,15 @@
     "techStack": ["React", "TypeScript", "FastAPI", "Python", "Amazon FBA Economics", "Sentiment Analysis"],
     "githubUrl": "https://github.com/chris-lau/personalWebsite",
     "liveUrl": "/amazon-tools",
+    "featured": true
+  },
+  {
+    "id": "tinyclaw",
+    "title": "tinyclaw — Governable Multi-Agent Platform",
+    "description": "A tiny, governable multi-agent platform — A2A-native (Linux Foundation protocol) orchestration with policy-as-code governance mapped to NIST AI RMF & EU AI Act, risk-tiered human-in-the-loop approvals, HMAC-signed execution permits, a hash-chained tamper-evident audit log, and OpenTelemetry traces exported to self-hosted Langfuse. Ships with a React dashboard and a seeded demo that runs with zero API keys.",
+    "techStack": ["Python", "A2A Protocol", "OpenTelemetry", "Langfuse", "React", "TypeScript"],
+    "githubUrl": "https://github.com/chris-lau/tinyclaw",
+    "liveUrl": "https://tinyclaw-614.pages.dev/",
     "featured": true
   }
 ]

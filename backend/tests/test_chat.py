@@ -558,7 +558,7 @@ def test_system_prompt_includes_projects_skills_and_now():
     assert "amazon_knowledge.json (JSON)" in prompt
 
     # Spot-check real content from each source.
-    assert "Multi-Agent System Platform" in prompt  # projects.json title
+    assert "tinyclaw — Governable Multi-Agent Platform" in prompt  # projects.json title
     assert "Amazon Seller Trend & Opportunity Suite" in prompt  # projects.json & architecture
     assert "Product & Leadership" in prompt  # skills.json category
     assert "AI Surveillance" in prompt  # now.json currentFocus
