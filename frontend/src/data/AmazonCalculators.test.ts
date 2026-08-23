@@ -37,6 +37,22 @@ describe('AmazonCalculators', () => {
       expect(['Moderate', 'Challenging']).toContain(result.rating);
       expect(result.breakdown.competitionScore).toBe(10);
     });
+
+    it('scores unknown review barriers neutrally — never as a low barrier', () => {
+      const result = calculateOpportunityScore({
+        searchVolumeGrowthPct: 0,
+        avgPrice: 35.0,
+        reviewBarrier: 'Unknown',
+        estimatedMarginPct: 32,
+        searchVolume: 0,
+      });
+
+      // Neutral baseline (15), not the Low-barrier bonus (30) that would
+      // inflate live listings whose reviews failed to parse.
+      expect(result.breakdown.competitionScore).toBe(15);
+      expect(result.score).toBeLessThan(85);
+      expect(result.rating).not.toBe('Exceptional');
+    });
   });
 
   describe('calculateUnitEconomics', () => {

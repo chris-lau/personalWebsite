@@ -49,7 +49,8 @@ export interface GoogleTrendPoint {
 export interface AmazonTrendResponse {
   query: string;
   trend_points: GoogleTrendPoint[];
-  growth_velocity_pct: number;
+  /** Null when no honest demand-growth signal exists (autocomplete counts aren't one). */
+  growth_velocity_pct: number | null;
   suggestions: string[];
   is_live: boolean;
   source: 'live_autocomplete' | 'simulated_benchmark';

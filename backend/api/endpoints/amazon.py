@@ -129,6 +129,12 @@ def _parse_amazon_search_html(html: str, query: str, category: str) -> list[Amaz
         if not raw_title:
             continue
 
+        # Skip Amazon boilerplate blocks that carry a data-asin but no real
+        # product title (e.g. "Check each product page for other buying
+        # options. Price and other details may vary...").
+        if raw_title.lower().startswith("check each product page"):
+            continue
+
         # Extract Price (returns 0.0 if not found, never invented defaults)
         price_match = re.search(
             r'<span class=["\']a-price["\'][^>]*?>.*?<span class=["\']a-offscreen["\']>(.*?)</span>',
@@ -142,8 +148,10 @@ def _parse_amazon_search_html(html: str, query: str, category: str) -> list[Amaz
         rating = _clean_rating(rating_match.group(1)) if rating_match else 0.0
 
         # Extract Reviews count (returns 0 if not found)
+        # 2026 markup puts the count in an aria-label on the <a> element
+        # (`<a aria-label="3,336 ratings" ...>`), not on a <span>.
         review_match = re.search(
-            r'<span[^>]*?aria-label=["\'](\d[\d,]*)\s*ratings?["\']', block
+            r'aria-label=["\'](\d[\d,]*)\s*ratings?["\']', block
         )
         if not review_match:
             review_match = re.search(r'<a[^>]*?href=["\'][^"\']*?#customerReviews["\'][^>]*?>\s*<span[^>]*?>([\d,]+)</span>', block)
@@ -342,20 +350,30 @@ async def inspect_amazon_asin(
             title = title_match.group(1).strip() if title_match else ""
             title = re.sub(r"\s+", " ", title)
 
-            # Parse price
+            # Parse price — a-price-whole now nests a decimal span
+            # (`<span class="a-price-whole">58<span class="a-price-decimal">.</span></span>`),
+            # so strip inner tags before combining with the fraction.
+            price = 0.0
             price_match = re.search(r'<span class=["\']a-price-whole["\']>(.*?)</span>.*?<span class=["\']a-price-fraction["\']>(.*?)</span>', html, re.DOTALL)
             if price_match:
-                price = float(f"{price_match.group(1).replace(',', '').strip()}.{price_match.group(2).strip()}")
-            else:
+                whole = re.sub(r"<[^>]+>", "", price_match.group(1)).replace(",", "").strip()
+                fraction = re.sub(r"<[^>]+>", "", price_match.group(2)).strip()
+                if whole and fraction:
+                    try:
+                        price = float(f"{whole}.{fraction}")
+                    except ValueError:
+                        price = 0.0
+            if price == 0.0:
                 price_off = re.search(r'<span class=["\']a-price["\'][^>]*?>.*?<span class=["\']a-offscreen["\']>(.*?)</span>', html, re.DOTALL)
                 price = _clean_price(price_off.group(1)) if price_off else 0.0
 
             # Parse rating
-            rating_match = re.search(r'<span class=["\']a-icon-alt["\']>(.*?)</span>', html)
+            rating_match = re.search(r'<span class=["\']a-icon-alt["\'][^>]*?>(.*?)</span>', html)
             rating = _clean_rating(rating_match.group(1)) if rating_match else 0.0
 
-            # Parse review count
-            reviews_match = re.search(r'<span id=["\']acrCustomerReviewText["\'][^>]*?>([\d,]+)\s*ratings?</span>', html)
+            # Parse review count — inner text now renders as "(3,336)";
+            # _clean_reviews strips the parens and any "ratings"/"Reviews" suffix.
+            reviews_match = re.search(r'<span id=["\']acrCustomerReviewText["\'][^>]*?>(.*?)</span>', html, re.DOTALL)
             reviews_count = _clean_reviews(reviews_match.group(1)) if reviews_match else 0
 
             # Parse Bullets
@@ -504,12 +522,12 @@ async def get_amazon_trends(
             )
         )
 
-    growth_velocity = min(220, max(15, 35 + (len(suggestions) * 12)))
-
+    # Autocomplete suggestion count carries no honest demand-growth signal.
+    # Leave velocity unset rather than fabricating a percentage.
     result = AmazonTrendResponse(
         query=q,
         trend_points=trend_points,
-        growth_velocity_pct=growth_velocity,
+        growth_velocity_pct=None,
         suggestions=suggestions[:8],
         is_live=is_live,
         source="live_autocomplete" if is_live else "simulated_benchmark",

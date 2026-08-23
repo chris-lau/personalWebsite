@@ -445,7 +445,7 @@ export async function fetchLiveAmazonTrends(
       data: {
         query,
         trend_points: [],
-        growth_velocity_pct: 35,
+        growth_velocity_pct: null,
         suggestions: [`${query} organizer`, `${query} set`],
         is_live: false,
         source: 'simulated_benchmark',

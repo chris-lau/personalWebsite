@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Literal
+from typing import Literal, Optional
+
 from pydantic import BaseModel, Field
 
 
@@ -55,7 +56,9 @@ class GoogleTrendPoint(BaseModel):
 class AmazonTrendResponse(BaseModel):
     query: str
     trend_points: list[GoogleTrendPoint]
-    growth_velocity_pct: int
+    # None when no honest demand-growth signal is available (autocomplete
+    # suggestion counts are not one).
+    growth_velocity_pct: Optional[int] = None
     suggestions: list[str]
     is_live: bool = False
     source: Literal["live_autocomplete", "simulated_benchmark"] = "simulated_benchmark"

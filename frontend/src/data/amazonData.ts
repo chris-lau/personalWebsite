@@ -32,10 +32,16 @@ export interface NicheTrend {
   avgWeightLb: number;
   fbaTier: FbaSizeTier;
   avgMonthlySales: number;
-  reviewBarrier: 'Low' | 'Medium' | 'High'; // Based on top 10 sellers review counts
+  // Based on top 10 sellers review counts; 'Unknown' when live review data
+  // could not be parsed (scored neutrally, never as a low barrier).
+  reviewBarrier: 'Low' | 'Medium' | 'High' | 'Unknown';
   avgTop10Reviews: number;
   topCompetitorRating: number;
   seasonality: 'Low' | 'Moderate' | 'High';
+  // True when no honest demand-growth signal exists for this niche (live
+  // listings without trend data) — UI hides the velocity claim instead of
+  // fabricating one.
+  growthUnknown?: boolean;
   painPoints: string[];
   differentiationAngle: string;
   tags: string[];
@@ -243,7 +249,7 @@ export const SAMPLE_NICHE_TRENDS: NicheTrend[] = [
 export function calculateOpportunityScore(params: {
   searchVolumeGrowthPct: number;
   avgPrice: number;
-  reviewBarrier: 'Low' | 'Medium' | 'High';
+  reviewBarrier: 'Low' | 'Medium' | 'High' | 'Unknown';
   estimatedMarginPct: number;
   searchVolume: number;
 }): {
@@ -265,10 +271,12 @@ export function calculateOpportunityScore(params: {
   if (params.searchVolume > 100000) demandScore = Math.min(30, demandScore + 5);
 
   // 2. Competition & Review Barrier Score (max 30 pts)
+  // Unknown review data gets the neutral baseline — never the Low-barrier
+  // bonus, which would inflate live listings whose reviews failed to parse.
   let competitionScore = 15;
   if (params.reviewBarrier === 'Low') competitionScore = 30;
   else if (params.reviewBarrier === 'Medium') competitionScore = 20;
-  else competitionScore = 10;
+  else if (params.reviewBarrier === 'High') competitionScore = 10;
 
   // 3. Margin Potential Score (max 25 pts)
   let marginScore = 10;

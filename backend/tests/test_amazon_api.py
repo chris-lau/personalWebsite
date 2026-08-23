@@ -16,11 +16,14 @@ SAMPLE_SEARCH_HTML = """
 <!DOCTYPE html>
 <html>
 <body>
+  <div data-asin="B0JUNKJUNK" class="s-result-item">
+    <h2><a href="/dp/B0JUNKJUNK"><span>Check each product page for other buying options. Price and other details may vary based on product size and color.</span></a></h2>
+  </div>
   <div data-asin="B08N5WRWNW" class="s-result-item">
     <h2><a href="/dp/B08N5WRWNW"><span>Orthopedic Elevated Ceramic Slow Feeder</span></a></h2>
     <span class="a-price"><span class="a-offscreen">$38.50</span></span>
     <span class="a-icon-alt">4.7 out of 5 stars</span>
-    <span aria-label="1,240 ratings">1,240</span>
+    <a aria-label="1,240 ratings" class="a-link-normal s-underline-text" href="/product-reviews/B08N5WRWNW"><span class="a-size-base">1,240</span></a>
     <img class="s-image" src="https://m.media-amazon.com/images/I/sample.jpg" />
     <span class="a-icon-prime">Prime</span>
   </div>
@@ -28,8 +31,12 @@ SAMPLE_SEARCH_HTML = """
     <h2><a href="/dp/B09XYZ8888"><span>Stainless Steel Whisking Pitcher</span></a></h2>
     <span class="a-price"><span class="a-offscreen">$18.99</span></span>
     <span class="a-icon-alt">4.5 out of 5 stars</span>
-    <span aria-label="430 ratings">430</span>
+    <a aria-label="430 ratings" class="a-link-normal s-underline-text" href="/product-reviews/B09XYZ8888"><span class="a-size-base">430</span></a>
     <img class="s-image" src="https://m.media-amazon.com/images/I/sample2.jpg" />
+  </div>
+  <div data-asin="B0NEW0NEW0" class="s-result-item">
+    <h2><a href="/dp/B0NEW0NEW0"><span>Brand New Untested Gadget</span></a></h2>
+    <span class="a-price"><span class="a-offscreen">$12.00</span></span>
   </div>
 </body>
 </html>
@@ -50,10 +57,9 @@ SAMPLE_ASIN_HTML = """
 <html>
 <body>
   <span id="productTitle">Ergonomic Felt & Cork Desk Pad Mat</span>
-  <span class="a-price-whole">29</span>
-  <span class="a-price-fraction">95</span>
+  <span class="a-price"><span class="a-offscreen">$29.95</span><span aria-hidden="true"><span class="a-price-symbol">$</span><span class="a-price-whole">29<span class="a-price-decimal">.</span></span><span class="a-price-fraction">95</span></span></span>
   <span class="a-icon-alt">4.8 out of 5 stars</span>
-  <span id="acrCustomerReviewText">890 ratings</span>
+  <span id="acrCustomerReviewText" aria-label="890 Reviews" class="a-size-small">(890)</span>
   <ul>
     <li><span class="a-list-item">Crafted from natural merino wool felt and high-density organic cork</span></li>
     <li><span class="a-list-item">Ultra-smooth glide surface engineered for precision optical mice</span></li>
@@ -101,14 +107,18 @@ async def test_amazon_search_live_success(monkeypatch):
         assert data["query"] == "desk mat"
         assert data["is_live"] is True
         assert data["source"] == "live_marketplace"
-        assert len(data["products"]) == 2
-        p1 = data["products"][0]
-        assert p1["asin"] == "B08N5WRWNW"
+        # 3 parseable products: boilerplate "Check each product page" block skipped
+        assert len(data["products"]) == 3
+        products_by_asin = {p["asin"]: p for p in data["products"]}
+        assert "B0JUNKJUNK" not in products_by_asin
+        p1 = products_by_asin["B08N5WRWNW"]
         assert p1["title"] == "Orthopedic Elevated Ceramic Slow Feeder"
         assert p1["price"] == 38.50
         assert p1["rating"] == 4.7
         assert p1["reviews_count"] == 1240
         assert p1["is_prime"] is True
+        # Product without a ratings element parses to 0 (treated as unknown upstream)
+        assert products_by_asin["B0NEW0NEW0"]["reviews_count"] == 0
 
 
 @pytest.mark.asyncio
@@ -173,7 +183,7 @@ async def test_amazon_asin_invalid():
 
 @pytest.mark.asyncio
 async def test_amazon_trends_endpoint(monkeypatch):
-    """Test live trends returns autocomplete and growth velocity."""
+    """Test live trends returns autocomplete suggestions and no fabricated velocity."""
     clear_amazon_cache()
     _patch_httpx_amazon(monkeypatch, suggestions_json={"suggestions": [{"value": "espresso tamper 54mm"}]})
 
@@ -186,3 +196,5 @@ async def test_amazon_trends_endpoint(monkeypatch):
         assert data["is_live"] is True
         assert data["source"] == "live_autocomplete"
         assert len(data["trend_points"]) == 12
+        # Suggestion count is not a demand signal — velocity must be unset
+        assert data["growth_velocity_pct"] is None
