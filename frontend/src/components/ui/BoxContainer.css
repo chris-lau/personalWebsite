@@ -51,16 +51,14 @@
   border: 0;
 }
 
-/* Modern Theme Overrides for BoxContainer */
+/* Modern Theme Overrides for BoxContainer — Light Crisp flat panel */
 [data-theme="modern"] .box-container {
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   border: 1px solid var(--border-muted);
-  background: var(--bg-card, rgba(28, 30, 36, 0.7));
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-card);
   margin-bottom: 0;
-  padding: 1.75rem 2rem;
+  padding: 1.5rem 1.75rem;
   overflow: hidden;
 }
 
@@ -78,12 +76,13 @@
   overflow: visible;
   clip: auto;
   white-space: normal;
-  font-family: var(--font-serif);
-  font-size: 1.85rem;
-  font-weight: 400;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 600;
   color: var(--header-color);
   letter-spacing: -0.01em;
   border-bottom: 1px solid var(--border-muted);
+  padding-bottom: 0.7rem;
 }
 
 [data-theme="modern"] .ascii-box-content {
@@ -92,14 +91,13 @@
 
 @media (max-width: 640px) {
   [data-theme="modern"] .box-container {
-    padding: 1.25rem 1rem;
-    border-radius: 12px;
+    padding: 1.15rem 1.1rem;
   }
 
   [data-theme="modern"] .box-section-heading {
-    font-size: 1.45rem;
-    margin-bottom: 1rem;
-    padding-bottom: 0.65rem;
+    font-size: 1.1rem;
+    margin-bottom: 0.9rem;
+    padding-bottom: 0.55rem;
   }
 }
 
