@@ -8,7 +8,7 @@ const meta: Meta<typeof ThemeToggle> = {
   decorators: [
     (Story) => (
       <ThemeProvider>
-        <div style={{ padding: '2rem', background: 'var(--bg-color)', minHeight: '100px' }}>
+        <div style={{ padding: '2rem', background: 'var(--bg-secondary)', minHeight: '100px' }}>
           <Story />
         </div>
       </ThemeProvider>
