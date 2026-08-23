@@ -99,7 +99,7 @@
 
 .chapter-btn:hover {
   color: var(--text-primary);
-  background-color: rgba(255, 255, 255, 0.04);
+  background-color: var(--overlay-soft);
 }
 
 .chapter-btn.active {

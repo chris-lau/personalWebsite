@@ -36,14 +36,20 @@ const EmailCopyButton = ({ email }: { email: string }) => {
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Clipboard unavailable (permissions/insecure context) — keep address visible as mailto fallback.
+      // Clipboard unavailable (permissions/insecure context) — fall back to the mail client.
+      window.location.href = `mailto:${email}`;
     }
   };
 
   return (
-    <button type="button" className="modern-footer-copy-email" onClick={copyEmail}>
+    <button
+      type="button"
+      className="modern-footer-copy-email"
+      onClick={copyEmail}
+      aria-label={copied ? 'Email address copied to clipboard' : `Copy email address ${email}`}
+    >
       {copied ? <Check size={13} aria-hidden="true" /> : <Copy size={13} aria-hidden="true" />}
-      <span aria-live="polite">{copied ? 'Copied' : email}</span>
+      <span aria-live="polite">{copied ? 'Copied to Clipboard' : email}</span>
     </button>
   );
 };

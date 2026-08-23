@@ -2,7 +2,7 @@
   border: 1px solid var(--border-muted);
   padding: 1.25rem;
   margin-bottom: 1.25rem;
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: var(--overlay-softer);
   transition: border-color 0.2s ease, transform 0.2s ease;
 }
 
@@ -59,7 +59,7 @@
 [data-theme="modern"] .blog-card {
   border-radius: 12px;
   border: 1px solid var(--border-color);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
+  background: linear-gradient(135deg, var(--overlay-soft) 0%, transparent 100%);
   padding: 1.5rem;
   margin-bottom: 1.5rem;
   transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
@@ -82,7 +82,7 @@
   font-size: 0.75rem;
   padding: 0.2rem 0.65rem;
   border-radius: 20px;
-  background-color: rgba(255, 255, 255, 0.07);
+  background-color: var(--overlay-soft);
   color: var(--accent-secondary);
   border: 1px solid var(--border-muted);
 }

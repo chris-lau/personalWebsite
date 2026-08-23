@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, Github, Linkedin } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Bot, Github, Globe, Linkedin, ShoppingCart } from 'lucide-react';
 import { profileData } from '../data/profile';
 import { projectsData } from '../data/projects';
 import { experienceData } from '../data/experience';
@@ -34,11 +34,11 @@ const PROJECT_OUTCOMES: Record<string, string> = {
     "The site you're on: three themes, a live GitHub Activity Dashboard, and REST API integration.",
 };
 
-/** Small mono glyph shown in each work row's icon square. */
-const PROJECT_ICONS: Record<string, string> = {
-  'multi-agent-system': 'Σ',
-  'amazon-seller-suite': 'A',
-  'personal-os': '◈',
+/** Domain icon shown in each work row's icon square. */
+const PROJECT_ICONS: Record<string, typeof Bot> = {
+  'multi-agent-system': Bot,
+  'amazon-seller-suite': ShoppingCart,
+  'personal-os': Globe,
 };
 
 /** Toolchain tile: hands-on engineering + AI skills, curated from skills.json (no new claims). */
@@ -95,7 +95,9 @@ export const HomePage = () => {
         </p>
 
         <div className="home-hero__cta-row">
-          <Link to="/experience" className="link-button primary">View Experience →</Link>
+          <Link to="/experience" className="link-button primary">
+            View Experience <ArrowRight size={13} aria-hidden="true" />
+          </Link>
           <a href={`mailto:${profileData.email}`} className="link-button">Get in Touch</a>
           {profileData.socials.map((social) => {
             const SocialIcon = SOCIAL_ICONS[social.platform];
@@ -143,7 +145,10 @@ export const HomePage = () => {
             return (
               <article key={project.id} className="work-row">
                 <div className="work-row__icon" aria-hidden="true">
-                  {PROJECT_ICONS[project.id] ?? '◆'}
+                  {(() => {
+                    const ProjectIcon = PROJECT_ICONS[project.id] ?? Globe;
+                    return <ProjectIcon size={18} strokeWidth={1.75} />;
+                  })()}
                 </div>
                 <div className="work-row__body">
                   <div className="work-row__titlerow">
@@ -172,17 +177,17 @@ export const HomePage = () => {
                   <div className="work-row__actions">
                     {project.githubUrl && (
                       <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="link-button">
-                        GitHub ↗
+                        GitHub <ArrowUpRight size={13} aria-hidden="true" />
                       </a>
                     )}
                     {liveUrl && (
                       liveUrl.startsWith('/') ? (
                         <Link to={liveUrl} className="link-button">
-                          Live Demo →
+                          Live Demo <ArrowRight size={13} aria-hidden="true" />
                         </Link>
                       ) : (
                         <a href={liveUrl} target="_blank" rel="noopener noreferrer" className="link-button">
-                          Live Demo →
+                          Live Demo <ArrowRight size={13} aria-hidden="true" />
                         </a>
                       )
                     )}
@@ -204,7 +209,9 @@ export const HomePage = () => {
           </ul>
           <div className="now-tile__footer">
             <span className="now-tile__updated">UPDATED {nowData.lastUpdated.toUpperCase()}</span>
-            <Link to="/now" className="link-button">More →</Link>
+            <Link to="/now" className="link-button">
+              More <ArrowRight size={13} aria-hidden="true" />
+            </Link>
           </div>
         </div>
         <div className="home-panel">

@@ -16,7 +16,7 @@
 
   /* Text */
   --text-primary: #0a0a0a;
-  --text-muted: #667085;
+  --text-muted: #475467; /* 5.8:1 on white, 5.5:1 on #fafafa */
   --text-inverse: #ffffff;
 
   --header-color: #0a0a0a;
@@ -82,6 +82,12 @@
   --border-color: #8ab06e;
   --border-muted: #423d3d;
 
+  --overlay-chrome: rgba(24, 22, 22, 0.78);
+  --overlay-menu: rgba(34, 32, 32, 0.95);
+  --overlay-soft: rgba(255, 255, 255, 0.06);
+  --overlay-softer: rgba(255, 255, 255, 0.03);
+  --accent-border: #8ab06e;
+
   --font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
   --font-serif: 'JetBrains Mono', monospace;
   --container-max-width: 820px;
@@ -103,6 +109,12 @@
 
   --border-color: #ffc47e;
   --border-muted: #2d3342;
+
+  --overlay-chrome: rgba(12, 13, 16, 0.78);
+  --overlay-menu: rgba(20, 22, 28, 0.95);
+  --overlay-soft: rgba(255, 255, 255, 0.06);
+  --overlay-softer: rgba(255, 255, 255, 0.03);
+  --accent-border: #ffc47e;
 
   --font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
   --font-serif: 'JetBrains Mono', monospace;

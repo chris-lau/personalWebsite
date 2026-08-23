@@ -86,7 +86,7 @@
 .theme-toggle-item:hover,
 .theme-toggle-item:focus-visible {
   color: var(--text-primary);
-  background-color: rgba(255, 255, 255, 0.06);
+  background-color: var(--overlay-soft);
   outline: none;
 }
 
