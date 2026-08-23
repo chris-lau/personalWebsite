@@ -25,7 +25,7 @@ export const Default: Story = {
     children: (
       <div>
         <h1 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>
-          Technical product leader who builds the AI systems he ships.
+          Technical product leader delivering enterprise AI at scale.
         </h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>
           The Light Crisp layout — one design system, light and dark modes.

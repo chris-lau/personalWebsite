@@ -4,7 +4,7 @@ test.describe('Portfolio E2E Tests', () => {
   test('navigates through all core page routes', async ({ page }) => {
     // 1. Home page — statement hero leads; name carried in the lede
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: /Technical product leader who builds the AI systems he ships/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Technical product leader delivering enterprise AI at scale/i })).toBeVisible();
 
     // 2. About page
     await page.goto('/about');
@@ -70,10 +70,10 @@ test.describe('Portfolio E2E Tests', () => {
     await page.goto('/');
 
     // First 10 seconds: statement headline, name, role, value prop, status, both CTAs.
-    await expect(page.getByRole('heading', { name: /Technical product leader who builds the AI systems he ships/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Technical product leader delivering enterprise AI at scale/i })).toBeVisible();
     await expect(page.locator('.home-hero__lede').getByText('Chris Lau')).toBeVisible();
-    await expect(page.getByText('Staff Product Manager, AI at Global Relay')).toBeVisible();
-    await expect(page.getByText(/the rare PM who architects, codes, and ships/i)).toBeVisible();
+    await expect(page.locator('.home-hero__lede').getByText(/Staff Product Manager, AI\./)).toBeVisible();
+    await expect(page.getByText(/bridging cutting-edge ML with real-world business impact/i)).toBeVisible();
     await expect(page.getByText('Staff Product Manager, Artificial Intelligence @ Global Relay')).toBeVisible();
     await expect(page.getByRole('link', { name: 'View Experience' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Get in Touch' })).toBeVisible();
@@ -165,6 +165,6 @@ test.describe('Portfolio E2E Tests', () => {
     // Click return home link
     await page.click('text=Return Home');
     await expect(page).toHaveURL('/');
-    await expect(page.getByRole('heading', { name: /Technical product leader who builds the AI systems he ships/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Technical product leader delivering enterprise AI at scale/i })).toBeVisible();
   });
 });

@@ -84,12 +84,12 @@ export const HomePage = () => {
         </div>
 
         <h1 className="home-hero__title">
-          Technical product leader who builds the AI systems he ships.
+          Technical product leader delivering enterprise AI at scale.
         </h1>
         <p className="home-hero__lede">
-          <strong>{profileData.name}</strong> — <span>{profileData.title}</span>.
-          {' '}AI surveillance, agentic automation, and enterprise data acquisition —
-          the rare PM who architects, codes, and ships.
+          <strong>{profileData.name}</strong> — Staff Product Manager, AI. Leading product
+          strategy across AI surveillance, agentic automation, and enterprise data
+          acquisition — bridging cutting-edge ML with real-world business impact.
         </p>
         <p className="home-hero__meta">
           {profileData.location} · {profileData.credentials}

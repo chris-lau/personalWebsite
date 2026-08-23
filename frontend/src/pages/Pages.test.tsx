@@ -106,10 +106,10 @@ describe('Page Components Unit Tests', () => {
 
     // Statement hero: positioning headline, name carried in the lede.
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-      'Technical product leader who builds the AI systems he ships.',
+      'Technical product leader delivering enterprise AI at scale.',
     );
     expect(screen.getByText('Chris Lau')).toBeInTheDocument();
-    expect(screen.getByText('Staff Product Manager, AI at Global Relay')).toBeInTheDocument();
+    expect(screen.getByText(/Staff Product Manager, AI\. Leading product strategy/)).toBeInTheDocument();
     expect(screen.getByText(/Greater Vancouver Metropolitan Area/)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /View Experience/ })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Get in Touch' })).toHaveAttribute(
