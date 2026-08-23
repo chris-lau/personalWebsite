@@ -59,8 +59,8 @@ const NOW_TILE_ITEM_COUNT = 3;
 /** Mono section label with index + hairline (Light Crisp section head). */
 const SectionHead = ({ index, label }: { index?: string; label: string }) => (
   <div className="home-section-head">
+    {index && <span className="home-section-head__index">{index}</span>}
     <h2 className="home-section-head__title">{label}</h2>
-    <span className="home-section-head__index">{index}</span>
     <span className="home-section-head__rule" aria-hidden="true" />
   </div>
 );

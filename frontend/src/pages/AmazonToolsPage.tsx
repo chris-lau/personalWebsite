@@ -161,7 +161,7 @@ export const AmazonToolsPage: React.FC = () => {
         </div>
       )}
 
-      {/* Top Tab Switcher */}
+      <Section index="01" title="SELLER TOOLKIT">
       <nav className="amazon-tabs-bar" aria-label="Amazon Tools Navigation">
         <button
           type="button"
@@ -254,6 +254,7 @@ export const AmazonToolsPage: React.FC = () => {
           </aside>
         )}
       </div>
+      </Section>
     </div>
   );
 };
