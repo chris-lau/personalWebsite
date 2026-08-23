@@ -122,35 +122,22 @@ test.describe('Portfolio E2E Tests', () => {
     await expect(page.getByText(/Live product demo:/i)).toBeVisible();
   });
 
-  test('toggles theme between Modern, ASCII, and CLI modes', async ({ page }) => {
+  test('toggles between light and dark modes', async ({ page }) => {
     await page.goto('/');
 
-    // First visit defaults to Modern.
+    // First visit defaults to light.
     const htmlElement = page.locator('html');
-    await expect(htmlElement).toHaveAttribute('data-theme', 'modern');
+    await expect(htmlElement).toHaveAttribute('data-theme', 'light');
     await expect(page.locator('.modern-layout-container')).toBeVisible();
 
-    // Open the compact theme switcher and pick ASCII.
-    const trigger = page.getByRole('button', { name: /Theme: .+ — select theme/ });
-    await trigger.click();
-    await page.getByRole('menuitemradio', { name: 'ASCII' }).click();
-    await expect(htmlElement).toHaveAttribute('data-theme', 'ascii');
-    await expect(page.locator('.ascii-layout-container')).toBeVisible();
+    // Toggle to dark — same layout, dark token set.
+    await page.getByRole('button', { name: 'Switch to dark mode' }).click();
+    await expect(htmlElement).toHaveAttribute('data-theme', 'dark');
+    await expect(page.locator('.modern-layout-container')).toBeVisible();
 
-    // Switch to CLI.
-    await trigger.click();
-    await page.getByRole('menuitemradio', { name: 'CLI' }).click();
-    await expect(htmlElement).toHaveAttribute('data-theme', 'cli');
-    await expect(page.locator('.cli-layout-container')).toBeVisible();
-
-    // The CLI theme keeps a prompt-style home link back to /.
-    await page.locator('.cli-prompt-link').click();
-    await expect(page).toHaveURL('/');
-
-    // Switch back to Modern.
-    await trigger.click();
-    await page.getByRole('menuitemradio', { name: 'Modern' }).click();
-    await expect(htmlElement).toHaveAttribute('data-theme', 'modern');
+    // And back to light.
+    await page.getByRole('button', { name: 'Switch to light mode' }).click();
+    await expect(htmlElement).toHaveAttribute('data-theme', 'light');
   });
 
   test('filters projects by technology tag and switches to Live GitHub Activity tab', async ({ page }) => {

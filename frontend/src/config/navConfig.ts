@@ -1,15 +1,11 @@
 export interface NavChildItem {
   path: string;
-  modernLabel: string;
-  cliLabel: string;
-  asciiLabel: string;
+  label: string;
 }
 
 export interface NavGroupItem {
   id: string;
-  modernLabel: string;
-  cliLabel: string;
-  asciiLabel: string;
+  label: string;
   path?: string; // If direct link (e.g. Contact, Projects, Experience)
   children?: NavChildItem[];
 }
@@ -17,81 +13,57 @@ export interface NavGroupItem {
 export const NAV_GROUPS: NavGroupItem[] = [
   {
     id: 'experience',
-    modernLabel: 'Experience',
-    cliLabel: 'experience/',
-    asciiLabel: 'EXP',
+    label: 'Experience',
     path: '/experience',
   },
   {
     id: 'projects',
-    modernLabel: 'Projects',
-    cliLabel: 'projects/',
-    asciiLabel: 'PROJECTS',
+    label: 'Projects',
     path: '/projects',
   },
   {
     id: 'about',
-    modernLabel: 'About',
-    cliLabel: 'about/',
-    asciiLabel: 'ABOUT',
+    label: 'About',
     children: [
       {
         path: '/about',
-        modernLabel: 'Bio & Skills',
-        cliLabel: 'about.txt',
-        asciiLabel: 'ABOUT',
+        label: 'Bio & Skills',
       },
       {
         path: '/now',
-        modernLabel: "What I'm Doing Now",
-        cliLabel: 'now.md',
-        asciiLabel: 'NOW',
+        label: "What I'm Doing Now",
       },
       {
         path: '/blog',
-        modernLabel: 'Blog',
-        cliLabel: 'blog/',
-        asciiLabel: 'BLOG',
+        label: 'Blog',
       },
       {
         path: '/guidebook',
-        modernLabel: 'Engineering Guidebook',
-        cliLabel: 'book.md',
-        asciiLabel: 'BOOK',
+        label: 'Engineering Guidebook',
       },
     ],
   },
   {
     id: 'lab',
-    modernLabel: 'Lab',
-    cliLabel: 'lab/',
-    asciiLabel: 'LAB',
+    label: 'Lab',
     children: [
       {
         path: '/how-this-site-works',
-        modernLabel: 'How This Site Works',
-        cliLabel: 'stack.md',
-        asciiLabel: 'STACK',
+        label: 'How This Site Works',
       },
       {
         path: '/monitoring',
-        modernLabel: 'Live Ops Dashboard',
-        cliLabel: 'top.sh',
-        asciiLabel: 'OPS',
+        label: 'Live Ops Dashboard',
       },
       {
         path: '/amazon-tools',
-        modernLabel: 'Amazon Seller Suite',
-        cliLabel: 'amazon-tools.sh',
-        asciiLabel: 'AMZ-TOOLS',
+        label: 'Amazon Seller Suite',
       },
     ],
   },
   {
     id: 'contact',
-    modernLabel: 'Contact',
-    cliLabel: 'contact.sh',
-    asciiLabel: 'CONTACT',
+    label: 'Contact',
     path: '/contact',
   },
 ];

@@ -10,7 +10,7 @@ describe('BoxContainer Component', () => {
 
   it('renders title when provided', () => {
     render(<BoxContainer title="Test Title">Test Content</BoxContainer>);
-    expect(screen.getByText('[ Test Title ]')).toBeDefined();
+    expect(screen.getByText('Test Title')).toBeDefined();
   });
 });
 

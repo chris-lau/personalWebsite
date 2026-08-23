@@ -8,33 +8,37 @@ interface ThemeContextType {
 }
 
 const STORAGE_KEY = 'portfolio_theme';
-const VALID_THEMES: ThemeMode[] = ['modern', 'ascii', 'cli'];
+const VALID_THEMES: ThemeMode[] = ['light', 'dark'];
+/** Legacy layout-theme values from before the Light Crisp consolidation. */
+const LEGACY_THEMES = ['modern', 'ascii', 'cli'];
+
+const readInitialTheme = (): ThemeMode => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved && VALID_THEMES.includes(saved as ThemeMode)) return saved as ThemeMode;
+    if (saved && LEGACY_THEMES.includes(saved)) return 'light';
+  } catch {
+    // Ignore storage errors in restricted contexts (e.g. Chrome incognito/iframe)
+  }
+  return 'light';
+};
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<ThemeMode>(() => {
-    try {
-      const savedTheme = localStorage.getItem(STORAGE_KEY) as ThemeMode;
-      return VALID_THEMES.includes(savedTheme) ? savedTheme : 'modern';
-    } catch {
-      return 'modern';
-    }
-  });
+  const [theme, setThemeState] = useState<ThemeMode>(readInitialTheme);
 
   const setTheme = (newTheme: ThemeMode) => {
     setThemeState(newTheme);
     try {
       localStorage.setItem(STORAGE_KEY, newTheme);
     } catch {
-      // Ignore storage errors in restricted contexts (e.g. Chrome incognito/iframe)
+      // Ignore storage errors in restricted contexts
     }
   };
 
   const toggleTheme = () => {
-    if (theme === 'modern') setTheme('ascii');
-    else if (theme === 'ascii') setTheme('cli');
-    else setTheme('modern');
+    setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
   useEffect(() => {

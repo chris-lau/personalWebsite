@@ -96,7 +96,7 @@ export const ModernLayout = ({ children }: ModernLayoutProps) => {
                         }
                         onClick={closeMobileMenu}
                       >
-                        {group.modernLabel}
+                        {group.label}
                       </NavLink>
                     </li>
                   );
@@ -117,7 +117,7 @@ export const ModernLayout = ({ children }: ModernLayoutProps) => {
                       aria-haspopup="true"
                       aria-controls={`submenu-${group.id}`}
                     >
-                      <span>{group.modernLabel}</span>
+                      <span>{group.label}</span>
                       <span className="dropdown-caret" aria-hidden="true">
                         {isOpen ? '▴' : '▾'}
                       </span>
@@ -138,7 +138,7 @@ export const ModernLayout = ({ children }: ModernLayoutProps) => {
                             role="menuitem"
                             onClick={closeMobileMenu}
                           >
-                            {child.modernLabel}
+                            {child.label}
                           </NavLink>
                         </li>
                       ))}

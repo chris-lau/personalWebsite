@@ -127,41 +127,30 @@ describe('App Router & Integration Tests', () => {
     // Wait for the lazy-loaded page to render the layout.
     await screen.findByText('ASK THIS SITE');
 
-    // Open the compact theme switcher and select ASCII.
-    const themeTrigger = screen.getByRole('button', { name: /Theme:.+select theme/i });
-    fireEvent.click(themeTrigger);
+    // Toggle dark mode — the provider applies it to <html data-theme="...">.
+    fireEvent.click(screen.getByRole('button', { name: 'Switch to dark mode' }));
+    expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
 
-    fireEvent.click(screen.getByRole('menuitemradio', { name: /ASCII/i }));
-
-    // The ThemeProvider applies the active theme to <html data-theme="...">.
-    // Assert via that side effect (the meaningful, render-affecting outcome),
-    // which is robust against act()/batching quirks in the deeper lazy-loaded tree.
-    await screen.findByText('ASK THIS SITE');
-    expect(document.documentElement.getAttribute('data-theme')).toBe('ascii');
+    // And back to light.
+    fireEvent.click(screen.getByRole('button', { name: 'Switch to light mode' }));
+    expect(document.documentElement.getAttribute('data-theme')).toBe('light');
   });
 
-  it('renders all 3 layout themes (Modern, ASCII, CLI) without triggering ErrorBoundary', async () => {
-    const { unmount } = render(
+  it('toggles between light and dark modes', async () => {
+    render(
       <MemoryRouter initialEntries={['/']}>
         <App />
       </MemoryRouter>
     );
 
-    await screen.findByText('ASK THIS SITE');
-    expect(screen.queryByText('Something went wrong')).toBeNull();
+    // Light is the default.
+    expect(document.documentElement.getAttribute('data-theme')).toBe('light');
 
-    // Switch to ASCII
-    const themeTrigger = screen.getByRole('button', { name: /Theme:.+select theme/i });
-    fireEvent.click(themeTrigger);
-    fireEvent.click(screen.getByRole('menuitemradio', { name: /ASCII/i }));
-    expect(screen.queryByText('Something went wrong')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Switch to dark mode' }));
+    expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
 
-    // Switch to CLI
-    fireEvent.click(screen.getByRole('button', { name: /Theme:.+select theme/i }));
-    fireEvent.click(screen.getByRole('menuitemradio', { name: /CLI/i }));
-    expect(screen.queryByText('Something went wrong')).toBeNull();
-
-    unmount();
+    fireEvent.click(screen.getByRole('button', { name: 'Switch to light mode' }));
+    expect(document.documentElement.getAttribute('data-theme')).toBe('light');
   });
 });
 

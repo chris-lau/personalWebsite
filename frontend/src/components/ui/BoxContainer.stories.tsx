@@ -19,7 +19,6 @@ export const SingleBorder: Story = {
 export const DoubleBorder: Story = {
   args: {
     title: 'SYSTEM LOGS',
-    variant: 'double',
     children: 'This box uses double border lines for extra visual distinction.',
   },
 };

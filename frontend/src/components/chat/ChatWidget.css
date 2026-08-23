@@ -423,18 +423,7 @@
 }
 
 /* Theme overrides for embedded starter chips */
-[data-theme="ascii"] .chat-panel--embedded .chat-panel__starter,
-[data-theme="ascii"] .chat-panel--embedded .chat-panel__input,
-[data-theme="ascii"] .chat-panel--embedded .chat-panel__send {
-  border-radius: 2px;
-}
 
-[data-theme="cli"] .chat-panel--embedded .chat-panel__starter,
-[data-theme="cli"] .chat-panel--embedded .chat-panel__input,
-[data-theme="cli"] .chat-panel--embedded .chat-panel__send {
-  border-radius: 2px;
-  font-family: var(--font-family);
-}
 
 /* Skeleton shown while models/fallback resolve (embedded only — the widget
    renders null during that window). */

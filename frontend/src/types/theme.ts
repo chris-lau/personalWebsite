@@ -1,2 +1,1 @@
-export type ThemeMode = 'ascii' | 'cli' | 'modern';
-
+export type ThemeMode = 'light' | 'dark';

@@ -1,103 +1,36 @@
+/* Flat widget panel — bordered surface for operational UIs. */
 .box-container {
-  position: relative;
-  margin-bottom: 1.5rem;
-  background-color: var(--bg-secondary);
-  font-family: var(--font-family);
-}
-
-
-.ascii-box-header-row,
-.ascii-box-footer-row {
-  display: flex;
-  align-items: center;
-  user-select: none;
-  color: var(--border-color);
-  font-weight: bold;
-  line-height: 1;
-}
-
-.ascii-box-header-row .border-line,
-.ascii-box-footer-row .border-line {
-  overflow: hidden;
-  white-space: nowrap;
-  letter-spacing: 0;
-}
-
-.flex-fill {
-  flex: 1;
-}
-
-.box-title {
-  color: var(--header-color, var(--accent-primary));
-  padding: 0 0.5rem;
-  font-weight: 700;
-}
-
-
-.ascii-box-content {
-  padding: 1rem 1.25rem;
-  color: var(--text-primary);
-}
-
-.box-section-heading {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-/* Modern Theme Overrides for BoxContainer — Light Crisp flat panel */
-[data-theme="modern"] .box-container {
-  border-radius: var(--radius-lg);
   border: 1px solid var(--border-muted);
+  border-radius: var(--radius-lg);
   background: var(--surface-raised);
   box-shadow: var(--shadow-card);
-  margin-bottom: 0;
   padding: 1.5rem 1.75rem;
   overflow: hidden;
 }
 
-[data-theme="modern"] .ascii-box-header-row,
-[data-theme="modern"] .ascii-box-footer-row {
-  display: none;
-}
-
-[data-theme="modern"] .box-section-heading {
-  position: static;
-  width: auto;
-  height: auto;
-  margin: 0 0 1.25rem 0;
-  padding: 0 0 0.85rem 0;
-  overflow: visible;
-  clip: auto;
-  white-space: normal;
+.box-section-heading {
   font-family: var(--font-display);
   font-size: 1.2rem;
   font-weight: 600;
   color: var(--header-color);
   letter-spacing: -0.01em;
+  margin: 0 0 1.1rem 0;
+  padding: 0 0 0.7rem 0;
   border-bottom: 1px solid var(--border-muted);
-  padding-bottom: 0.7rem;
 }
 
-[data-theme="modern"] .ascii-box-content {
-  padding: 0;
+.ascii-box-content {
+  color: var(--text-primary);
 }
 
 @media (max-width: 640px) {
-  [data-theme="modern"] .box-container {
+  .box-container {
     padding: 1.15rem 1.1rem;
   }
 
-  [data-theme="modern"] .box-section-heading {
+  .box-section-heading {
     font-size: 1.1rem;
     margin-bottom: 0.9rem;
     padding-bottom: 0.55rem;
   }
 }
-
