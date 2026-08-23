@@ -1,8 +1,8 @@
-# Chris Lau // AI & Product Leadership Website (Triple-Theme ASCII, CLI & Modern Editorial)
+# Chris Lau // AI & Product Leadership Website (Light Crisp Design System)
 
-A modern, responsive, accessible, frontend-only personal portfolio website and blog engine supporting three distinct visual themes: **Warm Earthy ASCII Art Design**, **Retro Terminal CLI Design**, and **Modern Editorial Design** (inspired by Anthropic and OpenAI web aesthetics) with real-time theme toggling.
+A modern, responsive, accessible personal portfolio website and blog engine with a **single token-driven design system (Light Crisp)** rendered in **light and dark modes**, a retrieval-grounded AI chat ("Ask this site"), a full FastAPI backend with PostgreSQL, and live operational telemetry.
 
-Built with **React 18**, **TypeScript**, **Vite**, **React Router 6**, **Storybook 8**, **Vitest**, and **Playwright**.
+Built with **React 18**, **TypeScript**, **Vite 5**, **React Router 6**, **Storybook 10**, **Vitest**, **Playwright**, and a **Python FastAPI** backend.
 
 Live Website: [https://chrislau.dev](https://chrislau.dev)  
 Live Component Storybook: [https://chris-lau-storybook.pages.dev](https://chris-lau-storybook.pages.dev)  
@@ -12,93 +12,63 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
 
 ## 🎨 Key Features
 
-- **Triple-Theme Support**:
-  - **`ascii` Mode**: Warm Earthy single-column layout (espresso background, parchment text, terracotta/sage accents, ASCII box frames).
-  - **`cli` Mode**: Retro terminal window layout with interactive command prompt (`$`), tab navigation, and terminal output aesthetic.
-  - **`modern` Mode**: Modern Editorial layout inspired by Anthropic & OpenAI websites (dark charcoal surface, warm ambient glows, `Instrument Serif` headers, and `Inter` sans-serif typography).
-  - **Real-Time Segmented Control**: 3-option pill selector (`[ MODERN | ASCII | CLI ]`) providing instant 1-click theme switching, full keyboard accessibility (`role="radiogroup"`), and `localStorage` state persistence.
-- **Consolidated Navigation & Submenus**:
-  - Consolidated 10 flat navigation items down to 3 intuitive top-level categories (**About** ▾, **Work & Writing** ▾, **System & Ops** ▾) + standalone **Contact** link.
-  - **Logo / Brand (`CL / Chris Lau`)**: Direct link to Home (`/`).
-  - **`About` ▾**: Bio & Profile (`/about`), Experience & Career (`/experience`), What I'm Doing Now (`/now`).
-  - **`Work & Writing` ▾**: Portfolio Projects (`/projects`), Technical Blog (`/blog`), Engineering Guidebooks (`/guidebook`), Amazon Seller Suite (`/amazon-tools`).
-  - **`System & Ops` ▾**: Site Architecture & Stack (`/how-this-site-works`), Ops Dashboard (`/monitoring`).
-  - **`Contact`**: Standalone CTA link (`/contact`).
-  - **Theme-Specific Submenu Adaptations**: Glassmorphism floating cards in Modern theme, Unix folder structures (`about/`, `work/`, `sys/`) in CLI theme, and ASCII border popover boxes (`+--- ABOUT ---+`) in ASCII theme.
-  - **Accessibility & UX**: W3C ARIA disclosure semantics (`aria-expanded`, `aria-haspopup="true"`, `aria-controls`), keyboard `Escape` key close, auto-dismiss on outside click, and responsive mobile drawer accordion collapse.
+- **Light Crisp Design System (One Design, Two Modes)**:
+  - **Token-Driven Styling**: Every visual decision — colors, typography, radii, shadows, borders — is a CSS custom property in `frontend/src/styles/variables.css`. Components consume semantic tokens (`var(--bg-primary)`, `var(--accent-primary)`, `var(--radius-md)`); restyling the whole site is a one-file change.
+  - **Light & Dark Modes**: The `:root` block defines the light palette; a single `[data-theme="dark"]` block flips the entire site. `ThemeContext` persists the mode to `localStorage` and automatically migrates legacy values from the retired three-theme era (`modern`/`ascii`/`cli` → `light`).
+  - **One-Point Shape Control**: Chip/badge shape sitewide is set by `--radius-chip`; buttons by `--radius-md`.
+  - **Consistent Component Grammar**: Five normalized button species (primary, default, ghost, chip, tab), numbered-section heads (`Section` component: index chip → title → hairline rule), editorial `work-row` lists for experience/work items, and boxed `BoxContainer` panels reserved for operational surfaces (chat, monitoring).
+  - **One Layout**: A single `ModernLayout` rendered through the `LayoutRenderer` seam — no per-theme layout components.
 
-- **Interactive Dual Engineering Guidebook App (`/guidebook`)**:
-  - **Dual Interactive Books (16 Chapters Total)**:
-    - **Book 1: Frontend Foundations**: *Building Modern Web Applications: A Step-by-Step Guide for Frontend Beginners* (9 chapters: React fundamentals, component design, state management, SPA routing, API caching, testing strategies).
-    - **Book 2: Backend Architecture**: *Production-Ready Backend Engineering: A Step-by-Step Guide for Python & FastAPI* (7 chapters: REST design, Pydantic schemas, middleware, database integration, Alembic migrations, SSE streaming, Docker containerization).
-  - Features dynamic book toggle switcher, collapsible mobile Table of Contents (`Choose Chapter ▾`), syntax-highlighted code blocks, WCAG tables, and next/prev chapter pagination buttons.
-  - **Performance & Mobile Optimization**: `useMemo` pre-parsed markdown node caching, container-relative instant scrolling (`scrollToReader()`), and CSS Grid `minmax(0, 1fr)` track sizing for responsive mobile reading without horizontal viewport overflow.
-
-- **Amazon Seller Trend & Opportunity Suite (`/amazon-tools`)**:
-  - **Opportunity Finder**: Interactive discovery tool analyzing 12 high-velocity product niches with customizable demand vs. competition scoring, search volume filters, and category toggles.
-  - **2026 FBA Unit Economics & Profit Margin Calculator**: Dynamic financial simulator modeling accurate 2026 Amazon fulfillment fee tiers, category-specific referral rates, TACoS ad spend, landed COGS, and breakeven margins.
-  - **Competitor Review Sentiment & Gap Analysis**: Product intelligence dashboard synthesizing sentiment weaknesses across 100+ customer reviews with instant AI prompt generation for product redesign.
-  - **Keyword Velocity & Trends Explorer**: Search volume tracking and growth velocity indicator identifying trending product terms before seasonal demand spikes.
-  - **AI Companion Mode & Copilot Assistance**: Side-by-side interactive chat assistant with persistent header toggle (`🤖 AI Companion Mode [ON/OFF]`), tab-aware starter questions, and 1-click "Ask AI Copilot" quick actions to clarify complex metrics (Opportunity Score, TACoS, 2026 FBA tiers, Low-Price FBA, breakeven thresholds, and review differentiation). Grounded directly in 2026 FBA economics and site architecture.
-
-- **Full-Featured Technical Blog Engine (`/blog`)**:
-  - Modular Markdown storage in `backend/posts/`, auto-discovered at build time via Vite's `import.meta.glob` (no manual import lists to maintain).
-  - Full GFM Markdown rendering via `react-markdown` + `remark-gfm` (shared `<MarkdownRenderer>` component supporting inline links, bold, code, tables, ordered/unordered lists, blockquotes with TL;DR callout detection, and images).
-  - Query helpers (`getAllBlogPosts`, `getBlogPostBySlug`, `getBlogPostsByTag`, `getGroupedBlogPostsByCategory`, `getRelatedBlogPosts`).
-  - **Executive Summaries**: Every article features a prominent **TL;DR** callout box for instant comprehension.
-  - **Category Grouping & Discovery**: **22 technical articles** organized under 4 categories (`Backend Architecture & Security`, `React Architecture & Design Systems`, `Developer Workflows & Tooling`, `Testing & Quality Assurance`) with automated **Related Articles** suggestions.
-
-- **Chat-First Home Page ("Ask Chris" AI Command Center)**:
-  - **AI Command Center as the Front Door**: The home hero places the interactive AI chat prompt front-and-center directly above the fold, featuring a live grounding status badge (`🟢 Grounded on Chris's live experience, projects & architecture`) and streamlined headline.
-  - **One-Click Intent-Driven Starter Chips**: Curated prompt chips ("What is Chris's biggest project?", "Tell me about his AI leadership & experience", "What is his core tech stack?", "What is he working on now?") stream answers with zero typing.
-  - **Unified Direct Exploration Dock**: An integrated responsive dock (`hero-explore-dock`) consolidating traditional reading routes (`About` · `Projects` · `Experience` · `Blog` · `Now`) and external profiles (`GitHub ↗` · `LinkedIn ↗`); featured projects and skills matrix remain scannable below the fold.
-  - **Single Chat Surface**: The floating widget hides itself on `/` and `/amazon-tools` where dedicated in-page chat interfaces operate.
-  - **Router-Aware Markdown Links**: Assistant replies render via a `chat` variant of `<MarkdownRenderer>` — site-relative "Read more:" links navigate client-side (React Router `<Link>`, no hard reload).
-  - **Extended Grounding**: Chat context includes `projects.json`, `skills.json`, `now.json`, and `site_architecture.json`; the system prompt caps answers (~120 words) and restricts links to an allowlist of site routes (`/about`, `/projects`, `/blog/{slug}`, `/experience`, `/now`, `/guidebook`, `/amazon-tools`) to prevent hallucinated URLs.
-  - **Plan**: [ask-chris-home-plan.md](ask-chris-home-plan.md) | **Tracker**: [IMPLEMENTATION-ask-chris.md](IMPLEMENTATION-ask-chris.md)
+- **Chat-First Home Page ("Ask this site")**:
+  - **Two-Column Hero**: A statement headline, status line, and direct exploration dock (About · Projects · Experience · Blog · Now · GitHub · LinkedIn) on the left; the interactive **Ask this site** chat column on the right, above the fold (stacks cleanly on mobile).
+  - **One-Click Starter Prompts**: Curated intent chips ("What is Chris's biggest project?", "What is his core tech stack?", …) stream answers with zero typing.
+  - **Programmatic Chat API**: `openChat({ starter })` (via `chatControl.ts`) lets any page open the chat panel with a pre-seeded question; on `/` it scrolls to the in-page chat column instead.
+  - **Single Chat Surface**: The floating launcher pill hides itself on `/` and `/amazon-tools` where dedicated in-page chat interfaces operate.
+  - **Router-Aware Markdown Links**: Assistant replies render site-relative "Read more:" links as React Router `<Link>`s (no hard reload).
 
 - **AI Chat Widget ("Chat with Chris")**:
-  - **Retrieval-Grounded Q&A**: A visitor-facing chat widget that answers questions using the site's blog posts, guidebooks, profile, projects, skills, site architecture, and current focus as context (~71K tokens) — no hallucination about unrelated topics.
-  - **Streaming Replies (SSE)**: Replies stream token-by-token over Server-Sent Events for a responsive UX.
+  - **Retrieval-Grounded Q&A**: Answers questions using the site's blog posts, guidebooks, profile, projects, skills, site architecture, and current focus as context (~71K tokens) — no hallucination about unrelated topics.
+  - **Streaming Replies (SSE)**: Replies stream token-by-token over Server-Sent Events.
   - **Multi-Provider, One SDK**: A single OpenAI-compatible client (`POST /api/chat`) serves Gemini, DeepSeek, and OpenAI behind a UI model switcher — only providers with a configured key appear in the dropdown.
-  - **Defensive Boundaries**: Strict system prompt resists prompt injection; per-IP rate limit (`CHAT_RATE_LIMIT_PER_MINUTE`) plus daily caps (`CHAT_DAILY_GLOBAL_LIMIT` / `CHAT_DAILY_PER_IP_LIMIT`) and bounded conversation history control cost/abuse.
-  - **Chat Observability (COMPLETE — All 7 Phases)**: The SSE stream emits structured event dicts (`token`, `meta`, `meta_server`, `usage`, `done`, `error`). Real token usage (`prompt_tokens`/`completion_tokens`) is reported for OpenAI and DeepSeek via provider-aware `stream_options` (Gemini is correctly excluded). Two server-side timing segments (`server_pre_llm_ms` for routing/prompt-build overhead, `server_llm_to_first_token_ms` for LLM inference to first token) enable TTFT decomposition: `ttft_client_ms ≈ network_rtt + server_pre_llm_ms + server_llm_to_first_token_ms`. Frontend types (`ChatMessageMetrics`, `ChatSessionSummary`, `StreamProgress`) and a pricing table (`MODEL_PRICING` with `Object.freeze` + `Readonly`) define the typed contract. The data layer (`sendChatMessage`) parses SSE events into `ChatMessageMetrics` with TTFT measurement and fallback token estimation. The `useChat` hook accumulates per-message metrics via `metricsMap` and tracks live streaming progress (`streamProgress`) with chunk-counting refs and interval-based `chunks_per_sec` reporting, with cleanup on stream complete, `clearChat`, and unmount. The companion-mode observability panel (`ChatObservabilityPanel`) renders a session summary card, latency sparkline, live streaming indicator, per-message metrics with segmented TTFT bar (network RTT / server overhead / LLM prefill), and model comparison — toggled via an Activity icon in the chat header with desktop split-panel and mobile tab navigation.
+  - **Defensive Boundaries**: Strict system prompt resists prompt injection; per-IP rate limit plus daily caps and bounded conversation history control cost/abuse.
+  - **Chat Observability (Complete — All 7 Phases)**: Structured SSE events (`token`, `meta`, `meta_server`, `usage`, `done`, `error`), real token usage for OpenAI/DeepSeek, two-segment server timing for TTFT decomposition (`ttft_client_ms ≈ network_rtt + server_pre_llm_ms + server_llm_to_first_token_ms`), typed frontend contracts (`ChatMessageMetrics`, `MODEL_PRICING`), and a companion observability panel (session summary, latency sparkline, per-message metrics with segmented TTFT bar, model comparison).
 
-- **Live GitHub Activity & Repository Dashboard (`/projects`)**:
-  - **Backend GitHub Proxy**: Server-side proxy endpoint (`GET /api/github-summary`) using `httpx` + optional `GITHUB_TOKEN` (5000 req/hr authenticated vs 60 req/hr unauthenticated), with a 15-minute in-memory TTL cache. Frontend calls the proxy and falls back to direct GitHub API if the backend is offline.
-  - **Interactive Username Switcher**: Allows visitors to lookup any GitHub user/organization (default: `@chris-lau`, presets: `@facebook`, `@vercel`).
-  - **30-Day Activity Filter & Highlights**: `⚡ Active (Past 30 Days)` pill filter and glowing `🔥 Active` badges on recently updated repos.
-  - **Client-Side Caching**: 15-minute `sessionStorage` TTL cache prevents hitting GitHub's 60 req/hr rate limit.
-  - **Tabbed Navigation**: Accessible tab control on Projects page (`📁 Featured Projects` vs `🐙 Live GitHub Activity`).
-  - **Storybook Stories**: Isolated visual component workshops for `<GitHubSummary />`, `<GitHubRepoCard />`, and `<GitHubUsernameSelector />`.
+- **Interactive Dual Engineering Guidebook (`/guidebook`)**:
+  - **Dual Interactive Books (16 Chapters Total)**: *Frontend Foundations* (9 chapters: React fundamentals, component design, state management, SPA routing, API caching, testing strategies) and *Production-Ready Backend Engineering* (7 chapters: REST design, Pydantic schemas, middleware, database integration, Alembic migrations, SSE streaming, Docker containerization).
+  - Dynamic book toggle switcher, collapsible mobile Table of Contents, syntax-highlighted code blocks, WCAG tables, and next/prev chapter pagination.
+
+- **Full-Featured Technical Blog Engine (`/blog`)**:
+  - Modular Markdown storage in `backend/posts/`, mapped through `backend/data/blog_posts.json` and rendered by a shared `<MarkdownRenderer>` (`react-markdown` + `remark-gfm`: links, tables, lists, blockquotes with TL;DR callout detection).
+  - Query helpers (`getAllBlogPosts`, `getBlogPostBySlug`, `getBlogPostsByTag`, `getGroupedBlogPostsByCategory`, `getRelatedBlogPosts`).
+  - **22 technical articles** organized under 4 categories (`Backend Architecture & Security`, `React Architecture & Design Systems`, `Developer Workflows & Tooling`, `Testing & Quality Assurance`) with automated Related Articles suggestions and prominent TL;DR callouts.
 
 - **Amazon Seller Intelligence & Opportunity Suite (`/amazon-tools`)**:
-  - **Live Product Search & Scraping Proxy**: FastAPI backend proxy (`GET /api/amazon/search`, `GET /api/amazon/asin/{asin}`) parsing live Amazon marketplace HTML for real product cards, live prices, customer reviews, ratings, and Prime eligibility with in-memory TTL caching.
-  - **Demand Velocity & Autocomplete Proxy**: Real-time Amazon search autocomplete suggestions and demand momentum velocity proxy (`GET /api/amazon/trends`).
-  - **Niche Opportunity Finder**: Search and filter 12+ product micro-niches with automated 0–100 Opportunity Scores based on search velocity, competition level, and price sweet spots.
-  - **2026 FBA Unit Economics Calculator**: Precise profit & margin simulator supporting 2026 Amazon fee schedules, Low-Price FBA fee breaks, referral rate tiers, dimensional weight logic, and Markdown sourcing summary export.
-  - **Review Gap & AI Listing Scanner**: Aggregates competitor complaint themes and generates prompt engineering templates for product differentiation.
-  - **AI Companion Mode**: Split-screen AI Copilot assistant with tab-tailored starter prompts and 1-click action triggers on cards/calculators.
-  - **Truthful Data Flagging & Degradation UI**: Differentiates live marketplace data from simulated benchmarks (`is_live` flags, `source` discriminators, warning status pills, and informative note banners).
+  - **Live Product Search & Scraping Proxy**: FastAPI backend proxy (`GET /api/amazon/search`, `GET /api/amazon/asin/{asin}`) parsing live Amazon marketplace HTML with in-memory TTL caching, plus autocomplete/demand-velocity proxies (`GET /api/amazon/trends`).
+  - **Opportunity Finder**: 12+ product micro-niches with automated 0–100 Opportunity Scores.
+  - **2026 FBA Unit Economics Calculator**: 2026 Amazon fee schedules, Low-Price FBA breaks, referral tiers, dimensional weight, and Markdown sourcing export.
+  - **Review Gap & AI Listing Scanner**, **Keyword Velocity Explorer**, and **AI Companion Mode** (split-screen copilot with tab-aware starters and 1-click ask actions, grounded in 2026 FBA economics).
+  - **Truthful Data Flagging**: Live marketplace data is differentiated from simulated benchmarks (`is_live` flags, source discriminators, warning pills).
+
+- **Full-Stack Operational Monitoring & Telemetry (`/monitoring`)**:
+  - Request correlation (`X-Request-ID` UUIDv4), structured JSON logging, sub-system health/readiness probes (`/health/live`, `/health/ready`), and process/DB telemetry (`/api/telemetry`).
+  - Browser Real User Monitoring (navigation timing, TTFB, DOM nodes, JS heap), storage audits, and a diagnostic JSON exporter.
+  - `<FullStackMonitoringDashboard />` with a 4-node live topology map (Cloudflare SPA → FastAPI → PostgreSQL → GitHub API), database health metrics, and an automated 5-step synthetic diagnostic runner.
+
+- **Live GitHub Activity & Repository Dashboard (`/projects`)**:
+  - Server-side GitHub proxy (`GET /api/github-summary`) with optional `GITHUB_TOKEN` (5000 req/hr) and a 15-minute in-memory TTL cache; client falls back to direct GitHub API if the backend is offline.
+  - Interactive username switcher, 30-day activity filter with Active badges, client-side `sessionStorage` caching, and accessible tabbed navigation.
 
 - **Accessibility, Mobile Responsiveness & UX**:
-  - **Edge-to-Edge Full-Bleed Resets**: Reset `#root` container with dynamic viewport units (`100dvh`) ensuring full-bleed sticky header across mobile screens.
-  - **Universal Breakpoints**: Standardized mobile responsive layouts on a clean 640px / 768px / 900px hierarchy.
-  - **Touch Target Scaling**: Mobile navigation hamburger toggles, theme pills, and action buttons enlarged to >= 40–44px for comfortable touch manipulation (`touch-action: manipulation`).
-  - **Non-Destructive iOS Zoom Prevention**: 16px base input sizing with `:not()` exclusions preserving compact micro-controls.
-  - **Accessible Icon System**: Semantic Lucide SVG icons replacing raw emojis with high-contrast text tokens (`var(--text-muted)` ensuring WCAG 2.1 AA 4.5:1 compliance).
-  - **Defensive Storage & Error Boundaries**: Top-level `ErrorBoundary` with graceful UI recovery and defensive `try/catch` around `localStorage`/`sessionStorage`.
-  - Scannable skill pill/chip tags across skills snapshots.
-  - Full keyboard focus indicators and semantic HTML5 layout containers (`#main-content` skip navigation).
-  - Universal zero-indent bullet list alignment (`list-style-position: inside`) and Contact page label alignment (`min-width: 95px`).
-  - Floating rounded glassmorphic footer card matching content container curvature (`16px`).
-  - Responsive markdown table parser rendering aligned data tables across all visual themes.
+  - Dynamic viewport units (`100dvh`) for full-bleed sticky header; standardized 640/768/900px breakpoint hierarchy.
+  - Touch targets ≥ 40–44px; 16px base input sizing prevents iOS zoom.
+  - Semantic Lucide SVG icons, WCAG 2.1 AA contrast via token values, decorative chrome hidden with `aria-hidden`, full keyboard focus indicators, `#main-content` skip navigation.
+  - Top-level `ErrorBoundary` and defensive `try/catch` around `localStorage`/`sessionStorage`.
 
 - **Testing & Quality Assurance**:
-  - Storybook 8 component catalog & accessibility auditing (`@storybook/addon-a11y`).
-  - Vitest + `@testing-library/react` unit & component integration tests (**196 / 196 passing tests** across 25 test files).
-  - Playwright real-browser end-to-end (E2E) testing across all 3 themes (**9 / 9 passing tests** across 3 spec files).
-  - Pytest backend unit & integration tests (**68 / 68 passing tests**).
+  - Vitest + React Testing Library unit & component integration tests (**215 / 215 passing** across 26 test files).
+  - Playwright real-browser end-to-end tests (**19 / 19 passing** across 6 spec files), including light/dark mode toggle persistence.
+  - Pytest backend unit & integration tests (**69 / 69 passing**).
+  - Storybook 10 component catalog & accessibility auditing (`@storybook/addon-a11y`).
 
 ---
 
@@ -106,43 +76,33 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
 
 ```text
 personalWebsite/
-├── README.md                          # Master project documentation
-├── personal-os-project-plan.md        # Master architectural project plan
-├── phase-1-implementation-plan.md     # Phase 1 execution plan & checklist
-├── phase-1-summary.md                 # Phase 1 summary & completion log
-├── phase-2-implementation-plan.md     # Phase 2 execution plan & checklist
-├── phase-2-summary.md                 # Phase 2 summary & completion log
-├── phase-3-implementation-plan.md     # Phase 3 execution plan & checklist
-├── phase-3-summary.md                 # Phase 3 summary & completion log
-├── phase-3.5-implementation-plan.md   # Phase 3.5 execution plan & checklist
-├── phase-3.5-summary.md               # Phase 3.5 summary & completion log
-├── phase-4-implementation-plan.md     # Phase 4 execution plan & checklist
-├── phase-4-summary.md                 # Phase 4 summary & completion log
-├── amazon-seller-tools-tracker.md     # Amazon Seller Suite roadmap & status log
-├── ai-chat-implementation-plan.md     # AI chat widget implementation plan
-├── ai-chat-plan-review.md             # AI chat plan review report
+├── README.md                          # Master project documentation (this file)
+├── personal-os-project-plan.md        # Master architectural roadmap (Phase 5 auth pending)
+├── phase-5-implementation-plan.md     # Next up: auth & draft posts (not yet implemented)
 ├── backend/                           # Python FastAPI Backend Service
 │   ├── main.py                        # FastAPI entrypoint, CORS & error handlers
 │   ├── core/                          # DB configuration, models, middleware & rate limiting
 │   ├── schemas/                       # Pydantic v2 data models (incl. GitHub proxy)
 │   ├── api/endpoints/                 # REST endpoints, GitHub proxy, chat (SSE), telemetry & health
-│   ├── data/                          # Backend data (blog posts, Guidebook, Amazon knowledge)
+│   ├── data/                          # Structured data (blog index, guidebooks, Amazon knowledge)
+│   ├── posts/                         # Blog & guidebook markdown sources
 │   ├── migrations/                    # Alembic database migration revisions
 │   ├── seed.py                        # Idempotent database seeding pipeline
-│   ├── tests/                         # Pytest test suite (68 tests)
+│   ├── tests/                         # Pytest test suite (69 tests)
 │   └── Dockerfile                     # Multi-stage container build (non-root) for Render
 └── frontend/                          # React 18 + TypeScript SPA app
-    ├── .storybook/                    # Storybook 8 configuration
-    ├── e2e/                           # Playwright end-to-end tests (3 spec files)
+    ├── .storybook/                    # Storybook 10 configuration
+    ├── e2e/                           # Playwright end-to-end tests (6 spec files)
     ├── src/
     │   ├── api/                       # REST clients, chat SSE, config (MODEL_PRICING), telemetryApi
     │   ├── components/                # UI, Blog, Chat, Markdown, GitHub & Monitoring Dashboard
-    │   ├── context/                   # ThemeContext (Global 3-theme manager)
-    │   ├── data/                      # Frontend data importers (import.meta.glob)
+    │   ├── context/                   # ThemeContext (light/dark manager + legacy migration)
+    │   ├── data/                      # Frontend data importers
     │   ├── hooks/                     # Custom React hooks (useGitHubData, useChat, useNavDropdown)
     │   ├── pages/                     # Page views (lazy-loaded, code-split)
+    │   ├── styles/                    # variables.css (design tokens — single source of truth)
     │   ├── utils/                     # Telemetry utilities (RUM, audit & export)
-    │   └── types/                     # TypeScript interfaces (monitoring.ts, chat.ts)
+    │   └── types/                     # TypeScript interfaces (theme.ts, chat.ts, monitoring.ts)
     ├── package.json
     ├── vite.config.ts
     └── tsconfig.json
@@ -150,91 +110,17 @@ personalWebsite/
 
 ---
 
-## 🐍 Phase 3 — FastAPI Backend & Python API Service (COMPLETED)
+## 🐍 FastAPI Backend & Database
 
-Phase 3 introduces a dedicated, production-ready **Python FastAPI Backend** (`/backend`) providing a centralized REST API service, server-side caching, and client fallback handling.
+The backend (`/backend`) is a production-ready Python FastAPI service providing REST APIs, server-side caching, and client fallback handling.
 
-Detailed summary: [phase-3-summary.md](file:///Users/chrislau/Documents/personalWebsite/phase-3-summary.md) | Implementation plan: [phase-3-implementation-plan.md](file:///Users/chrislau/Documents/personalWebsite/phase-3-implementation-plan.md)
+- **Environment-Aware Dual Database**: Zero-config SQLite locally (`sqlite:///./personal_os.db`); managed free-tier Aiven PostgreSQL in production (`DATABASE_URL`). SQLAlchemy 2.0 ORM models (`Project`, `Technology`, `NowEntry`, `ReadingItem`) with Alembic schema migrations.
+- **Resilient Fallback**: Idempotent JSON-to-SQL seeding (`seed.py`) plus API fallback handlers returning static local data if the database is unreachable or unseeded — the website stays up regardless.
+- **Pydantic v2 Schemas**: Strict input/output validation across all endpoints; auto-generated OpenAPI docs at `/docs` (Swagger UI) and `/redoc`.
+- **Automated 6-Hour Keep-Alive**: GitHub Actions workflow (`.github/workflows/keep-alive.yml`) pings `/health/ready` every 6 hours to keep cloud PostgreSQL active.
+- **Server-Side GitHub Proxy**: Async HTTPX fetch with 15-minute TTL cache to eliminate client-side rate limits.
 
----
-
-## 📊 Phase 3.5 — Full-Stack Operational Monitoring & Telemetry (COMPLETED)
-
-Phase 3.5 introduces an integrated, zero-cost, zero-cookie **Full-Stack Operational Monitoring & Telemetry System** across the Python FastAPI backend, React 18 frontend, and End-to-End application topology.
-
-### Architectural Highlights
-* **Dedicated Navigation & Monitoring Page (`/monitoring`)**:
-  - Standalone operational console accessible via top header navigation across all themes (**`Ops`** in Modern, **`OPS`** in ASCII, **`top.sh`** in CLI).
-* **Request Correlation (`X-Request-ID`)**: Middleware generating and propagating unique UUIDv4 headers for end-to-end request tracing (`CorrelationIDMiddleware`).
-* **Structured JSON Logging**: Machine-readable JSON logs output to `stdout` containing `timestamp`, `request_id`, `method`, `path`, `status_code`, `latency_ms`, `client_ip`, and `user_agent` (`RequestLoggingMiddleware`).
-* **Stack Trace Error Logging**: Global 500 exception handler outputting unhandled exception stack traces to `stderr` with request correlation IDs.
-* **Sub-System Health & Telemetry Endpoints**:
-  - `GET /health/live` — Fast process liveness probe.
-  - `GET /health/ready` — Deep sub-system readiness probe checking RAM RSS memory (MB), uptime, environment, CORS origins, and live PostgreSQL database connectivity (`SELECT 1`).
-  - `GET /api/telemetry` & `GET /api/v1/telemetry` — Live process uptime, RSS memory, cache hit/miss status, `slowapi` rate-limit budget, and PostgreSQL database status/latency telemetry.
-  - > ⚠️ **Note on Container Cold Starts**: Free-tier backend hosting (Render) automatically spins down instances during inactivity. Initial health probes or API requests after periods of inactivity may experience a delay of **50 seconds or longer** while the container wakes up. Subsequent requests execute in sub-50ms.
-* **Frontend Real User Monitoring (RUM) & Interactive Dashboard**:
-  - Navigation timing, TTFB, DOM node count, and JS heap memory (`getBrowserPerformanceMetrics`).
-  - Storage byte size, active key count, and GitHub proxy cache age (`auditSessionStorage`).
-  - Diagnostic JSON report exporter (`exportDiagnosticReport`).
-  - `<FullStackMonitoringDashboard />` React UI component featuring 4-node live system topology map (`[Cloudflare Pages React SPA] ──► [FastAPI Render Backend] ──► [PostgreSQL Database] ──► [GitHub REST API]`), database health metrics, and automated 5-step synthetic diagnostic test runner.
-  - Storybook component cataloging (`FullStackMonitoringDashboard.stories.tsx`).
-* **Technical Observability Blog Post**:
-  - *"Demystifying Full-Stack Operational Monitoring & Telemetry: Zero-Cost Observability from Browser RUM to FastAPI Middleware"*.
-
-Detailed summary: [phase-3.5-summary.md](file:///Users/chrislau/Documents/personalWebsite/phase-3.5-summary.md) | Implementation plan: [phase-3.5-implementation-plan.md](file:///Users/chrislau/Documents/personalWebsite/phase-3.5-implementation-plan.md)
-
----
-
-## 🗄️ Phase 4 — PostgreSQL Database & CRUD Integration (COMPLETED)
-
-Phase 4 transitions the backend from static JSON loading to a persistent relational database using SQLAlchemy 2.0 ORM and Alembic migrations.
-
-### Architectural Highlights
-* **Environment-Aware Dual Database Setup**:
-  - **Local Development:** Zero-config file-based SQLite database (`sqlite:///./personal_os.db`).
-  - **Production:** Managed free-tier Aiven PostgreSQL instance (`DATABASE_URL`).
-* **SQLAlchemy 2.0 & Alembic Migrations**:
-  - Relational database models for `Project`, `Technology`, `NowEntry`, and `ReadingItem` in `backend/core/models.py`.
-  - Schema version management via Alembic (`0101177364df_initial_schema_migration.py`).
-* **Data Seeding & Resilience Pipeline**:
-  - Idempotent seed script (`seed.py`) converting legacy JSON data into database rows.
-  - Automatic fallback handler in `/api/projects` and `/api/now` returning static local JSON if the database is unreachable or unseeded, guaranteeing 100% website uptime.
-* **Automated 6-Hour Keep-Alive Probe**:
-  - Scheduled GitHub Actions workflow (`.github/workflows/keep-alive.yml`) pinging `/health/ready` every 6 hours (`00:00`, `06:00`, `12:00`, `18:00` UTC).
-  - Executes a live `SELECT 1` query to keep cloud PostgreSQL (Aiven) active and prevent inactivity suspension.
-* **Full Test Metrics (273 / 273 Total Tests Passing)**:
-  - **Backend**: **68 / 68 Pytest unit tests passing** (including `tests/test_database.py`, `tests/test_chat.py`, `tests/test_amazon_api.py`).
-  - **Frontend**: **196 / 196 Vitest unit tests passing** across **25 test files**.
-  - **E2E**: **9 / 9 Playwright E2E tests passing**.
-
-Detailed summary: [phase-4-summary.md](phase-4-summary.md) | Implementation plan: [phase-4-implementation-plan.md](phase-4-implementation-plan.md)
-
----
-
-## 🤖 AI Chat Widget + Chat Observability
-
-### AI Chat Widget ("Chat with Chris") — IMPLEMENTED
-
-A visitor-facing RAG chat widget answering questions grounded in the site's blog posts, guidebooks, and profile (~71K token context — no vector DB needed). Streams replies token-by-token over Server-Sent Events via a single OpenAI-compatible SDK wrapper supporting Gemini, DeepSeek, and OpenAI behind a UI model switcher.
-
-**Implementation plan:** [ai-chat-implementation-plan.md](file:///Users/chrislau/Documents/personalWebsite/ai-chat-implementation-plan.md) | **Review:** [ai-chat-plan-review.md](file:///Users/chrislau/Documents/personalWebsite/ai-chat-plan-review.md)
-
-### Chat Observability — COMPLETE (All 7 Phases)
-
-A real-time observability dashboard transforming the chat widget into a companion-mode split-panel layout (chat left, observability right). The backend emits structured SSE events with token usage and server-side timing; the frontend measures TTFT, streaming throughput, and per-message cost.
-
-**Full plan:** [PLAN-chat-observability.md](PLAN-chat-observability.md)
-
-| Phase | Status | What Ships |
-|---|---|---|
-| 1. Backend SSE | ✅ Complete | Structured event dicts, provider-aware `stream_options`, two-segment `meta_server` timing |
-| 2. Frontend Types | ✅ Complete | `ChatMessageMetrics`, `ChatSessionSummary`, `StreamProgress`, `MODEL_PRICING` table |
-| 3. Data Layer | ✅ Complete | Timed, metric-emitting `sendChatMessage` with SSE parsing, fallback token estimation |
-| 4. `useChat` Hook | ✅ Complete | `metricsMap`, `streamProgress`, ref-based chunk counting, cleanup on abort/clear |
-| 5. Observability Panel | ✅ Complete | Session summary card, latency sparkline, live streaming indicator, per-message metrics with segmented TTFT bar |
-| 6. Companion Layout | ✅ Complete | Split-panel UX, mobile tabs, companion-class on `<section>`, localStorage toggle persistence |
-| 7. Tests | ✅ Complete | 38 new frontend tests (14 panel + 8 companion + 16 existing updated); 180/180 Vitest passing |
+> ⚠️ **Note on Container Cold Starts**: Free-tier backend hosting (Render) spins down during inactivity. Initial API requests may take ~50s to wake the container; subsequent requests run in <50ms.
 
 ---
 
@@ -266,6 +152,8 @@ The project uses environment variables for configuring both frontend and backend
 | `CHAT_DAILY_GLOBAL_LIMIT` | Optional | `200` | Total chat requests allowed per UTC day across all visitors (cost/abuse backstop; in-memory, resets at midnight). `0` disables. |
 | `CHAT_DAILY_PER_IP_LIMIT` | Optional | `30` | Per-IP daily chat request cap (fairness backstop). `0` disables. |
 
+> **Local chat note**: with no LLM keys in `backend/.env`, the chat widget runs in "limited mode" (no streaming answers) — everything else works fully offline of AI providers.
+
 ---
 
 ## 🚀 Getting Started
@@ -274,6 +162,7 @@ The project uses environment variables for configuring both frontend and backend
 
 - **Node.js**: `v18+`
 - **npm**: `v9+`
+- **Python**: `3.11+` (for the backend)
 
 ### Installation
 
@@ -287,6 +176,8 @@ The project uses environment variables for configuring both frontend and backend
    ```bash
    npm install
    ```
+
+3. (Optional) Backend: create a virtualenv in `backend/`, `pip install -r requirements.txt`, then run `uvicorn main:app --reload`.
 
 ---
 
@@ -312,15 +203,21 @@ Navigate to the `frontend/` directory to run commands:
 ## 🧪 Testing
 
 ### Unit & Component Tests (Vitest)
-Executes component rendering, page behavior, blog engine filtering, and router integration tests:
+Executes component rendering, page behavior, blog engine filtering, and router integration tests (215 tests across 26 files):
 ```bash
 npm test
 ```
 
 ### End-to-End Tests (Playwright)
-Launches Chromium instances to test full user journeys, 3-theme switching persistence (`ascii`, `cli`, `modern`), tag filtering, and 404 routing:
+Launches Chromium instances to test full user journeys — navigation, light/dark mode toggle persistence, tag filtering, chat launcher behavior, and 404 routing (19 tests across 6 spec files):
 ```bash
 npm run test:e2e
+```
+
+### Backend Tests (Pytest)
+Runs the FastAPI test suite (69 tests) from `backend/`:
+```bash
+python -m pytest
 ```
 
 ---
@@ -336,50 +233,23 @@ The personal website monorepo is deployed across specialized cloud providers:
 | **FastAPI Backend** | Docker Web Service | Render | `backend` | `docker build` (Dockerfile) | N/A (Port 10000) | [https://personalwebsite-w1mp.onrender.com](https://personalwebsite-w1mp.onrender.com) |
 | **Swagger UI / ReDoc** | OpenAPI Docs | Render (Auto) | `backend` | Auto-generated by FastAPI | `/docs` & `/redoc` | [https://personalwebsite-w1mp.onrender.com/docs](https://personalwebsite-w1mp.onrender.com/docs) |
 
----
-
 ### 1. Cloudflare Pages Settings (Frontend & Storybook)
 
-Cloudflare Pages deploys the React SPA and Storybook component library statically:
-
-- **Main Frontend Project (`chrislau.dev`)**:
-  - **Root directory**: `frontend`
-  - **Build command**: `npm run build`
-  - **Build output directory**: `dist`
-  - **Environment Variables**: `VITE_API_URL` set to `https://personalwebsite-w1mp.onrender.com/api`
-  - **Custom Domain**: Attached `chrislau.dev` under Custom Domains settings.
-
-- **Storybook Project (`chris-lau-storybook.pages.dev`)**:
-  - **Root directory**: `frontend`
-  - **Build command**: `npm run build-storybook`
-  - **Build output directory**: `storybook-static`
-
----
+- **Main Frontend Project (`chrislau.dev`)**: Root directory `frontend`, build `npm run build`, output `dist`, `VITE_API_URL` set to `https://personalwebsite-w1mp.onrender.com/api`, custom domain `chrislau.dev` attached.
+- **Storybook Project (`chris-lau-storybook.pages.dev`)**: Root directory `frontend`, build `npm run build-storybook`, output `storybook-static`.
 
 ### 2. Render Docker Web Service (FastAPI Backend & Swagger UI)
 
-- **Root directory**: `backend`
-- **Runtime**: **Docker** (uses multi-stage `backend/Dockerfile`)
-- **Environment Variables**:
-  - `ENVIRONMENT`: `production`
-  - `DATABASE_URL`: Managed Aiven PostgreSQL Connection String
-  - `ALLOWED_ORIGINS`: `https://chrislau.dev,https://www.chrislau.dev,https://personalwebsite-8i8.pages.dev`
-- **Health Check & Telemetry Endpoints**:
-  - Liveness Probes: `/health/live` & `/api/health/live`
-  - Readiness & DB Probes: `/health/ready` & `/api/health/ready`
-  - Telemetry Metrics: `/api/telemetry`
-  - Automated Keep-Alive: 6-hour cron (`.github/workflows/keep-alive.yml`) pinging `/health/ready` to prevent database inactivity shutdown.
-- **Auto-Generated Swagger UI**: Served automatically at `/docs` ([https://personalwebsite-w1mp.onrender.com/docs](https://personalwebsite-w1mp.onrender.com/docs)) and `/redoc`.
-
----
+- **Root directory**: `backend` — **Runtime**: Docker (multi-stage `backend/Dockerfile`)
+- **Environment Variables**: `ENVIRONMENT=production`, `DATABASE_URL` (Aiven PostgreSQL), `ALLOWED_ORIGINS=https://chrislau.dev,https://www.chrislau.dev,https://personalwebsite-8i8.pages.dev`
+- **Health & Telemetry**: `/health/live`, `/health/ready`, `/api/telemetry`; automated 6-hour keep-alive cron.
+- **Auto-Generated Swagger UI**: `/docs` and `/redoc`.
 
 ### 3. SPA Routing & `_redirects` File
 
-This project includes `frontend/public/_redirects` with the rule:
+`frontend/public/_redirects` contains:
 ```text
 /*  /index.html  200
 ```
 
-Instructs Cloudflare to direct all client-side routes (`/blog`, `/projects`, `/about`, `/guidebook`) back to `index.html` with a `200` status so React Router handles navigation cleanly without 404 errors.
-
-
+This directs all client-side routes (`/blog`, `/projects`, `/about`, `/guidebook`) back to `index.html` with a `200` status so React Router handles navigation cleanly without 404 errors.

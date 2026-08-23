@@ -1,146 +1,175 @@
-# How to Add a New Theme to a Modern React & TypeScript App: Design Tokens, Layouts, and Context
+# Retheming a React & TypeScript App: Design Tokens, One Layout, and Dark Mode
 
-In modern web development, supporting flexible user themes—whether retro ASCII terminals, sleek dark modes, or editorial designs inspired by Anthropic and OpenAI—requires a clean, scalable architecture.
+This site began life with **three novelty themes** — a Warm Earthy ASCII look, a Retro Terminal CLI, and a Modern Editorial skin — precisely so I would be forced to learn token-driven CSS. It has since been consolidated into **one design system** (Light Crisp) rendered in **light and dark modes**, and the consolidation itself became the best argument for the architecture: swapping the entire visual identity of the site touched exactly one CSS file.
 
-When designed correctly, adding an entirely new visual theme should take **minutes rather than days**, without refactoring existing page components or duplicating React code.
+In this guide, I'll walk through how the current theming system works and what it takes to either **restyle the whole site** or **add a new color mode** — with real code from this repository.
 
-In this guide, we'll explore how our application's modular architecture makes theme expansion effortless, and walk through the exact steps to add a **Modern Editorial** theme alongside existing **ASCII Retro** and **CLI Terminal** themes.
-
-> **TL;DR**: Expand multi-theme React apps in 4 steps: (1) Add a new type union (`'ascii' | 'cli' | 'modern'`), (2) Define scoped CSS design tokens in `variables.css` under `[data-theme="modern"]`, (3) Create a layout component (`ModernLayout.tsx`) registered in `LayoutRenderer.tsx`, and (4) Add cycle options to `ThemeToggle.tsx` and Playwright E2E tests.
+> **TL;DR**: Restyling is a one-file change: every visual decision is a CSS custom property in `variables.css` (`:root` holds the light palette, one `[data-theme="dark"]` block flips the whole site). Adding a new mode means duplicating that block under a new selector, extending the `ThemeMode` union type, and adding the value to `VALID_THEMES` in `ThemeContext`. There is exactly **one layout** — no per-theme components exist anymore.
 
 ---
 
+## Why Our Architecture Makes Restyling Effortless
 
-## Why Our Architecture Makes Adding Themes Effortless
+Before diving into code, let's examine the pillars that make theme changes cheap:
 
-Before diving into code, let's examine the key architectural pillars that enable friction-free theme expansion:
+### 1. Semantic CSS Design Tokens (`variables.css`)
+UI components never hardcode HEX colors, radii, or font names. They consume semantic CSS variables like `var(--bg-primary)`, `var(--text-primary)`, `var(--accent-primary)`, and `var(--radius-md)`. A restyle is therefore an edit to token *values*, not to components.
 
-### 1. Decoupled Data & Presentation Layers
-Static data (`profile.ts`, `projects.ts`, `experience.ts`, `skills.ts`) is stored as pure TypeScript objects completely independent of UI components or formatting. Adding or tweaking a theme never requires touching your data layer.
-
-### 2. Semantic CSS Design Tokens (`variables.css`)
-UI components never hardcode HEX colors or specific font names. Instead, components consume semantic CSS variables like `var(--bg-primary)`, `var(--text-primary)`, `var(--font-family)`, and `var(--accent-primary)`. Creating a new theme is as simple as scoping new variables under a `[data-theme="theme-name"]` selector.
+### 2. One Token Block Per Mode
+The light palette lives at `:root`; the dark palette lives in a single `[data-theme="dark"]` block. Flipping the mode flips every token at once — no per-component dark styles, no `dark:` prefixes scattered through the codebase.
 
 ### 3. Single Source of Truth Theme Context (`ThemeContext.tsx`)
-A centralized React Context broadcasts theme state app-wide and applies `data-theme` to `document.documentElement`. Any component or stylesheet automatically inherits the active theme without prop-drilling.
+A centralized React Context broadcasts the mode app-wide, persists it to `localStorage`, and applies `data-theme` to `document.documentElement`. Visitors who saved a legacy value from the three-theme era (`'modern'`, `'ascii'`, `'cli'`) are migrated to `'light'` automatically.
 
-### 4. Layout Abstraction Layer (`LayoutRenderer.tsx`)
-High-level layout shells (`AsciiLayout`, `CliLayout`, `ModernLayout`) manage structural chrome (headers, footers, navigation bars), allowing individual page components (`HomePage`, `ProjectsPage`, `BlogListPage`) to remain 100% theme-agnostic.
+### 4. One Layout, Shared Editorial Grammar
+There is no `AsciiLayout` or `CliLayout` anymore. A single `ModernLayout` (rendered through the `LayoutRenderer` seam) frames every page, and content follows one grammar — numbered `Section` heads and `work-row` lists — so a restyle never has to be applied page-by-page.
 
 ---
 
-## Step-by-Step: Adding the 'Modern Editorial' Theme
+## The Token File: `src/styles/variables.css`
 
-### Step 1: Type Safety First — Define Theme Union Types
+This is the only file that decides what the site looks like:
 
-Add the new theme name to your central type definition (`src/types/theme.ts`):
+```css
+:root {
+  /* Surfaces — Light Crisp: white ground, gray hairlines */
+  --bg-primary: #ffffff;
+  --bg-secondary: #fafafa;
+  --text-primary: #0a0a0a;
+  --text-muted: #475467; /* 5.8:1 on white — WCAG AA */
+
+  /* Accent — restrained: one blue, near-black fills */
+  --accent-primary: #175cd3;
+  --border-color: #d0d5dd;
+  --border-muted: #e4e7ec;
+
+  /* Typography & shape */
+  --font-family: 'Inter', -apple-system, sans-serif;
+  --radius-chip: 6px;  /* badges, tags, chips — chip shape sitewide */
+  --radius-md: 8px;    /* buttons */
+
+  --container-max-width: 1040px;
+}
+
+/* Dark variant — Light Crisp Dark. One block flips the whole site;
+   every component reads tokens only. */
+[data-theme="dark"] {
+  --bg-primary: #101013;
+  --bg-secondary: #16181c;
+  --text-primary: #f4f5f7;
+  --text-muted: #9aa1ad;
+  --accent-primary: #7cb0ff;
+  --border-color: rgba(255, 255, 255, 0.16);
+  --border-muted: rgba(255, 255, 255, 0.09);
+}
+```
+
+Because components only reference token *names*, updating values here instantly restyles the entire site — backgrounds, text, links, chips, buttons, hairlines, shadows, all of it.
+
+Shape is controlled the same way: want rounder chips everywhere? Change `--radius-chip` in one place. This is what "make sure the styling can be updated easily" looks like in practice.
+
+---
+
+## The State Layer: `src/context/ThemeContext.tsx`
 
 ```typescript
 // src/types/theme.ts
-export type ThemeMode = 'ascii' | 'cli' | 'modern';
+export type ThemeMode = 'light' | 'dark';
 ```
-
-Adding `'modern'` to the union type ensures TypeScript immediately enforces type checking across React Context, localStorage persistence, and theme toggling buttons.
-
----
-
-### Step 2: Declare CSS Design Tokens & Typography
-
-Map your theme's visual tokens (colors, font stacks, container widths, card backgrounds) to `[data-theme="modern"]` in `src/styles/variables.css`:
-
-```css
-/* Theme 3: Modern Editorial (Anthropic & OpenAI Inspired) */
-[data-theme="modern"] {
-  --bg-primary: #121316;
-  --bg-secondary: #1a1b20;
-  --bg-card: rgba(28, 30, 36, 0.7);
-  --text-primary: #f4f4f6;
-  --text-muted: #a1a1aa;
-  
-  --header-color: #f4f4f6;
-  --accent-primary: #f4ab6a;   /* Warm Amber Glow */
-  --accent-secondary: #a78bfa; /* Soft Lavender Glow */
-
-  --border-color: rgba(255, 255, 255, 0.15);
-  --border-muted: rgba(255, 255, 255, 0.08);
-  
-  --font-family: 'Inter', -apple-system, sans-serif;
-  --font-serif: 'Instrument Serif', Georgia, serif;
-  --container-max-width: 1040px;
-}
-```
-
-Because your components already consume these CSS variable names, updating `variables.css` instantly updates 80% of your site's visual appearance!
-
----
-
-### Step 3: Manage Theme State with React Context & LocalStorage
-
-Update your `ThemeContext` provider to handle saved theme validation and n-way theme cycling:
 
 ```typescript
-// src/context/ThemeContext.tsx
-const VALID_THEMES: ThemeMode[] = ['modern', 'ascii', 'cli'];
+// src/context/ThemeContext.tsx (essentials)
+const STORAGE_KEY = 'portfolio_theme';
+const VALID_THEMES: ThemeMode[] = ['light', 'dark'];
+/** Legacy layout-theme values from before the Light Crisp consolidation. */
+const LEGACY_THEMES = ['modern', 'ascii', 'cli'];
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<ThemeMode>(() => {
-    const saved = localStorage.getItem('portfolio_theme') as ThemeMode;
-    return VALID_THEMES.includes(saved) ? saved : 'modern';
-  });
+const readInitialTheme = (): ThemeMode => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved && VALID_THEMES.includes(saved as ThemeMode)) return saved as ThemeMode;
+    if (saved && LEGACY_THEMES.includes(saved)) return 'light';
+  } catch {
+    // Ignore storage errors in restricted contexts
+  }
+  return 'light';
+};
+
+const toggleTheme = () => {
+  setTheme(theme === 'light' ? 'dark' : 'light');
+};
+
+// Sync DOM data-theme attribute whenever theme state changes
+useEffect(() => {
+  document.documentElement.setAttribute('data-theme', theme);
+}, [theme]);
 ```
+
+The header renders a single Sun/Moon button (`ThemeToggle.tsx`) whose accessible name flips with the mode: `Switch to dark mode` / `Switch to light mode`.
 
 ---
 
-### Step 4: Component Overrides via CSS Selectors
+## How to Restyle the Whole Site
 
-Instead of writing new React components for existing UI elements, leverage CSS attribute selectors (`[data-theme="modern"] .component`) to adapt existing React UI components dynamically:
+1. Open `src/styles/variables.css`.
+2. Edit token values in `:root` (and the dark block if you want the dark mode to move with the new identity).
+3. Done. No component, page, or data file changes.
 
-```css
-/* Clean editorial heading & container override for BoxContainer */
-[data-theme="modern"] .box-container {
-  border-radius: 16px;
-  border: 1px solid var(--border-muted);
-  background: var(--bg-card);
-  padding: 1.75rem 2rem;
-}
+That is the entire procedure that was used for the Light Crisp reskin of this site — white ground, near-black ink, gray hairlines, a single restrained blue — which replaced the previous zinc-and-indigo skin by touching values, not structure.
 
-[data-theme="modern"] .ascii-box-header-row,
-[data-theme="modern"] .ascii-box-footer-row {
-  display: none; /* Hide retro ASCII lines */
-}
+## How to Add a New Color Mode
 
-[data-theme="modern"] .box-section-heading {
-  font-family: var(--font-serif);
-  font-size: 1.85rem;
-  color: var(--header-color);
-  border-bottom: 1px solid var(--border-muted);
-}
-```
+If you want a third mode (say, a high-contrast `'contrast'`), the change is three small edits:
+
+1. **`src/styles/variables.css`** — duplicate the token block under a new selector:
+   ```css
+   [data-theme="contrast"] {
+     --bg-primary: #000000;
+     --text-primary: #ffffff;
+     /* ... */
+   }
+   ```
+2. **`src/types/theme.ts`** — extend the union:
+   ```typescript
+   export type ThemeMode = 'light' | 'dark' | 'contrast';
+   ```
+3. **`src/context/ThemeContext.tsx`** — add `'contrast'` to `VALID_THEMES` so persistence accepts it, and wire it into the toggle control.
+
+TypeScript enforces the rest: any switch statement or localStorage read that misses the new value fails to compile.
 
 ---
 
-### Step 5: Verify & Test End-to-End
+## Verify & Test End-to-End
 
-Finally, add unit tests in Vitest and E2E tests in Playwright to verify state toggles and theme layout rendering:
+The theme contract is pinned by a Playwright test that asserts the `data-theme` attribute on `<html>`:
 
 ```typescript
-test('toggles theme between ASCII, CLI, and MODERN modes', async ({ page }) => {
+// e2e/portfolio.spec.ts
+test('toggles between light and dark modes', async ({ page }) => {
   await page.goto('/');
-  const html = page.locator('html');
 
-  await page.click('button[aria-label*="Switch to CLI theme"]');
-  await expect(html).toHaveAttribute('data-theme', 'cli');
-
-  await page.click('button[aria-label*="Switch to MODERN theme"]');
-  await expect(html).toHaveAttribute('data-theme', 'modern');
+  // First visit defaults to light.
+  const htmlElement = page.locator('html');
+  await expect(htmlElement).toHaveAttribute('data-theme', 'light');
   await expect(page.locator('.modern-layout-container')).toBeVisible();
+
+  // Toggle to dark — same layout, dark token set.
+  await page.getByRole('button', { name: 'Switch to dark mode' }).click();
+  await expect(htmlElement).toHaveAttribute('data-theme', 'dark');
+  await expect(page.locator('.modern-layout-container')).toBeVisible();
+
+  // And back to light.
+  await page.getByRole('button', { name: 'Switch to light mode' }).click();
+  await expect(htmlElement).toHaveAttribute('data-theme', 'light');
 });
 ```
+
+Note what the test asserts about the architecture: the layout container is identical in both modes. Only the tokens change.
 
 ---
 
 ## Conclusion
 
-By enforcing **type safety**, **semantic design tokens**, **centralized Context**, and **modular layout renderers**, adding a new visual design becomes a predictable, clean process. 
+The three-theme experiment taught the lesson the hard way: every additional layout multiplied the QA surface (three sets of e2e assertions, three sets of layout CSS, drift between skins). The consolidated architecture — **semantic tokens, one block per mode, one layout, type-safe mode union** — delivers the same flexibility with a fraction of the surface. Restyling the site is now a one-file change, and adding a mode is three small edits with compiler-enforced completeness.
 
-This architecture allows developers to experiment with radical design variations—from retro terminals to high-end editorial layouts—without accumulating technical debt or breaking existing features!
+That's the real payoff of design tokens: not the ability to have many themes, but the ability to *change your mind* cheaply.

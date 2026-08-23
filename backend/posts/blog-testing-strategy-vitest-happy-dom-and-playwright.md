@@ -225,16 +225,15 @@ test.describe('Portfolio E2E Tests', () => {
     await expect(page).toHaveURL('/how-this-site-works');
   });
 
-  test('toggles theme between ASCII and CLI mode', async ({ page }) => {
+  test('toggles between light and dark modes', async ({ page }) => {
     await page.goto('/');
-    
-    const htmlElement = page.locator('html');
-    await expect(htmlElement).toHaveAttribute('data-theme', 'ascii');
 
-    // Switch theme to CLI
-    await page.click('button[aria-label*="Switch to CLI theme"]');
-    await expect(htmlElement).toHaveAttribute('data-theme', 'cli');
-    await expect(page.locator('.cli-layout-container')).toBeVisible();
+    const htmlElement = page.locator('html');
+    await expect(htmlElement).toHaveAttribute('data-theme', 'light');
+
+    // Switch to dark mode
+    await page.click('button[aria-label*="dark"]');
+    await expect(htmlElement).toHaveAttribute('data-theme', 'dark');
   });
 });
 ```

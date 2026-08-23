@@ -1,6 +1,6 @@
 # Master Frontend Testing Strategy: Vitest, React Testing Library, Storybook, and Playwright
 
-> **TL;DR**: Implement a 4-tier testing pyramid: Use Vitest (`happy-dom`) for sub-second pure logic unit tests, React Testing Library + `MemoryRouter` for user-centric component integration tests, Storybook 8 for isolated visual UI & WCAG accessibility audits, and Playwright for real Chromium browser E2E route navigation and multi-theme persistence checks.
+> **TL;DR**: Implement a 4-tier testing pyramid: Use Vitest (`happy-dom`) for sub-second pure logic unit tests, React Testing Library + `MemoryRouter` for user-centric component integration tests, Storybook for isolated visual UI & WCAG accessibility audits, and Playwright for real Chromium browser E2E route navigation and light/dark mode persistence checks.
 
 When building modern React and TypeScript applications, testing is often presented as an afterthought or a complex chore. Beginners frequently ask:
 
@@ -62,8 +62,8 @@ In our project configuration, we chose a modern toolchain specifically paired to
 | :--- | :--- | :--- | :--- | :--- |
 | **1. Data & Logic Unit** | Vitest | Node / happy-dom | ~10 milliseconds | Pure data helpers, state reducers, tag search logic |
 | **2. UI Component Integration** | RTL + MemoryRouter | happy-dom | ~100 milliseconds | DOM rendering, button clicks, search filters, router state |
-| **3. Visual & Accessibility** | Storybook 8 | Browser / Canvas | Interactive | Isolated UI states, ASCII/CLI/Modern theme props, WCAG contrast |
-| **4. End-to-End (E2E)** | Playwright | Real Chromium Browser | ~1–3 seconds | Full navigation, theme switching persistence, real page URLs |
+| **3. Visual & Accessibility** | Storybook | Browser / Canvas | Interactive | Isolated UI states, light/dark mode props, WCAG contrast |
+| **4. End-to-End (E2E)** | Playwright | Real Chromium Browser | ~1–3 seconds | Full navigation, light/dark mode persistence, real page URLs |
 
 ---
 
@@ -252,24 +252,20 @@ export default defineConfig({
 import { test, expect } from '@playwright/test';
 
 test.describe('Portfolio E2E Tests', () => {
-  test('toggles theme between MODERN, ASCII, and CLI modes', async ({ page }) => {
+  test('toggles between light and dark modes', async ({ page }) => {
     await page.goto('/');
 
     const htmlElement = page.locator('html');
 
-    // 1. Verify default MODERN theme
-    await expect(htmlElement).toHaveAttribute('data-theme', 'modern');
-    await expect(page.locator('.modern-layout-container')).toBeVisible();
+    // 1. Verify default light mode
+    await expect(htmlElement).toHaveAttribute('data-theme', 'light');
 
-    // 2. Switch to ASCII theme
-    await page.click('button[aria-label*="Switch to ASCII theme"]');
-    await expect(htmlElement).toHaveAttribute('data-theme', 'ascii');
-    await expect(page.locator('.ascii-layout-container')).toBeVisible();
+    // 2. Switch to dark mode and back
+    await page.click('button[aria-label*="dark"]');
+    await expect(htmlElement).toHaveAttribute('data-theme', 'dark');
 
-    // 3. Switch to CLI terminal theme
-    await page.click('button[aria-label*="Switch to CLI theme"]');
-    await expect(htmlElement).toHaveAttribute('data-theme', 'cli');
-    await expect(page.locator('.cli-layout-container')).toBeVisible();
+    await page.click('button[aria-label*="light"]');
+    await expect(htmlElement).toHaveAttribute('data-theme', 'light');
   });
 
   test('searches and navigates to blog post detail view', async ({ page }) => {
