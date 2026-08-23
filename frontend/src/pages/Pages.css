@@ -223,7 +223,7 @@
   font-size: 0.75rem;
   font-weight: 500;
   padding: 0.25rem 0.75rem;
-  border-radius: 20px;
+  border-radius: var(--radius-chip);
   background-color: var(--bg-secondary);
   color: var(--text-muted);
   border: 1px solid var(--border-muted);
@@ -251,7 +251,7 @@
 .filter-tag,
 .tag-btn {
   font-family: var(--font-family);
-  border-radius: 20px;
+  border-radius: var(--radius-chip);
   padding: 0.35rem 0.9rem;
   border: 1px solid var(--border-muted);
   background-color: var(--bg-secondary);
@@ -349,7 +349,7 @@ p,
   font-size: 0.85rem;
   font-weight: 500;
   padding: 0.3rem 0.8rem;
-  border-radius: 20px;
+  border-radius: var(--radius-chip);
   background-color: var(--bg-secondary);
   color: var(--text-muted);
   border: 1px solid var(--border-muted);
@@ -585,7 +585,7 @@ p,
   color: var(--text-muted);
   background: var(--bg-secondary);
   border: 1px solid var(--border-muted);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-chip);
   padding: 0.3rem 0.85rem;
 }
 
@@ -730,7 +730,7 @@ p,
   color: var(--text-muted);
   background: var(--bg-secondary);
   border: 1px solid var(--border-muted);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-chip);
   padding: 0.28rem 0.8rem;
 }
 
@@ -868,7 +868,7 @@ p,
 .stack-tag {
   border: 1px solid var(--border-muted);
   background: var(--bg-secondary);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-chip);
   padding: 0.22rem 0.7rem;
 }
 

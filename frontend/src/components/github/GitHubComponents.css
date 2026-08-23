@@ -93,7 +93,7 @@
   font-family: var(--font-family, inherit);
   background: var(--bg-primary, rgba(255, 255, 255, 0.05));
   border: 1px solid var(--border-color, rgba(255, 255, 255, 0.2));
-  border-radius: 999px;
+  border-radius: var(--radius-chip);
   color: var(--text-primary, #cccccc);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -113,7 +113,7 @@
   font-family: var(--font-family, inherit);
   background: rgba(239, 68, 68, 0.15);
   border: 1px solid rgba(239, 68, 68, 0.4);
-  border-radius: 999px;
+  border-radius: var(--radius-chip);
   color: #f87171;
   cursor: pointer;
   font-weight: 600;
@@ -282,7 +282,7 @@
 .gh-language-bar {
   display: flex;
   height: 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   overflow: hidden;
   background-color: var(--overlay-soft);
 }

@@ -77,11 +77,11 @@
   font-weight: 400;
 }
 
-[data-theme="modern"] .blog-tag {
+.blog-tag {
   font-family: var(--font-family);
   font-size: 0.75rem;
   padding: 0.2rem 0.65rem;
-  border-radius: 20px;
+  border-radius: var(--radius-chip);
   background-color: var(--overlay-soft);
   color: var(--accent-secondary);
   border: 1px solid var(--border-muted);
