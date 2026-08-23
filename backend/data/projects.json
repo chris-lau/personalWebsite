@@ -10,8 +10,8 @@
   {
     "id": "personal-os",
     "title": "Personal Portfolio Website",
-    "description": "Triple-themed (Modern Editorial, ASCII Terminal & Retro CLI) personal website featuring a live GitHub Activity Dashboard, REST API integration, sessionStorage caching, and CSS Design Tokens.",
-    "techStack": ["React", "TypeScript", "GitHub API", "Vite", "CSS Tokens"],
+    "description": "Full-stack personal website (React + TypeScript frontend, Python FastAPI backend) with light/dark design-token theming, a live GitHub Activity Dashboard, a probe-based Live Ops monitoring console, an Amazon Seller Suite, and an AI chat copilot — deployed on Cloudflare Pages & Render.",
+    "techStack": ["React", "TypeScript", "FastAPI", "GitHub API", "Vite", "CSS Tokens"],
     "githubUrl": "https://github.com/chris-lau/personalWebsite",
     "featured": true
   },
