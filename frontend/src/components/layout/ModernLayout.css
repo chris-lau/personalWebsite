@@ -32,7 +32,7 @@
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(9, 9, 11, 0.72);
+  background: var(--overlay-chrome);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border-muted);
@@ -104,12 +104,12 @@
 
 .modern-nav-link:hover {
   color: var(--text-primary);
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: var(--overlay-soft);
 }
 
 .modern-nav-link.active {
   color: var(--accent-primary);
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: var(--overlay-soft);
 }
 
 /* Dropdown Toggle Button */
@@ -131,12 +131,12 @@
 
 .modern-nav-dropdown-toggle:hover {
   color: var(--text-primary);
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: var(--overlay-soft);
 }
 
 .modern-nav-dropdown-toggle.active {
   color: var(--accent-primary);
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: var(--overlay-soft);
 }
 
 .dropdown-caret {
@@ -151,7 +151,7 @@
   top: calc(100% + 0.5rem);
   left: 0;
   min-width: 200px;
-  background: rgba(24, 24, 27, 0.92);
+  background: var(--overlay-menu);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border-muted);
@@ -196,12 +196,12 @@
 
 .modern-dropdown-item:hover {
   color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--overlay-soft);
 }
 
 .modern-dropdown-item.active {
   color: var(--accent-primary);
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--overlay-soft);
   font-weight: 600;
 }
 
@@ -264,9 +264,9 @@
 .modern-footer-whoami {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  color: var(--accent-primary);
-  background: var(--accent-subtle);
-  border: 1px solid rgba(99, 102, 241, 0.25);
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-muted);
   padding: 0.2rem 0.55rem;
   border-radius: var(--radius-full);
 }
@@ -384,9 +384,9 @@
 
 .modern-footer-copy-email:hover,
 .modern-footer-copy-email:focus-visible {
-  color: var(--accent-highlight);
-  border-color: rgba(99, 102, 241, 0.4);
-  background: var(--accent-subtle);
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+  background: var(--bg-secondary);
 }
 
 .modern-footer-clock {
@@ -454,7 +454,7 @@
     position: static;
     display: none;
     box-shadow: none;
-    background-color: rgba(255, 255, 255, 0.03);
+    background-color: var(--overlay-softer);
     border: none;
     border-left: 2px solid var(--accent-primary);
     border-radius: 0;

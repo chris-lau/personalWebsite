@@ -27,7 +27,7 @@ describe('App Router & Integration Tests', () => {
       </MemoryRouter>
     );
 
-    expect(await screen.findByRole('heading', { name: 'ASK THIS SITE', level: 3 }, { timeout: 4000 })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'ASK THIS SITE', level: 2 }, { timeout: 4000 })).toBeInTheDocument();
   });
 
   it('renders about page at route "/about"', async () => {

@@ -103,11 +103,14 @@ describe('Page Components Unit Tests', () => {
       </MemoryRouter>
     );
 
-    // Human-first hero: name dominant, CTAs in priority order, socials moved in.
-    expect(screen.getByRole('heading', { name: 'Chris Lau', level: 1 })).toBeInTheDocument();
+    // Statement hero: positioning headline, name carried in the lede.
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+      'Technical product leader who builds the AI systems he ships.',
+    );
+    expect(screen.getByText('Chris Lau')).toBeInTheDocument();
     expect(screen.getByText('Staff Product Manager, AI at Global Relay')).toBeInTheDocument();
     expect(screen.getByText(/Greater Vancouver Metropolitan Area/)).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'View Experience' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /View Experience/ })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Get in Touch' })).toHaveAttribute(
       'href',
       'mailto:contact@chrislau.dev',
@@ -167,7 +170,7 @@ describe('Page Components Unit Tests', () => {
 
     // Live Demo routing: Amazon Suite -> /amazon-tools, Portfolio -> /how-this-site-works.
     const liveDemoHrefs = screen
-      .getAllByRole('link', { name: 'Live Demo' })
+      .getAllByRole('link', { name: /Live Demo/ })
       .map((link) => link.getAttribute('href'));
     expect(liveDemoHrefs).toEqual(['/amazon-tools', '/how-this-site-works']);
   });
