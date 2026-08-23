@@ -5,6 +5,14 @@
   gap: 1.5rem;
 }
 
+/* Page titles with a leading icon — JSX strips inter-element whitespace,
+   so the icon/text gap must come from CSS (matches AmazonToolsPage). */
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 /* Projects Page Tab Bar Switcher */
 .projects-tab-bar {
   display: flex;

@@ -74,7 +74,7 @@ export interface FullStackTopologyState {
   frontend_status: 'healthy' | 'degraded';
   backend_status: 'healthy' | 'offline' | 'fallback';
   database_status: 'healthy' | 'degraded' | 'offline' | 'fallback';
-  github_proxy_status: 'healthy' | 'degraded' | 'cached';
+  github_proxy_status: 'healthy' | 'degraded' | 'cached' | 'offline';
   network_rtt_ms: number | null;
   database_latency_ms?: number | null;
   database_engine?: string;

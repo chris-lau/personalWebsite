@@ -7,12 +7,12 @@ export interface NetworkBenchmarkResult {
   status: string;
 }
 
-export async function benchmarkNetworkRTT(): Promise<NetworkBenchmarkResult> {
+export async function benchmarkNetworkRTT(timeoutMs = 3000): Promise<NetworkBenchmarkResult> {
   const start = performance.now();
   try {
-    let res = await fetchWithTimeout(`${API_BASE_URL}/health/live`);
+    let res = await fetchWithTimeout(`${API_BASE_URL}/health/live`, timeoutMs);
     if (!res.ok) {
-      res = await fetchWithTimeout(`${BACKEND_ROOT_URL}/health/live`);
+      res = await fetchWithTimeout(`${BACKEND_ROOT_URL}/health/live`, timeoutMs);
     }
     const latency = Math.round(performance.now() - start);
 
@@ -26,9 +26,11 @@ export async function benchmarkNetworkRTT(): Promise<NetworkBenchmarkResult> {
   }
 }
 
-export async function fetchBackendTelemetry(): Promise<{ data: BackendTelemetry | null; isFallback: boolean }> {
+export async function fetchBackendTelemetry(
+  timeoutMs = 3000,
+): Promise<{ data: BackendTelemetry | null; isFallback: boolean }> {
   try {
-    const res = await fetchWithTimeout(`${API_BASE_URL}/telemetry`);
+    const res = await fetchWithTimeout(`${API_BASE_URL}/telemetry`, timeoutMs);
 
     if (res.ok) {
       const data: BackendTelemetry = await res.json();
@@ -37,6 +39,41 @@ export async function fetchBackendTelemetry(): Promise<{ data: BackendTelemetry 
     return { data: null, isFallback: true };
   } catch {
     return { data: null, isFallback: true };
+  }
+}
+
+export interface GithubProxyHealth {
+  status: 'healthy' | 'degraded' | 'offline';
+  cached: boolean;
+  stale: boolean;
+}
+
+/**
+ * Probe the GitHub proxy endpoint directly so the topology reflects the
+ * proxy's real state instead of inferring it from /telemetry reachability.
+ * A 200 with stale=true means the backend is serving an expired cache entry
+ * because the GitHub upstream failed (rate limit / 5xx) — degraded, not healthy.
+ */
+export async function probeGithubProxyHealth(
+  username = 'chris-lau',
+  timeoutMs = 3000,
+): Promise<GithubProxyHealth> {
+  try {
+    const res = await fetchWithTimeout(
+      `${API_BASE_URL}/github-summary?username=${encodeURIComponent(username)}`,
+      timeoutMs,
+    );
+    if (!res.ok) {
+      return { status: 'offline', cached: false, stale: false };
+    }
+    const body = (await res.json().catch(() => null)) as { cached?: boolean; stale?: boolean } | null;
+    return {
+      status: body?.stale ? 'degraded' : 'healthy',
+      cached: Boolean(body?.cached),
+      stale: Boolean(body?.stale),
+    };
+  } catch {
+    return { status: 'offline', cached: false, stale: false };
   }
 }
 
@@ -54,7 +91,9 @@ export async function fetchBackendReadiness(): Promise<{ data: ReadinessResponse
   }
 }
 
-export async function runE2EDiagnosticSuite(): Promise<DiagnosticCheckItem[]> {
+export async function runE2EDiagnosticSuite(
+  onUpdate?: (results: DiagnosticCheckItem[]) => void,
+): Promise<DiagnosticCheckItem[]> {
   const results: DiagnosticCheckItem[] = [
     {
       id: 'check-1-storage',
@@ -88,6 +127,13 @@ export async function runE2EDiagnosticSuite(): Promise<DiagnosticCheckItem[]> {
     },
   ];
 
+  // Emit a cloned snapshot after every state transition so the UI can render
+  // the per-check RUNNING / PENDING states as the suite progresses.
+  const emit = () => {
+    onUpdate?.(results.map((item) => ({ ...item })));
+  };
+  emit();
+
   // 1. Client Storage check
   try {
     sessionStorage.setItem('__diag_test__', '1');
@@ -105,9 +151,11 @@ export async function runE2EDiagnosticSuite(): Promise<DiagnosticCheckItem[]> {
       details: 'sessionStorage is restricted or unavailable.',
     };
   }
+  emit();
 
   // 2. Network RTT check
   results[1].status = 'running';
+  emit();
   const rtt = await benchmarkNetworkRTT();
   const isProdLocalhostMismatch =
     typeof window !== 'undefined' &&
@@ -125,9 +173,11 @@ export async function runE2EDiagnosticSuite(): Promise<DiagnosticCheckItem[]> {
       ? `VITE_API_URL is unset in Cloudflare Pages (compiled target: ${API_BASE_URL}). Set VITE_API_URL in Cloudflare Pages settings to your Render backend URL.`
       : `Failed to reach backend endpoint (${API_BASE_URL} is offline / local fallback active).`,
   };
+  emit();
 
   // 3. Backend & Database Readiness check
   results[2].status = 'running';
+  emit();
   const ready = await fetchBackendReadiness();
   if (ready.data) {
     const isHealthy = ready.data.status === 'healthy';
@@ -153,16 +203,25 @@ export async function runE2EDiagnosticSuite(): Promise<DiagnosticCheckItem[]> {
       details: 'Backend readiness probe unreachable.',
     };
   }
+  emit();
 
   // 4. GitHub Proxy check
   results[3].status = 'running';
+  emit();
   try {
     const start = performance.now();
-    const res = await fetch(`${API_BASE_URL}/github-summary?username=chris-lau`);
+    const res = await fetchWithTimeout(
+      `${API_BASE_URL}/github-summary?username=chris-lau`,
+      10000,
+    );
     const lat = Math.round(performance.now() - start);
     if (res.ok) {
-      const body = await res.json();
-      const cacheNote = body.cached ? ' (served from in-memory cache)' : ' (fresh fetch)';
+      const body = (await res.json().catch(() => null)) as { cached?: boolean; stale?: boolean } | null;
+      const cacheNote = body?.stale
+        ? ' (served stale cache — GitHub upstream degraded)'
+        : body?.cached
+          ? ' (served from in-memory cache)'
+          : ' (fresh fetch)';
       results[3] = {
         ...results[3],
         status: 'pass',
@@ -184,12 +243,14 @@ export async function runE2EDiagnosticSuite(): Promise<DiagnosticCheckItem[]> {
       details: 'GitHub proxy unreachable (backend offline or network error).',
     };
   }
+  emit();
 
   // 5. Rate Limiter check
   results[4].status = 'running';
+  emit();
   try {
     const start = performance.now();
-    const res = await fetch(`${API_BASE_URL}/projects`);
+    const res = await fetchWithTimeout(`${API_BASE_URL}/projects`, 10000);
     const lat = Math.round(performance.now() - start);
     // Read real rate-limit headers if present (slowapi sets these).
     const limit = res.headers.get('X-RateLimit-Limit');
@@ -225,6 +286,7 @@ export async function runE2EDiagnosticSuite(): Promise<DiagnosticCheckItem[]> {
       details: 'Rate limiter probe unreachable (backend offline).',
     };
   }
+  emit();
 
   return results;
 }

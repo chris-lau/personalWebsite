@@ -52,10 +52,10 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
 - **Full-Stack Operational Monitoring & Telemetry (`/monitoring`)**:
   - Request correlation (`X-Request-ID` UUIDv4), structured JSON logging, sub-system health/readiness probes (`/health/live`, `/health/ready`), and process/DB telemetry (`/api/telemetry`).
   - Browser Real User Monitoring (navigation timing, TTFB, DOM nodes, JS heap), storage audits, and a diagnostic JSON exporter.
-  - `<FullStackMonitoringDashboard />` with a 4-node live topology map (Cloudflare SPA → FastAPI → PostgreSQL → GitHub API), database health metrics, and an automated 5-step synthetic diagnostic runner.
+  - `<FullStackMonitoringDashboard />` with a 4-node live topology map (Cloudflare SPA → FastAPI → PostgreSQL → GitHub API), probe-driven node statuses with a worst-of-all-nodes headline aggregate and status legend, database health metrics, an automated 5-step synthetic diagnostic runner with streamed per-check results, and cold-start-aware connects (the first fetch waits out the ~50s Render wake-up instead of showing a false outage).
 
 - **Live GitHub Activity & Repository Dashboard (`/projects`)**:
-  - Server-side GitHub proxy (`GET /api/github-summary`) with optional `GITHUB_TOKEN` (5000 req/hr) and a 15-minute in-memory TTL cache; client falls back to direct GitHub API if the backend is offline.
+  - Server-side GitHub proxy (`GET /api/github-summary`) with optional `GITHUB_TOKEN` (5000 req/hr) and a 15-minute in-memory TTL cache plus stale-while-error fallback (an expired entry is served with `stale: true` when GitHub is rate-limited or unreachable, so `/projects` degrades instead of breaking); client falls back to direct GitHub API if the backend is offline.
   - Interactive username switcher, 30-day activity filter with Active badges, client-side `sessionStorage` caching, and accessible tabbed navigation.
 
 - **Accessibility, Mobile Responsiveness & UX**:
@@ -143,7 +143,7 @@ The project uses environment variables for configuring both frontend and backend
 | `DATABASE_URL` | Optional | `sqlite:///./personal_os.db` | Connection URI for PostgreSQL (Aiven) or SQLite database. |
 | `ALLOWED_ORIGINS` | Optional | `http://localhost:5173,https://chrislau.dev` | Comma-separated list of allowed CORS origins. |
 | `RATE_LIMIT_PER_MINUTE` | Optional | `60` | Max requests per minute per IP address (`slowapi`). |
-| `GITHUB_TOKEN` | Optional | `""` | Optional personal access token for higher GitHub REST API rate limits server-side. |
+| `GITHUB_TOKEN` | Optional* | `""` | Personal access token for higher GitHub REST API rate limits server-side. *Strongly recommended in production:* without it the proxy uses GitHub's unauthenticated 60 req/hr limit shared across Render's egress IPs, causing frequent 403s on `/projects` and the ops dashboard. |
 | `GEMINI_API_KEY` | Optional | `""` | Gemini API key. Enables Gemini models in the chat widget. |
 | `DEEPSEEK_API_KEY` | Optional | `""` | DeepSeek API key. Enables DeepSeek models in the chat widget. |
 | `OPENAI_API_KEY` | Optional | `""` | OpenAI API key. Enables GPT models in the chat widget. |

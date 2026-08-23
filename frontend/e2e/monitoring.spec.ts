@@ -17,21 +17,21 @@ test.describe('Operational Monitoring Dashboard E2E Tests', () => {
     await expect(page.getByText('GitHub REST API', { exact: true })).toBeVisible();
 
     // 4. Verify Interactive Action Buttons
-    await expect(page.getByRole('button', { name: '🔬 Run Diagnostics' })).toBeVisible();
-    await expect(page.getByRole('button', { name: '🧹 Flush Cache' })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Offline Mode/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Run Diagnostics/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Flush Cache/i })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Simulate offline/i })).toBeVisible();
     await expect(page.getByRole('button', { name: /Export Log/i })).toBeVisible();
   });
 
   test('runs automated synthetic diagnostic suite on user interaction', async ({ page }) => {
     await page.goto('/monitoring');
-    
+
     // Click diagnostic test button
-    const diagBtn = page.getByRole('button', { name: '🔬 Run Diagnostics' });
+    const diagBtn = page.getByRole('button', { name: /Run Diagnostics/i });
     await diagBtn.click();
 
     // Assert synthetic diagnostics checklist renders items
-    await expect(page.getByText('> 4. AUTOMATED SYNTHETIC DIAGNOSTICS')).toBeVisible();
+    await expect(page.getByText('4. AUTOMATED SYNTHETIC DIAGNOSTICS')).toBeVisible();
     await expect(page.getByText('Client Storage & Cache Integrity')).toBeVisible();
     await expect(page.getByText('Network RTT & CORS Validation')).toBeVisible();
   });
@@ -39,13 +39,13 @@ test.describe('Operational Monitoring Dashboard E2E Tests', () => {
   test('toggles simulated offline mode toggle button', async ({ page }) => {
     await page.goto('/monitoring');
 
-    const offlineToggleBtn = page.getByRole('button', { name: '🔌 Offline Mode' });
+    const offlineToggleBtn = page.getByRole('button', { name: /Simulate offline/i });
     await offlineToggleBtn.click();
 
-    const activeToggleBtn = page.getByRole('button', { name: '⚙️ Offline: ON' });
+    const activeToggleBtn = page.getByRole('button', { name: /Simulation on/i });
     await expect(activeToggleBtn).toBeVisible();
 
     await activeToggleBtn.click();
-    await expect(page.getByRole('button', { name: '🔌 Offline Mode' })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Simulate offline/i })).toBeVisible();
   });
 });

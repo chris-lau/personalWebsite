@@ -63,6 +63,21 @@
   --overlay-softer: rgba(16, 24, 40, 0.03);
   --accent-border: #d0d5dd;
 
+  /* Status semantics — green reserved for status; text values AA-safe on
+     light surfaces (>= 4.5:1). Badges/nodes consume these instead of
+     theme-blind hex codes. */
+  --status-ok-text: #1a7f37;
+  --status-ok-border: #1a7f37;
+  --status-ok-bg: rgba(26, 127, 55, 0.1);
+  --status-warn-text: #9a6700;
+  --status-warn-border: #9a6700;
+  --status-warn-bg: rgba(156, 103, 0, 0.1);
+  --status-bad-text: #cf222e;
+  --status-bad-border: #cf222e;
+  --status-bad-bg: rgba(207, 34, 46, 0.08);
+  --status-neutral-text: var(--text-muted);
+  --status-neutral-bg: var(--overlay-soft);
+
   --container-max-width: 1040px;
 }
 
@@ -98,5 +113,18 @@
   --overlay-soft: rgba(255, 255, 255, 0.06);
   --overlay-softer: rgba(255, 255, 255, 0.03);
   --accent-border: rgba(255, 255, 255, 0.22);
+
+  /* Status — brighter family for dark surfaces */
+  --status-ok-text: #2ecc71;
+  --status-ok-border: #2ecc71;
+  --status-ok-bg: rgba(46, 204, 113, 0.15);
+  --status-warn-text: #f1c40f;
+  --status-warn-border: #f1c40f;
+  --status-warn-bg: rgba(241, 196, 15, 0.15);
+  --status-bad-text: #ff7b72;
+  --status-bad-border: #ff7b72;
+  --status-bad-bg: rgba(255, 123, 114, 0.12);
+  --status-neutral-text: var(--text-muted);
+  --status-neutral-bg: var(--overlay-soft);
 }
 

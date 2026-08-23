@@ -100,3 +100,19 @@ export const exportDiagnosticReport = (reportData: Record<string, unknown>): voi
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 };
+
+/**
+ * Humanize process uptime: "45s", "16m 19s", "2h 4m", "5d 3h".
+ * Backends report raw float seconds, which nobody wants to mentally convert.
+ */
+export const formatUptime = (totalSeconds: number): string => {
+  const total = Math.max(0, Math.floor(totalSeconds));
+  const days = Math.floor(total / 86400);
+  const hours = Math.floor((total % 86400) / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const seconds = total % 60;
+  if (days > 0) return `${days}d ${hours}h`;
+  if (hours > 0) return `${hours}h ${minutes}m`;
+  if (minutes > 0) return `${minutes}m ${seconds}s`;
+  return `${seconds}s`;
+};

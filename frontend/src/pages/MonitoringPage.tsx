@@ -1,5 +1,5 @@
 import React from 'react';
-import { Activity, FileText, FlaskConical, Zap } from 'lucide-react';
+import { Activity, FileText, FlaskConical, Info, Zap } from 'lucide-react';
 import { Section } from '../components/ui/Section';
 import { FullStackMonitoringDashboard } from '../components/monitoring/FullStackMonitoringDashboard';
 import './Pages.css';
@@ -60,7 +60,7 @@ export const MonitoringPage: React.FC = () => {
       <section>
         <Section title="LIVE TELEMETRY CONSOLE" index="01">
           <p className="cold-start-note">
-            ℹ️ <strong>Backend Cold Start Note:</strong> Free-tier cloud instances (Render) spin
+            <Info size={14} aria-hidden="true" className="inline-icon" /> <strong>Backend Cold Start Note:</strong> Free-tier cloud instances (Render) spin
             down after 15 mins of inactivity. Initial requests (including Swagger UI{' '}
             <code>/docs</code> &amp; diagnostic probes) may take ~50s to wake up the backend
             container. Subsequent requests respond in &lt;50ms.

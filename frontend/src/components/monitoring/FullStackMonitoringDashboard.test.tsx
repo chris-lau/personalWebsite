@@ -4,10 +4,17 @@ import '@testing-library/jest-dom';
 import { FullStackMonitoringDashboard } from './FullStackMonitoringDashboard';
 import { ThemeProvider } from '../../context/ThemeContext';
 import * as telemetryApi from '../../api/telemetryApi';
+import { DiagnosticCheckItem } from '../../types/monitoring';
 
 describe('FullStackMonitoringDashboard Component Unit Tests', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
+    // Default: GitHub proxy probe reports healthy unless a test overrides it.
+    vi.spyOn(telemetryApi, 'probeGithubProxyHealth').mockResolvedValue({
+      status: 'healthy',
+      cached: true,
+      stale: false,
+    });
   });
 
   // Default happy-path mocks: backend online with telemetry data.
@@ -82,8 +89,8 @@ describe('FullStackMonitoringDashboard Component Unit Tests', () => {
     await waitFor(() => {
       expect(screen.getByRole('button', { name: /Run Diagnostics/i })).toBeInTheDocument();
     });
-    expect(screen.getByRole('button', { name: /Flush Cache/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Offline Mode/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Flush Cache' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Simulate offline/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Export Log/i })).toBeInTheDocument();
   });
 
@@ -120,13 +127,13 @@ describe('FullStackMonitoringDashboard Component Unit Tests', () => {
   it('toggles simulated offline mode when button is clicked', async () => {
     mockHealthyProbes();
     renderComponent();
-    const toggleBtn = await screen.findByRole('button', { name: /Offline Mode/i });
+    const toggleBtn = await screen.findByRole('button', { name: /Simulate offline/i });
 
     fireEvent.click(toggleBtn);
-    expect(screen.getByText(/Offline: ON/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Simulation on/i })).toBeInTheDocument();
 
     fireEvent.click(toggleBtn);
-    expect(screen.getByText(/Offline Mode/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Simulate offline/i })).toBeInTheDocument();
   });
 
   it('shows an error banner when the backend is unreachable', async () => {
@@ -209,7 +216,14 @@ describe('FullStackMonitoringDashboard Component Unit Tests', () => {
     renderComponent();
 
     await waitFor(() => {
-      expect(screen.getByText(/DEGRADED/i)).toBeInTheDocument();
+      const dbNode = screen
+        .getByText('PostgreSQL DB', { exact: true })
+        .closest('.topology-node');
+      expect(dbNode?.textContent).toMatch(/DEGRADED/);
+    });
+    // The aggregated headline must not claim HEALTHY over a degraded database.
+    await waitFor(() => {
+      expect(screen.getByText(/SYSTEM STATUS: DEGRADED/i)).toBeInTheDocument();
     });
   });
 
@@ -229,5 +243,116 @@ describe('FullStackMonitoringDashboard Component Unit Tests', () => {
     await waitFor(() => {
       expect(screen.getAllByText(/FALLBACK/i).length).toBeGreaterThan(0);
     });
+  });
+
+  it('renders DEGRADED GitHub proxy node when the probe reports stale-cache degradation', async () => {
+    mockHealthyProbes();
+    vi.spyOn(telemetryApi, 'probeGithubProxyHealth').mockResolvedValue({
+      status: 'degraded',
+      cached: true,
+      stale: true,
+    });
+
+    renderComponent();
+
+    await waitFor(() => {
+      const githubNode = screen
+        .getByText('GitHub REST API', { exact: true })
+        .closest('.topology-node');
+      expect(githubNode?.textContent).toMatch(/DEGRADED/);
+    });
+  });
+
+  it('renders OFFLINE GitHub proxy node when the proxy probe fails while the backend is online', async () => {
+    mockHealthyProbes();
+    vi.spyOn(telemetryApi, 'probeGithubProxyHealth').mockResolvedValue({
+      status: 'offline',
+      cached: false,
+      stale: false,
+    });
+
+    renderComponent();
+
+    await waitFor(() => {
+      const githubNode = screen
+        .getByText('GitHub REST API', { exact: true })
+        .closest('.topology-node');
+      expect(githubNode?.textContent).toMatch(/OFFLINE/);
+    });
+  });
+
+  it('does not mark the GitHub proxy healthy merely because /telemetry responded', async () => {
+    // Regression guard for the HEALTHY-vs-FAIL contradiction: telemetry is
+    // reachable (healthy DB, healthy RTT) but the proxy probe errors.
+    mockHealthyProbes();
+    vi.spyOn(telemetryApi, 'probeGithubProxyHealth').mockResolvedValue({
+      status: 'offline',
+      cached: false,
+      stale: false,
+    });
+
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getByText(/SYSTEM STATUS: OFFLINE/i)).toBeInTheDocument();
+    });
+    // The GitHub topology node must not claim HEALTHY alongside it.
+    const githubNode = screen.getByText('GitHub REST API', { exact: true }).closest('.topology-node');
+    expect(githubNode).not.toBeNull();
+    expect(githubNode?.textContent).not.toMatch(/HEALTHY/);
+  });
+
+  it('waits out the free-tier cold start on initial connect instead of timing out at 3s', async () => {
+    const rttSpy = vi.spyOn(telemetryApi, 'benchmarkNetworkRTT').mockResolvedValue({
+      isOnline: true,
+      latency_ms: 42,
+      status: 'healthy',
+    });
+    vi.spyOn(telemetryApi, 'fetchBackendTelemetry').mockResolvedValue({
+      data: null,
+      isFallback: true,
+    });
+
+    renderComponent();
+
+    await waitFor(() => {
+      expect(screen.getAllByText(/FALLBACK/i).length).toBeGreaterThan(0);
+    });
+    expect(rttSpy).toHaveBeenCalledWith(55_000);
+  });
+
+  it('streams partial diagnostic states through the onUpdate callback as checks progress', async () => {
+    mockHealthyProbes();
+    let observedCallback: ((results: DiagnosticCheckItem[]) => void) | undefined;
+
+    vi.spyOn(telemetryApi, 'runE2EDiagnosticSuite').mockImplementation(async (onUpdate) => {
+      observedCallback = onUpdate;
+      onUpdate?.([
+        {
+          id: 'check-1-storage',
+          name: 'Client Storage & Cache Integrity',
+          description: 'Audits browser sessionStorage availability and active cache state.',
+          status: 'running',
+        },
+      ]);
+      return [
+        {
+          id: 'check-1-storage',
+          name: 'Client Storage & Cache Integrity',
+          description: 'Audits browser sessionStorage availability and active cache state.',
+          status: 'pass',
+          latency_ms: 1,
+        },
+      ];
+    });
+
+    renderComponent();
+    const runBtn = await screen.findByRole('button', { name: /Run Diagnostics/i });
+    fireEvent.click(runBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText('PASS', { exact: true })).toBeInTheDocument();
+    });
+    expect(observedCallback).toBeInstanceOf(Function);
   });
 });

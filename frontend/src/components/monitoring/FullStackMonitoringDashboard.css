@@ -28,6 +28,8 @@
 }
 
 .status-badge {
+  display: inline-flex;
+  align-items: center;
   font-family: var(--font-family);
   font-size: 0.85rem;
   font-weight: 700;
@@ -35,29 +37,43 @@
   border-radius: var(--radius-md);
   text-transform: uppercase;
 
+  /* Decorative status dot, colored by the badge's own text color. */
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: currentColor;
+    margin-right: 0.45rem;
+  }
+
   &.healthy {
-    background-color: rgba(46, 204, 113, 0.15);
-    color: #2ecc71;
-    border: 1px solid #2ecc71;
+    background-color: var(--status-ok-bg);
+    color: var(--status-ok-text);
+    border: 1px solid var(--status-ok-border);
   }
 
   &.offline, &.fail {
-    background-color: rgba(231, 76, 60, 0.15);
-    color: #e74c3c;
-    border: 1px solid #e74c3c;
+    background-color: var(--status-bad-bg);
+    color: var(--status-bad-text);
+    border: 1px solid var(--status-bad-border);
   }
 
-  &.fallback, &.cached {
-    background-color: rgba(241, 196, 15, 0.15);
-    color: #f1c40f;
-    border: 1px solid #f1c40f;
+  &.fallback, &.cached, &.degraded {
+    background-color: var(--status-warn-bg);
+    color: var(--status-warn-text);
+    border: 1px solid var(--status-warn-border);
   }
 }
 
 .latency-badge, .last-check-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   font-family: var(--font-family);
   font-size: 0.8rem;
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
 .monitoring-actions {
@@ -67,6 +83,9 @@
 }
 
 .action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   font-family: var(--font-family);
   font-size: 0.8rem;
   font-weight: 600;
@@ -78,8 +97,8 @@
   cursor: pointer;
   transition: all 0.2s ease;
 
-  &:hover {
-    background-color: var(--border-color, #555);
+  &:hover:not(:disabled) {
+    background-color: var(--overlay-soft);
     transform: translateY(-1px);
   }
 
@@ -88,16 +107,32 @@
     cursor: not-allowed;
   }
 
+  /* Primary action — solid fill per the site's near-black primary language. */
   &.diag-btn {
+    background-color: var(--accent-secondary);
     border-color: var(--accent-secondary);
-    color: var(--accent-secondary);
+    color: var(--text-inverse);
+
+    &:hover:not(:disabled) {
+      opacity: 0.88;
+      background-color: var(--accent-secondary);
+    }
   }
 
   &.toggle-offline-btn.active {
-    background-color: rgba(241, 196, 15, 0.2);
-    border-color: #f1c40f;
-    color: #f1c40f;
+    background-color: var(--status-warn-bg);
+    border-color: var(--status-warn-border);
+    color: var(--status-warn-text);
   }
+}
+
+/* Transient confirmation for one-shot actions (flush/export). */
+.monitoring-action-notice {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  min-width: 0;
 }
 
 /* Section Styling */
@@ -112,6 +147,11 @@
   color: var(--accent-secondary);
   margin-bottom: 0.75rem;
   letter-spacing: 0.05em;
+
+  /* Terminal-style prompt glyph, decorative only (not read aloud). */
+  &::before {
+    content: '> ';
+  }
 }
 
 /* Topology Diagram */
@@ -188,8 +228,9 @@
   }
 
   .node-icon {
-    font-size: 1.5rem;
-    margin-bottom: 0.25rem;
+    display: inline-flex;
+    color: var(--text-muted);
+    margin-bottom: 0.35rem;
   }
 
   .node-title {
@@ -205,6 +246,7 @@
   }
 
   .node-status {
+    display: inline-block;
     font-family: var(--font-family);
     font-size: 0.7rem;
     font-weight: 700;
@@ -212,19 +254,47 @@
     border-radius: 3px;
 
     &.healthy {
-      background-color: rgba(46, 204, 113, 0.2);
-      color: #2ecc71;
+      background-color: var(--status-ok-bg);
+      color: var(--status-ok-text);
     }
 
     &.offline, &.fail {
-      background-color: rgba(231, 76, 60, 0.2);
-      color: #e74c3c;
+      background-color: var(--status-bad-bg);
+      color: var(--status-bad-text);
     }
 
     &.fallback, &.cached, &.degraded {
-      background-color: rgba(241, 196, 15, 0.2);
-      color: #f1c40f;
+      background-color: var(--status-warn-bg);
+      color: var(--status-warn-text);
     }
+  }
+}
+
+/* Status legend for the topology map. */
+.topology-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.1rem;
+  margin-top: 0.85rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .legend-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+
+    &.ok { background-color: var(--status-ok-border); }
+    &.warn { background-color: var(--status-warn-border); }
+    &.fall { background-color: var(--status-warn-border); }
+    &.bad { background-color: var(--status-bad-border); }
   }
 }
 
@@ -262,8 +332,15 @@
   }
 
   .arrow {
-    font-size: 0.75rem;
+    display: inline-flex;
     color: var(--accent-secondary);
+  }
+
+  /* Connectors run vertically on mobile — rotate the arrow to match. */
+  @media (max-width: 767px) {
+    .arrow {
+      transform: rotate(90deg);
+    }
   }
 }
 
@@ -295,6 +372,16 @@
     margin-bottom: 1rem;
     border-bottom: 1px dashed var(--border-color, #333);
     padding-bottom: 0.5rem;
+
+    &::before {
+      content: '> ';
+    }
+  }
+
+  .card-note {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin: -0.65rem 0 0.85rem 0;
   }
 }
 
@@ -324,10 +411,17 @@
 .offline-fallback-notice {
   font-family: var(--font-family);
   font-size: 0.8rem;
-  color: #f1c40f;
+  color: var(--status-warn-text);
   padding: 1rem;
-  background-color: rgba(241, 196, 15, 0.08);
+  background-color: var(--status-warn-bg);
   border-radius: var(--radius-md);
+
+  p {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin: 0;
+  }
 }
 
 /* Initial Loading State */
@@ -352,6 +446,13 @@
   animation: monitoringSpin 0.8s linear infinite;
 }
 
+.monitoring-loading-hint {
+  max-width: 42ch;
+  font-size: 0.8rem;
+  text-align: center;
+  opacity: 0.85;
+}
+
 @keyframes monitoringSpin {
   to {
     transform: rotate(360deg);
@@ -367,16 +468,19 @@
   gap: 0.75rem;
   padding: 0.85rem 1rem;
   margin-bottom: 1.25rem;
-  background-color: rgba(231, 76, 60, 0.1);
-  border: 1px solid rgba(231, 76, 60, 0.4);
+  background-color: var(--status-bad-bg);
+  border: 1px solid var(--status-bad-border);
   border-radius: 6px;
   font-family: var(--font-family);
 }
 
 .monitoring-error-message {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
   font-size: 0.88rem;
   font-weight: 600;
-  color: #e74c3c;
+  color: var(--status-bad-text);
 }
 
 .monitoring-error-actions {
@@ -391,14 +495,14 @@
 }
 
 .monitoring-retry-btn {
-  background-color: rgba(231, 76, 60, 0.15);
-  border-color: rgba(231, 76, 60, 0.5);
-  color: #e74c3c;
+  background-color: var(--status-bad-bg);
+  border-color: var(--status-bad-border);
+  color: var(--status-bad-text);
   font-weight: 600;
 }
 
 .monitoring-retry-btn:hover:not(:disabled) {
-  background-color: rgba(231, 76, 60, 0.25);
+  filter: brightness(0.95);
 }
 
 .monitoring-dismiss-btn {
@@ -422,19 +526,19 @@
   border-left-width: 4px;
 
   &.pass {
-    border-left-color: #2ecc71;
+    border-left-color: var(--status-ok-border);
   }
 
   &.fail {
-    border-left-color: #e74c3c;
+    border-left-color: var(--status-bad-border);
   }
 
   &.running {
-    border-left-color: #f1c40f;
+    border-left-color: var(--status-warn-border);
   }
 
   &.pending {
-    border-left-color: #888;
+    border-left-color: var(--border-muted);
   }
 }
 
@@ -446,6 +550,9 @@
 }
 
 .diag-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
   font-family: var(--font-family);
   font-size: 0.7rem;
   font-weight: 700;
@@ -453,23 +560,23 @@
   border-radius: 3px;
 
   &.pass {
-    background-color: rgba(46, 204, 113, 0.2);
-    color: #2ecc71;
+    background-color: var(--status-ok-bg);
+    color: var(--status-ok-text);
   }
 
   &.fail {
-    background-color: rgba(231, 76, 60, 0.2);
-    color: #e74c3c;
+    background-color: var(--status-bad-bg);
+    color: var(--status-bad-text);
   }
 
   &.running {
-    background-color: rgba(241, 196, 15, 0.2);
-    color: #f1c40f;
+    background-color: var(--status-warn-bg);
+    color: var(--status-warn-text);
   }
 
   &.pending {
-    background-color: var(--overlay-soft);
-    color: #aaa;
+    background-color: var(--status-neutral-bg);
+    color: var(--status-neutral-text);
   }
 }
 
@@ -495,4 +602,8 @@
   font-size: 0.75rem;
   opacity: 0.8;
   margin: 0;
+
+  &::before {
+    content: '> ';
+  }
 }
