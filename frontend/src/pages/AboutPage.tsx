@@ -28,17 +28,11 @@ export const AboutPage: React.FC = () => {
               <div key={cat.category} className="matrix-category">
                 <h3 className="category-title">{cat.category}</h3>
                 <ul className="skill-tags">
-                  {(cat.detailedSkills || cat.skills.map(s => ({ name: s, level: 'core' as const }))).map((skillItem) => {
+                  {(cat.detailedSkills || cat.skills.map(s => ({ name: s }))).map((skillItem) => {
                     const name = typeof skillItem === 'string' ? skillItem : skillItem.name;
-                    const level = typeof skillItem === 'string' ? 'core' : (skillItem.level || 'core');
                     return (
-                      <li
-                        key={name}
-                        className={`skill-pill ${level === 'core' ? 'skill-pill-core' : 'skill-pill-proficient'}`}
-                      >
-                        {level === 'core' && <span className="skill-badge-star" title="Core Expertise">★ </span>}
+                      <li key={name} className="skill-pill">
                         <span>{name}</span>
-                        <span className="skill-tier-badge">{level === 'core' ? 'Core' : 'Proficient'}</span>
                       </li>
                     );
                   })}
