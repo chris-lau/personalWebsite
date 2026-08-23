@@ -42,7 +42,7 @@ const PROJECT_ICONS: Record<string, typeof Bot> = {
 };
 
 /** Toolchain tile: hands-on engineering + AI skills, curated from skills.json (no new claims). */
-const TOOLCHAIN_SKILL_NAMES = [
+const CORE_SKILL_NAMES = [
   'React',
   'TypeScript',
   'REST APIs & Architecture',
@@ -72,7 +72,7 @@ export const HomePage = () => {
     .map((id) => projectsData.find((project) => project.id === id && project.featured))
     .filter((project): project is Project => Boolean(project));
   const allSkills = skillsData.flatMap((category) => category.skills);
-  const toolchainSkills = TOOLCHAIN_SKILL_NAMES.filter((name) => allSkills.includes(name));
+  const coreSkills = CORE_SKILL_NAMES.filter((name) => allSkills.includes(name));
 
   return (
     <div className="page-container page-home">
@@ -201,7 +201,7 @@ export const HomePage = () => {
         </div>
       </section>
 
-      <section className="home-section home-panels" aria-label="Now and toolchain">
+      <section className="home-section home-panels" aria-label="Now and core skills">
         <div className="home-panel">
           <SectionHead index="02" label="NOW" />
           <ul className="now-tile__list">
@@ -217,9 +217,9 @@ export const HomePage = () => {
           </div>
         </div>
         <div className="home-panel">
-          <SectionHead index="03" label="TOOLCHAIN" />
+          <SectionHead index="03" label="CORE SKILLS" />
           <div className="stack-tags">
-            {toolchainSkills.map((skill) => (
+            {coreSkills.map((skill) => (
               <span key={skill} className="tech-tag stack-tag">{skill}</span>
             ))}
           </div>

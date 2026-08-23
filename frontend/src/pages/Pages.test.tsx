@@ -134,7 +134,7 @@ describe('Page Components Unit Tests', () => {
     expect(screen.getByText(/This chat runs on a RAG backend I built/i)).toBeInTheDocument();
 
     expect(screen.getByText('FEATURED WORK')).toBeInTheDocument();
-    expect(screen.getByText('TOOLCHAIN')).toBeInTheDocument();
+    expect(screen.getByText('CORE SKILLS')).toBeInTheDocument();
     expect(screen.getByText('NOW')).toBeInTheDocument();
   });
 
