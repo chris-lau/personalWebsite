@@ -35,11 +35,11 @@ describe('Contextual Chat Links', () => {
   });
 
   describe('ProjectsPage', () => {
-    it('renders "Ask about this →" buttons for each project', () => {
+    it('renders "Ask this site →" buttons for each project', () => {
       render(<RouterWrapper><ProjectsPage /></RouterWrapper>);
 
-      // Find all "Ask about this" buttons
-      const askButtons = screen.getAllByText(/ask about this/i);
+      // Find all "Ask this site" buttons
+      const askButtons = screen.getAllByText(/ask this site/i);
       expect(askButtons.length).toBeGreaterThan(0);
     });
 
@@ -49,8 +49,8 @@ describe('Contextual Chat Links', () => {
       // Spy on event dispatching
       const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
 
-      // Find and click the first "Ask about this" button
-      const firstAskButton = screen.getAllByText(/ask about this/i)[0];
+      // Find and click the first "Ask this site" button
+      const firstAskButton = screen.getAllByText(/ask this site/i)[0];
       fireEvent.click(firstAskButton);
 
       // Verify event was dispatched
@@ -70,18 +70,18 @@ describe('Contextual Chat Links', () => {
       render(<RouterWrapper><ProjectsPage /></RouterWrapper>);
 
       // Find a button with aria-label containing project name
-      const askButtons = screen.getAllByText(/ask about this/i);
+      const askButtons = screen.getAllByText(/ask this site/i);
       expect(askButtons[0]).toHaveAttribute('aria-label');
-      expect(askButtons[0].getAttribute('aria-label')).toMatch(/Ask about this project:/i);
+      expect(askButtons[0].getAttribute('aria-label')).toMatch(/Ask this site about the .* project/i);
     });
   });
 
   describe('ExperiencePage', () => {
-    it('renders "Ask about this →" buttons for each role', () => {
+    it('renders "Ask this site →" buttons for each role', () => {
       render(<RouterWrapper><ExperiencePage /></RouterWrapper>);
 
-      // Find all "Ask about this" buttons
-      const askButtons = screen.getAllByText(/ask about this/i);
+      // Find all "Ask this site" buttons
+      const askButtons = screen.getAllByText(/ask this site/i);
       expect(askButtons.length).toBeGreaterThan(0);
     });
 
@@ -91,8 +91,8 @@ describe('Contextual Chat Links', () => {
       // Spy on event dispatching
       const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
 
-      // Find and click the first "Ask about this" button
-      const firstAskButton = screen.getAllByText(/ask about this/i)[0];
+      // Find and click the first "Ask this site" button
+      const firstAskButton = screen.getAllByText(/ask this site/i)[0];
       fireEvent.click(firstAskButton);
 
       // Verify event was dispatched
@@ -112,9 +112,9 @@ describe('Contextual Chat Links', () => {
       render(<RouterWrapper><ExperiencePage /></RouterWrapper>);
 
       // Find a button with aria-label containing role and company
-      const askButtons = screen.getAllByText(/ask about this/i);
+      const askButtons = screen.getAllByText(/ask this site/i);
       expect(askButtons[0]).toHaveAttribute('aria-label');
-      expect(askButtons[0].getAttribute('aria-label')).toMatch(/Ask about this role:/i);
+      expect(askButtons[0].getAttribute('aria-label')).toMatch(/Ask this site about the .* role/i);
     });
   });
 

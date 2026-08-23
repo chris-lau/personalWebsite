@@ -2,9 +2,9 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Portfolio E2E Tests', () => {
   test('navigates through all core page routes', async ({ page }) => {
-    // 1. Home page — human-first hero leads with the name as the dominant heading
+    // 1. Home page — statement hero leads; name carried in the lede
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: 'Chris Lau', level: 1 })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Technical product leader who builds the AI systems he ships/i })).toBeVisible();
 
     // 2. About page
     await page.goto('/about');
@@ -69,10 +69,11 @@ test.describe('Portfolio E2E Tests', () => {
   test('recruiter path: hero delivers the story and core nav is dropdown-free', async ({ page }) => {
     await page.goto('/');
 
-    // First 10 seconds: name, role headline, value prop, current role band, both CTAs.
-    await expect(page.getByRole('heading', { name: 'Chris Lau', level: 1 })).toBeVisible();
+    // First 10 seconds: statement headline, name, role, value prop, status, both CTAs.
+    await expect(page.getByRole('heading', { name: /Technical product leader who builds the AI systems he ships/i })).toBeVisible();
+    await expect(page.locator('.home-hero__lede').getByText('Chris Lau')).toBeVisible();
     await expect(page.getByText('Staff Product Manager, AI at Global Relay')).toBeVisible();
-    await expect(page.getByText(/Technical product leader in AI who actually builds/i)).toBeVisible();
+    await expect(page.getByText(/the rare PM who architects, codes, and ships/i)).toBeVisible();
     await expect(page.getByText('Staff Product Manager, Artificial Intelligence @ Global Relay')).toBeVisible();
     await expect(page.getByRole('link', { name: 'View Experience' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'Get in Touch' })).toBeVisible();
@@ -164,6 +165,6 @@ test.describe('Portfolio E2E Tests', () => {
     // Click return home link
     await page.click('text=Return Home');
     await expect(page).toHaveURL('/');
-    await expect(page.getByRole('heading', { name: 'Chris Lau', level: 1 })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /Technical product leader who builds the AI systems he ships/i })).toBeVisible();
   });
 });

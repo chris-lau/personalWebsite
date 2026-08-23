@@ -7,7 +7,7 @@ import { test, expect } from '@playwright/test';
  * DO NOT RUN this test during Track C development - it will fail because the listener
  * doesn't exist in this worktree. The coordinator will run this post-merge.
  *
- * This test verifies that clicking "Ask about this" buttons on Projects and Experience pages
+ * This test verifies that clicking "Ask this site" buttons on Projects and Experience pages
  * properly opens the chat dialog with the correct starter message sent.
  */
 
@@ -17,9 +17,9 @@ test.describe('Contextual Chat Links', () => {
     await page.goto('/projects');
   });
 
-  test('should open chat dialog when clicking "Ask about this" on a project', async ({ page }) => {
-    // Find the first "Ask about this" button
-    const askButton = page.getByText('Ask about this').first();
+  test('should open chat dialog when clicking "Ask this site" on a project', async ({ page }) => {
+    // Find the first "Ask this site" button
+    const askButton = page.getByRole('button', { name: /Ask this site about the/ }).first();
     await expect(askButton).toBeVisible();
 
     // Click the button
@@ -40,18 +40,18 @@ test.describe('Contextual Chat Links', () => {
     expect(messageText).toMatch(/project/i);
   });
 
-  test('should include correct aria-label on project "Ask about this" buttons', async ({ page }) => {
+  test('should include correct aria-label on project "Ask this site" buttons', async ({ page }) => {
     // Check that the button has proper accessibility label
-    const askButton = page.getByRole('button', { name: /ask about this project/i }).first();
+    const askButton = page.getByRole('button', { name: /ask this site about the .* project/i }).first();
     await expect(askButton).toBeVisible();
   });
 
-  test('should open chat dialog when clicking "Ask about this" on experience page', async ({ page }) => {
+  test('should open chat dialog when clicking "Ask this site" on experience page', async ({ page }) => {
     // Navigate to experience page
     await page.goto('/experience');
 
-    // Find the first "Ask about this" button
-    const askButton = page.getByText('Ask about this').first();
+    // Find the first "Ask this site" button
+    const askButton = page.getByRole('button', { name: /Ask this site about the/ }).first();
     await expect(askButton).toBeVisible();
 
     // Click the button
@@ -70,12 +70,12 @@ test.describe('Contextual Chat Links', () => {
     expect(messageText).toMatch(/role at/i);
   });
 
-  test('should include correct aria-label on experience "Ask about this" buttons', async ({ page }) => {
+  test('should include correct aria-label on experience "Ask this site" buttons', async ({ page }) => {
     // Navigate to experience page
     await page.goto('/experience');
 
     // Check that the button has proper accessibility label
-    const askButton = page.getByRole('button', { name: /ask about this role/i }).first();
+    const askButton = page.getByRole('button', { name: /ask this site about the .* role/i }).first();
     await expect(askButton).toBeVisible();
   });
 });

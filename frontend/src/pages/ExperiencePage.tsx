@@ -27,10 +27,10 @@ export const ExperiencePage: React.FC = () => {
                 <button
                   type="button"
                   className="link-button"
-                  aria-label={`Ask about this role: ${item.role} @ ${item.company}`}
+                  aria-label={`Ask this site about the ${item.role} role at ${item.company}`}
                   onClick={() => openChat({ starter: `Tell me about Chris's ${item.role} role at ${item.company}.` })}
                 >
-                  Ask about this →
+                  Ask this site →
                 </button>
               </div>
             ))}

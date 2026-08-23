@@ -23,33 +23,32 @@ const CaseRow = ({ project }: { project: Project }) => {
 
   return (
     <article className={`case-row ${open ? 'case-row--open' : ''}`}>
-      <button
-        type="button"
-        className="case-row__summary"
-        aria-expanded={open}
-        aria-controls={`case-details-${project.id}`}
-        onClick={() => setOpen((v) => !v)}
-      >
-        <span className="work-row__icon" aria-hidden="true">
-          <ProjectIcon size={18} strokeWidth={1.75} />
-        </span>
-        <span className="case-row__heading">
-          <span className="case-row__title">{project.title}</span>
-          <span className="case-row__desc">{project.description}</span>
-        </span>
+      <div className="case-row__summary">
+        <button
+          type="button"
+          className="case-row__toggle"
+          aria-expanded={open}
+          aria-controls={`case-details-${project.id}`}
+          onClick={() => setOpen((v) => !v)}
+        >
+          <span className="work-row__icon" aria-hidden="true">
+            <ProjectIcon size={18} strokeWidth={1.75} />
+          </span>
+          <span className="case-row__heading">
+            <span className="case-row__title">{project.title}</span>
+            <span className="case-row__desc">{project.description}</span>
+          </span>
+          <ChevronDown size={16} aria-hidden="true" className="case-row__chevron" />
+        </button>
         <button
           type="button"
           className="link-button case-row__ask"
-          aria-label={`Ask about this project: ${project.title}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            openChat({ starter: `Tell me about the ${project.title} project.` });
-          }}
+          aria-label={`Ask this site about the ${project.title} project`}
+          onClick={() => openChat({ starter: `Tell me about the ${project.title} project.` })}
         >
-          Ask about this →
+          Ask this site →
         </button>
-        <ChevronDown size={16} aria-hidden="true" className="case-row__chevron" />
-      </button>
+      </div>
 
       {open && (
         <div id={`case-details-${project.id}`} className="case-row__details">

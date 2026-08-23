@@ -12,9 +12,9 @@ test.describe('Backend API Fallback E2E Tests', () => {
     await page.goto('/projects');
     await expect(page.getByRole('heading', { name: 'FEATURED PORTFOLIO PROJECTS' })).toBeVisible();
 
-    // Verify projects page renders static local project cards
-    const projectCards = page.locator('.project-card');
-    await expect(projectCards.first()).toBeVisible();
+    // Verify projects page renders static local case rows
+    const caseRows = page.locator('.case-row');
+    await expect(caseRows.first()).toBeVisible();
 
     // Navigate to Now page
     await page.goto('/now');
