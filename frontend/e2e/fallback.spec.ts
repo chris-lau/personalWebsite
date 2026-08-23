@@ -21,7 +21,7 @@ test.describe('Backend API Fallback E2E Tests', () => {
     await expect(page.getByRole('heading', { name: "WHAT I'M DOING NOW" })).toBeVisible();
 
     // Verify Now page renders content successfully without crash
-    await expect(page.locator('.now-block').first()).toBeVisible();
+    await expect(page.locator('.work-row').first()).toBeVisible();
   });
 
 });
