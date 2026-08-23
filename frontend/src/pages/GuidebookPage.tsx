@@ -47,9 +47,9 @@ export const GuidebookPage: React.FC = () => {
   return (
     <div className="page-container page-guidebook">
       <section className="guidebook-hero">
-        <Section title="SOFTWARE ENGINEERING GUIDEBOOK SERIES">
+        <Section title="SOFTWARE ENGINEERING GUIDEBOOK SERIES" index="01">
           <div className="hero-content">
-            <h1 className="hero-title serif-heading">
+            <h1 className="hero-title">
               {activeVolume === 'frontend'
                 ? 'Volume 1: Building Modern Web Applications'
                 : 'Volume 2: FastAPI & Python Backend Architecture'}
@@ -130,14 +130,14 @@ export const GuidebookPage: React.FC = () => {
 
         {/* Chapter Reader Area */}
         <main ref={readerRef} className="guidebook-reader">
-          <Section title={`CHAPTER ${activeChapter.number} of ${currentChapters.length}`}>
+          <Section title={`CHAPTER ${activeChapter.number} of ${currentChapters.length}`} index="02">
             <div className="reader-header">
               <div className="chapter-meta">
                 <span className="chapter-badge">
                   {activeVolume === 'frontend' ? 'Volume 1' : 'Volume 2'} — Chapter {activeChapter.number}
                 </span>
               </div>
-              <h2 className="reader-chapter-title serif-heading">{activeChapter.title}</h2>
+              <h2 className="reader-chapter-title">{activeChapter.title}</h2>
             </div>
 
             <div className="reader-content">
