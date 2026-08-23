@@ -1,13 +1,13 @@
 import { Mail } from 'lucide-react';
 import { profileData } from '../data/profile';
-import { BoxContainer } from '../components/ui/BoxContainer';
+import { Section } from '../components/ui/Section';
 import './Pages.css';
 
 export const ContactPage = () => {
   return (
     <div className="page-container page-contact">
       <section>
-        <BoxContainer title="GET IN TOUCH">
+        <Section title="GET IN TOUCH" index="01">
           <div className="contact-methods">
             <p className="contact-intro">
               Whether you want to discuss AI product leadership, enterprise automation, potential collaborations, or tech opportunities, feel free to reach out directly.
@@ -40,7 +40,7 @@ export const ContactPage = () => {
               ))}
             </div>
           </div>
-        </BoxContainer>
+        </Section>
       </section>
     </div>
   );

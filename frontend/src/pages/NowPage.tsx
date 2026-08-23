@@ -1,14 +1,14 @@
 import React from 'react';
 import { BookOpen } from 'lucide-react';
 import { nowData } from '../data/now';
-import { BoxContainer } from '../components/ui/BoxContainer';
+import { Section } from '../components/ui/Section';
 import './Pages.css';
 
 export const NowPage: React.FC = () => {
   return (
     <div className="page-container page-now">
       <section>
-        <BoxContainer title="WHAT I'M DOING NOW">
+        <Section title="WHAT I'M DOING NOW" index="01">
           <p className="last-updated">Last Updated: {nowData.lastUpdated}</p>
 
           <div className="now-block">
@@ -47,7 +47,7 @@ export const NowPage: React.FC = () => {
               ))}
             </ul>
           </div>
-        </BoxContainer>
+        </Section>
       </section>
     </div>
   );

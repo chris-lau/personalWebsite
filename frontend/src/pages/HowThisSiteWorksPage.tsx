@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Activity, ShoppingBag, MessageSquare, Sparkles, Terminal, BookOpen, FileCode, Info } from 'lucide-react';
 import { siteArchitectureData } from '../data/siteArchitecture';
-import { BoxContainer } from '../components/ui/BoxContainer';
+import { Section } from '../components/ui/Section';
 import { BACKEND_ROOT_URL } from '../api/config';
 import { openChat } from '../components/chat/chatControl';
 import './Pages.css';
@@ -20,7 +20,7 @@ export const HowThisSiteWorksPage: React.FC = () => {
   return (
     <div className="page-container page-how-it-works">
       <section>
-        <BoxContainer title="HOW THIS SITE WORKS">
+        <Section title="HOW THIS SITE WORKS" index="01">
           <p className="intro-text">
             This portfolio is built as a lightweight, stateful, full-stack application showcasing modern frontend architectural principles, strict typing, dynamic theming, multi-tier testing strategies, real-time telemetry, and a Python FastAPI backend.
           </p>
@@ -105,7 +105,7 @@ export const HowThisSiteWorksPage: React.FC = () => {
               </div>
             ))}
           </div>
-        </BoxContainer>
+        </Section>
       </section>
     </div>
   );

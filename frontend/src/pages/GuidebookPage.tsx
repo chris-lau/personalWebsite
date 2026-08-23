@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { BookOpen, Server } from 'lucide-react';
 import { guidebookChapters, backendGuidebookChapters } from '../data/guidebookData';
-import { BoxContainer } from '../components/ui/BoxContainer';
+import { Section } from '../components/ui/Section';
 import { MarkdownRenderer } from '../components/markdown/MarkdownRenderer';
 import './Pages.css';
 import './GuidebookPage.css';
@@ -47,7 +47,7 @@ export const GuidebookPage: React.FC = () => {
   return (
     <div className="page-container page-guidebook">
       <section className="guidebook-hero">
-        <BoxContainer title="SOFTWARE ENGINEERING GUIDEBOOK SERIES">
+        <Section title="SOFTWARE ENGINEERING GUIDEBOOK SERIES">
           <div className="hero-content">
             <h1 className="hero-title serif-heading">
               {activeVolume === 'frontend'
@@ -87,7 +87,7 @@ export const GuidebookPage: React.FC = () => {
               </button>
             </div>
           </div>
-        </BoxContainer>
+        </Section>
       </section>
 
       {/* Guidebook Main Layout: Sidebar Navigation + Reader Area */}
@@ -141,7 +141,7 @@ export const GuidebookPage: React.FC = () => {
 
         {/* Chapter Reader Area */}
         <main ref={readerRef} className="guidebook-reader">
-          <BoxContainer title={`CHAPTER ${activeChapter.number} of ${currentChapters.length}`}>
+          <Section title={`CHAPTER ${activeChapter.number} of ${currentChapters.length}`}>
             <div className="reader-header">
               <div className="chapter-meta">
                 <span className="chapter-badge">
@@ -179,7 +179,7 @@ export const GuidebookPage: React.FC = () => {
                 </button>
               )}
             </nav>
-          </BoxContainer>
+          </Section>
         </main>
       </div>
     </div>

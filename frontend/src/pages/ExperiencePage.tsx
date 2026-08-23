@@ -1,6 +1,6 @@
 import React from 'react';
 import { experienceData } from '../data/experience';
-import { BoxContainer } from '../components/ui/BoxContainer';
+import { Section } from '../components/ui/Section';
 import { openChat } from '../components/chat/chatControl';
 import './Pages.css';
 
@@ -8,7 +8,7 @@ export const ExperiencePage: React.FC = () => {
   return (
     <div className="page-container page-experience">
       <section className="experience-history-section">
-        <BoxContainer title="CAREER & EXPERIENCE">
+        <Section title="CAREER & EXPERIENCE" index="01">
           <div className="experience-list">
             {experienceData.map((item) => (
               <div key={item.id} className="experience-item">
@@ -35,7 +35,7 @@ export const ExperiencePage: React.FC = () => {
               </div>
             ))}
           </div>
-        </BoxContainer>
+        </Section>
       </section>
     </div>
   );

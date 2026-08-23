@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Folder, GitBranch } from 'lucide-react';
 import { projectsData } from '../data/projects';
-import { BoxContainer } from '../components/ui/BoxContainer';
+import { Section } from '../components/ui/Section';
 import { GitHubDashboard } from '../components/github/GitHubDashboard';
 import { openChat } from '../components/chat/chatControl';
 import './Pages.css';
@@ -49,7 +49,7 @@ export const ProjectsPage: React.FC = () => {
         </div>
 
         {activeTab === 'featured' ? (
-          <BoxContainer title="FEATURED PORTFOLIO PROJECTS">
+          <Section title="FEATURED PORTFOLIO PROJECTS" index="01">
             <div className="filter-bar" role="group" aria-label="Filter projects by technology">
               <span className="filter-label" id="filter-by-label">Filter Tag: </span>
               <button
@@ -112,11 +112,11 @@ export const ProjectsPage: React.FC = () => {
                 </div>
               ))}
             </div>
-          </BoxContainer>
+          </Section>
         ) : (
-          <BoxContainer title="LIVE GITHUB ACTIVITY & REPOSITORIES">
+          <Section title="LIVE GITHUB ACTIVITY & REPOSITORIES" index="02" tint>
             <GitHubDashboard />
-          </BoxContainer>
+          </Section>
         )}
       </section>
     </div>

@@ -4,7 +4,7 @@ import { OpportunityFinder } from '../components/amazon/OpportunityFinder';
 import { UnitEconomicsCalculator } from '../components/amazon/UnitEconomicsCalculator';
 import { ReviewGapScanner } from '../components/amazon/ReviewGapScanner';
 import { ChatPanel } from '../components/chat/ChatPanel';
-import { BoxContainer } from '../components/ui/BoxContainer';
+import { Section } from '../components/ui/Section';
 import { useChat } from '../hooks/useChat';
 import {
   AMAZON_TRENDS_STARTERS,
@@ -221,7 +221,7 @@ export const AmazonToolsPage: React.FC = () => {
             className="amazon-companion-aside"
             aria-label="Amazon AI Companion Panel"
           >
-            <BoxContainer title="AMAZON AI COPILOT">
+            <Section title="AMAZON AI COPILOT">
               <div className="companion-header-meta">
                 <div className="companion-grounding-status">
                   <span className="grounding-dot" aria-hidden="true" />
@@ -250,7 +250,7 @@ export const AmazonToolsPage: React.FC = () => {
                   </button>
                 }
               />
-            </BoxContainer>
+            </Section>
           </aside>
         )}
       </div>

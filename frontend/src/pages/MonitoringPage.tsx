@@ -1,5 +1,5 @@
 import React from 'react';
-import { BoxContainer } from '../components/ui/BoxContainer';
+import { Section } from '../components/ui/Section';
 import { FullStackMonitoringDashboard } from '../components/monitoring/FullStackMonitoringDashboard';
 import './Pages.css';
 
@@ -40,7 +40,7 @@ export const MonitoringPage: React.FC = () => {
   return (
     <div className="page-container page-monitoring">
       <section>
-        <BoxContainer title="FULL-STACK OPERATIONAL MONITORING & TELEMETRY">
+        <Section title="FULL-STACK OPERATIONAL MONITORING & TELEMETRY" index="01">
           <p className="intro-text">
             <strong>Exhibit:</strong> Zero-cost observability I built &mdash; browser RUM, FastAPI middleware, synthetic E2E probes.
           </p>
@@ -68,7 +68,7 @@ export const MonitoringPage: React.FC = () => {
               </div>
             ))}
           </div>
-        </BoxContainer>
+        </Section>
 
         {/* Live Operational Monitoring Dashboard */}
         <FullStackMonitoringDashboard />
