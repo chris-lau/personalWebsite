@@ -11,7 +11,7 @@ import {
   AMAZON_CALCULATOR_STARTERS,
   AMAZON_REVIEW_GAP_STARTERS,
 } from '../components/chat/starters';
-import { NicheTrend } from '../data/amazonData';
+import { NicheTrend, AMAZON_CATEGORY_FEES } from '../data/amazonData';
 import './AmazonToolsPage.css';
 
 type ActiveTab = 'trends' | 'calculator' | 'review_gap';
@@ -122,9 +122,8 @@ export const AmazonToolsPage: React.FC = () => {
             </h1>
             <p className="page-description">
               <strong>Live product demo:</strong> an opportunity-scoring suite I designed and built end-to-end.
-              An interactive intelligence toolkit for Amazon private label sellers and brand builders.
-              Discover high-velocity product niches, model accurate 2026 FBA unit economics, and exploit
-              competitor review weaknesses.
+              An interactive toolkit for Amazon private label sellers and brand builders. Discover emerging
+              product niches, estimate 2026 FBA unit economics, and act on competitor review gaps.
             </p>
           </div>
           <button
@@ -148,7 +147,9 @@ export const AmazonToolsPage: React.FC = () => {
             <Bookmark size={16} aria-hidden="true" className="inline-icon accent" />
             <span>
               Loaded Active Niche: <strong>{selectedNiche.name}</strong> (Category:{' '}
-              {selectedNiche.category}, Avg Price: ${selectedNiche.avgPrice.toFixed(2)})
+              {AMAZON_CATEGORY_FEES.find((c) => c.id === selectedNiche.category)?.name ??
+                selectedNiche.category}
+              , Avg Price: ${selectedNiche.avgPrice.toFixed(2)})
             </span>
           </span>
           <button
@@ -169,7 +170,8 @@ export const AmazonToolsPage: React.FC = () => {
           onClick={() => setActiveTab('trends')}
         >
           <TrendingUp size={16} aria-hidden="true" />
-          <span>Product Trend &amp; Opportunity Finder</span>
+          <span className="tab-label-full">Trend &amp; Opportunity Finder</span>
+          <span className="tab-label-short">Trends</span>
         </button>
         <button
           type="button"
@@ -177,7 +179,8 @@ export const AmazonToolsPage: React.FC = () => {
           onClick={() => setActiveTab('calculator')}
         >
           <Calculator size={16} aria-hidden="true" />
-          <span>Unit Economics &amp; Profit Simulator</span>
+          <span className="tab-label-full">Unit Economics Simulator</span>
+          <span className="tab-label-short">Economics</span>
         </button>
         <button
           type="button"
@@ -185,7 +188,8 @@ export const AmazonToolsPage: React.FC = () => {
           onClick={() => setActiveTab('review_gap')}
         >
           <Search size={16} aria-hidden="true" />
-          <span>Review Gap &amp; Listing Prompt Scanner</span>
+          <span className="tab-label-full">Review Gap Scanner</span>
+          <span className="tab-label-short">Review Gaps</span>
         </button>
       </nav>
 
@@ -221,36 +225,37 @@ export const AmazonToolsPage: React.FC = () => {
             className="amazon-companion-aside"
             aria-label="Amazon AI Companion Panel"
           >
-            <Section title="AMAZON AI COPILOT">
-              <div className="companion-header-meta">
-                <div className="companion-grounding-status">
-                  <span className="grounding-dot" aria-hidden="true" />
-                  <span>2026 FBA &amp; Private Label Intelligence</span>
-                </div>
-                <div className="companion-context-badge">
-                  <span>Context: {tabTitle}</span>
-                </div>
+            <div className="companion-header-meta">
+              <div className="companion-grounding-status">
+                <span className="grounding-dot" aria-hidden="true" />
+                <span>2026 FBA &amp; Private Label Intelligence</span>
               </div>
+              <div className="companion-context-badge">
+                <span>Context: {tabTitle}</span>
+              </div>
+            </div>
 
-              <ChatPanel
-                chat={chat}
-                className="chat-panel--embedded chat-panel--amazon-companion"
-                starterQuestions={currentStarters}
-                greeting={currentGreeting}
-                inputRef={companionInputRef}
-                headerActions={
-                  <button
-                    type="button"
-                    className="chat-panel__icon-btn"
-                    onClick={() => setCompanionMode(false)}
-                    aria-label="Hide companion panel"
-                    title="Hide AI Companion"
-                  >
-                    <X size={16} aria-hidden="true" />
-                  </button>
-                }
-              />
-            </Section>
+            <ChatPanel
+              chat={chat}
+              className="chat-panel--embedded chat-panel--amazon-companion"
+              starterQuestions={currentStarters}
+              greeting={currentGreeting}
+              inputRef={companionInputRef}
+              title="Amazon AI Copilot"
+              showModelSelector={false}
+              assistantLabel="COPILOT"
+              headerActions={
+                <button
+                  type="button"
+                  className="chat-panel__icon-btn"
+                  onClick={() => setCompanionMode(false)}
+                  aria-label="Hide companion panel"
+                  title="Hide AI Companion"
+                >
+                  <X size={16} aria-hidden="true" />
+                </button>
+              }
+            />
           </aside>
         )}
       </div>

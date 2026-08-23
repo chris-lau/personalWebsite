@@ -43,11 +43,11 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - **22 technical articles** organized under 4 categories (`Backend Architecture & Security`, `React Architecture & Design Systems`, `Developer Workflows & Tooling`, `Testing & Quality Assurance`) with automated Related Articles suggestions and prominent TL;DR callouts.
 
 - **Amazon Seller Intelligence & Opportunity Suite (`/amazon-tools`)**:
-  - **Live Product Search & Scraping Proxy**: FastAPI backend proxy (`GET /api/amazon/search`, `GET /api/amazon/asin/{asin}`) parsing live Amazon marketplace HTML with in-memory TTL caching, plus autocomplete/demand-velocity proxies (`GET /api/amazon/trends`).
-  - **Opportunity Finder**: 12+ product micro-niches with automated 0–100 Opportunity Scores.
-  - **2026 FBA Unit Economics Calculator**: 2026 Amazon fee schedules, Low-Price FBA breaks, referral tiers, dimensional weight, and Markdown sourcing export.
-  - **Review Gap & AI Listing Scanner**, **Keyword Velocity Explorer**, and **AI Companion Mode** (split-screen copilot with tab-aware starters and 1-click ask actions, grounded in 2026 FBA economics).
-  - **Truthful Data Flagging**: Live marketplace data is differentiated from simulated benchmarks (`is_live` flags, source discriminators, warning pills).
+  - **Live Product Search & Scraping Proxy**: FastAPI backend proxy (`GET /api/amazon/search`, `GET /api/amazon/asin/{asin}`) parsing live Amazon marketplace HTML with in-memory TTL caching, plus an autocomplete suggestion proxy (`GET /api/amazon/trends`).
+  - **Trend & Opportunity Finder**: Curated benchmark niches plus live Amazon search results with automated 0–100 Opportunity Scores (four scored pillars — Demand ≤30, Competition ≤30, Margin ≤25, Price ≤15 — surfaced via tooltips and the detail modal).
+  - **Unit Economics Simulator**: 2026 Amazon fee schedules, Low-Price FBA breaks, referral tiers, FBA/FBM fulfillment toggle, and Markdown sourcing export.
+  - **Review Gap Scanner** (pain-point → AI listing-prompt generator) and **AI Companion Mode** (split-screen Amazon AI Copilot with tab-aware starters and 1-click ask actions, grounded in 2026 FBA economics).
+  - **Truthful Data Flagging**: Live marketplace data is differentiated from simulated benchmarks (`is_live` flags, source discriminators, warning pills); unparseable review counts surface as "unknown" and score neutrally instead of inventing numbers, and no demand-velocity percentage is fabricated from autocomplete counts.
 
 - **Full-Stack Operational Monitoring & Telemetry (`/monitoring`)**:
   - Request correlation (`X-Request-ID` UUIDv4), structured JSON logging, sub-system health/readiness probes (`/health/live`, `/health/ready`), and process/DB telemetry (`/api/telemetry`).
@@ -65,7 +65,7 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - Top-level `ErrorBoundary` and defensive `try/catch` around `localStorage`/`sessionStorage`.
 
 - **Testing & Quality Assurance**:
-  - Vitest + React Testing Library unit & component integration tests (**215 / 215 passing** across 26 test files).
+  - Vitest + React Testing Library unit & component integration tests (**226 / 226 passing** across 27 test files).
   - Playwright real-browser end-to-end tests (**19 / 19 passing** across 6 spec files), including light/dark mode toggle persistence.
   - Pytest backend unit & integration tests (**69 / 69 passing**).
   - Storybook 10 component catalog & accessibility auditing (`@storybook/addon-a11y`).

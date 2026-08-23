@@ -1,5 +1,17 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import {
+  AlertTriangle,
+  Bot,
+  Calculator,
+  Eye,
+  Info,
+  Lightbulb,
+  Loader2,
+  Search,
+  TrendingUp,
+  Zap,
+} from 'lucide-react';
+import {
   SAMPLE_NICHE_TRENDS,
   AMAZON_CATEGORY_FEES,
   calculateOpportunityScore,
@@ -15,6 +27,32 @@ interface OpportunityFinderProps {
   onAskCompanion?: (prompt: string) => void;
 }
 
+/** Shared card/modal economics + scoring preview for a niche. */
+function getNicheCalculations(niche: NicheTrend) {
+  const eco = calculateUnitEconomics({
+    salePrice: niche.avgPrice,
+    cogs: niche.avgCogs,
+    shippingToAmazonPerUnit: 1.2,
+    categoryId: niche.category,
+    fbaTier: niche.fbaTier,
+    tacosPct: 10,
+  });
+  const opp = calculateOpportunityScore({
+    searchVolumeGrowthPct: niche.searchVolumeGrowthPct,
+    avgPrice: niche.avgPrice,
+    reviewBarrier: niche.reviewBarrier,
+    estimatedMarginPct: eco.netMarginPct,
+    searchVolume: niche.searchVolume,
+  });
+  return { eco, opp };
+}
+
+/** Human-readable score pillar breakdown for tooltips and the detail modal. */
+function getScoreBreakdownTitle(opp: ReturnType<typeof calculateOpportunityScore>): string {
+  const b = opp.breakdown;
+  return `Demand ${b.demandScore}/30 · Competition ${b.competitionScore}/30 · Margin ${b.marginScore}/25 · Price ${b.pricePointScore}/15`;
+}
+
 export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
   onSelectNicheForEconomics,
   onSelectNicheForPrompt,
@@ -28,15 +66,18 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
   const [isLiveSearchActive, setIsLiveSearchActive] = useState<boolean>(false);
   const [isLoadingLive, setIsLoadingLive] = useState<boolean>(false);
   const [liveProducts, setLiveProducts] = useState<AmazonProductItem[]>([]);
-  const [liveGrowthVelocity, setLiveGrowthVelocity] = useState<number>(65);
+  const [liveGrowthVelocity, setLiveGrowthVelocity] = useState<number | null>(null);
   const [liveSuggestions, setLiveSuggestions] = useState<string[]>([]);
   const closeButtonRef = React.useRef<HTMLButtonElement>(null);
 
-  // Focus close button on modal open and handle Escape key dismiss
+  // Focus close button on modal open, handle Escape, and lock body scroll
   useEffect(() => {
     if (!selectedModalNiche) return;
 
     closeButtonRef.current?.focus();
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -45,10 +86,15 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, [selectedModalNiche]);
 
-  const [isLiveMarketplace, setIsLiveMarketplace] = useState<boolean>(true);
+  // Only meaningful once a live search has actually parsed marketplace HTML;
+  // starts false so curated benchmark cards are never labeled "Live Price".
+  const [isLiveMarketplace, setIsLiveMarketplace] = useState<boolean>(false);
   const [liveNote, setLiveNote] = useState<string>('');
 
   // Execute Live Amazon & Trend Search on Keyword Submit
@@ -81,7 +127,8 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
       }
 
       if (trendRes.data) {
-        setLiveGrowthVelocity(trendRes.data.growth_velocity_pct || 55);
+        // Null velocity means no honest signal — never invent a fallback.
+        setLiveGrowthVelocity(trendRes.data.growth_velocity_pct ?? null);
         setLiveSuggestions(trendRes.data.suggestions || []);
       }
     } catch {
@@ -92,12 +139,20 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
     }
   };
 
-  // Convert live search product into NicheTrend format for calculations & modals
+  // Convert live search product into NicheTrend format for calculations & modals.
+  // Only fields backed by parsed marketplace data are populated — review-derived
+  // estimates are left empty when the review count failed to parse, and pain
+  // points / differentiation angles are never invented for live listings.
   const liveNiches: NicheTrend[] = useMemo(() => {
     return liveProducts.map((p) => {
-      let barrier: 'Low' | 'Medium' | 'High' = 'Low';
-      if (p.reviews_count > 1000) barrier = 'High';
-      else if (p.reviews_count > 300) barrier = 'Medium';
+      const reviewsKnown = p.reviews_count > 0;
+
+      let barrier: 'Low' | 'Medium' | 'High' | 'Unknown' = 'Unknown';
+      if (reviewsKnown) {
+        if (p.reviews_count > 1000) barrier = 'High';
+        else if (p.reviews_count > 300) barrier = 'Medium';
+        else barrier = 'Low';
+      }
 
       const resolvedCategory = p.category || (selectedCategory !== 'all' ? selectedCategory : 'home_kitchen');
 
@@ -105,29 +160,26 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
         id: p.asin,
         name: p.title,
         category: resolvedCategory,
-        searchVolume: Math.max(1200, Math.round(p.reviews_count * 18)),
-        searchVolumeGrowthPct: liveGrowthVelocity,
+        searchVolume: reviewsKnown ? Math.max(1200, Math.round(p.reviews_count * 18)) : 0,
+        searchVolumeGrowthPct: liveGrowthVelocity ?? 0,
+        growthUnknown: liveGrowthVelocity === null,
         avgPrice: p.price > 0 ? p.price : 29.99,
         avgCogs: roundTwoDecimals(p.price > 0 ? p.price * 0.22 : 6.5),
         avgWeightLb: p.fba_tier === 'small_standard' ? 0.8 : 1.8,
         fbaTier: p.fba_tier,
-        avgMonthlySales: Math.max(150, Math.round(p.reviews_count * 0.7)),
+        avgMonthlySales: reviewsKnown ? Math.max(150, Math.round(p.reviews_count * 0.7)) : 0,
         reviewBarrier: barrier,
         avgTop10Reviews: p.reviews_count,
-        topCompetitorRating: p.rating > 0 ? p.rating : 4.5,
+        topCompetitorRating: p.rating,
         seasonality: 'Moderate',
-        painPoints: [
-          'Material durability issues reported under heavy daily usage',
-          'Sizing & packaging misalignment causing minor return friction',
-          'Lack of premium tactile grip or finish compared to photos',
-        ],
-        differentiationAngle: `Upgraded materials with reinforced joints, ergonomic design, and branded gift packaging.`,
+        painPoints: [],
+        differentiationAngle: '',
         tags: [
           isLiveMarketplace ? 'Live Amazon Listing' : 'Simulated Market Benchmark',
           p.is_prime ? 'Prime Eligible' : 'Standard Delivery',
           `ASIN: ${p.asin}`,
         ],
-        suggestedPrompt: `Target Amazon customers searching for "${p.title.slice(0, 50)}" with superior durability and warranty.`,
+        suggestedPrompt: '',
       };
     });
   }, [liveProducts, liveGrowthVelocity, selectedCategory, isLiveMarketplace]);
@@ -139,7 +191,8 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
       if (selectedCategory !== 'all' && niche.category !== selectedCategory) {
         return false;
       }
-      if (niche.searchVolumeGrowthPct < minGrowth) {
+      // A niche with no honest growth signal cannot claim to meet a growth bar.
+      if (minGrowth > 0 && (niche.growthUnknown || niche.searchVolumeGrowthPct < minGrowth)) {
         return false;
       }
       if (reviewFilter !== 'all' && niche.reviewBarrier !== reviewFilter) {
@@ -161,9 +214,12 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
       <div className="tool-intro-card">
         <div className="tool-header-action-row">
           <div>
-            <h3>📈 Amazon Live Product Opportunity & Trend Finder</h3>
+            <h3 className="tool-title">
+              <TrendingUp size={18} aria-hidden="true" className="inline-icon accent" />
+              Trend &amp; Opportunity Finder
+            </h3>
             <p>
-              Search real-time Amazon products and Google Trends demand velocity. Analyze live prices,
+              Search real-time Amazon products and demand signals. Analyze live prices,
               review counts, and calculate instant unit economics.
             </p>
           </div>
@@ -178,7 +234,7 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
         </div>
         {liveNote && (
           <div className="live-note-banner">
-            <span className="live-note-icon">ℹ️</span> {liveNote}
+            <Info size={15} className="live-note-icon" aria-hidden="true" /> {liveNote}
           </div>
         )}
       </div>
@@ -206,7 +262,15 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
               className="theme-btn-primary search-submit-btn"
               disabled={isLoadingLive}
             >
-              {isLoadingLive ? '🔍 Fetching Live...' : '⚡ Search Live Amazon'}
+              {isLoadingLive ? (
+                <>
+                  <Loader2 size={14} className="icon-spin" aria-hidden="true" /> Fetching…
+                </>
+              ) : (
+                <>
+                  <Zap size={14} aria-hidden="true" /> Search Live Amazon
+                </>
+              )}
             </button>
           </div>
         </form>
@@ -262,6 +326,7 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
               <option value="Low">Low Barrier (&lt; 300 reviews)</option>
               <option value="Medium">Medium Barrier (300 - 1,000)</option>
               <option value="High">High Barrier (1,000+)</option>
+              <option value="Unknown">Unknown (no review data)</option>
             </select>
           </div>
 
@@ -279,7 +344,11 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
               className="theme-slider"
               value={minGrowth}
               onChange={(e) => setMinGrowth(Number(e.target.value))}
+              disabled={isLiveSearchActive && liveGrowthVelocity === null}
             />
+            {isLiveSearchActive && liveGrowthVelocity === null && (
+              <span className="filter-hint">Live results have no verified growth data</span>
+            )}
           </div>
         </div>
 
@@ -298,9 +367,11 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
                 setReviewFilter('all');
                 setIsLiveSearchActive(false);
                 setLiveProducts([]);
+                setLiveSuggestions([]);
+                setLiveGrowthVelocity(null);
               }}
             >
-              Reset to Featured
+              {isLiveSearchActive ? 'Reset to Featured' : 'Clear Filters'}
             </button>
           ) : null}
         </div>
@@ -309,9 +380,9 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
       {/* Loading Skeleton */}
       {isLoadingLive && (
         <div className="loading-live-banner">
-          <div className="spinner-icon">⏳</div>
+          <Loader2 size={28} className="icon-spin" aria-hidden="true" />
           <div>
-            <strong>Querying Live Amazon Marketplace & Google Trends...</strong>
+            <strong>Querying Live Amazon Marketplace…</strong>
             <p>Fetching real prices, ASINs, customer review counts, and FBA tier requirements.</p>
           </div>
         </div>
@@ -320,32 +391,60 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
       {/* Opportunity Grid */}
       <div className="niche-cards-grid">
         {filteredNiches.map((niche) => {
-          // Pre-calculate economics for this card's preview
-          const eco = calculateUnitEconomics({
-            salePrice: niche.avgPrice,
-            cogs: niche.avgCogs,
-            shippingToAmazonPerUnit: 1.2,
-            categoryId: niche.category,
-            fbaTier: niche.fbaTier,
-            tacosPct: 10,
-          });
+          const { eco, opp } = getNicheCalculations(niche);
 
-          const opp = calculateOpportunityScore({
-            searchVolumeGrowthPct: niche.searchVolumeGrowthPct,
-            avgPrice: niche.avgPrice,
-            reviewBarrier: niche.reviewBarrier,
-            estimatedMarginPct: eco.netMarginPct,
-            searchVolume: niche.searchVolume,
-          });
+          // Context for the Ask-AI prompt: omit any metric we honestly don't have.
+          const demandContext =
+            niche.searchVolume > 0
+              ? `est. search volume of ${niche.searchVolume.toLocaleString()}${
+                  niche.growthUnknown ? '' : ` (${niche.searchVolumeGrowthPct}% growth)`
+                }`
+              : null;
+          const barrierContext =
+            niche.reviewBarrier === 'Unknown' ? null : `a ${niche.reviewBarrier} review barrier`;
+          const marketContext = [demandContext, barrierContext].filter(Boolean).join(', ');
 
           return (
             <div key={niche.id} className="niche-card">
               <div className="niche-card-header">
                 <div className="niche-title-row">
                   <h4 className="niche-name">{niche.name}</h4>
-                  <div className={`score-badge score-${opp.rating.toLowerCase()}`}>
-                    <span className="score-num">{opp.score}</span>
-                    <span className="score-tag">{opp.rating}</span>
+                  <div className="niche-card-header-actions">
+                    <div
+                      className={`score-badge score-${opp.rating.toLowerCase()}`}
+                      title={`Opportunity Score pillars — ${getScoreBreakdownTitle(opp)}`}
+                    >
+                      <span className="score-num">{opp.score}</span>
+                      <span className="score-tag">{opp.rating}</span>
+                    </div>
+                    <div className="niche-card-header-icons">
+                      {onAskCompanion && (
+                        <button
+                          type="button"
+                          className="niche-icon-btn"
+                          onClick={() =>
+                            onAskCompanion(
+                              `Can you analyze the market opportunity for "${niche.name}"? It has an Opportunity Score of ${opp.score}/100 (${opp.rating})${
+                                marketContext ? `, ${marketContext}` : ''
+                              }. Note: live review and trend data was unavailable for this listing, so treat the score as provisional.`
+                            )
+                          }
+                          aria-label="Ask AI about this niche"
+                          title="Ask AI Copilot to analyze this niche"
+                        >
+                          <Bot size={15} aria-hidden="true" />
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        className="niche-icon-btn"
+                        onClick={() => setSelectedModalNiche(niche)}
+                        aria-label="Inspect"
+                        title="Inspect niche details"
+                      >
+                        <Eye size={15} aria-hidden="true" />
+                      </button>
+                    </div>
                   </div>
                 </div>
                 <div className="niche-tags">
@@ -359,9 +458,17 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
 
               <div className="niche-metrics-row">
                 <div className="metric-box">
-                  <span className="metric-label">Est. Demand</span>
-                  <span className="metric-val">{niche.searchVolume.toLocaleString()} / mo</span>
-                  <span className="metric-sub text-green">+{niche.searchVolumeGrowthPct}% est. velocity</span>
+                  <span className="metric-label">
+                    {isLiveSearchActive ? 'Category Demand Est.' : 'Est. Niche Searches'}
+                  </span>
+                  <span className="metric-val">
+                    {niche.searchVolume > 0 ? `${niche.searchVolume.toLocaleString()} / mo` : '—'}
+                  </span>
+                  {niche.growthUnknown ? (
+                    <span className="metric-sub">Velocity unavailable</span>
+                  ) : (
+                    <span className="metric-sub text-green">+{niche.searchVolumeGrowthPct}% est. velocity</span>
+                  )}
                 </div>
                 <div className="metric-box">
                   <span className="metric-label">{isLiveMarketplace ? 'Live Price' : 'Benchmark Price'}</span>
@@ -370,20 +477,32 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
                 </div>
                 <div className="metric-box">
                   <span className="metric-label">Customer Reviews</span>
-                  <span className="metric-val">{niche.avgTop10Reviews.toLocaleString()} ratings</span>
-                  <span className={`metric-sub barrier-${niche.reviewBarrier.toLowerCase()}`}>
-                    {niche.reviewBarrier} Barrier ({niche.topCompetitorRating} ★)
-                  </span>
+                  {niche.reviewBarrier === 'Unknown' ? (
+                    <>
+                      <span className="metric-val">unknown</span>
+                      <span className="metric-sub">Review data unavailable</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="metric-val">{niche.avgTop10Reviews.toLocaleString()} ratings</span>
+                      <span className={`metric-sub barrier-${niche.reviewBarrier.toLowerCase()}`}>
+                        {niche.reviewBarrier} Barrier
+                        {niche.topCompetitorRating > 0 ? ` (${niche.topCompetitorRating} ★)` : ''}
+                      </span>
+                    </>
+                  )}
                 </div>
               </div>
 
-              <div className="differentiation-preview">
-                <div className="angle-header">
-                  <span className="angle-icon">💡</span>
-                  <strong>Sourcing & Differentiation Angle:</strong>
+              {niche.differentiationAngle && (
+                <div className="differentiation-preview">
+                  <div className="angle-header">
+                    <Lightbulb size={14} aria-hidden="true" />
+                    <strong>Sourcing &amp; Differentiation Angle:</strong>
+                  </div>
+                  <p className="angle-text">{niche.differentiationAngle}</p>
                 </div>
-                <p className="angle-text">{niche.differentiationAngle}</p>
-              </div>
+              )}
 
               <div className="niche-card-actions">
                 <button
@@ -391,35 +510,14 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
                   className="theme-btn-primary"
                   onClick={() => onSelectNicheForEconomics(niche)}
                 >
-                  🧮 Simulate Unit Economics
+                  <Calculator size={14} aria-hidden="true" /> Simulate Economics
                 </button>
                 <button
                   type="button"
                   className="theme-btn-secondary"
                   onClick={() => onSelectNicheForPrompt(niche)}
                 >
-                  🔍 View Listing Gaps
-                </button>
-                {onAskCompanion && (
-                  <button
-                    type="button"
-                    className="theme-btn-outline btn-sm"
-                    onClick={() =>
-                      onAskCompanion(
-                        `Can you analyze the market opportunity for "${niche.name}"? It has an Opportunity Score of ${opp.score}/100 (${opp.rating}), est. search volume of ${niche.searchVolume.toLocaleString()} (${niche.searchVolumeGrowthPct}% growth), and a ${niche.reviewBarrier} review barrier.`
-                      )
-                    }
-                    title="Ask AI Copilot to analyze this niche"
-                  >
-                    🤖 Ask AI
-                  </button>
-                )}
-                <button
-                  type="button"
-                  className="theme-btn-outline"
-                  onClick={() => setSelectedModalNiche(niche)}
-                >
-                  Inspect
+                  <Search size={14} aria-hidden="true" /> View Review Gaps
                 </button>
               </div>
             </div>
@@ -458,43 +556,71 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
             </div>
             <div className="modal-body">
               <div className="modal-section">
-                <h5>Market Dynamics & Real Metrics</h5>
+                <h5>Market Metrics</h5>
                 <ul className="modal-list">
                   <li>
-                    <strong>Est. Monthly Velocity:</strong> ~
-                    {selectedModalNiche.searchVolume.toLocaleString()} searches (
-                    <span className="text-green">
-                      +{selectedModalNiche.searchVolumeGrowthPct}% est. momentum
-                    </span>
-                    )
+                    <strong>Est. Monthly Velocity:</strong>{' '}
+                    {selectedModalNiche.searchVolume > 0 ? (
+                      <>
+                        ~{selectedModalNiche.searchVolume.toLocaleString()} searches (
+                        <span className="text-green">
+                          +
+                          {selectedModalNiche.searchVolumeGrowthPct}% est. momentum
+                        </span>
+                        )
+                      </>
+                    ) : (
+                      'Not available for this live listing'
+                    )}
                   </li>
                   <li>
-                    <strong>Live Retail Price:</strong> ${selectedModalNiche.avgPrice.toFixed(2)}
+                    <strong>{isLiveSearchActive && isLiveMarketplace ? 'Live Retail Price' : 'Benchmark Retail Price'}:</strong> ${selectedModalNiche.avgPrice.toFixed(2)}
                   </li>
                   <li>
-                    <strong>Competition Review Benchmark:</strong> ~
-                    {selectedModalNiche.avgTop10Reviews} reviews (Rating:{' '}
-                    {selectedModalNiche.topCompetitorRating} ★)
+                    <strong>Competition Review Benchmark:</strong>{' '}
+                    {selectedModalNiche.reviewBarrier === 'Unknown'
+                      ? 'unavailable (review data could not be parsed for this listing)'
+                      : <>
+                          ~{selectedModalNiche.avgTop10Reviews} reviews (Rating:{' '}
+                          {selectedModalNiche.topCompetitorRating} ★)
+                        </>}
                   </li>
                   <li>
                     <strong>Assigned FBA Size Tier:</strong> {selectedModalNiche.fbaTier}
                   </li>
+                  <li>
+                    <strong>Opportunity Score:</strong>{' '}
+                    {(() => {
+                      const { opp } = getNicheCalculations(selectedModalNiche);
+                      return (
+                        <>
+                          {opp.score}/100 ({opp.rating}) — {getScoreBreakdownTitle(opp)}
+                        </>
+                      );
+                    })()}
+                  </li>
                 </ul>
               </div>
 
-              <div className="modal-section">
-                <h5>Known Competitor Pain Points & Weaknesses</h5>
-                <ul className="pain-points-list">
-                  {selectedModalNiche.painPoints.map((pp, idx) => (
-                    <li key={idx}>⚠️ {pp}</li>
-                  ))}
-                </ul>
-              </div>
+              {selectedModalNiche.painPoints.length > 0 && (
+                <div className="modal-section">
+                  <h5>Known Competitor Pain Points &amp; Weaknesses</h5>
+                  <ul className="pain-points-list">
+                    {selectedModalNiche.painPoints.map((pp, idx) => (
+                      <li key={idx}>
+                        <AlertTriangle size={12} aria-hidden="true" /> {pp}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
-              <div className="modal-section highlight-box">
-                <h5>Recommended Differentiation Strategy</h5>
-                <p>{selectedModalNiche.differentiationAngle}</p>
-              </div>
+              {selectedModalNiche.differentiationAngle && (
+                <div className="modal-section highlight-box">
+                  <h5>Recommended Differentiation Strategy</h5>
+                  <p>{selectedModalNiche.differentiationAngle}</p>
+                </div>
+              )}
             </div>
             <div className="modal-footer">
               <button
@@ -505,20 +631,27 @@ export const OpportunityFinder: React.FC<OpportunityFinderProps> = ({
                   setSelectedModalNiche(null);
                 }}
               >
-                Load into Financial Simulator
+                <Calculator size={14} aria-hidden="true" /> Load into Financial Simulator
               </button>
               {onAskCompanion && (
                 <button
                   type="button"
                   className="theme-btn-outline"
                   onClick={() => {
+                    const painContext =
+                      selectedModalNiche.painPoints.length > 0
+                        ? ` Known customer pain points: ${selectedModalNiche.painPoints.join('; ')}.`
+                        : ' No structured pain-point data is available for this live listing — suggest which competitor weaknesses I should research first.';
+                    const angleContext = selectedModalNiche.differentiationAngle
+                      ? ` Proposed differentiation angle: "${selectedModalNiche.differentiationAngle}".`
+                      : '';
                     onAskCompanion(
-                      `Can you explain how to exploit competitor weaknesses for "${selectedModalNiche.name}"? Known customer pain points: ${selectedModalNiche.painPoints.join('; ')}. Proposed differentiation angle: "${selectedModalNiche.differentiationAngle}".`
+                      `Can you explain how to differentiate "${selectedModalNiche.name}" from competitors?${painContext}${angleContext}`
                     );
                     setSelectedModalNiche(null);
                   }}
                 >
-                  🤖 Ask AI Copilot
+                  <Bot size={14} aria-hidden="true" /> Ask AI Copilot
                 </button>
               )}
               <button

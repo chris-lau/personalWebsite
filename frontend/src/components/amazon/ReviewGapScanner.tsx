@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { AlertTriangle, Bot, Copy, Search, Sparkles } from 'lucide-react';
 import { SAMPLE_NICHE_TRENDS, AMAZON_CATEGORY_FEES, NicheTrend } from '../../data/amazonData';
 
 interface ReviewGapScannerProps {
@@ -20,23 +21,41 @@ export const ReviewGapScanner: React.FC<ReviewGapScannerProps> = ({ initialNiche
     }
   }, [initialNiche]);
 
+  // A live listing (ASIN id) is never in the curated dataset — use it directly
+  // instead of silently falling back to an unrelated curated niche.
+  const isCuratedInitial = initialNiche
+    ? SAMPLE_NICHE_TRENDS.some((n) => n.id === initialNiche.id)
+    : false;
+
   const activeNiche =
-    SAMPLE_NICHE_TRENDS.find((n) => n.id === selectedNicheId) || SAMPLE_NICHE_TRENDS[0];
+    SAMPLE_NICHE_TRENDS.find((n) => n.id === selectedNicheId) ||
+    initialNiche ||
+    SAMPLE_NICHE_TRENDS[0];
 
   const categoryName =
     AMAZON_CATEGORY_FEES.find((c) => c.id === activeNiche.category)?.name ||
     activeNiche.category;
+
+  const painPointsSection = activeNiche.painPoints.length
+    ? `Top Identified Competitor Weaknesses & Customer Pain Points:
+${activeNiche.painPoints.map((p, i) => `${i + 1}. ${p}`).join('\n')}`
+    : `Top Identified Competitor Weaknesses & Customer Pain Points:
+(None recorded for this live listing. Infer the most likely customer frustrations for this product type and clearly label them as hypotheses to validate against real reviews.)`;
+
+  const differentiationSection = activeNiche.differentiationAngle
+    ? `Our Key Product Differentiation Angle:
+"${activeNiche.differentiationAngle}"`
+    : `Our Key Product Differentiation Angle:
+(Not yet defined. Propose the strongest differentiation angle based on the product concept and category.)`;
 
   const generatedPrompt = `Act as an expert Amazon FBA Brand Strategist and Product Designer.
 
 Product Concept: ${activeNiche.name}
 Category: ${categoryName}
 
-Top Identified Competitor Weaknesses & Customer Pain Points:
-${activeNiche.painPoints.map((p, i) => `${i + 1}. ${p}`).join('\n')}
+${painPointsSection}
 
-Our Key Product Differentiation Angle:
-"${activeNiche.differentiationAngle}"
+${differentiationSection}
 
 ${
   customFeedbackText.trim()
@@ -63,9 +82,12 @@ Please generate:
   return (
     <div className="review-gap-section">
       <div className="tool-intro-card">
-        <h3>🔍 Competitor Review & Listing Gap Scanner</h3>
+        <h3 className="tool-title">
+          <Search size={18} aria-hidden="true" className="inline-icon accent" />
+          Review Gap Scanner
+        </h3>
         <p>
-          Analyze top 1-star & 2-star review complaint patterns across competitor listings to discover
+          Analyze top 1-star &amp; 2-star review complaint patterns across competitor listings to discover
           engineered product improvements. Generate optimized AI prompts for listing creation.
         </p>
       </div>
@@ -81,6 +103,12 @@ Please generate:
               value={selectedNicheId}
               onChange={(e) => setSelectedNicheId(e.target.value)}
             >
+              {!isCuratedInitial && initialNiche && (
+                <option value={initialNiche.id}>
+                  Live listing: {initialNiche.name.slice(0, 60)}
+                  {initialNiche.name.length > 60 ? '…' : ''}
+                </option>
+              )}
               {SAMPLE_NICHE_TRENDS.map((n) => (
                 <option key={n.id} value={n.id}>
                   {n.name}
@@ -90,24 +118,37 @@ Please generate:
           </div>
 
           <div className="pain-points-breakdown">
-            <h4 className="panel-subhead">🚨 Recurring Competitor Flaws & Customer Frustrations</h4>
-            <div className="pain-points-grid">
-              {activeNiche.painPoints.map((point, idx) => (
-                <div key={idx} className="pain-point-item">
-                  <span className="pain-badge">Issue #{idx + 1}</span>
-                  <p className="pain-text">{point}</p>
-                </div>
-              ))}
-            </div>
+            <h4 className="panel-subhead">
+              <AlertTriangle size={15} aria-hidden="true" className="inline-icon accent" />{' '}
+              Recurring Competitor Flaws &amp; Customer Frustrations
+            </h4>
+            {activeNiche.painPoints.length > 0 ? (
+              <div className="pain-points-grid">
+                {activeNiche.painPoints.map((point, idx) => (
+                  <div key={idx} className="pain-point-item">
+                    <span className="pain-badge">Issue #{idx + 1}</span>
+                    <p className="pain-text">{point}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="pain-points-empty-note">
+                No competitor pain-point data is available for live listings yet. Use the notes
+                field below to add issues you've observed — the generated prompt will ask the AI
+                to propose and clearly label hypotheses you should validate against real reviews.
+              </p>
+            )}
           </div>
 
-          <div className="differentiation-solution-card">
-            <div className="solution-header">
-              <span className="star-icon">✨</span>
-              <strong>Recommended Engineering & Differentiation Fix:</strong>
+          {activeNiche.differentiationAngle && (
+            <div className="differentiation-solution-card">
+              <div className="solution-header">
+                <Sparkles size={14} aria-hidden="true" />
+                <strong>Recommended Engineering &amp; Differentiation Fix:</strong>
+              </div>
+              <p className="solution-body">{activeNiche.differentiationAngle}</p>
             </div>
-            <p className="solution-body">{activeNiche.differentiationAngle}</p>
-          </div>
+          )}
 
           <div className="custom-input-group">
             <label htmlFor="custom-notes-input">
@@ -128,7 +169,10 @@ Please generate:
         <div className="ai-prompt-generator-card">
           <div className="generator-header">
             <div>
-              <h4 className="panel-subhead">🤖 AI Product Differentiation & Listing Prompt</h4>
+              <h4 className="panel-subhead">
+                <Bot size={15} aria-hidden="true" className="inline-icon accent" />{' '}
+                AI Product Differentiation &amp; Listing Prompt
+              </h4>
               <p className="subtext">
                 Ready-to-use prompt configured to highlight pain-point solutions in ChatGPT, Claude,
                 or Gemini.
@@ -139,14 +183,20 @@ Please generate:
                 <button
                   type="button"
                   className="theme-btn-outline btn-sm"
-                  onClick={() =>
+                  onClick={() => {
+                    const flawsContext = activeNiche.painPoints.length
+                      ? ` against competitor flaws: ${activeNiche.painPoints.join('; ')}`
+                      : ' (no structured pain-point data yet — suggest what to research in competitor reviews)';
+                    const angleContext = activeNiche.differentiationAngle
+                      ? ` Current angle: "${activeNiche.differentiationAngle}".`
+                      : '';
                     onAskCompanion(
-                      `For the product "${activeNiche.name}" in ${categoryName}, how can I refine this differentiation strategy against competitor flaws: ${activeNiche.painPoints.join('; ')}? Current angle: "${activeNiche.differentiationAngle}". What specific questions should I ask manufacturers?`
-                    )
-                  }
+                      `For the product "${activeNiche.name}" in ${categoryName}, how can I refine this differentiation strategy${flawsContext}?${angleContext} What specific questions should I ask manufacturers?`
+                    );
+                  }}
                   title="Ask AI Copilot to refine differentiation strategy"
                 >
-                  🤖 Ask AI Copilot
+                  <Bot size={14} aria-hidden="true" /> Ask AI Copilot
                 </button>
               )}
               <button
@@ -154,7 +204,7 @@ Please generate:
                 className="theme-btn-primary btn-sm"
                 onClick={handleCopyPrompt}
               >
-                {copiedPrompt ? '✓ Copied to Clipboard!' : '📋 Copy AI Prompt'}
+                <Copy size={14} aria-hidden="true" /> {copiedPrompt ? 'Copied to Clipboard!' : 'Copy AI Prompt'}
               </button>
             </div>
           </div>

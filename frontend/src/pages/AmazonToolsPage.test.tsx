@@ -46,36 +46,36 @@ describe('AmazonToolsPage', () => {
 
     expect(screen.getByRole('heading', { name: /Amazon Seller Trend & Opportunity Suite/i })).toBeInTheDocument();
     expect(screen.getByText(/Live product demo:/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Product Trend & Opportunity Finder/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Unit Economics & Profit Simulator/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Review Gap & Listing Prompt Scanner/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Trend & Opportunity Finder/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Unit Economics Simulator/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Review Gap Scanner/i })).toBeInTheDocument();
   });
 
   it('switches between tabs on click', () => {
     renderWithProviders();
 
     // Click Unit Economics tab
-    const calcTab = screen.getByRole('button', { name: /Unit Economics & Profit Simulator/i });
+    const calcTab = screen.getByRole('button', { name: /Unit Economics Simulator/i });
     fireEvent.click(calcTab);
-    expect(screen.getByRole('heading', { name: /Amazon FBA \/ FBM Profit & Unit Economics Simulator/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Unit Economics Simulator/i })).toBeInTheDocument();
 
     // Click Review Gap tab
-    const reviewTab = screen.getByRole('button', { name: /Review Gap & Listing Prompt Scanner/i });
+    const reviewTab = screen.getByRole('button', { name: /Review Gap Scanner/i });
     fireEvent.click(reviewTab);
-    expect(screen.getByRole('heading', { name: /Competitor Review & Listing Gap Scanner/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Review Gap Scanner/i })).toBeInTheDocument();
   });
 
   it('transfers niche data from Opportunity Finder into Unit Economics Calculator', () => {
     renderWithProviders();
 
-    // Find and click "Simulate Unit Economics" on the first card
-    const simulateButtons = screen.getAllByRole('button', { name: /Simulate Unit Economics/i });
+    // Find and click "Simulate Economics" on the first card
+    const simulateButtons = screen.getAllByRole('button', { name: /Simulate Economics/i });
     expect(simulateButtons.length).toBeGreaterThan(0);
     fireEvent.click(simulateButtons[0]);
 
     // Should switch to calculator and display banner
     expect(screen.getByText(/Loaded Active Niche:/i)).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /Amazon FBA \/ FBM Profit & Unit Economics Simulator/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Unit Economics Simulator/i })).toBeInTheDocument();
   });
 
   it('filters niches based on search query', () => {
@@ -101,13 +101,13 @@ describe('AmazonToolsPage', () => {
     expect(screen.getByText(/How is the 0-100 Opportunity Score calculated\?/i)).toBeInTheDocument();
 
     // Switch to calculator tab and verify companion context updates
-    const calcTab = screen.getByRole('button', { name: /Unit Economics & Profit Simulator/i });
+    const calcTab = screen.getByRole('button', { name: /Unit Economics Simulator/i });
     fireEvent.click(calcTab);
     expect(screen.getByText(/Context: Unit Economics Simulator/i)).toBeInTheDocument();
     expect(screen.getByText(/What is TACoS vs ACoS/i)).toBeInTheDocument();
 
     // Switch to review gap tab and verify companion context updates
-    const reviewTab = screen.getByRole('button', { name: /Review Gap & Listing Prompt Scanner/i });
+    const reviewTab = screen.getByRole('button', { name: /Review Gap Scanner/i });
     fireEvent.click(reviewTab);
     expect(screen.getByText(/Context: Review Gap Scanner/i)).toBeInTheDocument();
     expect(screen.getByText(/How do I turn 1-star competitor reviews into product specs\?/i)).toBeInTheDocument();
@@ -142,7 +142,7 @@ describe('AmazonToolsPage', () => {
   it('triggers companion chat when clicking Ask AI to Analyze on the unit economics calculator', () => {
     renderWithProviders();
 
-    const calcTab = screen.getByRole('button', { name: /Unit Economics & Profit Simulator/i });
+    const calcTab = screen.getByRole('button', { name: /Unit Economics Simulator/i });
     fireEvent.click(calcTab);
 
     const askAiBtn = screen.getByRole('button', { name: /Ask AI to Analyze/i });

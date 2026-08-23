@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { Bot, Calculator, Copy, Loader2, Package, Truck, Zap } from 'lucide-react';
 import {
   AMAZON_CATEGORY_FEES,
   FBA_TIERS,
@@ -171,9 +172,12 @@ export const UnitEconomicsCalculator: React.FC<UnitEconomicsCalculatorProps> = (
       <div className="tool-intro-card">
         <div className="tool-header-action-row">
           <div>
-            <h3>🧮 Amazon FBA / FBM Profit & Unit Economics Simulator</h3>
+            <h3 className="tool-title">
+              <Calculator size={18} aria-hidden="true" className="inline-icon accent" />
+              Unit Economics Simulator
+            </h3>
             <p>
-              Simulate true net margins, referral fees, 2026 FBA size tier costs (including
+              Simulate net margins, referral fees, 2026 FBA size tier costs (including
               Low-Price FBA rates), PPC ad spend, and breakeven limits.
             </p>
           </div>
@@ -189,7 +193,7 @@ export const UnitEconomicsCalculator: React.FC<UnitEconomicsCalculatorProps> = (
                 }
                 title="Ask AI Copilot to analyze these unit economics"
               >
-                🤖 Ask AI to Analyze
+                <Bot size={14} aria-hidden="true" /> Ask AI to Analyze
               </button>
             )}
             <button
@@ -198,7 +202,7 @@ export const UnitEconomicsCalculator: React.FC<UnitEconomicsCalculatorProps> = (
               onClick={handleCopySummary}
               title="Copy formatted markdown report for suppliers & sourcing agents"
             >
-              {copySuccess ? '✓ Copied Summary!' : '📋 Copy Sourcing Summary'}
+              <Copy size={14} aria-hidden="true" /> {copySuccess ? 'Copied Summary!' : 'Copy Sourcing Summary'}
             </button>
           </div>
         </div>
@@ -208,9 +212,9 @@ export const UnitEconomicsCalculator: React.FC<UnitEconomicsCalculatorProps> = (
         {/* Input Parameters Panel */}
         <div className="calculator-inputs-panel">
           <div className="asin-quick-loader-box">
-            <label htmlFor="quick-asin-input" className="asin-loader-label">
-              ⚡ Inspect Real Amazon ASIN / Product Link
-            </label>
+              <label htmlFor="quick-asin-input" className="asin-loader-label">
+                <Zap size={14} aria-hidden="true" /> Inspect Real Amazon ASIN / Product Link
+              </label>
             <form onSubmit={handleFetchAsin} className="asin-input-form">
               <input
                 id="quick-asin-input"
@@ -225,7 +229,13 @@ export const UnitEconomicsCalculator: React.FC<UnitEconomicsCalculatorProps> = (
                 className="theme-btn-primary asin-fetch-btn"
                 disabled={isLoadingAsin}
               >
-                {isLoadingAsin ? 'Fetching...' : 'Fetch ASIN'}
+                {isLoadingAsin ? (
+                  <>
+                    <Loader2 size={14} className="icon-spin" aria-hidden="true" /> Fetching…
+                  </>
+                ) : (
+                  'Fetch ASIN'
+                )}
               </button>
             </form>
             {asinError && <span className="asin-error-msg">{asinError}</span>}
@@ -251,7 +261,9 @@ export const UnitEconomicsCalculator: React.FC<UnitEconomicsCalculatorProps> = (
                 onChange={(e) => setSalePrice(Math.max(0, Number(e.target.value)))}
               />
               {economics.isLowPriceFba && (
-                <span className="badge-pill pill-green">⚡ Qualifies for Low-Price FBA (&lt;$10)</span>
+                <span className="badge-pill pill-green">
+                  <Zap size={11} aria-hidden="true" /> Qualifies for Low-Price FBA (&lt;$10)
+                </span>
               )}
             </div>
 
@@ -312,14 +324,14 @@ export const UnitEconomicsCalculator: React.FC<UnitEconomicsCalculatorProps> = (
                 className={`segment-btn ${fulfillmentType === 'FBA' ? 'active' : ''}`}
                 onClick={() => setFulfillmentType('FBA')}
               >
-                📦 Amazon FBA
+                <Package size={13} aria-hidden="true" /> Amazon FBA
               </button>
               <button
                 type="button"
                 className={`segment-btn ${fulfillmentType === 'FBM' ? 'active' : ''}`}
                 onClick={() => setFulfillmentType('FBM')}
               >
-                🚚 Merchant Fulfilled (FBM)
+                <Truck size={13} aria-hidden="true" /> Merchant Fulfilled (FBM)
               </button>
             </div>
           </div>

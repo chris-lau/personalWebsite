@@ -18,6 +18,12 @@ export interface ChatPanelProps {
   className?: string;
   /** Render the title / model switcher / clear header row. */
   showHeader?: boolean;
+  /** Header title. Embedded surfaces (e.g. the Amazon copilot) override the default. */
+  title?: string;
+  /** Show the model switcher in the header. Embedded copilot surfaces hide it. */
+  showModelSelector?: boolean;
+  /** Label shown on assistant messages ("CHRIS" by default, "COPILOT" for embedded copilots). */
+  assistantLabel?: string;
   /** Extra header action buttons injected by the floating widget (companion, close). */
   headerActions?: React.ReactNode;
   /** External control of the input (the widget focuses it when the panel opens). */
@@ -38,6 +44,9 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({
   greeting = DEFAULT_GREETING,
   className = '',
   showHeader = true,
+  title = 'Chat with Chris',
+  showModelSelector = true,
+  assistantLabel = 'CHRIS',
   headerActions,
   inputRef,
 }) => {
@@ -86,8 +95,8 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({
       {showHeader && (
         <header className="chat-panel__header">
           <div className="chat-panel__title-group">
-            <span className="chat-panel__title-text">Chat with Chris</span>
-            {models.length > 1 && (
+            <span className="chat-panel__title-text">{title}</span>
+            {showModelSelector && models.length > 1 && (
               <label className="chat-panel__model-select">
                 <span className="visually-hidden">Model</span>
                 <select
@@ -160,7 +169,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({
         ) : (
           messages.map((m) => (
             <div key={m.id} className={`chat-msg chat-msg--${m.role}`}>
-              <span className="chat-msg__role">{m.role === 'user' ? 'YOU' : 'CHRIS'}</span>
+              <span className="chat-msg__role">{m.role === 'user' ? 'YOU' : assistantLabel}</span>
               <span className="chat-msg__content">
                 {m.role === 'assistant' && m.content ? (
                   <span className="chat-msg__markdown">
