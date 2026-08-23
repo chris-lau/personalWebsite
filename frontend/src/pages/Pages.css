@@ -885,6 +885,7 @@ p,
 }
 
 .now-tile__list {
+  /* Shares the work-row__highlights bullet grammar below. */
   margin: 0;
 }
 
@@ -1321,7 +1322,8 @@ p,
   white-space: nowrap;
 }
 
-.work-row__highlights {
+.work-row__highlights,
+.now-tile__list {
   list-style: none;
   display: flex;
   flex-direction: column;
@@ -1329,7 +1331,8 @@ p,
   margin: 0.55rem 0 0;
 }
 
-.work-row__highlights li {
+.work-row__highlights li,
+.now-tile__list li {
   font-size: 0.85rem;
   line-height: 1.55;
   color: var(--text-muted);
@@ -1337,7 +1340,8 @@ p,
   position: relative;
 }
 
-.work-row__highlights li::before {
+.work-row__highlights li::before,
+.now-tile__list li::before {
   content: '›';
   position: absolute;
   left: 0;
