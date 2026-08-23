@@ -17,10 +17,11 @@
   align-items: center;
   gap: 0.4rem;
   padding: 0.6rem 1.25rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.15));
+  font-size: 0.85rem;
+  font-weight: 500;
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-muted);
   border-radius: 6px;
   color: var(--text-muted);
   cursor: pointer;
@@ -33,9 +34,9 @@
 }
 
 .projects-tab-btn.active {
-  background: var(--accent-primary);
-  color: #ffffff;
-  border-color: var(--accent-primary);
+  background: var(--overlay-soft);
+  color: var(--text-primary);
+  border-color: var(--border-color);
 }
 
 @media (max-width: 640px) {
@@ -164,6 +165,7 @@
   font-family: var(--font-family);
   font-size: 0.85rem;
   font-weight: 500;
+  min-height: 38px;
   padding: 0.45rem 1rem;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
@@ -197,6 +199,12 @@
 .link-button:active,
 .filter-tag:active {
   transform: translateY(1px);
+}
+
+.filter-tag:hover,
+.tag-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--border-color);
 }
 
 .link-button.primary {
@@ -261,12 +269,11 @@
 }
 
 .filter-tag.active,
-.filter-tag:hover,
-.tag-btn.active,
-.tag-btn:hover {
-  background-color: var(--accent-primary);
-  color: var(--text-inverse);
-  border-color: var(--accent-primary);
+.tag-btn.active {
+  background-color: var(--overlay-soft);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+  font-weight: 600;
 }
 
 .blog-search-input {
@@ -387,7 +394,7 @@ p,
   padding: 0.55rem 1.1rem;
   font-size: 0.88rem;
   font-weight: 600;
-  border-radius: 6px;
+  border-radius: var(--radius-chip);
   text-decoration: none;
   transition: all 0.2s ease;
   background: var(--bg-secondary);
@@ -832,7 +839,6 @@ p,
 }
 
 .work-row__actions .link-button {
-  padding: 0.35rem 0.85rem;
   font-size: 0.8rem;
 }
 
@@ -1033,7 +1039,6 @@ p,
 }
 
 .case-row__ask {
-  padding: 0.35rem 0.85rem;
   font-size: 0.8rem;
   white-space: nowrap;
 }
@@ -1044,7 +1049,6 @@ p,
 }
 
 .case-row--open .case-row__ask {
-  padding: 0.35rem 0.85rem;
   font-size: 0.8rem;
   white-space: nowrap;
 }

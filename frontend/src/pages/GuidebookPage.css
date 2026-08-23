@@ -86,7 +86,7 @@
   text-align: left;
   background: transparent;
   border: 1px solid transparent;
-  border-radius: 6px;
+  border-radius: var(--radius-md);
   padding: 0.5rem 0.65rem;
   color: var(--text-muted);
   font-family: var(--font-family);
@@ -103,8 +103,8 @@
 }
 
 .chapter-btn.active {
-  color: var(--bg-primary);
-  background-color: var(--accent-primary);
+  color: var(--text-primary);
+  background-color: var(--overlay-soft);
   font-weight: 600;
 }
 
