@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Activity, BookOpen, Database, ExternalLink } from 'lucide-react';
+import { Activity, BookOpen, Database } from 'lucide-react';
 import type { ChatMessage, ChatMessageMetrics, ChatSessionSummary, StreamProgress } from '../../types/chat';
 import { ChatSourcesModal } from './ChatSourcesModal';
 import './ChatObservabilityPanel.css';
