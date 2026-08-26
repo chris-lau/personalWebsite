@@ -86,12 +86,12 @@ async def _fake_stream(*args, **kwargs):
 # ---------------------------------------------------------------------------
 
 
-def _make_fake_chunk(content=None, finish_reason=None, usage=None, empty_choices=False):
+def _make_fake_chunk(content=None, finish_reason=None, usage=None, empty_choices=False, reasoning_content=None):
     """Build a lightweight fake ``ChatCompletionChunk``-like object."""
     if empty_choices:
         choices = []
-    elif content is not None or finish_reason is not None:
-        delta = SimpleNamespace(content=content)
+    elif content is not None or finish_reason is not None or reasoning_content is not None:
+        delta = SimpleNamespace(content=content, reasoning_content=reasoning_content)
         choices = [SimpleNamespace(delta=delta, finish_reason=finish_reason)]
     else:
         choices = []
@@ -573,3 +573,72 @@ def test_system_prompt_link_allowlist_guidance():
         assert route in prompt
     # Guardrail against hallucinated URLs must be present.
     assert "Do NOT link to routes other than" in prompt
+
+
+def test_system_prompt_traditional_chinese_rule():
+    """The system prompt must strictly enforce Traditional Chinese."""
+    prompt = chat._build_system_prompt()
+    assert "Traditional Chinese (繁體中文)" in prompt
+    assert "Simplified Chinese (簡體中文)" in prompt
+
+
+def test_get_chat_sources(client):
+    """GET /api/chat/sources returns the catalog of grounding documents."""
+    chat._build_source_items.cache_clear()
+    res = client.get("/api/chat/sources")
+    assert res.status_code == 200
+    data = res.json()
+    assert "sources" in data
+    assert "total_sources" in data
+    assert data["total_sources"] > 0
+    assert data["total_characters"] > 0
+    assert data["total_estimated_tokens"] > 0
+
+    categories = {s["category"] for s in data["sources"]}
+    assert "blog" in categories
+    assert "guidebook" in categories
+    assert "profile" in categories
+    assert "projects" in categories
+    assert "skills" in categories
+
+    # Verify first source item structure
+    first = data["sources"][0]
+    assert "id" in first
+    assert "title" in first
+    assert "category" in first
+    assert "source_file" in first
+    assert "char_count" in first
+    assert "estimated_tokens" in first
+    assert "content" in first
+
+
+@pytest.mark.asyncio
+async def test_generate_stream_yields_reasoning_tokens():
+    """_generate_stream yields 'thought' events for reasoning_content."""
+    chunks = [
+        _make_fake_chunk(reasoning_content="Thinking step 1... "),
+        _make_fake_chunk(reasoning_content="Thinking step 2."),
+        _make_fake_chunk(content="Final answer"),
+        _make_fake_chunk(finish_reason="stop"),
+    ]
+    captured = {}
+    fake_client = _make_fake_client(chunks, captured)
+    events = [
+        ev
+        async for ev in chat._generate_stream(
+            fake_client,
+            "deepseek-reasoner",
+            "system",
+            [],
+            "question",
+            request_start=time.monotonic(),
+        )
+    ]
+
+    thoughts = [e["thought"] for e in events if "thought" in e]
+    tokens = [e["token"] for e in events if "token" in e]
+
+    assert thoughts == ["Thinking step 1... ", "Thinking step 2."]
+    assert tokens == ["Final answer"]
+
+

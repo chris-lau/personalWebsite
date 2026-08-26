@@ -1,6 +1,6 @@
 import { Profile, Project, NowState } from '../types/portfolio';
 import { GitHubUser, GitHubRepo } from '../types/github';
-import { ChatModelsResponse, ChatRequest, ChatMessageMetrics, DECODE_FLOOR_SEC } from '../types/chat';
+import { ChatModelsResponse, ChatSourcesResponse, ChatRequest, ChatMessageMetrics, DECODE_FLOOR_SEC } from '../types/chat';
 import { AmazonSearchResponse, AmazonAsinDetail, AmazonTrendResponse } from '../types/amazon';
 import { profileData } from '../data/profile';
 import { projectsData } from '../data/projects';
@@ -106,6 +106,21 @@ export async function fetchChatModels(): Promise<BackendResponse<ChatModelsRespo
   }
 }
 
+/**
+ * Fetch the catalog of source materials grounding the chat model.
+ */
+export async function fetchChatSources(): Promise<BackendResponse<ChatSourcesResponse | null>> {
+  try {
+    const res = await fetchWithTimeout(`${API_BASE_URL}/chat/sources`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data: ChatSourcesResponse = await res.json();
+    return { data, isFallback: false };
+  } catch (err: unknown) {
+    const errorMsg = err instanceof Error ? err.message : 'Unknown error';
+    return { data: null, isFallback: true, error: errorMsg };
+  }
+}
+
 /** Sent over the wire as the SSE stream is parsed. */
 export interface ChatStreamResult {
   isFallback: boolean;
@@ -116,6 +131,7 @@ export interface ChatStreamResult {
 /** Callbacks for the SSE stream lifecycle. */
 export interface ChatMessageCallbacks {
   onToken: (token: string) => void;
+  onThought?: (thought: string) => void;
   onFirstToken: () => void;
   onComplete: (metrics: ChatMessageMetrics) => void;
 }
@@ -200,6 +216,7 @@ export async function sendChatMessage(
           try {
             const obj = JSON.parse(payload) as {
               token?: string;
+              thought?: string;
               done?: boolean;
               error?: string;
               meta?: { finish_reason: string; model: string };
@@ -208,6 +225,9 @@ export async function sendChatMessage(
             };
             if (obj.error) {
               return { isFallback: true, error: obj.error };
+            }
+            if (obj.thought) {
+              callbacks.onThought?.(obj.thought);
             }
             if (obj.token) {
               callbacks.onToken(obj.token);

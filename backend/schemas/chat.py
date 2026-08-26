@@ -38,3 +38,26 @@ class ChatModelsResponse(BaseModel):
 
     models: list[ChatModelInfo]
     default_model: str
+
+
+class ChatSourceItem(BaseModel):
+    """A grounding source document fed into the chat system prompt."""
+
+    id: str = Field(..., description="Unique identifier for the source")
+    title: str = Field(..., description="Display title for the source")
+    category: str = Field(..., description="Category: blog, guidebook, profile, experience, projects, skills, now, architecture, amazon")
+    source_file: str = Field(..., description="File origin or schema name")
+    route: Optional[str] = Field(default=None, description="Site route if applicable (e.g. /blog/xyz)")
+    char_count: int = Field(..., description="Character length of the source content")
+    estimated_tokens: int = Field(..., description="Estimated token count (~4 chars per token)")
+    content: str = Field(..., description="Full text or JSON string of the source")
+
+
+class ChatSourcesResponse(BaseModel):
+    """Response for GET /api/chat/sources."""
+
+    sources: list[ChatSourceItem]
+    total_sources: int
+    total_characters: int
+    total_estimated_tokens: int
+

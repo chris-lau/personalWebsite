@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
-import { Activity, BookOpen } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import { Activity, BookOpen, Database, ExternalLink } from 'lucide-react';
 import type { ChatMessage, ChatMessageMetrics, ChatSessionSummary, StreamProgress } from '../../types/chat';
+import { ChatSourcesModal } from './ChatSourcesModal';
 import './ChatObservabilityPanel.css';
 
 // ---------------------------------------------------------------------------
@@ -198,6 +199,8 @@ export const ChatObservabilityPanel: React.FC<ChatObservabilityPanelProps> = ({
   streamProgress,
   messages,
 }) => {
+  const [showSourcesModal, setShowSourcesModal] = useState<boolean>(false);
+
   const metricsEntries = useMemo(
     () => Array.from(metricsMap.entries()) as [string, ChatMessageMetrics][],
     [metricsMap],
@@ -222,6 +225,18 @@ export const ChatObservabilityPanel: React.FC<ChatObservabilityPanelProps> = ({
       <div className="obs-panel__empty">
         <Activity size={24} className="obs-panel__empty-icon" aria-hidden="true" />
         <p className="obs-panel__empty-text">Send a message to see observability data here</p>
+        <button
+          type="button"
+          className="obs-panel__sources-btn"
+          onClick={() => setShowSourcesModal(true)}
+          style={{ marginTop: '0.75rem' }}
+        >
+          <Database size={13} aria-hidden="true" /> Inspect Grounding Sources
+        </button>
+        <ChatSourcesModal
+          isOpen={showSourcesModal}
+          onClose={() => setShowSourcesModal(false)}
+        />
       </div>
     );
   }
@@ -430,7 +445,29 @@ export const ChatObservabilityPanel: React.FC<ChatObservabilityPanelProps> = ({
         </>
       )}
 
-      {/* ---- Section E: Learn More Footer ---- */}
+      {/* ---- Section E: Grounding Sources & Prompt Context ---- */}
+      {hasMetrics && (
+        <div className="obs-panel__grounding">
+          <div className="obs-panel__grounding-header">
+            <span className="obs-panel__grounding-title">
+              <Database size={13} aria-hidden="true" /> Grounding Sources & Context
+            </span>
+            <button
+              type="button"
+              className="obs-panel__sources-btn"
+              onClick={() => setShowSourcesModal(true)}
+              title="Inspect full source materials fed to the model"
+            >
+              View Sources
+            </button>
+          </div>
+          <p className="obs-panel__grounding-desc">
+            Model replies are grounded in Chris&apos;s blog posts, guidebooks, and system architecture (~71K prefix tokens). Responses strictly adhere to Traditional Chinese (繁體中文).
+          </p>
+        </div>
+      )}
+
+      {/* ---- Section F: Learn More Footer ---- */}
       {hasMetrics && (
         <div className="obs-panel__footer">
           <BookOpen size={12} className="obs-panel__footer-icon" aria-hidden="true" />
@@ -438,6 +475,11 @@ export const ChatObservabilityPanel: React.FC<ChatObservabilityPanelProps> = ({
           <a href="/blog/demystifying-full-stack-monitoring-and-telemetry">under the hood</a>?
         </div>
       )}
+
+      <ChatSourcesModal
+        isOpen={showSourcesModal}
+        onClose={() => setShowSourcesModal(false)}
+      />
     </div>
   );
 };

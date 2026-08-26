@@ -5,6 +5,7 @@ import {
   fetchNow,
   fetchGitHubSummary,
   fetchChatModels,
+  fetchChatSources,
   sendChatMessage,
   searchLiveAmazonProducts,
   lookupLiveAmazonAsin,
@@ -195,6 +196,46 @@ describe('backend API client & local fallback mechanism', () => {
     });
   });
 
+  describe('fetchChatSources', () => {
+    it('returns sources catalog when backend is reachable', async () => {
+      const mockSources = {
+        sources: [
+          {
+            id: 'blog-post-1',
+            title: 'Blog: Post 1',
+            category: 'blog',
+            source_file: 'post1.md',
+            route: '/blog/post-1',
+            char_count: 100,
+            estimated_tokens: 25,
+            content: 'Sample content',
+          },
+        ],
+        total_sources: 1,
+        total_characters: 100,
+        total_estimated_tokens: 25,
+      };
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue({
+        ok: true,
+        json: async () => mockSources,
+      } as Response);
+
+      const res = await fetchChatSources();
+      expect(res.isFallback).toBe(false);
+      expect(res.data?.total_sources).toBe(1);
+      expect(res.data?.sources[0].title).toBe('Blog: Post 1');
+    });
+
+    it('returns null data with fallback flag on error', async () => {
+      vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('Sources error'));
+
+      const res = await fetchChatSources();
+      expect(res.isFallback).toBe(true);
+      expect(res.data).toBeNull();
+      expect(res.error).toBe('Sources error');
+    });
+  });
+
   describe('sendChatMessage', () => {
     /** Build a fake SSE Response whose body streams the given data lines. */
     function makeSSEResponse(dataLines: string[]): Response {
@@ -240,6 +281,27 @@ describe('backend API client & local fallback mechanism', () => {
       expect(callbacks.onToken).toHaveBeenCalledWith(', ');
       expect(callbacks.onToken).toHaveBeenCalledWith('world!');
       expect(callbacks.onToken).toHaveBeenCalledTimes(3);
+    });
+
+    it('parses thought chunks and invokes onThought', async () => {
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+        makeSSEResponse([
+          JSON.stringify({ thought: 'Thinking about the problem...' }),
+          JSON.stringify({ token: 'Answer' }),
+          JSON.stringify({ done: true }),
+        ]),
+      );
+
+      const onThought = vi.fn();
+      const callbacks = { ...noopCallbacks(), onThought };
+      const result = await sendChatMessage(
+        { message: 'hi', history: [], model: 'deepseek-reasoner' },
+        callbacks,
+      );
+
+      expect(result.isFallback).toBe(false);
+      expect(onThought).toHaveBeenCalledWith('Thinking about the problem...');
+      expect(callbacks.onToken).toHaveBeenCalledWith('Answer');
     });
 
     it('returns fallback on a non-200 response', async () => {

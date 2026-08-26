@@ -404,4 +404,24 @@ describe('ChatObservabilityPanel', () => {
     const tooltip = document.querySelector('.obs-panel__sparkline-tooltip');
     expect(tooltip?.textContent).toContain('1500ms');
   });
+
+  it('renders Grounding Sources & Context section when metrics exist and opens modal on click', async () => {
+    const metricsMap = makeMetricsMap([['a1', makeMetrics()]]);
+
+    render(
+      <ChatObservabilityPanel
+        metricsMap={metricsMap}
+        sessionSummary={makeSessionSummary()}
+        isStreaming={false}
+        streamProgress={null}
+        messages={makeMessages([{ id: 'a1', content: 'Test response' }])}
+      />,
+    );
+
+    expect(screen.getByText(/Grounding Sources & Context/i)).toBeInTheDocument();
+    expect(screen.getByText(/Traditional Chinese \(繁體中文\)/i)).toBeInTheDocument();
+
+    const viewSourcesBtn = screen.getByRole('button', { name: /View Sources/i });
+    expect(viewSourcesBtn).toBeInTheDocument();
+  });
 });

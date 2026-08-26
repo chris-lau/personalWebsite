@@ -56,11 +56,11 @@
     "category": "Languages",
     "skills": [
       "English (Native/Bilingual)",
-      "Chinese (Native/Bilingual)"
+      "Traditional Chinese (Native/Bilingual)"
     ],
     "detailedSkills": [
       { "name": "English (Native/Bilingual)", "level": "core" },
-      { "name": "Chinese (Native/Bilingual)", "level": "core" }
+      { "name": "Traditional Chinese (Native/Bilingual)", "level": "core" }
     ]
   }
 ]

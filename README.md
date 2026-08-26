@@ -28,10 +28,13 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
 
 - **AI Chat Widget ("Chat with Chris")**:
   - **Retrieval-Grounded Q&A**: Answers questions using the site's blog posts, guidebooks, profile, projects, skills, site architecture, and current focus as context (~71K tokens) — no hallucination about unrelated topics.
+  - **Traditional Chinese Output (繁體中文)**: Enforces Traditional Chinese (繁體中文) rather than Simplified Chinese (簡體中文) whenever answering or prompted in Chinese.
+  - **On-Demand Grounding Source Material Inspector**: Dedicated `GET /api/chat/sources` endpoint and accessible [`ChatSourcesModal`](file:///Users/chrislau/Documents/personalWebsite/frontend/src/components/chat/ChatSourcesModal.tsx) dialog with keyword search, category filters, token counts, collapsible previews, and copy actions.
+  - **Dynamic Chain of Thought (Reasoning) Streaming**: Real-time SSE streaming for `reasoning_content` (DeepSeek-R1 / OpenAI reasoning) with an animated `Thinking... (Xs)` spinner, auto-collapsing to a `Thought for Xs` badge with an expandable thought trace.
   - **Streaming Replies (SSE)**: Replies stream token-by-token over Server-Sent Events.
   - **Multi-Provider, One SDK**: A single OpenAI-compatible client (`POST /api/chat`) serves Gemini, DeepSeek, and OpenAI behind a UI model switcher — only providers with a configured key appear in the dropdown.
   - **Defensive Boundaries**: Strict system prompt resists prompt injection; per-IP rate limit plus daily caps and bounded conversation history control cost/abuse.
-  - **Chat Observability (Complete — All 7 Phases)**: Structured SSE events (`token`, `meta`, `meta_server`, `usage`, `done`, `error`), real token usage for OpenAI/DeepSeek, two-segment server timing for TTFT decomposition (`ttft_client_ms ≈ network_rtt + server_pre_llm_ms + server_llm_to_first_token_ms`), typed frontend contracts (`ChatMessageMetrics`, `MODEL_PRICING`), and a companion observability panel (session summary, latency sparkline, per-message metrics with segmented TTFT bar, model comparison).
+  - **Chat Observability (Complete — All 7 Phases)**: Structured SSE events (`token`, `thought`, `meta`, `meta_server`, `usage`, `done`, `error`), real token usage for OpenAI/DeepSeek, two-segment server timing for TTFT decomposition (`ttft_client_ms ≈ network_rtt + server_pre_llm_ms + server_llm_to_first_token_ms`), typed frontend contracts (`ChatMessageMetrics`, `MODEL_PRICING`), and a companion observability panel (session summary, latency sparkline, per-message metrics with segmented TTFT bar, model comparison, and grounding sources launcher).
 
 - **Interactive Dual Engineering Guidebook (`/guidebook`)**:
   - **Dual Interactive Books (16 Chapters Total)**: *Frontend Foundations* (9 chapters: React fundamentals, component design, state management, SPA routing, API caching, testing strategies) and *Production-Ready Backend Engineering* (7 chapters: REST design, Pydantic schemas, middleware, database integration, Alembic migrations, SSE streaming, Docker containerization).
@@ -65,9 +68,9 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - Top-level `ErrorBoundary` and defensive `try/catch` around `localStorage`/`sessionStorage`.
 
 - **Testing & Quality Assurance**:
-  - Vitest + React Testing Library unit & component integration tests (**226 / 226 passing** across 27 test files).
+  - Vitest + React Testing Library unit & component integration tests (**238 / 238 passing** across 28 test files).
   - Playwright real-browser end-to-end tests (**19 / 19 passing** across 6 spec files), including light/dark mode toggle persistence.
-  - Pytest backend unit & integration tests (**69 / 69 passing**).
+  - Pytest backend unit & integration tests (**75 / 75 passing**).
   - Storybook 10 component catalog & accessibility auditing (`@storybook/addon-a11y`).
 
 ---
@@ -203,7 +206,7 @@ Navigate to the `frontend/` directory to run commands:
 ## 🧪 Testing
 
 ### Unit & Component Tests (Vitest)
-Executes component rendering, page behavior, blog engine filtering, and router integration tests (215 tests across 26 files):
+Executes component rendering, page behavior, chat streaming & Chain of Thought rendering, sources inspector, and router integration tests (238 tests across 28 files):
 ```bash
 npm test
 ```
@@ -215,7 +218,7 @@ npm run test:e2e
 ```
 
 ### Backend Tests (Pytest)
-Runs the FastAPI test suite (69 tests) from `backend/`:
+Runs the FastAPI test suite (75 tests) from `backend/`:
 ```bash
 python -m pytest
 ```

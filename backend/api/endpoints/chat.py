@@ -38,7 +38,14 @@ from slowapi.util import get_remote_address
 
 from config import settings
 from core.rate_limit import limiter
-from schemas.chat import ChatMessage, ChatModelInfo, ChatModelsResponse, ChatRequest
+from schemas.chat import (
+    ChatMessage,
+    ChatModelInfo,
+    ChatModelsResponse,
+    ChatRequest,
+    ChatSourceItem,
+    ChatSourcesResponse,
+)
 
 from ._data import POSTS_DIR, load_json
 
@@ -210,16 +217,9 @@ def _configured_models() -> list[ChatModelInfo]:
 
 
 @functools.lru_cache(maxsize=1)
-def _build_context() -> str:
-    """Concatenate the site's content into a single grounding string.
-
-    Reads blog post markdown, both guidebooks, profile, and experience —
-    everything the model should be able to answer questions about. Cached for
-    the process lifetime; a redeploy picks up new content. The cached string
-    also doubles as the stable prefix that providers prompt-cache (see the
-    note in ``_generate_stream``).
-    """
-    parts: list[str] = []
+def _build_source_items() -> list[ChatSourceItem]:
+    """Build the structured list of source documents used for grounding."""
+    sources: list[ChatSourceItem] = []
 
     # Blog posts: metadata from JSON, body from the linked markdown file.
     try:
@@ -231,14 +231,25 @@ def _build_context() -> str:
             markdown_file = post.get("markdownFile")
             if markdown_file:
                 md_path = (POSTS_DIR / markdown_file).resolve()
-                # Path-traversal guard (mirrors posts.py).
                 try:
                     md_path.relative_to(POSTS_DIR.resolve())
                 except ValueError:
                     md_path = None
                 if md_path and md_path.exists():
                     body = md_path.read_text(encoding="utf-8")
-            parts.append(f"# Blog post: {title}\n(slug: {slug})\n\n{body}")
+            content = f"# Blog post: {title}\n(slug: {slug})\n\n{body}"
+            sources.append(
+                ChatSourceItem(
+                    id=f"blog-{slug or title}",
+                    title=f"Blog: {title}",
+                    category="blog",
+                    source_file=markdown_file or "blog_posts.json",
+                    route=f"/blog/{slug}" if slug else "/blog",
+                    char_count=len(content),
+                    estimated_tokens=math.ceil(len(content) / 4),
+                    content=content,
+                )
+            )
     except FileNotFoundError:
         logger.warning("blog_posts.json not found while building chat context")
 
@@ -249,32 +260,70 @@ def _build_context() -> str:
     ):
         try:
             chapters = load_json(data_file)
-            for ch in chapters:
-                title = ch.get("title", "Untitled chapter")
-                content = ch.get("content", "")
-                parts.append(f"# {label} — {title}\n\n{content}")
+            for idx, ch in enumerate(chapters):
+                title = ch.get("title", f"Chapter {idx+1}")
+                ch_content = ch.get("content", "")
+                content = f"# {label} — {title}\n\n{ch_content}"
+                sources.append(
+                    ChatSourceItem(
+                        id=f"{data_file}-{idx}",
+                        title=f"{label} — {title}",
+                        category="guidebook",
+                        source_file=data_file,
+                        route="/guidebook",
+                        char_count=len(content),
+                        estimated_tokens=math.ceil(len(content) / 4),
+                        content=content,
+                    )
+                )
         except FileNotFoundError:
             logger.warning("%s not found while building chat context", data_file)
 
     # Profile, experience, projects, skills, now, site architecture, and Amazon knowledge base —
     # ground questions about who Chris is, what he has built (including the Amazon
     # Seller Trend & Opportunity Suite at /amazon-tools), his stack, and systems.
-    for data_file in (
-        "profile.json",
-        "experience.json",
-        "projects.json",
-        "skills.json",
-        "now.json",
-        "site_architecture.json",
-        "amazon_knowledge.json",
-    ):
+    metadata_configs = [
+        ("profile.json", "Profile & Bio", "profile", "/about"),
+        ("experience.json", "Work Experience", "experience", "/experience"),
+        ("projects.json", "Featured Projects", "projects", "/projects"),
+        ("skills.json", "Technical & Product Skills", "skills", "/about"),
+        ("now.json", "Current Focus & Projects (Now)", "now", "/now"),
+        ("site_architecture.json", "Site Architecture & Telemetry", "architecture", "/architecture"),
+        ("amazon_knowledge.json", "Amazon Suite Knowledge Base", "amazon", "/amazon-tools"),
+    ]
+    for data_file, title, category, route in metadata_configs:
         try:
             data = load_json(data_file)
-            parts.append(f"# {data_file} (JSON)\n\n{json.dumps(data, ensure_ascii=False)}")
+            content = f"# {data_file} (JSON)\n\n{json.dumps(data, ensure_ascii=False)}"
+            sources.append(
+                ChatSourceItem(
+                    id=data_file.replace(".", "-"),
+                    title=title,
+                    category=category,
+                    source_file=data_file,
+                    route=route,
+                    char_count=len(content),
+                    estimated_tokens=math.ceil(len(content) / 4),
+                    content=content,
+                )
+            )
         except FileNotFoundError:
             pass
 
-    return "\n\n---\n\n".join(parts)
+    return sources
+
+
+@functools.lru_cache(maxsize=1)
+def _build_context() -> str:
+    """Concatenate the site's content into a single grounding string.
+
+    Reads blog post markdown, both guidebooks, profile, and experience —
+    everything the model should be able to answer questions about. Cached for
+    the process lifetime; a redeploy picks up new content. The cached string
+    also doubles as the stable prefix that providers prompt-cache (see the
+    note in ``_generate_stream``).
+    """
+    return "\n\n---\n\n".join(s.content for s in _build_source_items())
 
 
 _SYSTEM_PROMPT_TEMPLATE = """\
@@ -302,6 +351,7 @@ containing markdown links using these site routes ONLY: /about, /projects, \
 
 STRICT RULES:
 - Answer only about Chris Lau, his writing, his projects, and this site's content, architecture, and interactive tools (including Amazon FBA private label and unit economics concepts covered in the context).
+- When answering in Chinese or if the user asks in Chinese, ALWAYS use Traditional Chinese (繁體中文), NEVER Simplified Chinese (簡體中文).
 - If a question is unrelated to Chris or this site, politely decline and suggest \
 a topic the assistant can help with (e.g. his blog posts, the frontend guidebook, \
 his projects, the Amazon tools suite).
@@ -374,14 +424,19 @@ async def _generate_stream(
             server_llm_to_first_token_ms = round((now - llm_start) * 1000, 2)
             first_chunk = False
 
-        # Token extraction (existing guard handles choices=[] chunk safely)
+        # Token extraction (handles reasoning tokens and content safely)
         if chunk.choices:
-            delta = chunk.choices[0].delta.content if chunk.choices[0].delta else None
-            finish_reason = chunk.choices[0].finish_reason
-            if finish_reason:
-                last_finish_reason = finish_reason
-            if delta:
-                yield {"token": delta}
+            choice = chunk.choices[0]
+            if choice.finish_reason:
+                last_finish_reason = choice.finish_reason
+            if choice.delta:
+                # Reasoning / Chain of Thought tokens (DeepSeek-R1, OpenAI reasoning)
+                reasoning = getattr(choice.delta, "reasoning_content", None) or getattr(choice.delta, "thought", None)
+                if reasoning:
+                    yield {"thought": reasoning}
+                content = choice.delta.content
+                if content:
+                    yield {"token": content}
 
         # Usage rides on the final empty-choices chunk when stream_options is set.
         # ``usage`` is always defined on ChatCompletionChunk (Optional), so check
@@ -419,6 +474,20 @@ async def list_chat_models():
     """Return the subset of models with a configured API key + the default model."""
     models = _configured_models()
     return ChatModelsResponse(models=models, default_model=settings.CHAT_DEFAULT_MODEL)
+
+
+@router.get("/chat/sources", response_model=ChatSourcesResponse, summary="Get Chat Grounding Source Materials")
+def get_chat_sources() -> ChatSourcesResponse:
+    """Return the structured catalog of source documents grounding the chat model."""
+    sources = _build_source_items()
+    total_chars = sum(s.char_count for s in sources)
+    total_tokens = sum(s.estimated_tokens for s in sources)
+    return ChatSourcesResponse(
+        sources=sources,
+        total_sources=len(sources),
+        total_characters=total_chars,
+        total_estimated_tokens=total_tokens,
+    )
 
 
 @router.post("/chat", summary="Stream a Chat Reply (SSE)")

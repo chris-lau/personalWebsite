@@ -1,11 +1,68 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Send, Trash2, Zap } from 'lucide-react';
+import { Send, Trash2, Zap, BookOpen, Brain, Sparkles, ChevronDown } from 'lucide-react';
 import type { UseChatState } from '../../hooks/useChat';
 import { MarkdownRenderer } from '../markdown/MarkdownRenderer';
+import { ChatSourcesModal } from './ChatSourcesModal';
 import './ChatWidget.css';
 
 const DEFAULT_GREETING =
   "Ask me anything about Chris's blog posts, guidebooks, or experience.";
+
+interface ThoughtBlockProps {
+  thought: string;
+  isThinking?: boolean;
+  durationSec?: number;
+}
+
+const ThoughtBlock: React.FC<ThoughtBlockProps> = ({ thought, isThinking, durationSec }) => {
+  const [userToggled, setUserToggled] = useState<boolean | null>(null);
+  const isOpen = userToggled !== null ? userToggled : Boolean(isThinking);
+
+  if (!thought && !isThinking) return null;
+
+  return (
+    <div className={`chat-msg__thought ${isOpen ? 'chat-msg__thought--expanded' : ''}`}>
+      <button
+        type="button"
+        className="chat-msg__thought-header"
+        onClick={() => setUserToggled(!isOpen)}
+        aria-expanded={isOpen}
+        title={isOpen ? 'Collapse chain of thought' : 'Expand chain of thought'}
+      >
+        <span className="chat-msg__thought-badge">
+          {isThinking ? (
+            <Sparkles size={12} className="chat-msg__thought-icon chat-msg__thought-icon--pulse" aria-hidden="true" />
+          ) : (
+            <Brain size={12} className="chat-msg__thought-icon" aria-hidden="true" />
+          )}
+          <span>
+            {isThinking
+              ? `Thinking${durationSec ? ` (${durationSec}s)` : '…'}`
+              : `Thought for ${durationSec ? `${durationSec}s` : 'a moment'}`}
+          </span>
+        </span>
+        <ChevronDown
+          size={13}
+          className={`chat-msg__thought-chevron ${isOpen ? 'chat-msg__thought-chevron--open' : ''}`}
+          aria-hidden="true"
+        />
+      </button>
+
+      {isOpen && (
+        <div className="chat-msg__thought-body">
+          <div className="chat-msg__thought-content">
+            {thought}
+            {isThinking && (
+              <span className="chat-msg__cursor" aria-label="thinking">
+                ▋
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export interface ChatPanelProps {
   /** Chat state from useChat(). Callers own the hook so they can also read metrics. */
@@ -22,6 +79,8 @@ export interface ChatPanelProps {
   title?: string;
   /** Show the model switcher in the header. Embedded copilot surfaces hide it. */
   showModelSelector?: boolean;
+  /** Show the grounding sources button in the header. Defaults to true. */
+  showSourcesButton?: boolean;
   /** Label shown on assistant messages ("CHRIS" by default, "COPILOT" for embedded copilots). */
   assistantLabel?: string;
   /** Extra header action buttons injected by the floating widget (companion, close). */
@@ -46,6 +105,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({
   showHeader = true,
   title = 'Chat with Chris',
   showModelSelector = true,
+  showSourcesButton = true,
   assistantLabel = 'CHRIS',
   headerActions,
   inputRef,
@@ -64,6 +124,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({
 
   const starters = starterQuestions ?? [];
   const [input, setInput] = useState<string>('');
+  const [showSourcesModal, setShowSourcesModal] = useState<boolean>(false);
   const localInputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -114,6 +175,17 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({
             )}
           </div>
           <div className="chat-panel__actions">
+            {showSourcesButton && (
+              <button
+                type="button"
+                className="chat-panel__icon-btn"
+                onClick={() => setShowSourcesModal(true)}
+                aria-label="View grounding source material"
+                title="View Grounding Source Material (RAG Context)"
+              >
+                <BookOpen size={16} aria-hidden="true" />
+              </button>
+            )}
             {messages.length > 0 && (
               <button
                 type="button"
@@ -129,6 +201,11 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({
           </div>
         </header>
       )}
+
+      <ChatSourcesModal
+        isOpen={showSourcesModal}
+        onClose={() => setShowSourcesModal(false)}
+      />
 
       {isFallback && (
         <div className="chat-panel__banner" role="status">
@@ -171,14 +248,21 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({
             <div key={m.id} className={`chat-msg chat-msg--${m.role}`}>
               <span className="chat-msg__role">{m.role === 'user' ? 'YOU' : assistantLabel}</span>
               <span className="chat-msg__content">
+                {m.role === 'assistant' && (m.thought || (loading && !m.content)) && (
+                  <ThoughtBlock
+                    thought={m.thought || ''}
+                    isThinking={loading && !m.content}
+                    durationSec={m.thoughtDurationSec}
+                  />
+                )}
                 {m.role === 'assistant' && m.content ? (
                   <span className="chat-msg__markdown">
                     <MarkdownRenderer content={m.content} variant="chat" />
                   </span>
-                ) : (
+                ) : m.role === 'user' ? (
                   m.content
-                )}
-                {loading && m.role === 'assistant' && m.content === '' && (
+                ) : null}
+                {loading && m.role === 'assistant' && m.content === '' && !m.thought && (
                   <span className="chat-msg__cursor" aria-label="typing">
                     ▋
                   </span>

@@ -4,6 +4,8 @@ export interface ChatMessage {
   id: string;
   role: ChatRole;
   content: string;
+  thought?: string;
+  thoughtDurationSec?: number;
   timestamp: string;
 }
 
@@ -22,6 +24,24 @@ export interface ChatModelInfo {
 export interface ChatModelsResponse {
   models: ChatModelInfo[];
   defaultModel: string;
+}
+
+export interface ChatSourceItem {
+  id: string;
+  title: string;
+  category: string;
+  source_file: string;
+  route?: string | null;
+  char_count: number;
+  estimated_tokens: number;
+  content: string;
+}
+
+export interface ChatSourcesResponse {
+  sources: ChatSourceItem[];
+  total_sources: number;
+  total_characters: number;
+  total_estimated_tokens: number;
 }
 
 // ---------------------------------------------------------------------------

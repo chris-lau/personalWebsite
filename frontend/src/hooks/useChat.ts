@@ -49,6 +49,7 @@ export function useChat(): UseChatState {
   // Refs for live progress tracking (mutable, avoid stale closures)
   const chunkCountRef = useRef<number>(0);
   const streamStartRef = useRef<number>(0);
+  const thoughtStartTimeRef = useRef<number | null>(null);
   const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Load available models once on mount.
@@ -82,6 +83,7 @@ export function useChat(): UseChatState {
 
       setError(null);
       setIsFallback(false);
+      thoughtStartTimeRef.current = null;
 
       const userMessage = makeMessage('user', trimmed);
       const assistantMessage = makeMessage('assistant', '');
@@ -94,6 +96,26 @@ export function useChat(): UseChatState {
       const result = await sendChatMessage(
         { message: trimmed, history, model: selectedModel, signal: controller.signal },
         {
+          onThought: (thoughtChunk) => {
+            if (!thoughtStartTimeRef.current) {
+              thoughtStartTimeRef.current = performance.now();
+            }
+            const duration = Math.max(
+              0.1,
+              Math.round(((performance.now() - thoughtStartTimeRef.current) / 1000) * 10) / 10,
+            );
+            setMessages((prev) =>
+              prev.map((m) =>
+                m.id === assistantMessage.id
+                  ? {
+                      ...m,
+                      thought: (m.thought || '') + thoughtChunk,
+                      thoughtDurationSec: duration,
+                    }
+                  : m,
+              ),
+            );
+          },
           onToken: (token) => {
             chunkCountRef.current += 1;
             setMessages((prev) =>

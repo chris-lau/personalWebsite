@@ -89,4 +89,37 @@ describe('ChatPanel', () => {
     renderPanel(baseHookState(), { showHeader: false });
     expect(screen.queryByText('Chat with Chris')).toBeNull();
   });
+
+  it('opens grounding sources modal when clicking sources button', async () => {
+    renderPanel(baseHookState());
+    const sourcesBtn = screen.getByLabelText('View grounding source material');
+    expect(sourcesBtn).toBeInTheDocument();
+    fireEvent.click(sourcesBtn);
+    expect(await screen.findByRole('dialog')).toBeInTheDocument();
+    expect(await screen.findByText('Grounding Source Material')).toBeInTheDocument();
+  });
+
+  it('renders dynamic Chain of Thought block and expands on click', async () => {
+    const state = baseHookState({
+      messages: [
+        { id: 'm1', role: 'user', content: 'solve this', timestamp: '' },
+        {
+          id: 'm2',
+          role: 'assistant',
+          content: 'Here is the final solution.',
+          thought: 'Step 1: analyze input. Step 2: compute result.',
+          thoughtDurationSec: 1.8,
+          timestamp: '',
+        },
+      ],
+    });
+    renderPanel(state);
+
+    expect(screen.getByText(/Thought for 1.8s/i)).toBeInTheDocument();
+
+    const thoughtBtn = screen.getByRole('button', { name: /Thought for 1.8s/i });
+    fireEvent.click(thoughtBtn);
+
+    expect(screen.getByText(/Step 1: analyze input/i)).toBeInTheDocument();
+  });
 });

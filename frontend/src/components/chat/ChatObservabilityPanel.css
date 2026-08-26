@@ -402,7 +402,63 @@
   font-size: 0.65rem;
 }
 
-/* ---- Section E: Learn More Footer ---- */
+/* ---- Section E: Grounding Sources & Prompt Context ---- */
+
+.obs-panel__grounding {
+  padding: 0.6rem 0.75rem;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-muted, var(--border-color));
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.75rem;
+  font-family: var(--font-family);
+}
+
+.obs-panel__grounding-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.obs-panel__grounding-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.obs-panel__grounding-desc {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+  margin: 0;
+}
+
+.obs-panel__sources-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+  background: var(--surface-raised);
+  border: 1px solid var(--accent-primary);
+  border-radius: var(--radius-chip);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.obs-panel__sources-btn:hover {
+  background: var(--accent-subtle);
+}
+
+/* ---- Section F: Learn More Footer ---- */
 
 .obs-panel__footer {
   padding-top: 0.5rem;
