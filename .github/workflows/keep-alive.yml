@@ -2,8 +2,8 @@ name: Keep-Alive Database & Backend Probe
 
 on:
   schedule:
-    # Runs every 6 hours (00:00, 06:00, 12:00, 18:00 UTC) to keep the database active
-    - cron: '0 */6 * * *'
+    # Runs every hour (on the hour, UTC) to keep the database active
+    - cron: '0 * * * *'
   workflow_dispatch: # Allows manual trigger from GitHub Actions tab
 
 jobs:
