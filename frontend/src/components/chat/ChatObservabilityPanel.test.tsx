@@ -419,7 +419,9 @@ describe('ChatObservabilityPanel', () => {
     );
 
     expect(screen.getByText(/Grounding Sources & Context/i)).toBeInTheDocument();
-    expect(screen.getByText(/Traditional Chinese \(繁體中文\)/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/View Sources shows the full catalog, token budget, and prompt rules/i),
+    ).toBeInTheDocument();
 
     const viewSourcesBtn = screen.getByRole('button', { name: /View Sources/i });
     expect(viewSourcesBtn).toBeInTheDocument();

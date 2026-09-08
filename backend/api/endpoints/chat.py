@@ -326,6 +326,13 @@ def _build_context() -> str:
     return "\n\n---\n\n".join(s.content for s in _build_source_items())
 
 
+# Language constraint injected into the system prompt's STRICT RULES and
+# surfaced verbatim by GET /api/chat/sources so the frontend never hardcodes it.
+CHAT_LANGUAGE_RULE = (
+    "When answering in Chinese or if the user asks in Chinese, ALWAYS use "
+    "Traditional Chinese (繁體中文), NEVER Simplified Chinese (簡體中文)."
+)
+
 _SYSTEM_PROMPT_TEMPLATE = """\
 You are "Chat with Chris", an assistant on Chris Lau's personal website \
 (chrislau.dev). Chris is an AI & Product leader based in Metro Vancouver, Canada.
@@ -351,7 +358,7 @@ containing markdown links using these site routes ONLY: /about, /projects, \
 
 STRICT RULES:
 - Answer only about Chris Lau, his writing, his projects, and this site's content, architecture, and interactive tools (including Amazon FBA private label and unit economics concepts covered in the context).
-- When answering in Chinese or if the user asks in Chinese, ALWAYS use Traditional Chinese (繁體中文), NEVER Simplified Chinese (簡體中文).
+- {language_rule}
 - If a question is unrelated to Chris or this site, politely decline and suggest \
 a topic the assistant can help with (e.g. his blog posts, the frontend guidebook, \
 his projects, the Amazon tools suite).
@@ -366,7 +373,9 @@ CONTEXT:
 
 
 def _build_system_prompt() -> str:
-    return _SYSTEM_PROMPT_TEMPLATE.format(context=_build_context())
+    return _SYSTEM_PROMPT_TEMPLATE.format(
+        context=_build_context(), language_rule=CHAT_LANGUAGE_RULE
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -487,6 +496,7 @@ def get_chat_sources() -> ChatSourcesResponse:
         total_sources=len(sources),
         total_characters=total_chars,
         total_estimated_tokens=total_tokens,
+        language_rule=CHAT_LANGUAGE_RULE,
     )
 
 

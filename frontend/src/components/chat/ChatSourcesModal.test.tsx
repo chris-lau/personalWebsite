@@ -40,6 +40,8 @@ describe('ChatSourcesModal', () => {
     total_sources: 3,
     total_characters: 1700,
     total_estimated_tokens: 425,
+    language_rule:
+      'When answering in Chinese or if the user asks in Chinese, ALWAYS use Traditional Chinese (繁體中文), NEVER Simplified Chinese (簡體中文).',
   };
 
   beforeEach(() => {
@@ -64,6 +66,8 @@ describe('ChatSourcesModal', () => {
     expect(await screen.findByText('Blog: Building Systems')).toBeInTheDocument();
     expect(await screen.findByText('Frontend Guidebook — Chapter 1: React')).toBeInTheDocument();
     expect((await screen.findAllByText('Profile & Bio')).length).toBeGreaterThan(0);
+    // The language rule comes from the API response, not a hardcoded string.
+    expect(await screen.findByText(/Language rule: .*繁體中文/)).toBeInTheDocument();
   });
 
   it('filters sources by search query', async () => {
@@ -138,5 +142,59 @@ describe('ChatSourcesModal', () => {
 
     fireEvent.keyDown(window, { key: 'Escape' });
     expect(onClose).toHaveBeenCalledTimes(2);
+  });
+
+  it('shows a retryable error state without category pills when the first fetch fails', async () => {
+    vi.spyOn(backendApi, 'fetchChatSources').mockResolvedValue({
+      data: null,
+      isFallback: true,
+      error: 'The user aborted a request.',
+    });
+
+    render(<ChatSourcesModal isOpen={true} onClose={vi.fn()} />);
+
+    expect(await screen.findByRole('alert')).toBeInTheDocument();
+    expect(screen.getByText('Failed to load grounding sources.')).toBeInTheDocument();
+    // Cold-start hint appears for abort-style (timeout) errors.
+    expect(screen.getByText(/backend may be waking up/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /retry/i })).toBeInTheDocument();
+    // No data → no lone "All Sources" pill and no source cards.
+    expect(screen.queryByRole('radio', { name: 'All Sources' })).toBeNull();
+    expect(screen.queryByText('Blog: Building Systems')).toBeNull();
+  });
+
+  it('recovers when Retry follows a failed fetch', async () => {
+    const spy = vi
+      .spyOn(backendApi, 'fetchChatSources')
+      .mockResolvedValueOnce({ data: null, isFallback: true, error: 'HTTP 503' })
+      .mockResolvedValueOnce({ data: mockSourcesResponse, isFallback: false });
+
+    render(<ChatSourcesModal isOpen={true} onClose={vi.fn()} />);
+
+    expect(await screen.findByRole('alert')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /retry/i }));
+
+    expect(await screen.findByText('Blog: Building Systems')).toBeInTheDocument();
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  it('keeps previously loaded cards visible when a refresh fails', async () => {
+    vi.spyOn(backendApi, 'fetchChatSources')
+      .mockResolvedValueOnce({ data: mockSourcesResponse, isFallback: false })
+      .mockResolvedValue({ data: null, isFallback: true, error: 'HTTP 500' });
+
+    const { rerender } = render(<ChatSourcesModal isOpen={true} onClose={vi.fn()} />);
+
+    expect(await screen.findByText('Blog: Building Systems')).toBeInTheDocument();
+
+    // Reopen (isOpen toggled) triggers a refresh that fails.
+    rerender(<ChatSourcesModal isOpen={false} onClose={vi.fn()} />);
+    rerender(<ChatSourcesModal isOpen={true} onClose={vi.fn()} />);
+
+    // Stale data is retained — cards stay visible, no error alert replaces them.
+    await waitFor(() => {
+      expect(screen.getByText('Blog: Building Systems')).toBeInTheDocument();
+    });
+    expect(screen.queryByRole('alert')).toBeNull();
   });
 });

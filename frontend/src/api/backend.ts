@@ -111,7 +111,11 @@ export async function fetchChatModels(): Promise<BackendResponse<ChatModelsRespo
  */
 export async function fetchChatSources(): Promise<BackendResponse<ChatSourcesResponse | null>> {
   try {
-    const res = await fetchWithTimeout(`${API_BASE_URL}/chat/sources`);
+    // The payload embeds every grounding document (~300KB) and the Render
+    // service may be waking from a free-tier cold start (30s+), so this
+    // user-initiated inspector fetch needs a much longer budget than the
+    // 3s default — otherwise the modal renders an empty "All Sources" list.
+    const res = await fetchWithTimeout(`${API_BASE_URL}/chat/sources`, 30_000);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data: ChatSourcesResponse = await res.json();
     return { data, isFallback: false };

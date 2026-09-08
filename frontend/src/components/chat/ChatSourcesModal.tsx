@@ -9,6 +9,8 @@ import {
   ExternalLink,
   Layers,
   Database,
+  AlertCircle,
+  RefreshCw,
 } from 'lucide-react';
 import { fetchChatSources } from '../../api/backend';
 import type { ChatSourceItem, ChatSourcesResponse } from '../../types/chat';
@@ -40,6 +42,7 @@ export const ChatSourcesModal: React.FC<ChatSourcesModalProps> = ({ isOpen, onCl
   const [data, setData] = useState<ChatSourcesResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState<number>(0);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [expandedSourceId, setExpandedSourceId] = useState<string | null>(null);
@@ -49,7 +52,8 @@ export const ChatSourcesModal: React.FC<ChatSourcesModalProps> = ({ isOpen, onCl
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
 
-  // Fetch sources when modal opens
+  // Fetch sources when modal opens or the user retries. A failed refresh keeps
+  // the previously loaded data so an open modal never blanks out.
   useEffect(() => {
     if (!isOpen) return;
 
@@ -71,7 +75,7 @@ export const ChatSourcesModal: React.FC<ChatSourcesModalProps> = ({ isOpen, onCl
     return () => {
       cancelled = true;
     };
-  }, [isOpen]);
+  }, [isOpen, retryCount]);
 
   // Keyboard escape key to close
   useEffect(() => {
@@ -138,6 +142,11 @@ export const ChatSourcesModal: React.FC<ChatSourcesModalProps> = ({ isOpen, onCl
   };
 
   if (!isOpen) return null;
+
+  // Abort messages differ per browser ("The user aborted a request.", etc.) —
+  // they all indicate our timeout fired, which usually means the backend is
+  // waking from a Render free-tier cold start.
+  const isTimeoutError = /abort/i.test(error ?? '');
 
   return (
     <div
@@ -211,10 +220,6 @@ export const ChatSourcesModal: React.FC<ChatSourcesModalProps> = ({ isOpen, onCl
               <span className="sources-modal__stat-label">Estimated Tokens</span>
               <span className="sources-modal__stat-value">~{formatNumber(data.total_estimated_tokens)}</span>
             </div>
-            <div className="sources-modal__stat">
-              <span className="sources-modal__stat-label">Language Rule</span>
-              <span className="sources-modal__stat-value">繁體中文 (Traditional)</span>
-            </div>
           </div>
         )}
 
@@ -232,22 +237,26 @@ export const ChatSourcesModal: React.FC<ChatSourcesModalProps> = ({ isOpen, onCl
             />
           </div>
 
-          <div className="sources-modal__categories" role="radiogroup" aria-label="Filter by category">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                type="button"
-                role="radio"
-                aria-checked={selectedCategory === cat}
-                className={`sources-modal__category-pill ${
-                  selectedCategory === cat ? 'sources-modal__category-pill--active' : ''
-                }`}
-                onClick={() => setSelectedCategory(cat)}
-              >
-                {CATEGORY_LABELS[cat] || cat}
-              </button>
-            ))}
-          </div>
+          {/* Category filters are meaningless without data — omit the row
+              entirely rather than showing a lone "All Sources" pill. */}
+          {data && (
+            <div className="sources-modal__categories" role="radiogroup" aria-label="Filter by category">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  role="radio"
+                  aria-checked={selectedCategory === cat}
+                  className={`sources-modal__category-pill ${
+                    selectedCategory === cat ? 'sources-modal__category-pill--active' : ''
+                  }`}
+                  onClick={() => setSelectedCategory(cat)}
+                >
+                  {CATEGORY_LABELS[cat] || cat}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Content list */}
@@ -259,20 +268,37 @@ export const ChatSourcesModal: React.FC<ChatSourcesModalProps> = ({ isOpen, onCl
             </div>
           )}
 
-          {error && (
-            <div className="sources-modal__empty">
-              <p style={{ color: 'var(--text-muted)' }}>{error}</p>
+          {error && !data && (
+            <div className="sources-modal__empty sources-modal__empty--error" role="alert">
+              <AlertCircle size={22} aria-hidden="true" style={{ margin: '0 auto 0.5rem' }} />
+              <p>Failed to load grounding sources.</p>
+              <p className="sources-modal__error-detail">{error}</p>
+              {isTimeoutError && (
+                <p className="sources-modal__error-hint">
+                  The backend may be waking up from sleep — this can take up to a minute.
+                </p>
+              )}
+              <button
+                type="button"
+                className="sources-modal__btn sources-modal__retry-btn"
+                onClick={() => setRetryCount((n) => n + 1)}
+                disabled={loading}
+              >
+                <RefreshCw size={14} aria-hidden="true" /> Retry
+              </button>
             </div>
           )}
 
-          {!loading && !error && filteredSources.length === 0 && (
+          {/* A failed refresh leaves error set while data is still present —
+              keep showing the previously loaded cards in that case. */}
+          {!loading && data && filteredSources.length === 0 && (
             <div className="sources-modal__empty">
               <p>No grounding sources matched your search query.</p>
             </div>
           )}
 
           {!loading &&
-            !error &&
+            data &&
             filteredSources.map((source) => {
               const isExpanded = expandedSourceId === source.id;
               const isCopied = copiedId === source.id;
@@ -358,6 +384,11 @@ export const ChatSourcesModal: React.FC<ChatSourcesModalProps> = ({ isOpen, onCl
         <footer className="sources-modal__footer">
           <span>All documents are bundled into the prompt context for transparent retrieval.</span>
           <span>Cached for zero runtime DB latency</span>
+          {data?.language_rule && (
+            <span className="sources-modal__footer-rule">
+              Language rule: {data.language_rule}
+            </span>
+          )}
         </footer>
       </div>
     </div>

@@ -254,6 +254,36 @@
   font-size: var(--text-sm);
 }
 
+/* Load-failure state — prominent message + retry */
+.sources-modal__empty--error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--text-primary);
+}
+
+.sources-modal__error-detail {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  word-break: break-word;
+}
+
+.sources-modal__error-hint {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.sources-modal__retry-btn {
+  margin-top: 0.75rem;
+}
+
+.sources-modal__retry-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 /* Source Card */
 .source-card {
   border: 1px solid var(--border-color);
@@ -409,8 +439,17 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.35rem;
   font-size: var(--text-xs);
   color: var(--text-muted);
+}
+
+/* Verbatim prompt rule reported by the backend — own line so the full
+   sentence is never truncated. */
+.sources-modal__footer-rule {
+  flex-basis: 100%;
+  color: var(--text-primary);
 }
 
 @media (max-width: 640px) {

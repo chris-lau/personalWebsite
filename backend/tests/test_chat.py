@@ -594,6 +594,11 @@ def test_get_chat_sources(client):
     assert data["total_characters"] > 0
     assert data["total_estimated_tokens"] > 0
 
+    # The language rule is reported verbatim from the system prompt so the
+    # frontend never hardcodes it.
+    assert "繁體中文" in data["language_rule"]
+    assert chat.CHAT_LANGUAGE_RULE in chat._build_system_prompt()
+
     categories = {s["category"] for s in data["sources"]}
     assert "blog" in categories
     assert "guidebook" in categories

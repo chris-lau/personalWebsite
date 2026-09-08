@@ -462,7 +462,8 @@ export const ChatObservabilityPanel: React.FC<ChatObservabilityPanelProps> = ({
             </button>
           </div>
           <p className="obs-panel__grounding-desc">
-            Model replies are grounded in Chris&apos;s blog posts, guidebooks, and system architecture (~71K prefix tokens). Responses strictly adhere to Traditional Chinese (繁體中文).
+            Model replies are grounded in Chris&apos;s blog posts, guidebooks, and system architecture. View Sources
+            shows the full catalog, token budget, and prompt rules.
           </p>
         </div>
       )}
