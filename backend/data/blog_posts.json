@@ -1,5 +1,24 @@
 [
   {
+    "id": "agentic-ai-sdlc-engineering-practices",
+    "slug": "agentic-ai-sdlc-engineering-practices",
+    "title": "From Deterministic to Probabilistic: How Agentic AI Rewrites the SDLC",
+    "description": "How familiar engineering practices translate to agentic AI: trajectory evals replace unit tests, multi-hop tracing replaces logs, memory tiers replace classic state, eval gates replace CI/CD, and execution limits become the new resiliency.",
+    "updatedDate": "September 2026",
+    "readTime": "5 min read",
+    "tags": [
+      "AI Agents",
+      "LLMOps",
+      "Artificial Intelligence",
+      "Software Engineering",
+      "System Architecture"
+    ],
+    "author": "Chris Lau",
+    "category": "AI Engineering & LLMOps",
+    "featured": true,
+    "markdownFile": "blog-agentic-ai-sdlc-engineering-practices.md"
+  },
+  {
     "id": "demystifying-database-integration-sqlite-postgres",
     "slug": "demystifying-database-integration-sqlite-postgres",
     "title": "Demystifying Relational Database Integration: Lessons Learned from SQLite Local Development to Aiven PostgreSQL Production",
