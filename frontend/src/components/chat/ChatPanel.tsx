@@ -16,39 +16,64 @@ interface ThoughtBlockProps {
 
 const ThoughtBlock: React.FC<ThoughtBlockProps> = ({ thought, isThinking, durationSec }) => {
   const [userToggled, setUserToggled] = useState<boolean | null>(null);
-  const isOpen = userToggled !== null ? userToggled : Boolean(isThinking);
+  // Live elapsed counter for the thinking phase. Models streamed through the
+  // OpenAI-compatible Gemini bridge emit no reasoning tokens, so the header
+  // must stay informative on its own during the silent wait for first token.
+  const [elapsedSec, setElapsedSec] = useState<number>(0);
+
+  useEffect(() => {
+    if (!isThinking) return;
+    const start = performance.now();
+    const timer = setInterval(() => {
+      setElapsedSec(Math.floor((performance.now() - start) / 1000));
+    }, 500);
+    return () => clearInterval(timer);
+  }, [isThinking]);
+
+  const hasThought = thought.trim().length > 0;
+  // Auto-expand only while there is reasoning text to read.
+  const isOpen = userToggled !== null ? userToggled : Boolean(hasThought && isThinking);
 
   if (!thought && !isThinking) return null;
 
+  const label = isThinking
+    ? `Thinking…${elapsedSec > 0 ? ` (${elapsedSec}s)` : ''}`
+    : `Thought for ${durationSec ? `${durationSec}s` : 'a moment'}`;
+
   return (
     <div className={`chat-msg__thought ${isOpen ? 'chat-msg__thought--expanded' : ''}`}>
-      <button
-        type="button"
-        className="chat-msg__thought-header"
-        onClick={() => setUserToggled(!isOpen)}
-        aria-expanded={isOpen}
-        title={isOpen ? 'Collapse chain of thought' : 'Expand chain of thought'}
-      >
-        <span className="chat-msg__thought-badge">
-          {isThinking ? (
-            <Sparkles size={12} className="chat-msg__thought-icon chat-msg__thought-icon--pulse" aria-hidden="true" />
-          ) : (
-            <Brain size={12} className="chat-msg__thought-icon" aria-hidden="true" />
-          )}
-          <span>
-            {isThinking
-              ? `Thinking${durationSec ? ` (${durationSec}s)` : '…'}`
-              : `Thought for ${durationSec ? `${durationSec}s` : 'a moment'}`}
+      {hasThought ? (
+        <button
+          type="button"
+          className="chat-msg__thought-header"
+          onClick={() => setUserToggled(!isOpen)}
+          aria-expanded={isOpen}
+          title={isOpen ? 'Collapse chain of thought' : 'Expand chain of thought'}
+        >
+          <span className="chat-msg__thought-badge">
+            {isThinking ? (
+              <Sparkles size={12} className="chat-msg__thought-icon chat-msg__thought-icon--pulse" aria-hidden="true" />
+            ) : (
+              <Brain size={12} className="chat-msg__thought-icon" aria-hidden="true" />
+            )}
+            <span>{label}</span>
           </span>
-        </span>
-        <ChevronDown
-          size={13}
-          className={`chat-msg__thought-chevron ${isOpen ? 'chat-msg__thought-chevron--open' : ''}`}
-          aria-hidden="true"
-        />
-      </button>
+          <ChevronDown
+            size={13}
+            className={`chat-msg__thought-chevron ${isOpen ? 'chat-msg__thought-chevron--open' : ''}`}
+            aria-hidden="true"
+          />
+        </button>
+      ) : (
+        <div className="chat-msg__thought-header">
+          <span className="chat-msg__thought-badge">
+            <Sparkles size={12} className="chat-msg__thought-icon chat-msg__thought-icon--pulse" aria-hidden="true" />
+            <span>{label}</span>
+          </span>
+        </div>
+      )}
 
-      {isOpen && (
+      {isOpen && hasThought && (
         <div className="chat-msg__thought-body">
           <div className="chat-msg__thought-content">
             {thought}

@@ -150,9 +150,11 @@ export function useChat(): UseChatState {
       setStreamProgress(null);
       setLoading(false);
 
-      if (result.isFallback) {
+      // A cancelled stream (panel closed / unmount mid-reply) is not a service
+      // failure — don't flip the chat into degraded mode for it.
+      if (result.isFallback && result.error !== 'cancelled') {
         setIsFallback(true);
-        if (result.error && result.error !== 'cancelled') {
+        if (result.error) {
           setError(result.error);
         }
         // If the assistant bubble is still empty, surface a visible fallback.
@@ -176,8 +178,11 @@ export function useChat(): UseChatState {
     setMetricsMap(new Map());
     setStreamProgress(null);
     setError(null);
-    setIsFallback(false);
-  }, []);
+    // Degraded mode is a server fact (no provider keys), not conversation
+    // state — keep it so ChatWidget's `models.length === 0 && !isFallback`
+    // guard doesn't unmount the whole widget after clearing.
+    setIsFallback(models.length === 0);
+  }, [models.length]);
 
   // Abort any in-flight stream and clear progress interval on unmount.
   useEffect(() => {

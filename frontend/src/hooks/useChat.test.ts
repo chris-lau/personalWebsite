@@ -52,6 +52,32 @@ describe('useChat hook', () => {
     });
   });
 
+  it('clearChat keeps the degraded flag when no models are configured', async () => {
+    (fetchChatModels as ReturnType<typeof vi.fn>).mockResolvedValue({
+      data: { models: [], defaultModel: 'gemini-2.5-flash' },
+      isFallback: false,
+    });
+    (sendChatMessage as ReturnType<typeof vi.fn>).mockResolvedValue({ isFallback: false });
+
+    const { result } = renderHook(() => useChat());
+
+    await waitFor(() => {
+      expect(result.current.isFallback).toBe(true);
+    });
+
+    await act(async () => {
+      await result.current.sendMessage('hello');
+    });
+    act(() => {
+      result.current.clearChat();
+    });
+
+    // ChatWidget hides itself while models is empty and isFallback is false,
+    // so clearing must not reset the degraded flag.
+    expect(result.current.isFallback).toBe(true);
+    expect(result.current.messages.length).toBe(0);
+  });
+
   it('appends a user message and streams the assistant reply', async () => {
     (fetchChatModels as ReturnType<typeof vi.fn>).mockResolvedValue({
       data: {
