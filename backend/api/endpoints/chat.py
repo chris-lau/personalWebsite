@@ -33,7 +33,7 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
-from openai import AsyncOpenAI
+from openai import AsyncOpenAI, BadRequestError
 from slowapi.util import get_remote_address
 
 from config import settings
@@ -164,6 +164,20 @@ PROVIDER_SUPPORTS_USAGE: dict[str, bool] = {
     "openai": True,
     "deepseek": True,
     "gemini": False,
+}
+
+# Ask Gemini's OpenAI-compat bridge to stream thought summaries, so the
+# frontend's chain-of-thought box has content on the default model. The
+# double-nested ``extra_body`` matches the shape in Google's OpenAI
+# compatibility docs. Toggled by CHAT_GEMINI_INCLUDE_THOUGHTS.
+GEMINI_THOUGHT_EXTRA_BODY: dict[str, Any] = {
+    "extra_body": {
+        "google": {
+            "thinking_config": {
+                "include_thoughts": True,
+            }
+        }
+    }
 }
 
 
@@ -398,18 +412,38 @@ async def _generate_stream(
         messages.append({"role": msg.role, "content": msg.content})
     messages.append({"role": "user", "content": user_message})
 
-    # Provider-aware stream_options: only include when the provider supports it.
+    # Provider-aware request options: stream_options where supported, and
+    # thought summaries for Gemini (the bridge streams no reasoning tokens
+    # unless asked, which is why the default model's thought box was empty).
     provider = _provider_for_model(model)
-    use_stream_options = PROVIDER_SUPPORTS_USAGE.get(provider, False)
+    create_kwargs: dict[str, Any] = {}
+    if PROVIDER_SUPPORTS_USAGE.get(provider, False):
+        create_kwargs["stream_options"] = {"include_usage": True}
+    if provider == "gemini" and settings.CHAT_GEMINI_INCLUDE_THOUGHTS:
+        create_kwargs["extra_body"] = GEMINI_THOUGHT_EXTRA_BODY
 
     llm_start = time.monotonic()
     server_pre_llm_ms: float = round((llm_start - request_start) * 1000, 2)
-    stream = await client.chat.completions.create(
-        model=model,
-        messages=messages,
-        stream=True,
-        **({"stream_options": {"include_usage": True}} if use_stream_options else {}),
-    )
+    try:
+        stream = await client.chat.completions.create(
+            model=model,
+            messages=messages,
+            stream=True,
+            **create_kwargs,
+        )
+    except BadRequestError:
+        # Older bridge versions reject unknown thinking_config shapes. Retry
+        # once without the thought request so chat never regresses on it.
+        if "extra_body" not in create_kwargs:
+            raise
+        logger.warning("Gemini bridge rejected thinking_config; retrying without thought summaries")
+        create_kwargs.pop("extra_body")
+        stream = await client.chat.completions.create(
+            model=model,
+            messages=messages,
+            stream=True,
+            **create_kwargs,
+        )
 
     last_finish_reason: str | None = None
     usage_data: dict | None = None
@@ -428,8 +462,14 @@ async def _generate_stream(
             if choice.finish_reason:
                 last_finish_reason = choice.finish_reason
             if choice.delta:
-                # Reasoning / Chain of Thought tokens (DeepSeek-R1, OpenAI reasoning)
-                reasoning = getattr(choice.delta, "reasoning_content", None) or getattr(choice.delta, "thought", None)
+                # Reasoning / Chain of Thought tokens. Field name varies by
+                # provider: DeepSeek uses reasoning_content, and the Gemini
+                # bridge may surface thought summaries as thought/reasoning.
+                reasoning = (
+                    getattr(choice.delta, "reasoning_content", None)
+                    or getattr(choice.delta, "thought", None)
+                    or getattr(choice.delta, "reasoning", None)
+                )
                 if reasoning:
                     yield {"thought": reasoning}
                 content = choice.delta.content

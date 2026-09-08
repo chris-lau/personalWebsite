@@ -26,6 +26,10 @@ class Settings(BaseSettings):
     DEEPSEEK_API_KEY: str = Field(default="")
     OPENAI_API_KEY: str = Field(default="")
     CHAT_DEFAULT_MODEL: str = Field(default="gemini-2.5-flash")
+    # Ask Gemini's OpenAI-compat bridge for thought summaries so the site's
+    # chain-of-thought box has content on the default model. Thought tokens
+    # are billed as output; set CHAT_GEMINI_INCLUDE_THOUGHTS=false to opt out.
+    CHAT_GEMINI_INCLUDE_THOUGHTS: bool = Field(default=True)
     # Stricter per-IP limit than the global RATE_LIMIT_PER_MINUTE.
     CHAT_RATE_LIMIT_PER_MINUTE: int = Field(default=10)
     # Daily cost-abuse caps (in-memory, reset at UTC midnight). The global cap

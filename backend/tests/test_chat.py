@@ -86,12 +86,19 @@ async def _fake_stream(*args, **kwargs):
 # ---------------------------------------------------------------------------
 
 
-def _make_fake_chunk(content=None, finish_reason=None, usage=None, empty_choices=False, reasoning_content=None):
+def _make_fake_chunk(
+    content=None,
+    finish_reason=None,
+    usage=None,
+    empty_choices=False,
+    reasoning_content=None,
+    extra_delta=None,
+):
     """Build a lightweight fake ``ChatCompletionChunk``-like object."""
     if empty_choices:
         choices = []
-    elif content is not None or finish_reason is not None or reasoning_content is not None:
-        delta = SimpleNamespace(content=content, reasoning_content=reasoning_content)
+    elif content is not None or finish_reason is not None or reasoning_content is not None or extra_delta:
+        delta = SimpleNamespace(content=content, reasoning_content=reasoning_content, **(extra_delta or {}))
         choices = [SimpleNamespace(delta=delta, finish_reason=finish_reason)]
     else:
         choices = []
@@ -412,6 +419,91 @@ async def test_gemini_25_flash_omits_stream_options(monkeypatch):
     chunks = [_make_fake_chunk(content="Hi", finish_reason="stop")]
     _, kwargs = await _collect_stream_events("gemini-2.5-flash", chunks, monkeypatch)
     assert "stream_options" not in kwargs
+
+
+# ---------------------------------------------------------------------------
+# Gemini thought-summary tests (mock _get_client, NOT _generate_stream)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_gemini_requests_thought_summaries(monkeypatch):
+    """Gemini models ask the bridge for thought summaries (chain-of-thought UI)."""
+    chunks = [_make_fake_chunk(content="Hi", finish_reason="stop")]
+    _, kwargs = await _collect_stream_events("gemini-2.5-flash", chunks, monkeypatch)
+
+    extra_body = kwargs.get("extra_body")
+    assert extra_body is not None
+    thinking = extra_body["extra_body"]["google"]["thinking_config"]
+    assert thinking["include_thoughts"] is True
+
+
+@pytest.mark.asyncio
+async def test_gemini_thought_request_disabled_by_setting(monkeypatch):
+    """CHAT_GEMINI_INCLUDE_THOUGHTS=false omits the thinking_config request."""
+    monkeypatch.setattr(chat.settings, "CHAT_GEMINI_INCLUDE_THOUGHTS", False)
+    chunks = [_make_fake_chunk(content="Hi", finish_reason="stop")]
+    _, kwargs = await _collect_stream_events("gemini-2.5-flash", chunks, monkeypatch)
+    assert "extra_body" not in kwargs
+
+
+@pytest.mark.asyncio
+async def test_deepseek_omits_thought_request(monkeypatch):
+    """Non-Gemini providers never send the Gemini-specific extra_body."""
+    chunks = [_make_fake_chunk(content="Hi", finish_reason="stop")]
+    _, kwargs = await _collect_stream_events("deepseek-chat", chunks, monkeypatch)
+    assert "extra_body" not in kwargs
+
+
+@pytest.mark.asyncio
+async def test_gemini_thought_chunks_stream_as_thought_events(monkeypatch):
+    """Bridge thought-summary deltas are yielded as 'thought' SSE events."""
+    chunks = [
+        _make_fake_chunk(extra_delta={"thought": "Weighing options. "}),
+        _make_fake_chunk(content="Answer", finish_reason="stop"),
+    ]
+    events, _ = await _collect_stream_events("gemini-2.5-flash", chunks, monkeypatch)
+
+    thoughts = [e["thought"] for e in events if "thought" in e]
+    tokens = [e["token"] for e in events if "token" in e]
+    assert thoughts == ["Weighing options. "]
+    assert tokens == ["Answer"]
+
+
+@pytest.mark.asyncio
+async def test_gemini_retries_without_thought_body_on_400(monkeypatch):
+    """A bridge that rejects thinking_config falls back to a plain request."""
+    import httpx
+    from openai import BadRequestError
+
+    calls: list[dict] = []
+
+    async def _flaky_create(**kwargs):
+        calls.append(kwargs)
+        if "extra_body" in kwargs:
+            raise BadRequestError(
+                "Unknown name 'thinking_config'",
+                response=httpx.Response(400, request=httpx.Request("POST", "http://test")),
+                body=None,
+            )
+        return _AsyncChunks([_make_fake_chunk(content="Hi", finish_reason="stop")])
+
+    fake_client = SimpleNamespace(
+        chat=SimpleNamespace(completions=SimpleNamespace(create=_flaky_create))
+    )
+
+    events = [
+        ev
+        async for ev in chat._generate_stream(
+            fake_client, "gemini-2.5-flash", "system", [], "hello",
+            request_start=time.monotonic(),
+        )
+    ]
+
+    assert len(calls) == 2
+    assert "extra_body" in calls[0]
+    assert "extra_body" not in calls[1]
+    assert [e["token"] for e in events if "token" in e] == ["Hi"]
 
 
 # ---------------------------------------------------------------------------
