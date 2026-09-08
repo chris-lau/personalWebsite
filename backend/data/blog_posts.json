@@ -1,5 +1,24 @@
 [
   {
+    "id": "agentic-ai-expands-sdlc-roles",
+    "slug": "agentic-ai-expands-sdlc-roles",
+    "title": "The SDLC Skill Stack Is Getting Larger: How Agentic AI Expands Every Engineering Role",
+    "description": "A follow-up to how agentic AI rewrites the SDLC: why traditional roles don't disappear but expand—engineers constrain non-determinism, QA adopts evals, SRE observes agent behavior, architects govern autonomy, security covers prompt injection, and PMs define behavior over functionality.",
+    "updatedDate": "September 2026",
+    "readTime": "6 min read",
+    "tags": [
+      "AI Agents",
+      "LLMOps",
+      "Artificial Intelligence",
+      "Software Engineering",
+      "DevOps"
+    ],
+    "author": "Chris Lau",
+    "category": "AI Engineering & LLMOps",
+    "featured": true,
+    "markdownFile": "blog-agentic-ai-expands-sdlc-roles.md"
+  },
+  {
     "id": "agentic-ai-sdlc-engineering-practices",
     "slug": "agentic-ai-sdlc-engineering-practices",
     "title": "From Deterministic to Probabilistic: How Agentic AI Rewrites the SDLC",
