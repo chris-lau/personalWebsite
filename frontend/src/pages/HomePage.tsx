@@ -5,7 +5,8 @@ import { projectsData } from '../data/projects';
 import { experienceData } from '../data/experience';
 import { skillsData } from '../data/skills';
 import { nowData } from '../data/now';
-import { Project } from '../types/portfolio';
+import { getBlogPostBySlug } from '../data/blogPosts';
+import { BlogPost, Project } from '../types/portfolio';
 import { ChatPanel } from '../components/chat/ChatPanel';
 import { HOME_STARTERS } from '../components/chat/starters';
 import { useChat } from '../hooks/useChat';
@@ -18,6 +19,13 @@ const SOCIAL_ICONS: Record<string, typeof Linkedin> = {
 
 /** Homepage display order for the featured work rows. */
 const FEATURED_PROJECT_ORDER = ['tinyclaw', 'amazon-seller-suite', 'personal-os'];
+
+/** Homepage promotion for the writing section — newest first. */
+const FEATURED_POST_SLUGS = [
+  'agentic-ai-product-requirements',
+  'agentic-ai-expands-sdlc-roles',
+  'agentic-ai-sdlc-engineering-practices',
+];
 
 /** Homepage-only Live Demo destinations for projects without a liveUrl in projects.json. */
 const LIVE_DEMO_PATHS: Record<string, string> = {
@@ -73,6 +81,9 @@ export const HomePage = () => {
     .filter((project): project is Project => Boolean(project));
   const allSkills = skillsData.flatMap((category) => category.skills);
   const coreSkills = CORE_SKILL_NAMES.filter((name) => allSkills.includes(name));
+  const featuredPosts = FEATURED_POST_SLUGS
+    .map((slug) => getBlogPostBySlug(slug))
+    .filter((post): post is BlogPost => Boolean(post));
 
   return (
     <div className="page-container page-home">
@@ -201,9 +212,37 @@ export const HomePage = () => {
         </div>
       </section>
 
+      <section className="home-section home-writing" aria-label="Latest writing">
+        <SectionHead index="02" label="LATEST WRITING" />
+        <div className="home-writing__list">
+          {featuredPosts.map((post) => (
+            <article key={post.slug} className="blog-row">
+              <span className="blog-row__date">{post.updatedDate}</span>
+              <div className="blog-row__body">
+                <h3 className="blog-row__title">
+                  <Link to={`/blog/${post.slug}`}>{post.title}</Link>
+                </h3>
+                <p className="blog-row__excerpt">{post.description}</p>
+                <div className="tech-tags">
+                  {post.tags.slice(0, 3).map((tag) => (
+                    <span key={tag} className="tech-tag">#{tag}</span>
+                  ))}
+                </div>
+              </div>
+              <span className="blog-row__readtime">{post.readTime}</span>
+            </article>
+          ))}
+        </div>
+        <div className="home-writing__more">
+          <Link to="/blog" className="link-button">
+            All Posts <ArrowRight size={13} aria-hidden="true" />
+          </Link>
+        </div>
+      </section>
+
       <section className="home-section home-panels" aria-label="Now and core skills">
         <div className="home-panel">
-          <SectionHead index="02" label="NOW" />
+          <SectionHead index="03" label="NOW" />
           <ul className="now-tile__list">
             {nowData.workingOn.slice(0, NOW_TILE_ITEM_COUNT).map((item) => (
               <li key={item}>{item}</li>
@@ -217,7 +256,7 @@ export const HomePage = () => {
           </div>
         </div>
         <div className="home-panel">
-          <SectionHead index="03" label="CORE SKILLS" />
+          <SectionHead index="04" label="CORE SKILLS" />
           <div className="stack-tags">
             {coreSkills.map((skill) => (
               <span key={skill} className="tech-tag stack-tag">{skill}</span>

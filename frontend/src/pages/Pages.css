@@ -972,6 +972,15 @@ p,
   padding: 3rem 0;
 }
 
+/* Latest writing — rows reuse the .blog-row editorial idiom; the sibling
+   hairline comes from the global .blog-row + .blog-row rule, and the section
+   head's rule stands in for the first row's top border (work-list grammar). */
+.home-writing__more {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.9rem;
+}
+
 .home-hero {
   padding-bottom: 0.5rem;
 }
