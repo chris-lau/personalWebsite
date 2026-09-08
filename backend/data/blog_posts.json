@@ -1,5 +1,24 @@
 [
   {
+    "id": "agentic-ai-product-requirements",
+    "slug": "agentic-ai-product-requirements",
+    "title": "Agentic Product Requirements: A 10-Part Framework for Defining AI Agent Behavior",
+    "description": "The PM follow-up in the agentic AI series: a 10-part requirements framework covering user goals, agent responsibility, autonomy levels, tool permissions, statistical success criteria, failure behavior, deterministic guardrails, evaluation scenarios, human escalation, and release criteria as eval gates.",
+    "updatedDate": "September 2026",
+    "readTime": "7 min read",
+    "tags": [
+      "Product Management",
+      "AI Agents",
+      "LLMOps",
+      "Artificial Intelligence",
+      "Software Engineering"
+    ],
+    "author": "Chris Lau",
+    "category": "AI Engineering & LLMOps",
+    "featured": true,
+    "markdownFile": "blog-agentic-ai-product-requirements.md"
+  },
+  {
     "id": "agentic-ai-expands-sdlc-roles",
     "slug": "agentic-ai-expands-sdlc-roles",
     "title": "The SDLC Skill Stack Is Getting Larger: How Agentic AI Expands Every Engineering Role",
