@@ -545,7 +545,7 @@ def test_provider_for_model_falls_back_to_default_provider(client, monkeypatch):
 
 
 def test_system_prompt_includes_projects_skills_and_now():
-    """The grounding context must cover projects/skills/now/architecture/amazon_knowledge
+    """The grounding context must cover projects/skills/now/architecture
     so starter-chip and companion-mode questions answer well."""
     chat._build_context.cache_clear()
     prompt = chat._build_system_prompt()
@@ -555,21 +555,17 @@ def test_system_prompt_includes_projects_skills_and_now():
     assert "skills.json (JSON)" in prompt
     assert "now.json (JSON)" in prompt
     assert "site_architecture.json (JSON)" in prompt
-    assert "amazon_knowledge.json (JSON)" in prompt
 
     # Spot-check real content from each source.
     assert "tinyclaw — Governable Multi-Agent Platform" in prompt  # projects.json title
-    assert "Amazon Seller Trend & Opportunity Suite" in prompt  # projects.json & architecture
     assert "Product & Leadership" in prompt  # skills.json category
     assert "AI Surveillance" in prompt  # now.json currentFocus
-    assert "TACoS vs ACoS" in prompt  # amazon_knowledge.json
-    assert "Opportunity Score" in prompt  # amazon_knowledge.json
 
 
 def test_system_prompt_link_allowlist_guidance():
     """The system prompt must restrict links to the allowed site routes."""
     prompt = chat._build_system_prompt()
-    for route in ("/about", "/projects", "/now", "/experience", "/guidebook", "/blog/{slug}", "/amazon-tools"):
+    for route in ("/about", "/projects", "/now", "/experience", "/guidebook", "/blog/{slug}"):
         assert route in prompt
     # Guardrail against hallucinated URLs must be present.
     assert "Do NOT link to routes other than" in prompt

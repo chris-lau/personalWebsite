@@ -45,7 +45,7 @@ class ChatSourceItem(BaseModel):
 
     id: str = Field(..., description="Unique identifier for the source")
     title: str = Field(..., description="Display title for the source")
-    category: str = Field(..., description="Category: blog, guidebook, profile, experience, projects, skills, now, architecture, amazon")
+    category: str = Field(..., description="Category: blog, guidebook, profile, experience, projects, skills, now, architecture")
     source_file: str = Field(..., description="File origin or schema name")
     route: Optional[str] = Field(default=None, description="Site route if applicable (e.g. /blog/xyz)")
     char_count: int = Field(..., description="Character length of the source content")

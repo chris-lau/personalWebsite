@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, ArrowUpRight, Bot, Github, Globe, Linkedin, ShieldCheck, ShoppingCart } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Bot, Github, Globe, Linkedin, ShieldCheck } from 'lucide-react';
 import { profileData } from '../data/profile';
 import { projectsData } from '../data/projects';
 import { experienceData } from '../data/experience';
@@ -18,7 +18,7 @@ const SOCIAL_ICONS: Record<string, typeof Linkedin> = {
 };
 
 /** Homepage display order for the featured work rows. */
-const FEATURED_PROJECT_ORDER = ['tinyclaw', 'amazon-seller-suite', 'personal-os'];
+const FEATURED_PROJECT_ORDER = ['tinyclaw', 'personal-os'];
 
 /** Homepage promotion for the writing section — newest first. */
 const FEATURED_POST_SLUGS = [
@@ -36,8 +36,6 @@ const LIVE_DEMO_PATHS: Record<string, string> = {
 const PROJECT_OUTCOMES: Record<string, string> = {
   tinyclaw:
     'A2A-native agents under policy-as-code guardrails — HITL approvals, signed permits, tamper-evident audit.',
-  'amazon-seller-suite':
-    'A 0–100 Opportunity Score with FBA unit-economics simulation and competitor review-gap scanning.',
   'personal-os':
     "The site you're on: three themes, a live GitHub Activity Dashboard, and REST API integration.",
 };
@@ -45,7 +43,6 @@ const PROJECT_OUTCOMES: Record<string, string> = {
 /** Domain icon shown in each work row's icon square. */
 const PROJECT_ICONS: Record<string, typeof Bot> = {
   tinyclaw: ShieldCheck,
-  'amazon-seller-suite': ShoppingCart,
   'personal-os': Globe,
 };
 
@@ -168,9 +165,6 @@ export const HomePage = () => {
                     <h3 className="work-row__title">{project.title}</h3>
                     {project.id === 'personal-os' && (
                       <span className="work-row__badge">YOU ARE HERE</span>
-                    )}
-                    {project.id === 'amazon-seller-suite' && (
-                      <span className="work-row__badge">LIVE DEMO</span>
                     )}
                   </div>
                   <p className="work-row__desc">{project.description}</p>

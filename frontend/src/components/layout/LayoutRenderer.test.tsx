@@ -41,7 +41,6 @@ describe('LayoutRenderer Component', () => {
     expect(within(footerNav).getByRole('link', { name: 'Guidebook' })).toBeDefined();
     expect(within(footerNav).getByRole('link', { name: 'How This Site Works' })).toBeDefined();
     expect(within(footerNav).getByRole('link', { name: 'Ops Dashboard' })).toBeDefined();
-    expect(within(footerNav).getByRole('link', { name: 'Amazon Suite' })).toBeDefined();
     expect(within(footerNav).getByRole('link', { name: 'Experience' })).toBeDefined();
     expect(within(footerNav).getByRole('link', { name: 'Projects' })).toBeDefined();
     expect(within(footerNav).getByRole('link', { name: 'Contact' })).toBeDefined();

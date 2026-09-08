@@ -55,10 +55,6 @@ export const NAV_GROUPS: NavGroupItem[] = [
         path: '/monitoring',
         label: 'Live Ops Dashboard',
       },
-      {
-        path: '/amazon-tools',
-        label: 'Amazon Seller Suite',
-      },
     ],
   },
   {

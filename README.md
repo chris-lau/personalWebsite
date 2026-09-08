@@ -23,7 +23,7 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - **Two-Column Hero**: A statement headline, status line, and direct exploration dock (About · Projects · Experience · Blog · Now · GitHub · LinkedIn) on the left; the interactive **Ask this site** chat column on the right, above the fold (stacks cleanly on mobile).
   - **One-Click Starter Prompts**: Curated intent chips ("What is Chris's biggest project?", "What is his core tech stack?", …) stream answers with zero typing.
   - **Programmatic Chat API**: `openChat({ starter })` (via `chatControl.ts`) lets any page open the chat panel with a pre-seeded question; on `/` it scrolls to the in-page chat column instead.
-  - **Single Chat Surface**: The floating launcher pill hides itself on `/` and `/amazon-tools` where dedicated in-page chat interfaces operate.
+  - **Single Chat Surface**: The floating launcher pill hides itself on `/` where the dedicated in-page chat interface operates.
   - **Router-Aware Markdown Links**: Assistant replies render site-relative "Read more:" links as React Router `<Link>`s (no hard reload).
 
 - **AI Chat Widget ("Chat with Chris")**:
@@ -44,13 +44,6 @@ GitHub Repository: [https://github.com/chris-lau/personalWebsite](https://github
   - Modular Markdown storage in `backend/posts/`, mapped through `backend/data/blog_posts.json` and rendered by a shared `<MarkdownRenderer>` (`react-markdown` + `remark-gfm`: links, tables, lists, blockquotes with TL;DR callout detection).
   - Query helpers (`getAllBlogPosts`, `getBlogPostBySlug`, `getBlogPostsByTag`, `getGroupedBlogPostsByCategory`, `getRelatedBlogPosts`).
   - **22 technical articles** organized under 4 categories (`Backend Architecture & Security`, `React Architecture & Design Systems`, `Developer Workflows & Tooling`, `Testing & Quality Assurance`) with automated Related Articles suggestions and prominent TL;DR callouts.
-
-- **Amazon Seller Intelligence & Opportunity Suite (`/amazon-tools`)**:
-  - **Live Product Search & Scraping Proxy**: FastAPI backend proxy (`GET /api/amazon/search`, `GET /api/amazon/asin/{asin}`) parsing live Amazon marketplace HTML with in-memory TTL caching, plus an autocomplete suggestion proxy (`GET /api/amazon/trends`).
-  - **Trend & Opportunity Finder**: Curated benchmark niches plus live Amazon search results with automated 0–100 Opportunity Scores (four scored pillars — Demand ≤30, Competition ≤30, Margin ≤25, Price ≤15 — surfaced via tooltips and the detail modal).
-  - **Unit Economics Simulator**: 2026 Amazon fee schedules, Low-Price FBA breaks, referral tiers, FBA/FBM fulfillment toggle, and Markdown sourcing export.
-  - **Review Gap Scanner** (pain-point → AI listing-prompt generator) and **AI Companion Mode** (split-screen Amazon AI Copilot with tab-aware starters and 1-click ask actions, grounded in 2026 FBA economics).
-  - **Truthful Data Flagging**: Live marketplace data is differentiated from simulated benchmarks (`is_live` flags, source discriminators, warning pills); unparseable review counts surface as "unknown" and score neutrally instead of inventing numbers, and no demand-velocity percentage is fabricated from autocomplete counts.
 
 - **Full-Stack Operational Monitoring & Telemetry (`/monitoring`)**:
   - Request correlation (`X-Request-ID` UUIDv4), structured JSON logging, sub-system health/readiness probes (`/health/live`, `/health/ready`), and process/DB telemetry (`/api/telemetry`).
@@ -87,7 +80,7 @@ personalWebsite/
 │   ├── core/                          # DB configuration, models, middleware & rate limiting
 │   ├── schemas/                       # Pydantic v2 data models (incl. GitHub proxy)
 │   ├── api/endpoints/                 # REST endpoints, GitHub proxy, chat (SSE), telemetry & health
-│   ├── data/                          # Structured data (blog index, guidebooks, Amazon knowledge)
+│   ├── data/                          # Structured data (blog index, guidebooks)
 │   ├── posts/                         # Blog & guidebook markdown sources
 │   ├── migrations/                    # Alembic database migration revisions
 │   ├── seed.py                        # Idempotent database seeding pipeline

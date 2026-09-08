@@ -30,7 +30,6 @@ import { MonitoringPage } from './MonitoringPage';
 import { NotFoundPage } from './NotFoundPage';
 import { BlogListPage } from './BlogListPage';
 import { BlogDetailPage } from './BlogDetailPage';
-import { AmazonToolsPage } from './AmazonToolsPage';
 
 describe('Page Components Unit Tests', () => {
   it('renders MonitoringPage telemetry console', () => {
@@ -160,22 +159,18 @@ describe('Page Components Unit Tests', () => {
 
     const headings = screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent);
     expect(headings.indexOf('tinyclaw — Governable Multi-Agent Platform'))
-      .toBeLessThan(headings.indexOf('Amazon Seller Trend & Opportunity Suite'));
-    expect(headings.indexOf('Amazon Seller Trend & Opportunity Suite'))
       .toBeLessThan(headings.indexOf('Personal Portfolio Website'));
 
     // One-line outcomes condensed from each project's description.
     expect(screen.getByText(/policy-as-code guardrails/i)).toBeInTheDocument();
-    expect(screen.getByText(/Opportunity Score with FBA unit-economics/i)).toBeInTheDocument();
     expect(screen.getByText(/three themes, a live GitHub Activity Dashboard/i)).toBeInTheDocument();
 
-    // Live Demo routing: tinyclaw (external) -> pages.dev, Amazon Suite -> /amazon-tools, Portfolio -> /how-this-site-works.
+    // Live Demo routing: tinyclaw (external) -> pages.dev, Portfolio -> /how-this-site-works.
     const liveDemoHrefs = screen
       .getAllByRole('link', { name: /Live Demo/ })
       .map((link) => link.getAttribute('href'));
     expect(liveDemoHrefs).toEqual([
       'https://tinyclaw-614.pages.dev/',
-      '/amazon-tools',
       '/how-this-site-works',
     ]);
   });
@@ -255,18 +250,6 @@ describe('Page Components Unit Tests', () => {
     expect(screen.getByText('HOW THIS SITE WORKS')).toBeInTheDocument();
   });
 
-  it('renders AmazonToolsPage suite', () => {
-    render(
-      <MemoryRouter>
-        <ThemeProvider>
-          <AmazonToolsPage />
-        </ThemeProvider>
-      </MemoryRouter>
-    );
-
-    expect(screen.getByText(/Amazon Seller Trend & Opportunity Suite/i)).toBeInTheDocument();
-  });
-
   it('renders NotFoundPage with error state', () => {
     render(
       <MemoryRouter>
@@ -278,7 +261,7 @@ describe('Page Components Unit Tests', () => {
     expect(screen.getByText(/Return Home/i)).toBeInTheDocument();
   });
 
-  // Track C: Showcase reframing tests for Monitoring, Amazon Tools, and How This Site Works
+  // Track C: Showcase reframing tests for Monitoring and How This Site Works
   it('renders MonitoringPage with showcase framing intro line', () => {
     render(
       <MemoryRouter>
@@ -293,27 +276,14 @@ describe('Page Components Unit Tests', () => {
     expect(screen.getByText(/Zero-cost observability I built/i)).toBeInTheDocument();
   });
 
-  it('renders AmazonToolsPage with showcase framing intro line', () => {
-    render(
-      <MemoryRouter>
-        <ThemeProvider>
-          <AmazonToolsPage />
-        </ThemeProvider>
-      </MemoryRouter>
-    );
-
-    expect(screen.getByText(/Live product demo:/i)).toBeInTheDocument();
-    expect(screen.getByText(/an opportunity-scoring suite I designed and built end-to-end/i)).toBeInTheDocument();
-  });
-
-  it('renders HowThisSiteWorksPage with Lab hub explorer buttons for Amazon Suite and Chat Obs', () => {
+  it('renders HowThisSiteWorksPage with Lab hub explorer buttons for Chat Obs', () => {
     render(
       <MemoryRouter>
         <HowThisSiteWorksPage />
       </MemoryRouter>
     );
 
-    expect(screen.getByRole('link', { name: /Amazon Seller Suite/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Live Monitoring Console/i })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Chat Observability & Telemetry/i })).toBeInTheDocument();
   });
 });

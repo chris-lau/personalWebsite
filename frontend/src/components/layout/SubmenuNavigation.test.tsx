@@ -55,11 +55,10 @@ describe('Submenu Navigation Component Tests', () => {
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(aboutTrigger.getAttribute('aria-expanded')).toBe('false');
 
-    // Lab dropdown should contain How This Site Works, Live Ops Dashboard, Amazon Seller Suite
+    // Lab dropdown should contain How This Site Works and Live Ops Dashboard
     fireEvent.click(labTrigger);
     expect(within(headerNav).getByRole('menuitem', { name: /How This Site Works/i })).toBeDefined();
     expect(within(headerNav).getByRole('menuitem', { name: /Live Ops Dashboard/i })).toBeDefined();
-    expect(within(headerNav).getByRole('menuitem', { name: /Amazon Seller Suite/i })).toBeDefined();
   });
 
 });

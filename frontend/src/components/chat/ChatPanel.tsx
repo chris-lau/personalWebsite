@@ -75,9 +75,9 @@ export interface ChatPanelProps {
   className?: string;
   /** Render the title / model switcher / clear header row. */
   showHeader?: boolean;
-  /** Header title. Embedded surfaces (e.g. the Amazon copilot) override the default. */
+  /** Header title. Embedded surfaces (e.g. the home hero) override the default. */
   title?: string;
-  /** Show the model switcher in the header. Embedded copilot surfaces hide it. */
+  /** Show the model switcher in the header. Embedded surfaces can hide it. */
   showModelSelector?: boolean;
   /** Show the grounding sources button in the header. Defaults to true. */
   showSourcesButton?: boolean;

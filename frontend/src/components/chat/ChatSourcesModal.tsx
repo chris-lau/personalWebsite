@@ -31,7 +31,6 @@ const CATEGORY_LABELS: Record<string, string> = {
   skills: 'Skills',
   now: 'Now (Focus)',
   architecture: 'Site Architecture',
-  amazon: 'Amazon Suite',
 };
 
 function formatNumber(n: number): string {

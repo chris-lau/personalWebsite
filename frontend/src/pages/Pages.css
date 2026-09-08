@@ -6,7 +6,7 @@
 }
 
 /* Page titles with a leading icon — JSX strips inter-element whitespace,
-   so the icon/text gap must come from CSS (matches AmazonToolsPage). */
+   so the icon/text gap must come from CSS. */
 .page-title {
   display: flex;
   align-items: center;

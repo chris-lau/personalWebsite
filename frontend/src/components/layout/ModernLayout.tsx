@@ -206,7 +206,6 @@ export const ModernLayout = ({ children }: ModernLayoutProps) => {
               <ul className="modern-footer-links">
                 <li><NavLink to="/how-this-site-works" className="modern-footer-link">How This Site Works</NavLink></li>
                 <li><NavLink to="/monitoring" className="modern-footer-link">Ops Dashboard</NavLink></li>
-                <li><NavLink to="/amazon-tools" className="modern-footer-link">Amazon Suite</NavLink></li>
               </ul>
             </div>
 

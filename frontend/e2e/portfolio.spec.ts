@@ -115,12 +115,9 @@ test.describe('Portfolio E2E Tests', () => {
 
     // Footer safety net links every demoted page (second independent path).
     const footerNav = page.getByRole('navigation', { name: 'Footer Navigation' });
-    for (const label of ['Bio', 'Now', 'Blog', 'Guidebook', 'How This Site Works', 'Ops Dashboard', 'Amazon Suite']) {
+    for (const label of ['Bio', 'Now', 'Blog', 'Guidebook', 'How This Site Works', 'Ops Dashboard']) {
       await expect(footerNav.getByRole('link', { name: label, exact: true })).toBeVisible();
     }
-    await footerNav.getByRole('link', { name: 'Amazon Suite', exact: true }).click();
-    await expect(page).toHaveURL('/amazon-tools');
-    await expect(page.getByText(/Live product demo:/i)).toBeVisible();
   });
 
   test('toggles between light and dark modes', async ({ page }) => {

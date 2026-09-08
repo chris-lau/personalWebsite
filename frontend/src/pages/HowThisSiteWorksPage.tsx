@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Activity, ShoppingBag, MessageSquare, Sparkles, Terminal, BookOpen, FileCode, Info, Boxes, Palette, FlaskConical, Server, Database, Cloud, Gauge, MessagesSquare } from 'lucide-react';
+import { Activity, MessageSquare, Sparkles, Terminal, BookOpen, FileCode, Info, Boxes, Palette, FlaskConical, Server, Database, Cloud, Gauge, MessagesSquare } from 'lucide-react';
 import { siteArchitectureData } from '../data/siteArchitecture';
 import { Section } from '../components/ui/Section';
 import { BACKEND_ROOT_URL } from '../api/config';
@@ -18,7 +18,6 @@ const CATEGORY_ICONS: Record<string, typeof Boxes> = {
   'PRODUCTION DEPLOYMENTS & CLOUD INFRASTRUCTURE': Cloud,
   'OPERATIONAL MONITORING, TELEMETRY & SYNTHETIC DIAGNOSTICS': Gauge,
   'AI CHAT ENGINE & REAL-TIME OBSERVABILITY': MessagesSquare,
-  'AMAZON SELLER INTELLIGENCE & OPPORTUNITY SUITE': ShoppingBag,
 };
 
   const handleOpenChatObservability = () => {
@@ -51,10 +50,6 @@ const CATEGORY_ICONS: Record<string, typeof Boxes> = {
               <NavLink to="/monitoring" className="explorer-badge-btn monitoring">
                 <Activity size={15} aria-hidden="true" />
                 <span>Live Monitoring Console (/monitoring)</span>
-              </NavLink>
-              <NavLink to="/amazon-tools" className="explorer-badge-btn amazon">
-                <ShoppingBag size={15} aria-hidden="true" />
-                <span>Amazon Seller Suite (/amazon-tools)</span>
               </NavLink>
               <button
                 type="button"
