@@ -55,9 +55,9 @@ describe('Page Components Unit Tests', () => {
     expect(screen.getByText('TECHNICAL BLOG')).toBeInTheDocument();
 
     const searchInput = screen.getByPlaceholderText(/Search posts by keyword/i);
-    fireEvent.change(searchInput, { target: { value: 'Scaffolding' } });
+    fireEvent.change(searchInput, { target: { value: 'Blog Engine' } });
 
-    expect(screen.getByText(/Demystifying Modern React Scaffolding/i)).toBeInTheDocument();
+    expect(screen.getByText(/Building a Full-Featured Blog Engine/i)).toBeInTheDocument();
 
     // Reset search and test tag click — getByRole throws if missing, so this is a real assertion.
     fireEvent.change(searchInput, { target: { value: '' } });
@@ -68,7 +68,7 @@ describe('Page Components Unit Tests', () => {
 
   it('renders BlogDetailPage with content and related articles when valid slug provided', () => {
     render(
-      <MemoryRouter initialEntries={['/blog/demystifying-react-architecture-and-dev-tools']}>
+      <MemoryRouter initialEntries={['/blog/building-a-full-featured-react-blog-engine']}>
         <Routes>
           <Route path="/blog/:slug" element={<BlogDetailPage />} />
         </Routes>
@@ -77,7 +77,7 @@ describe('Page Components Unit Tests', () => {
 
     expect(
       screen.getByText(
-        'Demystifying Modern React Architecture: Data Contracts, Dev Servers, and Type-Safe State',
+        'Building a Full-Featured Blog Engine in React & TypeScript: Architecture, Search, and Multi-Tier Testing',
       ),
     ).toBeInTheDocument();
     expect(screen.getByText('By Chris Lau')).toBeInTheDocument();

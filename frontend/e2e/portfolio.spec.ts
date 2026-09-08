@@ -55,7 +55,7 @@ test.describe('Portfolio E2E Tests', () => {
 
     // Click on the matching blog post title
     await page.click('text=Demystifying Modern React Architecture');
-    await expect(page).toHaveURL(/\/blog\/demystifying-react-architecture-and-dev-tools/);
+    await expect(page).toHaveURL(/\/blog\/building-a-full-featured-react-blog-engine/);
 
     // Verify blog detail header
     await expect(page.getByRole('heading', { name: /Demystifying Modern React Architecture/ })).toBeVisible();

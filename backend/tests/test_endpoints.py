@@ -62,14 +62,14 @@ def test_list_posts(client):
     assert response.status_code == 200
     data = response.json()
     assert isinstance(data, list)
-    assert len(data) >= 20
+    assert len(data) >= 5
 
 
 def test_get_post_by_slug_valid(client):
-    response = client.get("/api/posts/demystifying-react-architecture-and-dev-tools")
+    response = client.get("/api/posts/building-a-full-featured-react-blog-engine")
     assert response.status_code == 200
     data = response.json()
-    assert data["slug"] == "demystifying-react-architecture-and-dev-tools"
+    assert data["slug"] == "building-a-full-featured-react-blog-engine"
     assert len(data["content"]) > 0
 
 

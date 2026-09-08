@@ -15,9 +15,9 @@ describe('Blog Posts Data Layer Unit Tests', () => {
   });
 
   it('retrieves a post by slug accurately', () => {
-    const post = getBlogPostBySlug('demystifying-react-architecture-and-dev-tools');
+    const post = getBlogPostBySlug('building-a-full-featured-react-blog-engine');
     expect(post).toBeDefined();
-    expect(post?.title).toContain('Demystifying Modern React Architecture');
+    expect(post?.title).toContain('Building a Full-Featured Blog Engine');
   });
 
   it('returns undefined for non-existent slug', () => {
@@ -52,7 +52,7 @@ describe('Blog Posts Data Layer Unit Tests', () => {
   });
 
   it('retrieves related blog posts based on matching tags', () => {
-    const post = getBlogPostBySlug('demystifying-react-architecture-and-dev-tools');
+    const post = getBlogPostBySlug('building-a-full-featured-react-blog-engine');
     if (post) {
       const related = getRelatedBlogPosts(post, 3);
       expect(related.length).toBeGreaterThan(0);
