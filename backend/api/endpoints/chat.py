@@ -326,8 +326,8 @@ def _build_context() -> str:
     return "\n\n---\n\n".join(s.content for s in _build_source_items())
 
 
-# Language constraint injected into the system prompt's STRICT RULES and
-# surfaced verbatim by GET /api/chat/sources so the frontend never hardcodes it.
+# Language constraint injected into the system prompt's STRICT RULES: Chinese
+# questions must be answered in Traditional Chinese, never Simplified.
 CHAT_LANGUAGE_RULE = (
     "When answering in Chinese or if the user asks in Chinese, ALWAYS use "
     "Traditional Chinese (繁體中文), NEVER Simplified Chinese (簡體中文)."
@@ -496,7 +496,6 @@ def get_chat_sources() -> ChatSourcesResponse:
         total_sources=len(sources),
         total_characters=total_chars,
         total_estimated_tokens=total_tokens,
-        language_rule=CHAT_LANGUAGE_RULE,
     )
 
 

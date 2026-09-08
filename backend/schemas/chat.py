@@ -60,8 +60,4 @@ class ChatSourcesResponse(BaseModel):
     total_sources: int
     total_characters: int
     total_estimated_tokens: int
-    language_rule: str = Field(
-        ...,
-        description="Verbatim language constraint from the system prompt's STRICT RULES",
-    )
 

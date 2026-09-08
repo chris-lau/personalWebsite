@@ -42,9 +42,6 @@ export interface ChatSourcesResponse {
   total_sources: number;
   total_characters: number;
   total_estimated_tokens: number;
-  /** Verbatim language rule from the backend system prompt. Optional so a
-      newer frontend degrades gracefully against an older backend. */
-  language_rule?: string;
 }
 
 // ---------------------------------------------------------------------------

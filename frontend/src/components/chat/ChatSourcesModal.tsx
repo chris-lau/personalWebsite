@@ -384,11 +384,6 @@ export const ChatSourcesModal: React.FC<ChatSourcesModalProps> = ({ isOpen, onCl
         <footer className="sources-modal__footer">
           <span>All documents are bundled into the prompt context for transparent retrieval.</span>
           <span>Cached for zero runtime DB latency</span>
-          {data?.language_rule && (
-            <span className="sources-modal__footer-rule">
-              Language rule: {data.language_rule}
-            </span>
-          )}
         </footer>
       </div>
     </div>

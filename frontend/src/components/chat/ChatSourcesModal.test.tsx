@@ -40,8 +40,6 @@ describe('ChatSourcesModal', () => {
     total_sources: 3,
     total_characters: 1700,
     total_estimated_tokens: 425,
-    language_rule:
-      'When answering in Chinese or if the user asks in Chinese, ALWAYS use Traditional Chinese (繁體中文), NEVER Simplified Chinese (簡體中文).',
   };
 
   beforeEach(() => {
@@ -66,8 +64,6 @@ describe('ChatSourcesModal', () => {
     expect(await screen.findByText('Blog: Building Systems')).toBeInTheDocument();
     expect(await screen.findByText('Frontend Guidebook — Chapter 1: React')).toBeInTheDocument();
     expect((await screen.findAllByText('Profile & Bio')).length).toBeGreaterThan(0);
-    // The language rule comes from the API response, not a hardcoded string.
-    expect(await screen.findByText(/Language rule: .*繁體中文/)).toBeInTheDocument();
   });
 
   it('filters sources by search query', async () => {
