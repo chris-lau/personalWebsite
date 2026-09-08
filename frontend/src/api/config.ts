@@ -42,10 +42,12 @@ export interface ModelPricing {
 /** Safe default for unknown models — no NaN risk in cost calculations. */
 const DEFAULT_PRICING: ModelPricing = Object.freeze({ input_per_1m: 0, output_per_1m: 0 });
 
-/** Verified 2026-08-10 from official provider pricing pages. */
+/** Verified 2026-09-08 from official provider pricing pages. */
 export const MODEL_PRICING: Readonly<Record<string, ModelPricing>> = Object.freeze({
   'gemini-2.0-flash':    Object.freeze({ input_per_1m: 0.10,   output_per_1m: 0.40 }),
   'gemini-2.5-flash':    Object.freeze({ input_per_1m: 0.15,   output_per_1m: 0.60 }),
+  // Promo pricing through 2026-12-31; doubles to 1.50 / 7.50 on 2027-01-01.
+  'gemini-3.8-flash':    Object.freeze({ input_per_1m: 0.75,   output_per_1m: 3.75 }),
   'deepseek-chat':       Object.freeze({ input_per_1m: 0.14,   output_per_1m: 0.28 }),
   'deepseek-reasoner':   Object.freeze({ input_per_1m: 0.55,   output_per_1m: 2.19 }),
   'gpt-4o-mini':         Object.freeze({ input_per_1m: 0.15,   output_per_1m: 0.60 }),

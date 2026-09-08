@@ -164,7 +164,7 @@ def test_list_chat_models_returns_configured_models(client, with_gemini_key):
     body = response.json()
     assert body["default_model"] == chat.settings.CHAT_DEFAULT_MODEL
     ids = [m["id"] for m in body["models"]]
-    assert "gemini-2.5-flash" in ids
+    assert "gemini-3.8-flash" in ids
     # DeepSeek/OpenAI are not configured, so they must not appear.
     assert not any(m["provider"] == "deepseek" for m in body["models"])
     assert not any(m["provider"] == "openai" for m in body["models"])
@@ -414,10 +414,10 @@ async def test_gemini_omits_stream_options(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_gemini_25_flash_omits_stream_options(monkeypatch):
-    """Gemini 2.5 Flash should also omit ``stream_options``."""
+async def test_gemini_38_flash_omits_stream_options(monkeypatch):
+    """Gemini 3.8 Flash should also omit ``stream_options``."""
     chunks = [_make_fake_chunk(content="Hi", finish_reason="stop")]
-    _, kwargs = await _collect_stream_events("gemini-2.5-flash", chunks, monkeypatch)
+    _, kwargs = await _collect_stream_events("gemini-3.8-flash", chunks, monkeypatch)
     assert "stream_options" not in kwargs
 
 
@@ -430,11 +430,11 @@ async def test_gemini_25_flash_omits_stream_options(monkeypatch):
 async def test_gemini_requests_thought_summaries(monkeypatch):
     """Gemini models ask the bridge for thought summaries (chain-of-thought UI)."""
     chunks = [_make_fake_chunk(content="Hi", finish_reason="stop")]
-    _, kwargs = await _collect_stream_events("gemini-2.5-flash", chunks, monkeypatch)
+    _, kwargs = await _collect_stream_events("gemini-3.8-flash", chunks, monkeypatch)
 
     extra_body = kwargs.get("extra_body")
     assert extra_body is not None
-    thinking = extra_body["extra_body"]["google"]["thinking_config"]
+    thinking = extra_body["google"]["thinking_config"]
     assert thinking["include_thoughts"] is True
 
 
@@ -443,7 +443,7 @@ async def test_gemini_thought_request_disabled_by_setting(monkeypatch):
     """CHAT_GEMINI_INCLUDE_THOUGHTS=false omits the thinking_config request."""
     monkeypatch.setattr(chat.settings, "CHAT_GEMINI_INCLUDE_THOUGHTS", False)
     chunks = [_make_fake_chunk(content="Hi", finish_reason="stop")]
-    _, kwargs = await _collect_stream_events("gemini-2.5-flash", chunks, monkeypatch)
+    _, kwargs = await _collect_stream_events("gemini-3.8-flash", chunks, monkeypatch)
     assert "extra_body" not in kwargs
 
 
@@ -495,7 +495,7 @@ async def test_gemini_retries_without_thought_body_on_400(monkeypatch):
     events = [
         ev
         async for ev in chat._generate_stream(
-            fake_client, "gemini-2.5-flash", "system", [], "hello",
+            fake_client, "gemini-3.8-flash", "system", [], "hello",
             request_start=time.monotonic(),
         )
     ]
@@ -626,7 +626,7 @@ def test_provider_for_model_defaults_to_gemini_on_unrecognized(client, monkeypat
 
 def test_provider_for_model_falls_back_to_default_provider(client, monkeypatch):
     """Recognized default model is used as fallback for unknown model ids."""
-    monkeypatch.setattr(chat.settings, "CHAT_DEFAULT_MODEL", "gemini-2.5-flash")
+    monkeypatch.setattr(chat.settings, "CHAT_DEFAULT_MODEL", "gemini-3.8-flash")
     # Unknown model falls back to gemini's provider
     assert chat._provider_for_model("totally-unknown-model") == "gemini"
 

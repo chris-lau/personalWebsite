@@ -25,7 +25,7 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str = Field(default="")
     DEEPSEEK_API_KEY: str = Field(default="")
     OPENAI_API_KEY: str = Field(default="")
-    CHAT_DEFAULT_MODEL: str = Field(default="gemini-2.5-flash")
+    CHAT_DEFAULT_MODEL: str = Field(default="gemini-3.8-flash")
     # Ask Gemini's OpenAI-compat bridge for thought summaries so the site's
     # chain-of-thought box has content on the default model. Thought tokens
     # are billed as output; set CHAT_GEMINI_INCLUDE_THOUGHTS=false to opt out.

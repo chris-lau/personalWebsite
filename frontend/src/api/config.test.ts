@@ -2,10 +2,11 @@ import { describe, it, expect } from 'vitest';
 import { MODEL_PRICING, getModelPricing, type ModelPricing } from './config';
 
 describe('MODEL_PRICING table', () => {
-  it('contains all five models from the plan', () => {
+  it('contains all selectable and historical models', () => {
     const expected = [
       'gemini-2.0-flash',
       'gemini-2.5-flash',
+      'gemini-3.8-flash',
       'deepseek-chat',
       'deepseek-reasoner',
       'gpt-4o-mini',

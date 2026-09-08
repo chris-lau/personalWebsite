@@ -142,7 +142,7 @@ _PROVIDERS: dict[str, tuple[str, str, list[str]]] = {
     "gemini": (
         "https://generativelanguage.googleapis.com/v1beta/openai/",
         "GEMINI_API_KEY",
-        ["gemini-2.5-flash"],
+        ["gemini-3.8-flash"],
     ),
     "deepseek": (
         "https://api.deepseek.com/v1",
@@ -160,6 +160,9 @@ _PROVIDERS: dict[str, tuple[str, str, list[str]]] = {
 # Provider capability flags — update as providers add support.
 # Verified 2026-08-10: DeepSeek documents OpenAI-compatible stream_options;
 # Gemini's /v1beta/openai bridge does NOT accept it (returns HTTP 400).
+# 2026-09-08: Google's OpenAI-compat docs now show stream_options in examples,
+# but this is unverified against the live bridge — flip to True only after a
+# smoke test (a blind flip would 400 every Gemini chat request).
 PROVIDER_SUPPORTS_USAGE: dict[str, bool] = {
     "openai": True,
     "deepseek": True,
@@ -168,14 +171,14 @@ PROVIDER_SUPPORTS_USAGE: dict[str, bool] = {
 
 # Ask Gemini's OpenAI-compat bridge to stream thought summaries, so the
 # frontend's chain-of-thought box has content on the default model. The
-# double-nested ``extra_body`` matches the shape in Google's OpenAI
-# compatibility docs. Toggled by CHAT_GEMINI_INCLUDE_THOUGHTS.
+# openai SDK merges extra_body into the top level of the JSON body, where
+# this bridge reads ``google.thinking_config`` (verified live 2026-09-08:
+# the double-nested docs form is silently ignored here). Toggled by
+# CHAT_GEMINI_INCLUDE_THOUGHTS.
 GEMINI_THOUGHT_EXTRA_BODY: dict[str, Any] = {
-    "extra_body": {
-        "google": {
-            "thinking_config": {
-                "include_thoughts": True,
-            }
+    "google": {
+        "thinking_config": {
+            "include_thoughts": True,
         }
     }
 }
