@@ -290,6 +290,10 @@
   border-radius: var(--radius-md);
   background: var(--surface-raised);
   overflow: hidden;
+  /* The card's overflow:hidden zeroes the flex automatic minimum height, so
+     without this the flex-column list shrinks every card to its borders
+     instead of overflowing the scroll area. */
+  flex-shrink: 0;
   transition: border-color var(--transition-fast);
 }
 
